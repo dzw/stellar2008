@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nebula3 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/frame.xsd">
+
+<FrameShader name="DX9Sample">
+	<DeclareRenderTarget name="ColorBuffer1" format="A8R8G8B8" depth="true" relWidth="1.0" relHeight="1.0" msaa="true"/>
+	
+	<Pass name="Color1" renderTarget="ColorBuffer1" shader="p_color" clearColor="0.3,0.3,0.3,1.0" clearDepth="1.0" clearStencil="0">
+        <Batch shader="b_sampler" type="Solid" shdFeatures="Solid" nodeFilter="Solid" sorting="None" lighting="None"/>
+			<!--<ApplyShaderVariable sem="ModelViewProjection" value="mvp"/>
+		</Batch>-->
+	</Pass>
+	
+	<PostEffect name="Compose1" shader="pe_compose">
+		<ApplyShaderVariable sem="ColorBuffer" value="ColorBuffer1"/>		
+	</PostEffect>
+</FrameShader>
+
+</Nebula3>

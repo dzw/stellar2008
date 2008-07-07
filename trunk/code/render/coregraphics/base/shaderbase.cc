@@ -1,0 +1,69 @@
+//------------------------------------------------------------------------------
+//  shaderbase.cc
+//  (C) 2007 Radon Labs GmbH
+//------------------------------------------------------------------------------
+#include "stdneb.h"
+#include "coregraphics/base/shaderbase.h"
+#include "coregraphics/shaderinstance.h"
+#include "coregraphics/shader.h"
+
+namespace Base
+{
+ImplementClass(Base::ShaderBase, 'SHDB', Resources::Resource);
+
+using namespace CoreGraphics;
+
+//------------------------------------------------------------------------------
+/**
+*/
+ShaderBase::ShaderBase() 
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+ShaderBase::~ShaderBase()
+{
+    n_assert(0 == this->shaderInstances.Size());
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+Ptr<ShaderInstance>
+ShaderBase::CreateShaderInstance()
+{
+    Ptr<ShaderInstance> newInst = ShaderInstance::Create();
+    Ptr<ShaderBase> thisPtr(this);
+    newInst->Setup(thisPtr.downcast<Shader>());
+    this->shaderInstances.Append(newInst);
+    return newInst;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+ShaderBase::DiscardShaderInstance(const Ptr<ShaderInstance>& inst)
+{
+    inst->Cleanup();
+    IndexT i = this->shaderInstances.FindIndex(inst);
+    n_assert(InvalidIndex != i);
+    this->shaderInstances.EraseIndex(i);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void 
+ShaderBase::Update()
+{
+	Ptr<ShaderBase> thisPtr(this);
+	for (SizeT i = 0; i < this->shaderInstances.Size(); i++)
+	{
+		this->shaderInstances[i]->Update(thisPtr.downcast<Shader>());
+	}
+}
+} // namespace Base
