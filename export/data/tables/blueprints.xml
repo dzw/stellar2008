@@ -1,0 +1,31 @@
+<!-- an automatic entity with optional static mesh collision or passive physics -->
+<BluePrints>
+    <!-- a light entity -->
+    <Entity type="Light" cppclass="Entity">
+        <Property type="BaseGameFeature::TimeProperty"/>
+        <Property type="GraphicsFeature::LightProperty"/>
+    </Entity>
+
+    <!-- remote controlled camera for level editor -->
+    <Entity type="RemoteCamera" cppclass="Entity">
+    </Entity>
+
+    <!-- a camera entity with like maya input -->
+    <Entity type="Camera" cppclass="Entity">     
+    </Entity> 
+    
+    <!-- a simple entity -->
+    <Entity type="Simple" cppclass="Entity">
+        <Property type="GraphicsFeature::GraphicsProperty"/>
+        <Property type="PhysicsFeature::PhysicsProperty"/>
+    </Entity>
+
+    <!-- a ready-made actor entity -->
+    <Entity type="Actor" cppclass="Entity">    
+        <Property type="GraphicsFeature::InputProperty"/>
+        <Property type="GraphicsFeature::ActorGraphicsProperty"/>
+        <Property type="PhysicsFeature::ActorPhysicsProperty"/>
+        <Property type="PhysicsFeature::MouseGripperProperty"/>
+        <Property type="GraphicsFeature::ChaseCameraProperty"/>
+    </Entity>
+</BluePrints>
