@@ -7,6 +7,7 @@
 	一个地形tile,管理tile上的所有数据
 */
 #include "resources/resource.h"
+#include "terrain/terrainchunk.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -20,10 +21,15 @@ public:
 
 	virtual void Unload();
 
+protected:
 	/// 16*16个chunk
-	Util::FixedArray<Ptr<TerrainChunkEntity>> terrainChunk;
+	Ptr<TerrainChunk> chunk[TILECHUNKSIZE*TILECHUNKSIZE];
 	/// buliding
 	//Util::Array<Ptr<InteriorEntity> interiors;
+    //Util::Array<Ptr<ModelEntity> models;
+    Util::Array<String> textureNames;
+    Util::Array<String> interiorNames;
+    Util::Array<String> modelNames;
 };
 
 } // namespace Models
