@@ -26,9 +26,57 @@ class TerrainTileStream : public IOMessage
 	void ParseData(const Ptr<Stream>& stream);
 	///
 	void TerrainTileStream::ParseChunk();
-public:
+
+protected:
+    Ptr<ManagedTexture> CreateTextureResource(const String& name);
 
 	Ptr<Terrain::TerrainTile> tile;
+
+
+    /// 创建texCoord，alphaCoord，只执行一次
+	void InitGlobalVBOs();
+	void fixnamen(char *name, SizeT len);
+	void fixname(Util::String &name);
+
+	SizeT mcnk_offsets[256], mcnk_sizes[256];
+
+	/// mapnode
+	Math::vector vmin, vmax, vcenter;
+	/// mapchunk
+	float xbase, ybase, zbase;
+	float r;
+
+	int nTextures;
+
+	//float xbase, ybase, zbase;
+	//float r;
+
+	unsigned int areaID;
+
+	bool haswater;
+	bool visible;
+	bool hasholes;
+	float waterlevel;
+
+	//unsigned int textures[4];
+	unsigned int alphamaps[3];
+	unsigned int shadow, blend;
+
+	int animated[4];
+
+	unsigned int vertices, normals;
+
+	short *strip;
+	int striplen;
+
+	//Liquid *lq;
+
+	Util::FixedArray<ChunkData> chunks;
+	Util::Array<Util::String> textures;
+
+	static bool coordCreated;
+	static Math::float2 texCoord[mapbufsize];
+	static Math::float2 alphaCoord[mapbufsize];
 };
 
 } // namespace Interface

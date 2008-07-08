@@ -21,12 +21,12 @@ namespace Terrain
 	#define UNITSIZE (CHUNKSIZE / 8.0f)
 	#define ZEROPOINT (32.0f * (TILESIZE))
 
-	const int mapbufsize = 9*9 + 8*8;
-	const int stripsize = 8*18 + 7*2;
+	const SizeT mapbufsize = 9*9 + 8*8;
+	const SizeT stripsize = 8*18 + 7*2;
 	const float detail_size = 8.0f;
-	const int samplerstripsize = 8*8*4*3;
-	const int MAPTILECACHESIZE = 16;
-
+	const SizeT samplerstripsize = 8*8*4*3;
+	const SizeT MAPTILECACHESIZE = 16;
+    const SizeT TILECHUNKSIZE = 16; 
 
 	struct MapChunkHeader {
 		uint32 flags;

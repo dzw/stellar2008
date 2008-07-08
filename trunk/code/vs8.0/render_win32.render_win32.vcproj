@@ -2528,7 +2528,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\render\terrain\terrainchunkentity.cc"
+				RelativePath="..\render\terrain\terrainchunk.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -2559,7 +2559,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\render\terrain\terrainchunkentity.h"
+				RelativePath="..\render\terrain\terrainchunk.h"
 				>
 			</File>
 			<File
