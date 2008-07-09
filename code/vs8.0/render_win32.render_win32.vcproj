@@ -2675,6 +2675,22 @@
 					RelativePath="..\render\terrain\terrainchunknodeinstance.h"
 					>
 				</File>
+				<File
+					RelativePath="..\render\terrain\terrainnode.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\terrain\terrainnode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\terrain\terrainnodeinstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\terrain\terrainnodeinstance.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
