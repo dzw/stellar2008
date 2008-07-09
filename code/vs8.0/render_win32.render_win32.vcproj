@@ -1355,6 +1355,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\graphics\terrainquadtree.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\graphics\terrainquadtree.h"
+				>
+			</File>
+			<File
+				RelativePath="..\render\graphics\terrainquadtreecell.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\graphics\terrainquadtreecell.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\graphics\view.cc"
 				>
 			</File>
@@ -2477,14 +2493,6 @@
 			Name="terrain"
 			>
 			<File
-				RelativePath="..\render\terrain\managedchunkcacha.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\terrain\managedchunkcacha.h"
-				>
-			</File>
-			<File
 				RelativePath="..\render\terrain\managedterraintile.cc"
 				>
 			</File>
@@ -2657,22 +2665,49 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="node"
+				Name="render"
 				>
 				<File
-					RelativePath="..\render\terrain\terrainchunknode.cc"
+					RelativePath="..\render\terrain\TerrainChunkCache.cc"
 					>
 				</File>
 				<File
-					RelativePath="..\render\terrain\terrainchunknode.h"
+					RelativePath="..\render\terrain\TerrainChunkCache.h"
 					>
 				</File>
 				<File
-					RelativePath="..\render\terrain\terrainchunknodeinstance.cc"
+					RelativePath="..\render\terrain\terrainentity.cc"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Realse|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\render\terrain\terrainchunknodeinstance.h"
+					RelativePath="..\render\terrain\terrainentity.h"
 					>
 				</File>
 				<File

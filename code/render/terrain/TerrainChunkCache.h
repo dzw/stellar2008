@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TERRAIN_MANAGEDCHUNKCACHA_H
-#define TERRAIN_MANAGEDCHUNKCACHA_H
+#ifndef TERRAIN_TERRAINCHUNKSTORAGE_H
+#define TERRAIN_TERRAINCHUNKSTORAGE_H
 //------------------------------------------------------------------------------
 /**
     @class Terrain::ManagedWorld
@@ -9,32 +9,30 @@
 	地面距离设置显示的chunk数量，添加新的chunk时需要，如果缓冲中还有可用空间，
 	就直接添加，否则需要把看不见的chunk都删除了，再添加。
 
+	管理缓冲，在缓冲中添加\删除chunk
     (C) cTuo
 */
-#include "resources/managedresource.h"
-#include "terrain/world.h"
+#include "core/refcounted.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
 {
-class ManagedChunkCacha : public Resources::ManagedResource
+class TerrainChunkCache : public Core::RefCounted
 {
-    DeclareClass(ManagedChunkCacha);
+    DeclareClass(TerrainChunkCache);
 public:
-    /// get contained model resource
-    const Ptr<Model>& GetModel() const;
-
-	void CreateCacha(const Resources::ResourceId& resId, SizeT chunkNum);
+	/// 初始化分配
+	void Alloc(SizeT num);
+	/// 清空
+	void Dealloc();
+	/// 重新初始化
+	void Realloc();
+	/// 增加一个chunk
+	void AddChunk(Ptr<TerrainNodeInstance> &node);
+	Ptr<Mesh> GetMesh();
+protected:
+	Ptr<Mesh> cache;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline const Ptr<Model>&
-ManagedChunkCacha::GetModel() const
-{
-    return this->GetResource().downcast<Model>();
-}
 
 } // namespace Models
 //------------------------------------------------------------------------------

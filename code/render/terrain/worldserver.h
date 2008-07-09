@@ -16,6 +16,7 @@
 #include "terrain/world.h"
 #include "terrain/managedWorld.h"
 #include "Terrain/terraindef.h"
+#include "terrain/Terrainentity.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -82,6 +83,8 @@ private:
 
 	Ptr<Graphics::CameraEntity> camera;
 	Ptr<Graphics::Stage> stage;
+	/// 用于渲染所有可见块
+	Ptr<TerrainEntity> terrain;
 };
 
 //------------------------------------------------------------------------------

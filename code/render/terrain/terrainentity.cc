@@ -1,27 +1,29 @@
 //------------------------------------------------------------------------------
-//  modelnode.cc
+//  modelentity.cc
 //  (C) 2007 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "stdneb.h"
+#include "terrain/terrainentity.h"
 #include "terrain/terrainnode.h"
+#include "terrain/terrainnodeinstance.h"
 
 namespace Terrain
 {
-ImplementClass(Terrain::TerrainNode, 'TNNE', Models::ModelNode);
+ImplementClass(Terrain::TerrainEntity, 'TNTY', Graphics::GraphicsEntity);
 
+using namespace Models;
 
 //------------------------------------------------------------------------------
 /**
 */
-TerrainNode::TerrainNode()
+TerrainEntity::TerrainEntity()
 {
-    // empty
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-TerrainNode::~TerrainNode()
+TerrainEntity::~TerrainEntity()
 {
 }
 
@@ -29,21 +31,18 @@ TerrainNode::~TerrainNode()
 /**
 */
 void 
-TerrainNode::ApplySharedState()
+TerrainEntity::CreateTerrainCacha(SizeT num)
 {
-	// 提交缓冲中的顶点数据,在instance中使用这些数据渲染(参考ShapeNode::ApplySharedState)
-	const Ptr<Mesh>& mesh = this->cache->GetMesh();
-	mesh->ApplyPrimitives(this->primGroupIndex);
+	
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-Ptr<ModelNodeInstance> 
-TerrainNode::CreateNodeInstance() const
+void 
+TerrainEntity::AddChunkToRender(const Ptr<TerrainChunk>& chunk)
 {
-	Ptr<ModelNodeInstance> newInst = (ModelNodeInstance*) TerrainNodeInstance::Create();
-	return newInst;
+
 }
 
-} // namespace Models
+} // namespace Graphics

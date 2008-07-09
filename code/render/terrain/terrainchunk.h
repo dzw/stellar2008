@@ -28,6 +28,9 @@ public:
 
     void Init(const Ptr<Stream>& stream, const Ptr<TerrainTile>& tile);
 
+	/// 在terrainnodeinstance中调用设置渲染
+	void Render();
+
 protected:
     Ptr<CoreGraphics::Mesh> mesh;
 	IndexT primGroupIndex;

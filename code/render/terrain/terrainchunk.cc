@@ -371,4 +371,10 @@ TerrainChunk::Init(const Ptr<Stream>& stream, const Ptr<TerrainTile>& tile)
     isOk = true;
 }
 
+void 
+TerrainChunk::Render()
+{
+	
+}
+
 } // namespace Graphics
