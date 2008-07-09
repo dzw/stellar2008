@@ -4,14 +4,12 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "models/modelinstance.h"
-#include "Terrain/terrainchunknodeinstance.h"
-#include "Terrain/terrainchunknode.h"
+#include "Terrain/terrainnodeinstance.h"
 #include "coregraphics/renderdevice.h"
-#include "coregraphics/transformdevice.h"
 
 namespace Terrain
 {
-ImplementClass(Terrain::TerrainChunkNodeInstance, 'CKNI', Models::ModelNodeInstance);
+ImplementClass(Terrain::TerrainNodeInstance, 'CKNI', Models::ModelNodeInstance);
 
 using namespace Math;
 using namespace CoreGraphics;
@@ -19,7 +17,7 @@ using namespace CoreGraphics;
 //------------------------------------------------------------------------------
 /**
 */
-TerrainChunkNodeInstance::TerrainChunkNodeInstance()
+TerrainNodeInstance::TerrainNodeInstance()
 {
     // empty
 }
@@ -27,7 +25,7 @@ TerrainChunkNodeInstance::TerrainChunkNodeInstance()
 //------------------------------------------------------------------------------
 /**
 */
-TerrainChunkNodeInstance::~TerrainChunkNodeInstance()
+TerrainNodeInstance::~TerrainNodeInstance()
 {
     // empty
 }
@@ -36,7 +34,7 @@ TerrainChunkNodeInstance::~TerrainChunkNodeInstance()
 /**
 */
 void
-TerrainChunkNodeInstance::Render()
+TerrainNodeInstance::Render()
 {
 	ModelNodeInstance::Render();
 	RenderDevice::Instance()->Draw();
@@ -46,7 +44,7 @@ TerrainChunkNodeInstance::Render()
 /**
 */
 void
-TerrainChunkNodeInstance::OnNotifyVisible(IndexT frameIndex)
+TerrainNodeInstance::OnNotifyVisible(IndexT frameIndex)
 {
 	// just tell our model node that we are a visible instance
 	this->modelNode->AddVisibleNodeInstance(frameIndex, this);
@@ -56,30 +54,33 @@ TerrainChunkNodeInstance::OnNotifyVisible(IndexT frameIndex)
 /**
 */
 void
-TerrainChunkNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst)
+TerrainNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst)
 {
-	TransformNodeInstance::OnAttachToModelInstance(inst, node, parentNodeInst);
+	ModelNodeInstance::OnAttachToModelInstance(inst, node, parentNodeInst);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-TerrainChunkNodeInstance::OnRemoveFromModelInstance()
+TerrainNodeInstance::OnRemoveFromModelInstance()
 {
-	TransformNodeInstance::OnRemoveFromModelInstance();
+	ModelNodeInstance::OnRemoveFromModelInstance();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-TerrainChunkNodeInstance::ApplyState()
+TerrainNodeInstance::ApplyState()
 {
-	TransformNodeInstance::ApplyState();
+	if (chunk.isvalid())
+		chunk->Render();
 
-	// apply any needed model transform state to shader
-	TransformDevice* transformDevice = TransformDevice::Instance();
-	transformDevice->ApplyModelTransforms();    
+	//TransformNodeInstance::ApplyState();
+
+	//// apply any needed model transform state to shader
+	//TransformDevice* transformDevice = TransformDevice::Instance();
+	//transformDevice->ApplyModelTransforms();
 }
 } // namespace Models
