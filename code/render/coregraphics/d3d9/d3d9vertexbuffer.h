@@ -27,6 +27,8 @@ public:
     virtual void Unload();
     /// map the vertices for CPU access
     void* Map(MapType mapType);
+	///
+	void* Map(MapType mapType, SizeT offset, SizeT size);
     /// unmap the resource
     void Unmap();
 

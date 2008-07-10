@@ -374,7 +374,39 @@ TerrainChunk::Init(const Ptr<Stream>& stream, const Ptr<TerrainTile>& tile)
 void 
 TerrainChunk::Render()
 {
-	
+
+		RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
+
+		String feature = "Terrain1";
+		if (tex[0].isvalid())
+			diffMap[0]->SetTexture(tex[0]->GetTexture());
+		if (tex[1].isvalid())
+		{
+			diffMap[1]->SetTexture(tex[1]->GetTexture());
+			feature = "Terrain2";
+		}
+		if (tex[2].isvalid())
+		{
+			diffMap[2]->SetTexture(tex[2]->GetTexture());
+			feature = "Terrain3";
+		}
+		if (tex[3].isvalid())
+		{
+			diffMap[3]->SetTexture(tex[3]->GetTexture());
+			feature = "Terrain4";
+		}
+		if (tex[4].isvalid())
+			diffMap[4]->SetTexture(tex[4]->GetTexture());
+
+		ShaderServer* shdServer = ShaderServer::Instance();
+		shdServer->SetFeatureBits(shdServer->FeatureStringToMask(feature));
+	}
+	else
+	{
+		mesh->ApplyPrimitives(0);
+	}
+
+	ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
 }
 
 } // namespace Graphics

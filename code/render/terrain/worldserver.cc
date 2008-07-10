@@ -284,4 +284,6 @@ WorldServer::RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile)
 	ResourceManager::Instance()->DiscardManagedResource(tile.upcast<ManagedResource>());
 }
 
+
+
 } // namespace Models

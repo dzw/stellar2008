@@ -26,6 +26,8 @@ public:
 protected:
 	Ptr<Model> terrain;
 	Ptr<ModelInstance> terrainInstance;
+
+	SizeT curChunkNum;
 };
 
 } // namespace Graphics

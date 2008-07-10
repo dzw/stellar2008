@@ -30,6 +30,8 @@ public:
 
 	/// 在terrainnodeinstance中调用设置渲染
 	void Render();
+	TerrainChunkFVF* GetVertexData();
+	void SetVertexOffsetInCache(SizeT offset);
 
 protected:
     Ptr<CoreGraphics::Mesh> mesh;
@@ -54,12 +56,28 @@ protected:
 	bool isEmpty;				// 有时候没有混合纹理，需要用一张空纹理代替，避免shader出错，这个标志共享同一张空纹理，不要重复建立
 
     bool isOk;                  // 数据加载完成
+
+	// render
+	CoreGraphics::PrimitiveGroup primGroup;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
+inline TerrainChunkFVF* 
+TerrainChunk::GetVertexData()
+{
+	return this->dataBuf;
+}
 
+inline void 
+TerrainChunk::SetVertexOffsetInCache(SizeT offset)
+{
+	this->primGroup.SetBaseVertex(offset);
+	this->primGroup.SetNumVertices(8*8+9*9);
+	this->primGroup.SetBaseIndex(0);
+	this->primGroup.SetNumIndices(samplerstripsize);
+}
 
 } // namespace Graphics
 //------------------------------------------------------------------------------

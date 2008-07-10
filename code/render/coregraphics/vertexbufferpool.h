@@ -1,13 +1,19 @@
 #pragma once
-#ifndef COREGRAPHICS_VERTEXBUFFER_H
-#define COREGRAPHICS_VERTEXBUFFER_H
+#ifndef COREGRAPHICS_VERTEXBUFFERPOOL_H
+#define COREGRAPHICS_VERTEXBUFFERPOOL_H
 //------------------------------------------------------------------------------
 /**
-    
+	¶¯Ì¬¶¥µã»º³å³Ø
+	
+	cTuo
 */    
+#include "coregraphics/vertexbuffer.h"
+#include "util/array.h"
+#include "core/refcounted.h"
+
 namespace CoreGraphics
 {
-class VertexBufferPool : public Core::RefCount
+class VertexBufferPool : public Core::RefCounted
 {
     DeclareClass(VertexBufferPool);
 public:
@@ -15,12 +21,9 @@ public:
     ~VertexBufferPool();
 
     void Release();
-    SizeT GetBlockCount()const
-    {
-        return blockSize;
-    }
-
-    Ptr<VertexBuffer> GetBuffer();
+    SizeT GetBlockCount()const;
+	void Reset(DWORD vertexSize, DWORD blockVertexCount, DWORD blockCount, const Util::Array<VertexComponent>& vertexComponents);
+	Ptr<VertexBuffer> GetBuffer();
     bool Full()const;
     DWORD Alloc(void *data);
     void Free(DWORD offset);
