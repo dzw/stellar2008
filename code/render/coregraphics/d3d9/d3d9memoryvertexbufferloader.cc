@@ -38,9 +38,9 @@ D3D9MemoryVertexBufferLoader::OnLoadRequested()
     // create a d3d9 vertex buffer object
     IDirect3DVertexBuffer9* d3dVertexBuffer = 0;
     HRESULT hr = d3d9Device->CreateVertexBuffer(this->vertexDataSize,       // Length
-                                                0,                          // Usage
+        (this->vertexBufferUsage==UsageDynamic?D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY:0),     // Usage
                                                 0,                          // FVF
-                                                D3DPOOL_MANAGED,            // Pool
+        (this->vertexBufferUsage==UsageDynamic?D3DPOOL_DEFAULT:D3DPOOL_MANAGED),            // Pool
                                                 &d3dVertexBuffer,           // ppVertexBuffer
                                                 NULL);                      // pSharedHandle
     n_assert(SUCCEEDED(hr));

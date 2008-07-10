@@ -13,6 +13,7 @@
     (C) cTuo
 */
 #include "core/refcounted.h"
+#include "terrain/terraindef.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -21,6 +22,9 @@ class TerrainChunkCache : public Core::RefCounted
 {
     DeclareClass(TerrainChunkCache);
 public:
+    TerrainChunkCache();
+    ~TerrainChunkCache();
+
 	/// 初始化分配
 	void Alloc(SizeT num);
 	/// 清空
@@ -28,10 +32,12 @@ public:
 	/// 重新初始化
 	void Realloc();
 	/// 增加一个chunk
-	void AddChunk(Ptr<TerrainNodeInstance> &node);
+	DWORD AddChunk(void *data);
 	Ptr<Mesh> GetMesh();
 protected:
 	Ptr<Mesh> cache;
+    Ptr<VertexBuffer> vertexBuffer;
+    Ptr<IndexBuffer> indexBuffer;
 };
 
 } // namespace Models
