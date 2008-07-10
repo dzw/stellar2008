@@ -65,6 +65,9 @@ public:
 	const Ptr<ManagedChunkCacha>& GetChunkCacha()const;
 
 	void OnFrame();
+
+	
+
 private:
 
     bool isOpen;
@@ -85,6 +88,8 @@ private:
 	Ptr<Graphics::Stage> stage;
 	/// 用于渲染所有可见块
 	Ptr<TerrainEntity> terrain;
+
+	
 };
 
 //------------------------------------------------------------------------------

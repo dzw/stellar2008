@@ -79,10 +79,50 @@ D3D9VertexBuffer::Map(MapType mapType)
             break;
     }
     void* ptr = 0;
-    HRESULT hr = this->d3d9VertexBuffer->Lock(0, 0, &ptr, 0/*lockFlags*/);
+    HRESULT hr = this->d3d9VertexBuffer->Lock(0, 0, &ptr, lockFlags);
     n_assert(SUCCEEDED(hr));
     this->mapCount++;
     return ptr;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void* 
+D3D9VertexBuffer::Map(MapType mapType, SizeT offset, SizeT size)
+{
+	n_assert(0 != this->d3d9VertexBuffer);
+	DWORD lockFlags = D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_NOSYSLOCK;
+	switch (mapType)
+	{
+	case MapRead:
+		n_assert((UsageStaging == this->usage) && (AccessRead == this->access));
+		lockFlags |= D3DLOCK_READONLY;
+		break;
+
+	case MapWrite:
+		n_assert((UsageStaging == this->usage) && (AccessWrite == this->access));
+		break;
+
+	case MapReadWrite:
+		n_assert((UsageStaging == this->usage) && (AccessReadWrite == this->access));
+		break;
+
+	case MapWriteDiscard:
+		n_assert((UsageDynamic == this->usage) && (AccessWrite == this->access));
+		lockFlags |= D3DLOCK_DISCARD;
+		break;
+
+	case MapWriteNoOverwrite:
+		n_assert((UsageDynamic == this->usage) && (AccessWrite == this->access));
+		lockFlags |= D3DLOCK_NOOVERWRITE;
+		break;
+	}
+	void* ptr = 0;
+	HRESULT hr = this->d3d9VertexBuffer->Lock(offset, size, &ptr, lockFlags);
+	n_assert(SUCCEEDED(hr));
+	this->mapCount++;
+	return ptr;
 }
 
 //------------------------------------------------------------------------------

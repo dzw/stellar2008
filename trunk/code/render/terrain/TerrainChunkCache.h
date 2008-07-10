@@ -25,19 +25,19 @@ public:
     TerrainChunkCache();
     ~TerrainChunkCache();
 
-	/// 初始化分配
-	void Alloc(SizeT num);
-	/// 清空
-	void Dealloc();
-	/// 重新初始化
-	void Realloc();
+	void ApplyCache();
+	void CreateChunkCache(SizeT chunkNum);
 	/// 增加一个chunk
 	DWORD AddChunk(void *data);
-	Ptr<Mesh> GetMesh();
+
 protected:
-	Ptr<Mesh> cache;
-    Ptr<VertexBuffer> vertexBuffer;
-    Ptr<IndexBuffer> indexBuffer;
+	void CreateIndexBuffer();
+
+	Ptr<VertexBufferPool> vertexBufferPool;
+	Ptr<IndexBuffer> indexBuffer;
+	Util::Array<VertexComponent> vertexComponents;
+
+	uint16 indexBufferData[samplerstripsize];
 };
 
 } // namespace Models

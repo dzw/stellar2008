@@ -532,6 +532,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\coregraphics\indexbufferpool.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\indexbufferpool.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\coregraphics\indextype.h"
 				>
 			</File>
@@ -757,6 +765,14 @@
 			</File>
 			<File
 				RelativePath="..\render\coregraphics\vertexbuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\vertexbufferpool.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\vertexbufferpool.h"
 				>
 			</File>
 			<File
