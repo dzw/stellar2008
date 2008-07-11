@@ -121,6 +121,13 @@ TerrainChunkCache::CreateChunkCache(SizeT chunkNum)
 	mesh->SetState(Resource::Loaded);
 	mesh->SetVertexBuffer(vertexBufferPool->GetBuffer());
 	mesh->SetIndexBuffer(indexBuffer);*/
+
+    freeList.SetSize(num);
+    for (SizeT i = 0; i < num; i++)
+    {
+        freeList[i] = (freeList.Size() - 1 - i) * 
+    }
+
 }
 
 } // namespace WOW
