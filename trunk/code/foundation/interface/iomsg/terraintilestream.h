@@ -20,6 +20,7 @@ class TerrainTileStream : public IOMessage
     DeclareClass(TerrainTileStream);
     DeclareMsgId;
 
+    TerrainTileStream();
 	///
 	~TerrainTileStream();
 	///

@@ -4,11 +4,20 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "interface/iomsg/terraintilestream.h"
+#include "render/terrain/terrainnode.h"
 
 namespace Interface
 {
 ImplementClass(Interface::TerrainTileStream, 'TTSM', Interface::IOMessage);
 ImplementMsgId(TerrainTileStream);
+
+//------------------------------------------------------------------------------
+/**
+*/
+TerrainTileStream::TerrainTileStream()
+{
+    InitGlobalVBOs();
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -22,7 +31,7 @@ TerrainTileStream::~TerrainTileStream()
 /**
 */
 void 
-TerrainParse::fixnamen(char *name, SizeT len)
+TerrainTileStream::fixnamen(char *name, SizeT len)
 {
 	for (size_t i=0; i<len; i++) {
 		if (i>0 && name[i]>='A' && name[i]<='Z' && isalpha(name[i-1])) {
@@ -37,7 +46,7 @@ TerrainParse::fixnamen(char *name, SizeT len)
 /**
 */
 void 
-TerrainParse::fixname(String &name)
+TerrainTileStream::fixname(String &name)
 {
 	for (SizeT i=0; i<name.Length(); i++) {
 		if (i>0 && name[i]>='A' && name[i]<='Z' && isalpha(name[i-1])) {
@@ -52,7 +61,7 @@ TerrainParse::fixname(String &name)
 /**
 */
 void 
-TerrainParse::InitGlobalVBOs()
+TerrainTileStream::InitGlobalVBOs()
 {
 	float2 *vt;
 	float tx,ty;
@@ -286,19 +295,353 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& stream)
         for (SizeT j = 0; j < TILECHUNKSIZE; j++)
         {
             stream->Seek(mcnk_offsets[i<<4+j], Stream::Begin);
-            this->tile->chunk[i<<4+j] = TerrainChunk::Create();
-            this->tile->chunk[i<<4+j].Init(stream, this->tile);
+
+            String name;
+            name.Format("%d_%d", i, j);
+            Ptr<TerrainNode> node = TerrainNode::Create();
+            node->SetName(name);
+            this->tile->AttachNode(node);
+            ParseChunk(stream, node);
+            //node->Init(stream);
+            //this->tile->chunk[i<<4+j] = TerrainChunk::Create();
+            //this->tile->chunk[i<<4+j].Init(stream, this->tile);
         }
     }
+
+    //this->tile->LoadResources();
 }
 
 //------------------------------------------------------------------------------
 /**
 	解析每个chunk
 */
-void TerrainTileStream::ParseChunk(const Ptr<Stream>& stream, Ptr<TerrainChunk>& chunk)
+void TerrainTileStream::ParseChunk(const Ptr<Stream>& stream, Ptr<TerrainNode>& node)
 {
-    
+    bool supportShaders = true;
+	bool createAlphaTex = false;
+
+	vector tn[mapbufsize], tv[mapbufsize];
+
+	//stream->Seek((int)mcnk_offsets[x*16+y], Stream::Begin);
+	stream->Seek(4, Stream::Current);
+
+	Util::FourCC fourcc;
+	int size;
+	int texId[4];
+
+	stream->Read(&size, 4);
+
+	// okay here we go ^_^
+	int lastpos = stream->GetPosition() + size;
+
+	//char header[0x80];
+	MapChunkHeader header;
+	stream->Read(&header, 0x80);
+
+	areaID = header.areaid;
+
+	zbase = header.zpos;
+	xbase = header.xpos;
+	ybase = header.ypos;
+
+	int holes = header.holes;
+	int chunkflags = header.flags;
+
+	hasholes = (holes != 0);
+
+	// correct the x and z values ^_^
+	zbase = zbase*-1.0f + ZEROPOINT;
+	xbase = xbase*-1.0f + ZEROPOINT;
+
+	//zbase = float(x) * CHUNKSIZE;//+1000.0f;
+	//xbase = float(y) * CHUNKSIZE;//+1000.0f;
+	//ybase = 0;
+
+
+	vmin = vector( 9999999.0f, 9999999.0f, 9999999.0f);
+	vmax = vector(-9999999.0f,-9999999.0f,-9999999.0f);
+
+	unsigned char *blendbuf;
+	if (supportShaders) {
+		blendbuf = n_new_array(unsigned char, 64*64*4);
+		memset(blendbuf, 0, 64*64*4);
+	}
+
+	while (stream->GetPosition() < lastpos) {
+		stream->Read(&fourcc,4);
+		stream->Read(&size, 4);
+
+        Sleep(0);
+
+		size_t nextpos = stream->GetPosition() + size;
+
+		if (fourcc == 'MCNR') {
+			nextpos = stream->GetPosition() + 0x1C0; // size fix
+			// normal vectors
+			char nor[3];
+			vector *ttn = tn;
+			for (int j=0; j<17; j++) {
+				for (int i=0; i<((j%2)?8:9); i++) {
+					stream->Read(nor,3);
+					// order Z,X,Y ?
+					//*ttn++ = vector((float)nor[0]/127.0f, (float)nor[2]/127.0f, (float)nor[1]/127.0f);
+					*ttn++ = vector(-(float)nor[1]/127.0f, (float)nor[2]/127.0f, -(float)nor[0]/127.0f);
+				}
+			}
+		}
+		else if (fourcc == 'MCVT') {
+			vector *ttv = tv;
+
+			// vertices
+			for (int j=0; j<17; j++) {
+				for (int i=0; i<((j%2)?8:9); i++) {
+					float h,xpos,zpos;
+					stream->Read(&h,4);
+					xpos = i * UNITSIZE;
+					zpos = j * 0.5f * UNITSIZE;
+					if (j%2) {
+						xpos += UNITSIZE*0.5f;
+					}
+					vector v = vector(/*xbase+*/xpos, /*ybase+*/h, /*zbase+*/zpos);
+					*ttv++ = v;
+					if (v.y() < vmin.y()) vmin.y() = v.y();
+					if (v.y() > vmax.y()) vmax.y() = v.y();
+				}
+			}
+
+			vmin.y() += ybase;
+			vmin.x() = xbase;
+			vmin.z() = zbase;
+			vmax.y() += ybase;
+			vmax.x() = xbase + 8 * UNITSIZE;
+			vmax.z() = zbase + 8 * UNITSIZE;
+			r = (vmax - vmin).length() * 0.5f;
+
+		}
+		else if (fourcc == 'MCLY') {
+			// texture info
+			nTextures = (int)size / 16;
+			//gLog("=\n");
+			for (int i=0; i<nTextures; i++) {
+				int tex, flags;
+				stream->Read(&tex,4);
+				stream->Read(&flags, 4);
+
+				stream->Seek(8, Stream::Current);
+
+				flags &= ~0x100;
+
+				if (flags & 0x80) {
+					animated[i] = flags;
+				} else {
+					animated[i] = 0;
+				}
+
+				texId[i] = tex;
+				//textures[i] = video.textures.get(mt->textures[tex]);
+			}
+		}
+		else if (fourcc == 'MCSH') {
+			// shadow map 64 x 64
+			unsigned char sbuf[64*64], *p, c[8];
+			p = sbuf;
+			for (int j=0; j<64; j++) {
+				stream->Read(c,8);
+				for (int i=0; i<8; i++) {
+					for (int b=0x01; b!=0x100; b<<=1) {
+						*p++ = (c[i] & b) ? 85 : 0;
+					}
+				}
+			}
+
+			if (supportShaders) {
+				for (int p=0; p<64*64; p++) {
+					blendbuf[p*4+3] = sbuf[p];
+				}
+
+				//CreateTextureManual(blendbuf, 64*64*sizeof(unsigned int));
+			}
+			createAlphaTex = true;
+		}
+		else if (fourcc == 'MCAL') {
+			// alpha maps  64 x 64
+			if (nTextures>0) {
+				createAlphaTex = true;
+
+				char* bufMap;
+				int pos = stream->GetPosition();
+				bufMap = (char*)stream->Map();
+				//				glGenTextures(nTextures-1, alphamaps);
+				for (int i=0; i<nTextures-1; i++) {
+					//					glBindTexture(GL_TEXTURE_2D, alphamaps[i]);
+					unsigned char amap[64*64], *p;
+
+					char *abuf = (char*)(bufMap + pos);
+					p = amap;
+					for (int j=0; j<64; j++) {
+						for (int i=0; i<32; i++) {
+							unsigned char c = *abuf++;
+							*p++ = (c & 0x0f) << 4;
+							*p++ = (c & 0xf0);
+						}
+
+					}
+
+					if (supportShaders) {
+						for (int p=0; p<64*64; p++) {
+							//blendbuf[p*4+i] = amap[p];
+
+							if (i==0) blendbuf[p*4+2] = amap[p];  // r
+							if (i==1) blendbuf[p*4+1] = amap[p];  // g
+							if (i==2) blendbuf[p*4+0] = amap[p];  // b
+						}
+					}
+
+					pos += 0x800;
+					//stream->Seek(0x800, Stream::Current);
+				}
+				stream->Unmap();
+
+			} else {
+				// some MCAL chunks have incorrect sizes! :(
+				continue;
+			}
+		}
+		else if (fourcc == 'MCLQ') {
+			// liquid / water level
+			//FourCC fcc1;
+			//stream->Read(fcc1,4);
+			//
+			//if (fcc1 == 'MCSE') {
+			//	haswater = false;
+			//}
+			//else {
+			//	haswater = true;
+			//	stream->Seek(-4, Stream::Current);
+			//	stream->Read(&waterlevel,4);
+
+			//	if (waterlevel > vmax.y) vmax.y = waterlevel;
+			//	if (waterlevel < vmin.y) haswater = false;
+
+			//	stream->Seek(4, Stream::Current);
+
+			//	//lq = new Liquid(8, 8, vector(xbase, waterlevel, zbase));
+			//	////lq->init(f);
+			//	//lq->initFromTerrain(f, chunkflags);
+			//}
+			// we're done here!
+			break;
+		}
+		stream->Seek((int)nextpos, Stream::Begin);
+	}
+
+	vcenter = (vmin + vmax) * 0.5f;
+
+	TerrainChunkFVF *dataPtr = node->GetVertexData();     //n_new_array(TerrainChunkFVF, mapbufsize);
+
+	for (int i = 0; i < mapbufsize; i++)
+	{
+		dataPtr[i].x = tv[i].x();
+		dataPtr[i].y = tv[i].y();
+		dataPtr[i].z = tv[i].z();
+		dataPtr[i].tex = texCoord[i];
+		dataPtr[i].texblend = alphaCoord[i];
+
+		vector vec = float4::normalize(tn[i]);
+		dataPtr[i].nx = vec.x();
+		dataPtr[i].ny = vec.y();
+		dataPtr[i].nz = vec.z();
+	}
+
+
+
+	//blendbuf = blendbuf;
+	//bufSize = 64*64*4;
+	//isEmpty = !(supportShaders && createAlphaTex);
+
+	//dataBuf = dataPtr;
+	//dataSize = mapbufsize;
+	//
+	//shaderName = "shd:static";
+	//if (nTextures > 0)
+	//{
+ //       shaderName = "shd:terrain";
+
+	//	switch (nTextures)
+	//	{
+	//	case 1:// 第1层纹理
+	//		tex[0] = CreateTextureResource(textures[texId[0]]);
+	//		break;
+	//	case 2:
+	//		chunk.tex1 = CreateTextureResource(textures[texId[1]]);
+	//		break;
+	//	case 3:
+	//		tex[1] = CreateTextureResource(textures[texId[1]]);
+	//		tex[2] = CreateTextureResource(textures[texId[2]]);
+	//		break;
+	//	case 4:
+	//		tex[1] = CreateTextureResource(textures[texId[1]]);
+	//		tex[2] = CreateTextureResource(textures[texId[2]]);
+	//		tex[3] = CreateTextureResource(textures[texId[3]]);
+	//		break;
+	//	}
+	//}
+	//else
+	//{
+	//	// 暂时代替
+	//	//newModelNode->SetString(Attr::DiffMap0, texBlend);
+	//}
+
+ //   this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(ResourceId(shaderName));
+
+	//box.set(vcenter, vmax - vcenter);
+	//pos = vector(xbase, ybase, zbase);
+
+    // 混合纹理
+	node->SetString(Attr::TexBlend0, texBlend);
+
+	
+	String shaName = "shd:static";
+
+	if (nTextures > 0)
+	{
+        shaName = "shd:terrain";
+		// 第1层纹理
+		node->SetString(Attr::DiffMap0, textures[texId[0]]);
+		switch (nTextures)
+		{
+		case 1:
+			break;
+		case 2:
+			node->SetString(Attr::DiffMap1, textures[texId[1]]);
+			break;
+		case 3:
+			node->SetString(Attr::DiffMap1, textures[texId[1]]);
+			node->SetString(Attr::DiffMap2, textures[texId[2]]);
+			break;
+		case 4:
+			node->SetString(Attr::DiffMap1, textures[texId[1]]);
+			node->SetString(Attr::DiffMap2, textures[texId[2]]);
+			node->SetString(Attr::DiffMap3, textures[texId[3]]);
+			break;
+		}
+	}
+	else
+	{
+		// 暂时代替
+		node->SetString(Attr::DiffMap0, texBlend);
+	}
+
+	node->SetString(Attr::Shader, shaName);
+	
+	node->SetFloat4(Attr::BoxCenter, vcenter);
+	node->SetFloat4(Attr::BoxExtents, vmax - vcenter);
+
+	//node->SetString(Attr::MeshResourceId, meshName);
+	//node->SetInt(Attr::MeshGroupIndex, 0);
+    node->LoadResources();
+
+    isOk = true;
 }
 
 Ptr<ManagedTexture>

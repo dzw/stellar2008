@@ -36,8 +36,14 @@ TerrainNodeInstance::~TerrainNodeInstance()
 void
 TerrainNodeInstance::Render()
 {
-	ModelNodeInstance::Render();
-	RenderDevice::Instance()->Draw();
+	//ModelNodeInstance::Render();
+	//RenderDevice::Instance()->Draw();
+
+    const Ptr<TerrainNode> node = GetModelNode().downcast<TerrainNode>();
+    if (node->GetResourceState() == Resources::Resource::Loaded)
+    {
+        node->Render();
+    }
 }    
 
 //------------------------------------------------------------------------------
@@ -74,9 +80,6 @@ TerrainNodeInstance::OnRemoveFromModelInstance()
 void
 TerrainNodeInstance::ApplyState()
 {
-	if (chunk.isvalid())
-		chunk->Render();
-
 	//TransformNodeInstance::ApplyState();
 
 	//// apply any needed model transform state to shader
