@@ -66,7 +66,7 @@ public:
 
 	void OnFrame();
 
-	
+	void ApplyCache();
 
 private:
 
@@ -77,7 +77,7 @@ private:
 	/// 上一帧位置
 	Math::vector prePos;
 
-	Ptr<ManagedChunkCacha> chunkCacha;
+	Ptr<TerrainChunkCache> chunkCache;
 	Ptr<ManagedWorld> managedWorld;
 	/// 当前地图 3*3
 	Ptr<ManagedTerrainTile> curMaptile[3][3];
@@ -88,8 +88,6 @@ private:
 	Ptr<Graphics::Stage> stage;
 	/// 用于渲染所有可见块
 	Ptr<TerrainEntity> terrain;
-
-	
 };
 
 //------------------------------------------------------------------------------
@@ -124,7 +122,13 @@ WorldServer::SetCamera(const Ptr<Graphics::CameraEntity>& camera)
 inline const Ptr<ManagedChunkCacha>& 
 WorldServer::GetChunkCacha()const
 {
-	return this->chunkCacha;
+	return this->chunkCache;
+}
+
+inline void 
+WorldServer::ApplyCache()
+{
+    return this->chunkCache->ApplyCache();
 }
 
 } // namespace Models

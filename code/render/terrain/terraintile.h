@@ -12,7 +12,7 @@
 //------------------------------------------------------------------------------
 namespace Terrain
 {
-class TerrainTile : public Resources::Resource
+class TerrainTile : public Models::Model
 {
     DeclareClass(TerrainTile);
 public:
@@ -23,13 +23,13 @@ public:
 
 protected:
 	/// 16*16¸öchunk
-	Ptr<TerrainChunk> chunk[TILECHUNKSIZE*TILECHUNKSIZE];
+	//Ptr<TerrainChunk> chunk[TILECHUNKSIZE*TILECHUNKSIZE];
 	/// buliding
 	//Util::Array<Ptr<InteriorEntity> interiors;
     //Util::Array<Ptr<ModelEntity> models;
-    Util::Array<String> textureNames;
-    Util::Array<String> interiorNames;
-    Util::Array<String> modelNames;
+    //Util::Array<String> textureNames;
+    //Util::Array<String> interiorNames;
+    //Util::Array<String> modelNames;
 };
 
 } // namespace Models

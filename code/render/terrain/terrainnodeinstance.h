@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 namespace Terrain
 {
-class TerrainNodeInstance : public Models::ModelNodeInstance
+class TerrainNodeInstance : public Models::StateNodeInstance
 {
     DeclareClass(TerrainNodeInstance);
 public:
@@ -33,8 +33,6 @@ protected:
 	virtual void OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst);
 	/// called when removed from ModelInstance
 	virtual void OnRemoveFromModelInstance();
-
-	Ptr<TerrainChunk> chunk;
 };
 
 } // namespace Models

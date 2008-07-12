@@ -2552,50 +2552,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\render\terrain\terrainchunk.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Realse|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\render\terrain\terrainchunk.h"
-				>
-			</File>
-			<File
 				RelativePath="..\render\terrain\terraindef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\render\terrain\terraintile.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\terrain\terraintile.h"
 				>
 			</File>
 			<File
@@ -2740,6 +2697,14 @@
 				</File>
 				<File
 					RelativePath="..\render\terrain\terrainnodeinstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\terrain\terraintile.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\terrain\terraintile.h"
 					>
 				</File>
 			</Filter>
