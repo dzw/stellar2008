@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "terrain/world.h"
-//#include "wow/world/worldserver.h"
 #include "graphics/graphicsserver.h"
 #include "graphics/modelentity.h"
 #include "graphics/stage.h"

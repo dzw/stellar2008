@@ -22,6 +22,11 @@
 #include "attr/attributecontainer.h"
 #include "models/visresolvecontainer.h"
 
+namespace Terrain
+{
+	class TerrainTile;
+}
+
 //------------------------------------------------------------------------------
 namespace Models
 {
@@ -119,7 +124,7 @@ private:
     friend class ModelServer;
     friend class ModelInstance;
     friend class ModelNode;
-	friend class TerrainChunk;
+	friend class Terrain::TerrainTile;
 
     /// attach a ModelInstance to the Model
     void AttachInstance(const Ptr<ModelInstance>& inst);

@@ -12,10 +12,8 @@
 #include "models/load/xmlmodelreader.h"
 #include "models/load/n2modelreader.h"
 #include "attr/attributecontainer.h"
-#include "wow/m2/m2modelreader.h"
 //#include "models/nodes/shapenode.h"
-#include "wow/wmo/group/groupreader.h"
-#include "wow/world/adt/adtreader.h"
+
 
 namespace Models
 {
@@ -28,7 +26,6 @@ using namespace Util;
 using namespace Resources;
 using namespace Interface;
 using namespace Attr;
-using namespace WOW;
 
 //------------------------------------------------------------------------------
 /**
@@ -176,27 +173,6 @@ StreamModelLoader::SetupModelFromStream(const Ptr<Stream>& stream)
         modelReader->SetModelResId(this->resource->GetResourceId());
         isLegacyFile = true;
     }
-	else if (fileExt == "m2")
-	{
-		// m2 format
-		modelReader = (ModelReader*) M2ModelReader::Create();
-		modelReader->SetModelResId(this->resource->GetResourceId());
-		isLegacyFile = true;
-	}
-	else if (fileExt == "wmo")
-	{
-		// wmo group
-		modelReader = (ModelReader*) WMOGroupReader::Create();
-		modelReader->SetModelResId(this->resource->GetResourceId());
-		isLegacyFile = true;
-	}
-	//else if (fileExt == "adt")
-	//{
-	//	modelReader = (ModelReader*)MapTileReader::Create();
-	//	modelReader->SetModelResId(this->resource->GetResourceId());
-	//	// 最后更新一下boundbox
-	//	isLegacyFile = true;
-	//}
     else
     {
         n_error("StreamModelLoader: unrecognized file extension '%s' in '%s'!",

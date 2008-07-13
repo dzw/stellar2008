@@ -10,7 +10,6 @@
     (C) 2007 Radon Labs GmbH
 */
 #include "resources/resourceid.h"
-#include "Terrain/managedchunkcacha.h"
 #include "terrain/worldserver.h"
 //#include "wow/world/Terrain/managedchunk.h"
 

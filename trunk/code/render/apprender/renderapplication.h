@@ -34,11 +34,10 @@
 #include "timing/timer.h"
 #include "addons/nebula2/nebula2wrapper.h"
 #include "apprender/platformconfig.h"
-#include "wow/wmo/wmoserver.h"
 #include "coregraphics/fontserver.h"
 #include "graphics/sorting/bspserver.h"
 #include "coregraphics/debugview.h"
-//#include "wow/asyncload/asyncwowinterface.h"
+#include "terrain/worldserver.h"
 
 //------------------------------------------------------------------------------
 namespace App
@@ -94,7 +93,6 @@ protected:
     Ptr<Resources::SharedResourceServer> sharedResourceServer;
     Ptr<Resources::ResourceManager> resourceManager;
     Ptr<Models::ModelServer> modelServer;
-	Ptr<WOW::WMOServer> wmoServer;
 	Ptr<Graphics::BspServer> bspServer;
     Ptr<Graphics::GraphicsServer> graphicsServer;
     Ptr<Lighting::LightServer> lightServer;
@@ -102,7 +100,6 @@ protected:
     Ptr<Input::InputServer> inputServer;
     Ptr<Frame::FrameServer> frameServer;
 	Ptr<CoreGraphics::DebugView> debugView;
-	//Ptr<WOW::AsyncWOWInterface> WOWInterface;
 
 #if !__WII__    
     Ptr<Scripting::ScriptServer> scriptServer;

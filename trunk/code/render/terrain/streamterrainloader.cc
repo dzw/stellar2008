@@ -3,14 +3,14 @@
 //  (C) 2007 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "wow/world/streamworldloader.h"
+#include "terrain/streamterrainloader.h"
 #include "interface/iointerface.h"
 #include "interface/iomsg/readstream.h"
-#include "interface/iomsg/terraintilestream.h"
+#include "Terrain/iomsg/terraintilestream.h"
 #include "io/memorystream.h"
 #include "attr/attributecontainer.h"
 #include "math/vector3.h"
-
+#include "Terrain/terraintile.h"
 
 namespace Terrain
 {
@@ -67,6 +67,7 @@ StreamTerrainLoader::OnLoadRequested()
 		if (this->resource->GetResourceId().Value().GetFileExtension() == "adt")
 		{
 			this->readStreamMsg = (Interface::IOMessage*)TerrainTileStream::Create();
+			this->readStreamMsg.downcast<TerrainTileStream>()->tile = this->resource;
 			this->readStreamMsg->SetURI(this->resource->GetResourceId().Value());
 		}
 		else
@@ -111,7 +112,6 @@ StreamTerrainLoader::OnLoadCancelled()
     n_assert(this->GetState() == Resource::Pending);
     n_assert(this->readStreamMsg.isvalid());
     IOInterface::Instance()->Cancel(this->readStreamMsg.upcast<Message>());
-	//AsyncWOWInterface::Instance()->Cancel(this->readStreamMsg.upcast<Message>());
     this->readStreamMsg = 0;
     ResourceLoader::OnLoadCancelled();
 }
@@ -181,28 +181,20 @@ StreamTerrainLoader::SetupModelFromStream()
 	}
 	else if (fileExt == "wdt")
 	{
-		modelReader = (ModelReader*)WDTReader::Create();
-		modelReader->SetModelResId(this->resource->GetResourceId());
+//		modelReader = (ModelReader*)WDTReader::Create();
+//		modelReader->SetModelResId(this->resource->GetResourceId());
 		//modelReader.downcast<WDTReader>()->SetWDT(this->resource.downcast<WDT>());
 	}
 	else if (fileExt == "wdl")
 	{
-		modelReader = (ModelReader*)WDLReader::Create();
-		modelReader->SetModelResId(this->resource->GetResourceId());
+//		modelReader = (ModelReader*)WDLReader::Create();
+//		modelReader->SetModelResId(this->resource->GetResourceId());
 		//modelReader.downcast<WDLReader>()->SetWDL(this->resource.downcast<WDL>());
 	}
 	else if (fileExt == "adt")
 	{
 		// 已在加载线程中解析了数据，在这里加载wmos和models。
 		
-		return true;
-	}
-	else if (fileExt == "chk")
-	{
-		// loaded a chunk
-		Ptr<ChunkReadStream> ckmsg = this->readStreamMsg.downcast<ChunkReadStream>();
-		Ptr<TerrainChunk> ck = this->resource.downcast<TerrainChunk>();
-		ck->UpdateChunks(ckmsg->chunk);
 		return true;
 	}
     else

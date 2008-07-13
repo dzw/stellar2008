@@ -1,6 +1,6 @@
 #pragma once
-#ifndef WOW_WORLDSERVER_H
-#define WOW_WORLDSERVER_H
+#ifndef TERRAIN_WORLDSERVER_H
+#define TERRAIN_WORLDSERVER_H
 //------------------------------------------------------------------------------
 /**
     @class Terrain::WorldServer
@@ -13,10 +13,14 @@
 #include "core/singleton.h"
 #include "resources/resourceid.h"
 #include "io/uri.h"
+#include "graphics/cameraentity.h"
+#include "graphics/stage.h"
 #include "terrain/world.h"
 #include "terrain/managedWorld.h"
 #include "Terrain/terraindef.h"
-#include "terrain/Terrainentity.h"
+//#include "terrain/Terrainentity.h"
+#include "terrain/managedterraintile.h"
+#include "terrain/TerrainChunkCache.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -39,34 +43,40 @@ public:
     /// return true if model server is open
     bool IsOpen() const;
 
+
 	/// set a camera for the world
 	void SetCamera(const Ptr<Graphics::CameraEntity>& camera);
 	
+
 	/// load a managed World from URI
-	void LoadWorld(const Resources::ResourceId& resId);
+	void LoadWorld(const Resources::ResourceId& worldName);
 	/// discard a managed model
-	void UnloadWorld() const;
+	void UnloadWorld();
 	/// get world resource
 	const Ptr<World>& GetWorld()const;
+
 
 	/// check if change current position
 	void CheckTile(const Math::vector& pos);
 	///
 	void EnterTile(int x, int z);
 	/// load terrain tile
-	void LoadTile(int x, int z);
+	Ptr<ManagedTerrainTile>&  LoadTile(int x, int z);
 	///
 	bool CheckValidTile(int i, int j)const;
 	/// 创建一个tile,可能需要为每个tile创建quadtree
 	const Ptr<ManagedTerrainTile>& CreateTerrainTile(const Resources::ResourceId& resId, int x, int z);
 	///
 	void RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile);
+
+
 	///
-	const Ptr<ManagedChunkCacha>& GetChunkCacha()const;
+	const Ptr<TerrainChunkCache>& GetChunkCacha()const;
+	void ApplyCache();
+
 
 	void OnFrame();
-
-	void ApplyCache();
+	void UpdateViaiableChunk();
 
 private:
 
@@ -87,7 +97,9 @@ private:
 	Ptr<Graphics::CameraEntity> camera;
 	Ptr<Graphics::Stage> stage;
 	/// 用于渲染所有可见块
-	Ptr<TerrainEntity> terrain;
+	//Ptr<TerrainEntity> terrain;
+	int cx, cz;
+	Resources::ResourceId worldName;
 };
 
 //------------------------------------------------------------------------------
@@ -119,7 +131,7 @@ WorldServer::SetCamera(const Ptr<Graphics::CameraEntity>& camera)
 	this->camera = camera;
 }
 
-inline const Ptr<ManagedChunkCacha>& 
+inline const Ptr<TerrainChunkCache>& 
 WorldServer::GetChunkCacha()const
 {
 	return this->chunkCache;

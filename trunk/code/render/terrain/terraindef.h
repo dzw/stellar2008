@@ -65,7 +65,7 @@ namespace Terrain
 	};
 
 	/// 地形顶点格式（组织数据）
-	struct .
+	struct TerrainChunkFVF
 	{
 		float x,y,z;
 		float nx,ny,nz;

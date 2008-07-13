@@ -17,10 +17,7 @@ namespace Models
 {
 	class TerrainChunk;
 }
-namespace WOW
-{
-	class MapTileReader;
-}
+
 //------------------------------------------------------------------------------
 namespace Direct3D9
 {
@@ -56,9 +53,6 @@ public:
 protected:
     friend class D3D9StreamTextureLoader;
     friend class D3D9RenderTarget;
-	/// friend maptile
-	friend class WOW::MapTileReader;
-	friend class Models::TerrainChunk;
 
     /// setup from a IDirect3DTexture9
     void SetupFromD3D9Texture(IDirect3DTexture9* ptr);

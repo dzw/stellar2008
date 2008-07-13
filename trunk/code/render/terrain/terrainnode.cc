@@ -4,11 +4,21 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "terrain/terrainnode.h"
+#include "terrain/terrainnodeinstance.h"
+#include "terrain/worldserver.h"
+#include "coregraphics/renderdevice.h"
+#include "coregraphics/shaderserver.h"
+#include "coregraphics/shaderinstance.h"
+#include "resources/managedtexture.h"
+#include "util/string.h"
 
 namespace Terrain
 {
 ImplementClass(Terrain::TerrainNode, 'TNNE', Models::ModelNode);
 
+using namespace CoreGraphics;
+using namespace Models;
+using namespace Util;
 
 //------------------------------------------------------------------------------
 /**
@@ -39,8 +49,8 @@ void
 TerrainNode::ApplySharedState()
 {
 	// 提交缓冲中的顶点数据,在instance中使用这些数据渲染(参考ShapeNode::ApplySharedState)
-	const Ptr<Mesh>& mesh = this->cache->GetMesh();
-	mesh->ApplyPrimitives(this->primGroupIndex);
+	//const Ptr<Mesh>& mesh = this->mesh->GetMesh();
+	//mesh->ApplyPrimitives(this->primGroupIndex);
 }
 
 //------------------------------------------------------------------------------
@@ -56,7 +66,7 @@ TerrainNode::CreateNodeInstance() const
 void
 TerrainNode::LoadResource()
 {
-    StateNode::LoadResource();
+    StateNode::LoadResources();
 
     // create a managed mesh resource
 	/*ResourceId meshResId = this->GetString(Attr::MeshResourceId);
@@ -99,9 +109,6 @@ TerrainNode::LoadResource()
 void 
 TerrainNode::Render()
 {
-    WorldServer::Instance()->ApplyCache();
-	RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
-
 	String feature = "Terrain1";
 	if (tex[0].isvalid())
 		diffMap[0]->SetTexture(tex[0]->GetTexture());
@@ -128,6 +135,16 @@ TerrainNode::Render()
 	
 
 	ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
+	WorldServer::Instance()->ApplyCache();
+	RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
+	RenderDevice::Instance()->Draw();
+}
+
+void 
+TerrainNode::AddToRender()
+{
+	DWORD offset = WorldServer::Instance()->GetChunkCacha()->AddChunk(dataBuf);
+	SetVertexOffsetInCache(offset);
 }
 
 } // namespace Models

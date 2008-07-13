@@ -9,7 +9,6 @@
 #include "graphics/cameraentity.h"
 #include "timing/timer.h"
 #include "coregraphics/debugview.h"
-#include "wow/world/Terrain/terrainchunkentity.h"
 #include "foundation/debug/perform/profiler.h"
 
 namespace Graphics

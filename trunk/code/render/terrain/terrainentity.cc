@@ -6,6 +6,7 @@
 #include "terrain/terrainentity.h"
 #include "terrain/terrainnode.h"
 #include "terrain/terrainnodeinstance.h"
+#include "models/model.h"
 
 namespace Terrain
 {

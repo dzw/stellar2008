@@ -78,9 +78,6 @@ public:
     /// save the resource
     virtual bool Save();
 
-	/// set load state	wow资源直接加载，所以需要手动设置加载状态
-	//void SetStateDirectly(State s);
-
 	/// set current state wow资源直接加载，所以需要手动设置加载状态
     void SetState(State s);
 protected:
@@ -209,14 +206,6 @@ Resource::LoadFailed() const
     return (Failed == this->state);
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-//inline void 
-//Resource::SetStateDirectly(Resources::Resource::State s)
-//{
-//	this->SetState(s);
-//}
 } // namespace Resources
 //------------------------------------------------------------------------------
 #endif

@@ -5,6 +5,7 @@
 #include "stdneb.h"
 #include "models/modelinstance.h"
 #include "Terrain/terrainnodeinstance.h"
+#include "Terrain/terrainnode.h"
 #include "coregraphics/renderdevice.h"
 
 namespace Terrain
@@ -13,6 +14,7 @@ ImplementClass(Terrain::TerrainNodeInstance, 'CKNI', Models::ModelNodeInstance);
 
 using namespace Math;
 using namespace CoreGraphics;
+using namespace Models;
 
 //------------------------------------------------------------------------------
 /**
