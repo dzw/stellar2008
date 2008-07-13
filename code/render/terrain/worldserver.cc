@@ -3,7 +3,7 @@
 //  (C) 2007 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "wow/world/worldserver.h"
+#include "Terrain/worldserver.h"
 #include "io/ioserver.h"
 #include "io/stream.h"
 #include "math/vector3.h"
@@ -26,6 +26,7 @@ using namespace IO;
 using namespace Attr;
 using namespace Resources;
 using namespace Math;
+using namespace Graphics;
 
 //------------------------------------------------------------------------------
 /**
@@ -75,6 +76,9 @@ WorldServer::Open()
 	resMapper->SetResourceLoaderClass(StreamTerrainLoader::RTTI);
 	resMapper->SetManagedResourceClass(ManagedTerrainTile::RTTI);
 	ResourceManager::Instance()->AttachMapper(resMapper.upcast<ResourceMapper>());
+
+	this->chunkCache = TerrainChunkCache::Create();
+	this->chunkCache->CreateChunkCache(256);
 }
 
 //------------------------------------------------------------------------------
@@ -89,7 +93,9 @@ WorldServer::Close()
 	ResourceManager::Instance()->RemoveMapper(World::RTTI);
 	ResourceManager::Instance()->RemoveMapper(TerrainTile::RTTI);
 
-	this->UnloadWorld();
+	UnloadWorld();
+
+	this->chunkCache = 0;
 
 	this->isOpen = false;
 }
@@ -98,12 +104,14 @@ WorldServer::Close()
 /**
 */
 void
-WorldServer::LoadWorld(const ResourceId& resId)
+WorldServer::LoadWorld(const ResourceId& worldName)
 {
 	if (this->managedWorld.isvalid())
 		n_assert(0);
 	this->managedWorld = ResourceManager::Instance()->CreateManagedResource(World::RTTI, resId).downcast<ManagedWorld>();
-	this->managedWorld->SetPriority(Priority::HighestPriority);
+	this->managedWorld->SetPriority(ManagedResource::HighestPriority);
+
+	this->worldName = resId;
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +123,7 @@ WorldServer::LoadWorld(const ResourceId& resId)
 	必需哪里Load就要哪里Discard！！！
 */
 void
-WorldServer::UnloadWorld(const Ptr<ManagedWorld>& managedModel) const
+WorldServer::UnloadWorld()
 {
 	if (this->managedWorld.isvalid())
 	{
@@ -141,11 +149,13 @@ WorldServer::OnFrame()
 	{
 		if (this->camera.isvalid())
 		{
-			vector pos = this->camera->GetTransform()->getrow3();
+			vector pos = this->camera->GetTransform().getrow3();
 			if (this->prePos != pos)
 			{
 				CheckTile(pos);
 				this->prePos = pos;
+
+				UpdateViaiableChunk();
 			}
 		}
 	}
@@ -170,7 +180,7 @@ WorldServer::CheckTile(const vector& pos)
 	//vector pos = this->camera->GetTransform().getrow3();
 	if (this->curMaptile[1][1].isvalid() || oob)
 	{
-		float2 centerPos = this->curMaptile[1][1]->GetPos();
+		float2 centerPos = this->curMaptile[1][1]->GetTile()->GetPos();
 		if (oob || (pos.x() < centerPos.x() || (pos.x() > (centerPos.x() + TILESIZE))
 				|| pos.z() < centerPos.y() || (pos.z() > (centerPos.y() + TILESIZE))))
 		{
@@ -193,6 +203,8 @@ WorldServer::EnterTile(int x, int z)
 	else
 		this->oob = !this->managedWorld->IsValidTile(z, x);
 
+	cx = x;
+	cz = z;
 	for (int j=0; j<3; j++) {
 		for (int i=0; i<3; i++) {
 			curMaptile[j][i] = LoadTile(x-1+i, z-1+j);
@@ -203,15 +215,11 @@ WorldServer::EnterTile(int x, int z)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+Ptr<ManagedTerrainTile>& 
 WorldServer::LoadTile(int x, int z)
 {
 	if (!CheckValidTile(x, z) || this->managedWorld->IsValidTile(z, x))
-		return 0;
-
-	GraphicsServer* gfxServer = GraphicsServer::Instance();
-	Ptr<Stage> stage = gfxServer->GetStageByName(String("DefaultStage"));
-
+		return Ptr<ManagedTerrainTile>(0);
 
 	vector pos(x * TILESIZE, 0, z * TILESIZE);
 	IndexT firstnull = MAPTILECACHESIZE;
@@ -219,7 +227,7 @@ WorldServer::LoadTile(int x, int z)
 	{
 		if (this->mapTileCache[i].isvalid())
 		{
-			if (this->mapTileCache[i]->GetX() == x && this->mapTileCache[i]->GetZ() == z)
+			if (this->mapTileCache[i]->GetTile()->GetX() == x && this->mapTileCache[i]->GetTile()->GetZ() == z)
 				return this->mapTileCache[i];
 		}
 		else
@@ -234,10 +242,10 @@ WorldServer::LoadTile(int x, int z)
 		int score, maxscore = 0, maxidx = 0; 
 		for (IndexT i = 0; i < MAPTILECACHESIZE; i++)
 		{
-			int X = this->mapTileCache[i]->GetX();
-			int Z = this->mapTileCache[i]->GetZ();
+			int X = this->mapTileCache[i]->GetTile()->GetX();
+			int Z = this->mapTileCache[i]->GetTile()->GetZ();
 
-			score = int(n_abs(tilePos.x() - X) + n_abs(tilePos.y() - Z));
+			score = int(n_abs(X - cx) + n_abs(Z - cz));
 			if (score > maxscore)
 			{
 				maxscore = score;
@@ -253,7 +261,7 @@ WorldServer::LoadTile(int x, int z)
 	}
 
 	char name[256];
-	sprintf(name,"wow:World\\Maps\\%s\\%s_%d_%d.adt", basename.AsCharPtr(), basename.AsCharPtr(), x, z);
+	sprintf(name,"wow:World\\Maps\\%s\\%s_%d_%d.adt", worldName.Value().AsCharPtr(), worldName.Value().AsCharPtr(), x, z);
 
 	this->mapTileCache[firstnull] = CreateTerrainTile(ResourceId(name), x, z);
 
@@ -269,7 +277,7 @@ WorldServer::CreateTerrainTile(const Resources::ResourceId& resId, int x, int z)
 	Ptr<ManagedTerrainTile> tile = ResourceManager::Instance()->CreateManagedResource(TerrainTile::RTTI, resId).downcast<ManagedTerrainTile>();
 	if (tile.isvalid())
 	{
-		tile->SetXZ(x, z);
+		tile->GetTile()->SetXZ(x, z);
 	}
 
 	return tile;
@@ -284,6 +292,16 @@ WorldServer::RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile)
 	ResourceManager::Instance()->DiscardManagedResource(tile.upcast<ManagedResource>());
 }
 
-
+//------------------------------------------------------------------------------
+/**
+	这里可以从camera获得可见的quadtreecell，然后更新可见chunk
+	暂时只加载一个tile
+*/
+void
+WorldServer::UpdateViaiableChunk()
+{
+	if (curMaptile[1][1].isvalid())
+		curMaptile[1][1]->GetTile()->AddAllChunk();
+}
 
 } // namespace Models

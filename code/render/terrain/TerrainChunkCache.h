@@ -14,6 +14,9 @@
 */
 #include "core/refcounted.h"
 #include "terrain/terraindef.h"
+#include "coregraphics/vertexbufferpool.h"
+#include "coregraphics/indexbuffer.h"
+#include "coregraphics/vertexcomponent.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -33,9 +36,9 @@ public:
 protected:
 	void CreateIndexBuffer();
 
-	Ptr<VertexBufferPool> vertexBufferPool;
-	Ptr<IndexBuffer> indexBuffer;
-	Util::Array<VertexComponent> vertexComponents;
+	Ptr<CoreGraphics::VertexBufferPool> vertexBufferPool;
+	Ptr<CoreGraphics::IndexBuffer> indexBuffer;
+	Util::Array<CoreGraphics::VertexComponent> vertexComponents;
 
 	uint16 indexBufferData[samplerstripsize];
 };

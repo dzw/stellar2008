@@ -728,19 +728,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\foundation\interface\iomsg\parsestream.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\foundation\interface\iomsg\parsestream.h"
+					>
+				</File>
+				<File
 					RelativePath="..\foundation\interface/iomsg\readstream.cc"
 					>
 				</File>
 				<File
 					RelativePath="..\foundation\interface/iomsg\readstream.h"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\interface\iomsg\terraintilestream.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\interface\iomsg\terraintilestream.h"
 					>
 				</File>
 				<File

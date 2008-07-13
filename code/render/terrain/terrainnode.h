@@ -8,7 +8,9 @@
 
 	设置渲染需要的总数据
 */
-#include "models/modelnode.h"
+#include "models/nodes/statenode.h"
+#include "Terrain/terraindef.h"
+#include "coregraphics/mesh.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -25,15 +27,17 @@ public:
 	/// apply state shared by all my ModelNodeInstances
 	virtual void ApplySharedState();
     virtual Resources::Resource::State GetResourceState() const;
+	virtual void LoadResource();
 
 	/// create a model node instance
-	virtual Ptr<ModelNodeInstance> CreateNodeInstance() const;
-	void SetMesh(const Ptr<Mesh>& mesh);
+	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
+	void SetMesh(const Ptr<CoreGraphics::Mesh>& mesh);
 
 	/// 在terrainnodeinstance中调用设置渲染
 	void Render();
 	TerrainChunkFVF* GetVertexData();
 	void SetVertexOffsetInCache(SizeT offset);
+	void AddToRender();
 
 protected:
     Ptr<CoreGraphics::Mesh> mesh;

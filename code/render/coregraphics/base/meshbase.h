@@ -30,13 +30,6 @@ namespace Models
 	class TerrainChunk;
 }
 
-namespace WOW
-{
-	class WMOGroupReader;
-	class MapTileReader;
-	class WorldManager;
-}
-
 //------------------------------------------------------------------------------
 namespace Base
 {
@@ -72,13 +65,6 @@ public:
 protected:
     friend class CoreGraphics::StreamMeshLoader;
 	friend class Resources::DynamicMeshResourceLoader;
-	/// wow 的资源直接在ModelReader子类中创建mesh
-	friend class Models::M2ModelReader;	
-	// wow 的wmo资源读的时候直接创建
-	friend class WOW::WMOGroupReader;
-	friend class WOW::MapTileReader;
-	friend class WOW::WorldManager;
-	friend class Models::TerrainChunk;
 
     /// set the vertex buffer object
     void SetVertexBuffer(const Ptr<CoreGraphics::VertexBuffer>& vb);

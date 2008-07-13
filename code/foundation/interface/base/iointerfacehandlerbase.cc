@@ -68,9 +68,9 @@ bool
 IOInterfaceHandlerBase::HandleMessage(const Ptr<Message>& msg)
 {
     n_assert(msg.isvalid());
-	if (msg->CheckId(TerrainTileStream::Id))
+	if (msg->CheckId(ParseStream::Id))
 	{
-		this->OnTerrainTileReadStream(msg.downcast<Interface::TerrainTileStream>());
+		this->OnParseStream(msg.downcast<Interface::ParseStream>());
 	}
 	else if (msg->CheckId(MountMPQArchive::Id))
 	{
@@ -243,11 +243,10 @@ IOInterfaceHandlerBase::OnReadStream(const Ptr<Interface::ReadStream>& msg)
 /**
 */
 void
-IOInterfaceHandlerBase::OnTerrainTileReadStream(const Ptr<Interface::TerrainTileStream>& msg)
+IOInterfaceHandlerBase::OnTerrainTileReadStream(const Ptr<Interface::ParseStream>& msg)
 {
 	//n_printf("IOInterface: ReadStream %s\n", msg->GetURI().AsString().AsCharPtr());
 
-	// ¼ÓÔØADTÎÄ¼þ
 	// create a file stream which reads in the data from disc
 	msg->SetResult(false);
 	Ptr<Stream> srcStream = IO::IoServer::Instance()->CreateStream(msg->GetURI());

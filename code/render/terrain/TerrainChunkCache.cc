@@ -3,13 +3,19 @@
 //  (C) 2007 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "terrain/terrainchunkStorage.h"
+#include "terrain/terrainchunkcache.h"
+#include "coregraphics/renderdevice.h"
+#include "coregraphics/memoryindexbufferloader.h"
+#include "resources/resourceloader.h"
 
 const Resources::ResourceId meshName = "ChunkCache";
 
 namespace Terrain
 {
 ImplementClass(Terrain::TerrainChunkCache, 'MDCC', Core::RefCounted);
+
+using namespace CoreGraphics;
+using namespace Resources;
 
 //------------------------------------------------------------------------------
 /**
@@ -30,9 +36,9 @@ TerrainChunkCache::~TerrainChunkCache()
 	增加一个chunk用于渲染
 */
 DWORD 
-TerrainChunkCache::AddChunk(Ptr<TerrainChunk>& chunk)
+TerrainChunkCache::AddChunk(void* data)
 {
-	return this->vertexBufferPool->Alloc(chunk->GetVertexData());
+	return this->vertexBufferPool->Alloc(data);
 }
 
 //------------------------------------------------------------------------------
@@ -114,20 +120,12 @@ TerrainChunkCache::CreateChunkCache(SizeT chunkNum)
 	this->indexBuffer->SetLoader(ibLoader.upcast<ResourceLoader>());
 	this->indexBuffer->Load();
 	this->indexBuffer->SetLoader(0);
-	n_delete_array(indices);
 	n_assert(this->indexBuffer->GetState() == IndexBuffer::Loaded);
 
 	/*Ptr<Mesh> mesh = SharedResourceServer::Instance()->CreateSharedResource(meshName, Mesh::RTTI, StreamMeshLoader::RTTI).downcast<Mesh>();
 	mesh->SetState(Resource::Loaded);
 	mesh->SetVertexBuffer(vertexBufferPool->GetBuffer());
 	mesh->SetIndexBuffer(indexBuffer);*/
-
-    freeList.SetSize(num);
-    for (SizeT i = 0; i < num; i++)
-    {
-        freeList[i] = (freeList.Size() - 1 - i) * 
-    }
-
 }
 
 } // namespace WOW

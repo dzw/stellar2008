@@ -8,7 +8,7 @@
 
     (C)  cTuo
 */
-#include "models/modelnodeinstance.h"
+#include "models/nodes/statenodeinstance.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -30,7 +30,7 @@ protected:
 	/// notify that we are visible
 	virtual void OnNotifyVisible(IndexT frameIndex);
 	/// called when attached to ModelInstance
-	virtual void OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst);
+	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
 	/// called when removed from ModelInstance
 	virtual void OnRemoveFromModelInstance();
 };

@@ -36,5 +36,4 @@ protected:
     Ptr<VertexBuffer> buffer;
 };
 }
-
-
+#endif

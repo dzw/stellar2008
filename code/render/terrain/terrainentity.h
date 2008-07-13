@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 namespace Terrain
 {
-class TerrainEntity : public GraphicsEntity
+class TerrainEntity : public Graphics::GraphicsEntity
 {
     DeclareClass(TerrainEntity);
 public:
@@ -21,11 +21,11 @@ public:
 	/// 创建渲染块
 	void CreateTerrainCacha(SizeT num);
 	/// 加入需要渲染的块
-	void AddChunkToRender(const Ptr<TerrainChunk>& chunk);
+	//void AddChunkToRender(const Ptr<TerrainChunk>& chunk);
 
 protected:
-	Ptr<Model> terrain;
-	Ptr<ModelInstance> terrainInstance;
+	Ptr<Models::Model> terrain;
+	Ptr<Models::ModelInstance> terrainInstance;
 
 	SizeT curChunkNum;
 };

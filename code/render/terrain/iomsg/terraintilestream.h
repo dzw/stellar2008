@@ -1,21 +1,21 @@
 #pragma once
-#ifndef INTERFACE_TERRAINTILESTREAM
-#define INTERFACE_TERRAINTILESTREAM
+#ifndef TERRAIN_TERRAINTILESTREAM
+#define TERRAIN_TERRAINTILESTREAM
 //------------------------------------------------------------------------------
 /**
-    @class Interface::TerrainTileStream
+    @class Terrain::TerrainTileStream
     
     加载并解析，生成chunk数据。
         
     (C) 2006 Radon Labs GmbH
 */
-#include "interface/iomsg/iomessage.h"
-#include "render/terrain/terraintile.h"
+#include "interface/iomsg/parsestream.h"
+#include "terrain/terraintile.h"
 
 //------------------------------------------------------------------------------
-namespace Interface
+namespace Terrain
 {
-class TerrainTileStream : public IOMessage
+class TerrainTileStream : public Interface::ParseStream
 {
     DeclareClass(TerrainTileStream);
     DeclareMsgId;
@@ -24,14 +24,14 @@ class TerrainTileStream : public IOMessage
 	///
 	~TerrainTileStream();
 	///
-	void ParseData(const Ptr<Stream>& stream);
+	virtual void ParseData(const Ptr<IO::Stream>& stream);
 	///
 	void TerrainTileStream::ParseChunk();
 
 protected:
-    Ptr<ManagedTexture> CreateTextureResource(const String& name);
+	Ptr<Resources::ManagedTexture> CreateTextureResource(const String& name);
 
-	Ptr<Terrain::TerrainTile> tile;
+	Ptr<TerrainTile> tile;
 
 
     /// 创建texCoord，alphaCoord，只执行一次

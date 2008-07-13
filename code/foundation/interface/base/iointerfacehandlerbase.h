@@ -20,7 +20,7 @@
 #include "interface/iomsg/copyfile.h"
 #include "interface/iomsg/mountziparchive.h"
 #include "interface/iomsg/mountmpqarchive.h"
-#include "interface/iomsg/terraintilestream.h"
+#include "interface/iomsg/parsestream.h"
 
 //------------------------------------------------------------------------------
 namespace Base
@@ -60,7 +60,7 @@ protected:
 	/// handle MountMPQArchive message
 	void OnMountMPQArchive(const Ptr<Interface::MountMPQArchive>& msg);
 	///
-	void OnTerrainTileReadStream(const Ptr<Interface::TerrainTileStream>& msg);
+	void OnParseStream(const Ptr<Interface::ParseStream>& msg);
 
     Ptr<IO::Console> console;
     Ptr<IO::IoServer> ioServer;

@@ -51,8 +51,6 @@ using namespace Input;
 using namespace Frame;
 using namespace Timing;
 using namespace Anim;
-using namespace WOW;
-using namespace Terrain;
 
 //------------------------------------------------------------------------------
 /**
@@ -122,9 +120,6 @@ RenderApplication::Open()
             mountZipArchiveMsg->SetURI("home:export.zip");
             this->ioInterface->Send(mountZipArchiveMsg.upcast<Messaging::Message>());
         }
-
-		//this->WOWInterface = WOW::AsyncWOWInterface::Create();
-		//this->WOWInterface->Open();
 
 		// wow mpq assign		E:\\game\\wow\\data  D:\\game\\World of Warcraft\\Data
 		this->ioServer->SetAssign(Assign("mpq", "E:\\game\\wow\\data"));
@@ -217,10 +212,6 @@ RenderApplication::Open()
         // setup model server
         this->modelServer = ModelServer::Create();
         this->modelServer->Open();
-
-		// setup wmo server
-		this->wmoServer = WMOServer::Create();
-		this->wmoServer->Open();
 
         // setup graphics subsystem
         this->graphicsServer = GraphicsServer::Create();
@@ -326,9 +317,6 @@ RenderApplication::Close()
     this->modelServer->Close();
     this->modelServer = 0;
 
-	this->wmoServer->Close();
-	this->wmoServer = 0;
-
     this->resourceManager->Close();
     this->resourceManager = 0;
 
@@ -383,8 +371,6 @@ RenderApplication::Close()
 
 	this->debugView = 0;
 
-	/*this->WOWInterface->Close();
-	this->WOWInterface = 0;*/
     Application::Close();
 }
 

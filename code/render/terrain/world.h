@@ -1,6 +1,6 @@
 #pragma once
-#ifndef WOW_WORLD_H
-#define WOW_WORLD_H
+#ifndef TERRAIN_WORLD_H
+#define TERRAIN_WORLD_H
 //------------------------------------------------------------------------------
 /**
 	╪стьwdtнд╪Ч

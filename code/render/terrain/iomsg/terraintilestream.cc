@@ -3,8 +3,8 @@
 //  cTuo
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "interface/iomsg/terraintilestream.h"
-#include "render/terrain/terrainnode.h"
+#include "terrain/iomsg/terraintilestream.h"
+#include "terrain/terrainnode.h"
 
 namespace Interface
 {
