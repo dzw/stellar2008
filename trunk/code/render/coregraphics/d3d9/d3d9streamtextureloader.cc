@@ -333,4 +333,39 @@ D3D9StreamTextureLoader::DecompressDXTC(int format, int w, int h, unsigned int s
 		return;
 	}
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+Ptr<Texture> 
+D3D9StreamTextureLoader::CreateTexture(SizeT width, SizeT height, SizeT level, CoreGraphics::PixelFormat::Code format, void* srcData, SizeT srcSize)
+{
+    Ptr<D3D9Texture> res;
+    IDirect3DDevice9* d3d9Device = D3D9RenderDevice::Instance()->GetDirect3DDevice();
+    IDirect3DTexture9* d3d9Texture = 0;
+	hr = d3d9Device->CreateTexture(width, height, level, 0, d3dFormat, D3DPOOL_MANAGED, &d3d9Texture, NULL);
+	if (FAILED(hr))
+	{
+		n_error("D3D9StreamTextureLoader: LoadBLP() failed for file '%s'!", this->resource->GetResourceId().Value().AsCharPtr());
+		return res;
+	}
+
+    if (srcData != 0)
+    {
+        // no level 
+        d3d9Texture->LockRect(0, &lockRect, NULL, 0);
+        Memory::Copy(srcData, lockRect.pBits, srcSize);
+		d3d9Texture->UnlockRect(0);
+    }
+
+     res = D3D9Texture::Create();
+     res->SetHeight(height);
+     res->SetWidth(width);
+     res->SetNumMipLevels(level);
+     res->SetPixelFormat(format);
+     res->SetupFromD3D9Texture(d3d9Texture);
+
+     return res;
+}
+
 } // namespace Direct3D9

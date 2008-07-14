@@ -26,7 +26,9 @@ class TerrainTileStream : public Interface::ParseStream
 	///
 	virtual void ParseData(const Ptr<IO::Stream>& stream);
 	///
-	void TerrainTileStream::ParseChunk();
+	void ParseChunk();
+    void InitGlobalVBOs();
+    Ptr<ManagedTexture> CreateTextureResource(const String& name);
 
 protected:
 	Ptr<Resources::ManagedTexture> CreateTextureResource(const String& name);

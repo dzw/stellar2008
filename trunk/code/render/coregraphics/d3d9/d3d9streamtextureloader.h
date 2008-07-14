@@ -27,7 +27,8 @@ public:
     virtual void OnLoadCancelled();
     /// call frequently while after OnLoadRequested() to put Resource into loaded state
     virtual bool OnPending();
-
+    /// 手动创建2d纹理
+    static Ptr<Texture> CreateTexture(SizeT width, SizeT height, SizeT level, CoreGraphics::PixelFormat::Code format, void* srcData, SizeT srcSize);
 private:
     /// setup the texture from a Nebula3 stream
     bool SetupTextureFromStream(const Ptr<IO::Stream>& stream);
