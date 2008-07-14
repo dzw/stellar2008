@@ -363,7 +363,7 @@ void TerrainTileStream::ParseChunk(const Ptr<Stream>& stream, Ptr<TerrainNode>& 
 
 	unsigned char *blendbuf;
 	if (supportShaders) {
-		blendbuf = n_new_array(unsigned char, 64*64*4);
+		blendbuf = n_new_array(unsigned char, 64*64*4); \\ 创建四张贴图，其中前三张为alpha map,最后一张shadow map
 		memset(blendbuf, 0, 64*64*4);
 	}
 
@@ -449,7 +449,7 @@ void TerrainTileStream::ParseChunk(const Ptr<Stream>& stream, Ptr<TerrainNode>& 
 				stream->Read(c,8);
 				for (int i=0; i<8; i++) {
 					for (int b=0x01; b!=0x100; b<<=1) {
-						*p++ = (c[i] & b) ? 85 : 0;
+						*p++ = (c[i] & b) ? 85 : 0;         \\ 85 表示阴影深度（值越大越黑）
 					}
 				}
 			}
