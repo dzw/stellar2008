@@ -94,7 +94,33 @@ namespace Terrain
 		Math::vector pos;
 	};
 
-	
+	//------------------------------------------------------------------------------
+	/**
+	*/
+	void fixnamen(char *name, SizeT len)
+	{
+		for (size_t i=0; i<len; i++) {
+			if (i>0 && name[i]>='A' && name[i]<='Z' && isalpha(name[i-1])) {
+				name[i] |= 0x20;
+			} else if ((i==0 || !isalpha(name[i-1])) && name[i]>='a' && name[i]<='z') {
+				name[i] &= ~0x20;
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------------
+	/**
+	*/
+	void fixname(Util::String &name)
+	{
+		for (SizeT i=0; i<name.Length(); i++) {
+			if (i>0 && name[i]>='A' && name[i]<='Z' && isalpha(name[i-1])) {
+				name[i] |= 0x20;
+			} else if ((i==0 || !isalpha(name[i-1])) && name[i]>='a' && name[i]<='z') {
+				name[i] &= ~0x20;
+			}
+		}
+	}
 } // namespace Models
 //------------------------------------------------------------------------------
 #endif

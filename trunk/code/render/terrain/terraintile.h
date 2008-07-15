@@ -12,6 +12,7 @@
 #include "models/model.h"
 #include "Terrain/terraindef.h"
 #include "Terrain/terrainnode.h"
+#include "foundation/io/memorystream.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -24,12 +25,15 @@ public:
 	~TerrainTile();
 
 	virtual void Unload();
+	const Ptr<IO::Stream> GetStream();
 	/// 
 	const Ptr<TerrainNode>& GetChunk(int x, int z);
+
 	/// Add a chunk to render
 	void AddRenderChunk(int x, int z);
 	/// 测试用的，渲染整个tile
 	void AddAllChunk();
+
 	int GetX()const;
 	int GetZ()const;
 	void SetXZ(int x, int z);
@@ -39,13 +43,23 @@ protected:
 	//Ptr<TerrainChunk> chunk[TILECHUNKSIZE*TILECHUNKSIZE];
 	/// buliding
 	//Util::Array<Ptr<InteriorEntity> interiors;
-    //Util::Array<Ptr<ModelEntity> models;
+	//Util::Array<Ptr<Graphics::ModelEntity> models;
     //Util::Array<String> textureNames;
     //Util::Array<String> interiorNames;
     //Util::Array<String> modelNames;
-
+	
 	int x, z;
+	Ptr<IO::MemoryStream> stream;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline const Ptr<IO::Stream> 
+TerrainTile::GetStream()
+{
+	return this->stream.upcast<IO::Stream>();
+}
 
 //------------------------------------------------------------------------------
 /**

@@ -9,6 +9,18 @@ namespace Terrain
 {
 ImplementClass(Terrain::TerrainTile, 'TNTE', Models::Model);
 
+using namespace IO;
+
+TerrainTile::TerrainTile()
+{
+	this->stream = MemoryStream::Create();
+}
+
+TerrainTile::~TerrainTile()
+{
+	this->stream = 0;
+}
+
 //------------------------------------------------------------------------------
 /**
 */

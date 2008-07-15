@@ -20,11 +20,18 @@ using namespace CoreGraphics;
 using namespace Models;
 using namespace Util;
 
+bool TerrainNode::coordCreated = false;
+Math::float2 TerrainNode::texCoord[mapbufsize];
+Math::float2 TerrainNode::alphaCoord[mapbufsize];
+
 //------------------------------------------------------------------------------
 /**
 */
 TerrainNode::TerrainNode()
 {
+	if (!TerrainNode::coordCreated)
+		InitGlobalVBOs();
+
     //this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(ResourceId("shd:terrain"));
     this->diffMap[0] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
     this->diffMap[1] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap1"));
@@ -40,6 +47,19 @@ TerrainNode::TerrainNode()
 */
 TerrainNode::~TerrainNode()
 {
+}
+
+void 
+TerrainNode::SetChunkHeaderData(void* data)
+{
+	this->headerData = data;
+	MapChunkHeader* heard = this->headerData;
+
+	this->x = heard->ix;
+	this->z = heard->iy;
+	this->posBase = vector(heard->xpos-1.0f + ZEROPOINT, heard->ypos, heard->zpos-1.0f + ZEROPOINT);
+	this->areaId = heard->areaid;
+	//this->boundingBox = heard->
 }
 
 //------------------------------------------------------------------------------
@@ -145,6 +165,66 @@ TerrainNode::AddToRender()
 {
 	DWORD offset = WorldServer::Instance()->GetChunkCacha()->AddChunk(dataBuf);
 	SetVertexOffsetInCache(offset);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void 
+TerrainNode::InitGlobalVBOs()
+{
+	float2 *vt;
+	float tx,ty;
+
+	// init texture coordinates for detail map:
+	// 一个MapChunk的纹理坐标，细节纹理  9*9+8*8
+	vt = texCoord;
+	const float detail_half = 0.5f * detail_size / 8.0f;
+	for (int j=0; j<17; j++) {
+		for (int i=0; i<((j%2)?8:9); i++) {
+			tx = detail_size / 8.0f * i;
+			ty = detail_size / 8.0f * j * 0.5f;
+			if (j%2) {
+				// offset by half
+				tx += detail_half;
+			}
+			*vt++ = float2(tx, ty);
+		}
+	}
+
+
+
+	// init texture coordinates for alpha map:
+	// alpha纹理
+	vt = alphaCoord;
+	const float alpha_half = 0.5f * 1.0f / 8.0f;
+	for (int j=0; j<17; j++) {
+		for (int i=0; i<((j%2)?8:9); i++) {
+			tx = 1.0f / 8.0f * i;
+			ty = 1.0f / 8.0f * j * 0.5f;
+			if (j%2) {
+				// offset by half
+				tx += alpha_half;
+			}
+			//*vt++ = float2(tx*0.95f, ty*0.95f);
+
+			/*const int divs = 32;
+			const float inv = 1.0f / divs;
+			const float mul = (divs-1.0f);
+			*vt++ = float2(tx*(mul*inv), ty*(mul*inv));*/
+
+			if (tx == 0.0f)
+				tx += 0.02f;
+			else
+				tx *= 0.98f;
+
+			if (ty == 0.0f)
+				ty += 0.02f;
+			else
+				ty *= 0.98f;
+			*vt++ = float2(tx, ty);
+		}
+	}
 }
 
 } // namespace Models

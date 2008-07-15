@@ -75,10 +75,6 @@ StateNode::GetResourceState() const
 void
 StateNode::LoadResources()
 {
-	Timing::Timer tt;
-	tt.Reset();
-	tt.Start();
-
     n_assert(!this->shaderInstance.isvalid());
     n_assert(this->HasAttr(Attr::Shader));
     ShaderServer::ShaderParamBindMode paramBindMode = ShaderServer::Instance()->GetShaderParamBindMode();
@@ -86,14 +82,6 @@ StateNode::LoadResources()
     // create a new shader instance from the Shader attribute
     const ResourceId& resId = this->GetString(Attr::Shader);
     this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(resId);
-
-    tt.Stop();
-	float t = (float)tt.GetTime();
-	String output;
-	output.AppendFloat(t);
-	DebugView::Instance()->AddDebugString("StateNode::LoadResources1", output);
-    tt.Reset();
-	tt.Start();
 
     // iterate through shader variables and set their attribute values on the shader
     IndexT i;
@@ -137,14 +125,6 @@ StateNode::LoadResources()
             }
         }
     }
-
-	tt.Stop();
-	t = (float)tt.GetTime();
-	output;
-    output.Clear();
-	output.AppendFloat(t);
-	DebugView::Instance()->AddDebugString("StateNode::LoadResources2", output);
-
     ModelNode::LoadResources();
 }
 
