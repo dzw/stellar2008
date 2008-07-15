@@ -58,7 +58,6 @@ namespace Attr
 	DeclareString(DiffMap3, 'DIM3', ReadWrite);
 
     DeclareString(LoadChunk, 'LCHK', ReadWrite);
-
 }
 //------------------------------------------------------------------------------
 #endif    

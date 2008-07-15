@@ -27,59 +27,50 @@ class TerrainTileStream : public Interface::ParseStream
 	virtual void ParseData(const Ptr<IO::Stream>& stream);
 	///
 	void ParseChunk();
-    void InitGlobalVBOs();
-    Ptr<ManagedTexture> CreateTextureResource(const String& name);
+    //Ptr<ManagedTexture> CreateTextureResource(const String& name);
 
 protected:
-	Ptr<Resources::ManagedTexture> CreateTextureResource(const String& name);
+	//Ptr<Resources::ManagedTexture> CreateTextureResource(const String& name);
 
 	Ptr<TerrainTile> tile;
-
-
-    /// 创建texCoord，alphaCoord，只执行一次
-	void InitGlobalVBOs();
-	void fixnamen(char *name, SizeT len);
-	void fixname(Util::String &name);
 
 	SizeT mcnk_offsets[256], mcnk_sizes[256];
 
 	/// mapnode
-	Math::vector vmin, vmax, vcenter;
-	/// mapchunk
-	float xbase, ybase, zbase;
-	float r;
-
-	int nTextures;
-
+	//Math::vector vmin, vmax, vcenter;
+	///// mapchunk
 	//float xbase, ybase, zbase;
 	//float r;
 
-	unsigned int areaID;
+	//int nTextures;
 
-	bool haswater;
-	bool visible;
-	bool hasholes;
-	float waterlevel;
+	////float xbase, ybase, zbase;
+	////float r;
 
-	//unsigned int textures[4];
-	unsigned int alphamaps[3];
-	unsigned int shadow, blend;
+	//unsigned int areaID;
 
-	int animated[4];
+	//bool haswater;
+	//bool visible;
+	//bool hasholes;
+	//float waterlevel;
 
-	unsigned int vertices, normals;
+	////unsigned int textures[4];
+	//unsigned int alphamaps[3];
+	//unsigned int shadow, blend;
 
-	short *strip;
-	int striplen;
+	//int animated[4];
 
-	//Liquid *lq;
+	//unsigned int vertices, normals;
 
-	Util::FixedArray<ChunkData> chunks;
-	Util::Array<Util::String> textures;
+	//short *strip;
+	//int striplen;
 
-	static bool coordCreated;
-	static Math::float2 texCoord[mapbufsize];
-	static Math::float2 alphaCoord[mapbufsize];
+	////Liquid *lq;
+
+	//Util::FixedArray<ChunkData> chunks;
+	//Util::Array<Util::String> textures;
+
+	
 };
 
 } // namespace Interface

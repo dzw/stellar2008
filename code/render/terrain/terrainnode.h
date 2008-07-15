@@ -39,6 +39,10 @@ public:
 	void SetVertexOffsetInCache(SizeT offset);
 	void AddToRender();
 
+	static void InitGlobalVBOs();
+
+	/// set resource data
+	void SetChunkHeaderData(void* data);
 protected:
     Ptr<CoreGraphics::Mesh> mesh;
 	IndexT primGroupIndex;
@@ -48,9 +52,9 @@ protected:
     Ptr<CoreGraphics::ShaderVariable> diffMap[5];
 	Ptr<Resources::ManagedTexture> tex[5];
 
-    Math::bbox box;
     Math::vector posBase;
     int x, z;
+	DWORD areaId;
 
     Util::String shaderName;    // shd:terrain
 
@@ -65,6 +69,12 @@ protected:
 
 	// render
 	CoreGraphics::PrimitiveGroup primGroup;
+	/// 指向chunk数据存放的地址
+	void* headerData;
+
+	static bool coordCreated;
+	static Math::float2 texCoord[mapbufsize];
+	static Math::float2 alphaCoord[mapbufsize];
 };
 
 Resources::Resource::State 
