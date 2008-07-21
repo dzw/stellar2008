@@ -11,6 +11,7 @@
 #include "coregraphics/shaderinstance.h"
 #include "resources/managedtexture.h"
 #include "util/string.h"
+#include "coregraphics/streamtextureloader.h"
 
 namespace Terrain
 {
@@ -29,18 +30,28 @@ Math::float2 TerrainNode::alphaCoord[mapbufsize];
 /**
 */
 TerrainNode::TerrainNode()
+loaded(false),
+blendbuf(0),
+dataBuf(0),
+nTextures(0),
+areaId(0),
+x(0),
+z(0),
+primGroupIndex(0),
+headerOffset(0),
+stream(0)
 {
 	if (!TerrainNode::coordCreated)
-		InitGlobalVBOs();
+		TerrainNode::InitGlobalVBOs();
 
     //this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(ResourceId("shd:terrain"));
-    this->diffMap[0] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
+    /*this->diffMap[0] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
     this->diffMap[1] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap1"));
     this->diffMap[2] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap2"));
     this->diffMap[3] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap3"));
     this->diffMap[4] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("TexBlend0"));
     for (IndexT i = 0; i < 5; i++)
-        this->tex[i] = 0;
+        this->tex[i] = 0;*/
 }
 
 //------------------------------------------------------------------------------
@@ -48,6 +59,10 @@ TerrainNode::TerrainNode()
 */
 TerrainNode::~TerrainNode()
 {
+	if (blendbuf)
+		n_delete_array(blendbuf);
+	if (dataBuf)
+		n_delete_array(dataBuf);
 }
 
 void 
@@ -72,6 +87,7 @@ TerrainNode::SetResource(const Ptr<Stream>& s, SizeT offset)
 void 
 TerrainNode::ApplySharedState()
 {
+	StateNode::ApplySharedState();
 	// 提交缓冲中的顶点数据,在instance中使用这些数据渲染(参考ShapeNode::ApplySharedState)
 	//const Ptr<Mesh>& mesh = this->mesh->GetMesh();
 	//mesh->ApplyPrimitives(this->primGroupIndex);
@@ -134,7 +150,7 @@ void
 TerrainNode::Render()
 {
 	String feature = "Terrain1";
-	if (tex[0].isvalid())
+	/*if (tex[0].isvalid())
 		diffMap[0]->SetTexture(tex[0]->GetTexture());
 	if (tex[1].isvalid())
 	{
@@ -152,7 +168,9 @@ TerrainNode::Render()
 		feature = "Terrain4";
 	}
 	if (tex[4].isvalid())
-		diffMap[4]->SetTexture(tex[4]->GetTexture());
+		diffMap[4]->SetTexture(tex[4]->GetTexture());*/
+
+	//StateNode::ApplySharedState();
 
 	ShaderServer* shdServer = ShaderServer::Instance();
 	shdServer->SetFeatureBits(shdServer->FeatureStringToMask(feature));
@@ -236,22 +254,22 @@ TerrainNode::ParseData()
 {
     n_assert(this->stream.isvalid());
     n_assert(this->dataBuf == NULL);
-    
+
+	FourCC fourcc;
+	SizeT size;
     this->stream->Seek(this->headerOffset, Stream::Begin);
-    SizeT lastpos = this->stream->GetPosition();
+    int lastpos = this->stream->GetPosition();
+	int nextpos;
 
     this->dataBuf = new TerrainChunkFVF[mapbufsize];
 
     vector vmin = vector( 9999999.0f, 9999999.0f, 9999999.0f);
 	vector vmax = vector(-9999999.0f,-9999999.0f,-9999999.0f);
 
-	//unsigned char *blendbuf;
-	//if (supportShaders) {
-	//	blendbuf = n_new_array(unsigned char, 64*64*4); // 创建四张贴图，其中前三张为alpha map,最后一张shadow map
-	//	memset(blendbuf, 0, 64*64*4);
-	//}
+	unsigned char *blendbuf;
+	blendbuf = n_new_array(unsigned char, 64*64*4); // 创建四张贴图，其中前三张为alpha map,最后一张shadow map
+	memset(blendbuf, 0, 64*64*4);
 
-    
 	while (stream->GetPosition() < lastpos) {
 		stream->Read(&fourcc,4);
 		stream->Read(&size, 4);
@@ -272,9 +290,10 @@ TerrainNode::ParseData()
 					// order Z,X,Y ?
 					//*ttn++ = vector((float)nor[0]/127.0f, (float)nor[2]/127.0f, (float)nor[1]/127.0f);
                     //*ttn++ = vector(-(float)nor[1]/127.0f, (float)nor[2]/127.0f, -(float)nor[0]/127.0f);
-                    ttn->nx = -(float)nor[1]/127.0f;
-                    ttn->ny = (float)nor[2]/127.0f;
-                    ttn->nz = -(float)nor[0]/127.0f);
+					vector vec = float4::normalize(vector(-(float)nor[1]/127.0f, (float)nor[2]/127.0f, -(float)nor[0]/127.0f));
+                    ttn->nx = vec.x();
+                    ttn->ny = vec.y();
+                    ttn->nz = vec.z();
                     ttn++;
 				}
 			}
@@ -304,13 +323,13 @@ TerrainNode::ParseData()
 				}
 			}
 
-			vmin.y() += ybase;
-			vmin.x() = xbase;
-			vmin.z() = zbase;
-			vmax.y() += ybase;
-			vmax.x() = xbase + 8 * UNITSIZE;
-			vmax.z() = zbase + 8 * UNITSIZE;
-			r = (vmax - vmin).length() * 0.5f;
+			vmin.y() += posBase.y();
+			vmin.x() = posBase.x();
+			vmin.z() = posBase.z();
+			vmax.y() += posBase.y();
+			vmax.x() = posBase.x() + 8 * UNITSIZE;
+			vmax.z() = posBase.z() + 8 * UNITSIZE;
+			//r = (vmax - vmin).length() * 0.5f;
 
 		}
 		else if (fourcc == 'MCLY') {
@@ -334,79 +353,71 @@ TerrainNode::ParseData()
 
 				//texId[i] = tex;
 				if (i == 0)
-                    this->SetString(Attr::DiffMap0, tile->GetTextureName(tex);
+                    this->SetString(Attr::DiffMap0, tile->GetTextureName(tex));
                 if (i == 1)
-                    this->SetString(Attr::DiffMap1, tile->GetTextureName(tex);
+                    this->SetString(Attr::DiffMap1, tile->GetTextureName(tex));
                 if (i == 2)
-                    this->SetString(Attr::DiffMap2, tile->GetTextureName(tex);
+                    this->SetString(Attr::DiffMap2, tile->GetTextureName(tex));
                 if (i == 3)
-                    this->SetString(Attr::DiffMap3, tile->GetTextureName(tex);
+                    this->SetString(Attr::DiffMap3, tile->GetTextureName(tex));
 			}
 		}
-		//else if (fourcc == 'MCSH') {
-		//	// shadow map 64 x 64
-		//	unsigned char sbuf[64*64], *p, c[8];
-		//	p = sbuf;
-		//	for (int j=0; j<64; j++) {
-		//		stream->Read(c,8);
-		//		for (int i=0; i<8; i++) {
-		//			for (int b=0x01; b!=0x100; b<<=1) {
-		//				*p++ = (c[i] & b) ? 85 : 0;         // 85 表示阴影深度（值越大越黑）
-		//			}
-		//		}
-		//	}
+		else if (fourcc == 'MCSH') {
+			// shadow map 64 x 64
+			unsigned char sbuf[64*64], *p, c[8];
+			p = sbuf;
+			for (int j=0; j<64; j++) {
+				stream->Read(c,8);
+				for (int i=0; i<8; i++) {
+					for (int b=0x01; b!=0x100; b<<=1) {
+						*p++ = (c[i] & b) ? 85 : 0;         // 85 表示阴影深度（值越大越黑）
+					}
+				}
+			}
+			
+			for (int p=0; p<64*64; p++) 
+				blendbuf[p*4+3] = sbuf[p];
+		}
+		else if (fourcc == 'MCAL') {
+			// alpha maps  64 x 64
+			if (nTextures>0) {
 
-		//	if (supportShaders) {
-		//		for (int p=0; p<64*64; p++) {
-		//			blendbuf[p*4+3] = sbuf[p];
-		//		}
+				char* bufMap;
+				int pos = stream->GetPosition();
+				bufMap = (char*)stream->Map();
+				//				glGenTextures(nTextures-1, alphamaps);
+				for (int i=0; i<nTextures-1; i++) {
+					//					glBindTexture(GL_TEXTURE_2D, alphamaps[i]);
+					unsigned char amap[64*64], *p;
 
-		//		//CreateTextureManual(blendbuf, 64*64*sizeof(unsigned int));
-		//	}
-		//	createAlphaTex = true;
-		//}
-		//else if (fourcc == 'MCAL') {
-		//	// alpha maps  64 x 64
-		//	if (nTextures>0) {
-		//		createAlphaTex = true;
+					char *abuf = (char*)(bufMap + pos);
+					p = amap;
+					for (int j=0; j<64; j++) {
+						for (int i=0; i<32; i++) {
+							unsigned char c = *abuf++;
+							*p++ = (c & 0x0f) << 4;
+							*p++ = (c & 0xf0);
+						}
 
-		//		char* bufMap;
-		//		int pos = stream->GetPosition();
-		//		bufMap = (char*)stream->Map();
-		//		//				glGenTextures(nTextures-1, alphamaps);
-		//		for (int i=0; i<nTextures-1; i++) {
-		//			//					glBindTexture(GL_TEXTURE_2D, alphamaps[i]);
-		//			unsigned char amap[64*64], *p;
+					}
+					
+					for (int p=0; p<64*64; p++) {
+						//blendbuf[p*4+i] = amap[p];
 
-		//			char *abuf = (char*)(bufMap + pos);
-		//			p = amap;
-		//			for (int j=0; j<64; j++) {
-		//				for (int i=0; i<32; i++) {
-		//					unsigned char c = *abuf++;
-		//					*p++ = (c & 0x0f) << 4;
-		//					*p++ = (c & 0xf0);
-		//				}
+						if (i==0) blendbuf[p*4+2] = amap[p];  // r
+						if (i==1) blendbuf[p*4+1] = amap[p];  // g
+						if (i==2) blendbuf[p*4+0] = amap[p];  // b
+					}
+					
 
-		//			}
+					pos += 0x800;
+					//stream->Seek(0x800, Stream::Current);
+				}
+				stream->Unmap();
 
-		//			if (supportShaders) {
-		//				for (int p=0; p<64*64; p++) {
-		//					//blendbuf[p*4+i] = amap[p];
-
-		//					if (i==0) blendbuf[p*4+2] = amap[p];  // r
-		//					if (i==1) blendbuf[p*4+1] = amap[p];  // g
-		//					if (i==2) blendbuf[p*4+0] = amap[p];  // b
-		//				}
-		//			}
-
-		//			pos += 0x800;
-		//			//stream->Seek(0x800, Stream::Current);
-		//		}
-		//		stream->Unmap();
-
-			//} 
+			} 
             else {
-				// some MCAL chunks have incorrect sizes! :(
+				 //some MCAL chunks have incorrect sizes! :(
 				continue;
 			}
 		}
@@ -440,7 +451,20 @@ TerrainNode::ParseData()
 
 	vector vcenter = (vmin + vmax) * 0.5f;
 
-    this->Loaded = true;
+	// 可以直接放到GPU中计算，减少CPU时间!!!
+	for (int i = 0; i < mapbufsize; i++)
+	{
+		this->dataBuf[i].tex = texCoord[i];
+		this->dataBuf[i].texblend = alphaCoord[i];
+	}
+	
+
+	String blendName = CreateBlendTexture(blendbuf, 64*64*4);
+	this->SetString(Attr::TexBlend0, blendName);
+
+	StateNode::LoadResources();
+
+    this->loaded = true;
 }
 
 //------------------------------------------------------------------------------
@@ -449,52 +473,18 @@ TerrainNode::ParseData()
 
 	暂时这样写吧，直接用DX9了。应该扩展一下texture类，实现手动创建功能。
 */
-const String 
-TerrainNode::CreateTextureManual(const void* srcData, int srcDataSize)
+const String&
+TerrainNode::CreateBlendTexture(void* srcData, SizeT srcNum)
 {
-    Ptr<Texture> texture = D3D9StreamTextureLoader::CreateTexture(...);
-
-
-
-
-	HRESULT hr;
-    if (0 == d3d9Texture)
-    {
-	    IDirect3DDevice9* d3d9Device = Direct3D9::D3D9RenderDevice::Instance()->GetDirect3DDevice();
-	    n_assert(0 != d3d9Device);
-	
-	    hr = d3d9Device->CreateTexture(64, 64, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &d3d9Texture, NULL);
-	    if (FAILED(hr))
-	    {
-		    n_error("CreateTextureManual: CreateTexture() failed!");
-		    //return NULL;
-	    }
-    }
-
-	D3DLOCKED_RECT lr;
-	unsigned char *pixel = 0;
-
-	d3d9Texture->LockRect(0, &lr, NULL, 0);
-	pixel = (unsigned char*)lr.pBits;
-	Memory::Copy(srcData, pixel, srcDataSize);
-	d3d9Texture->UnlockRect(0);
-
-	// 相同的StateNode使用同一张纹理所以名字相同，实现共享
-	//static int totalM2Model = 0;
 	String texName = "Tex_";
 	texName.AppendInt((int)this);
-	//texName.AppendInt(totalM2Model);
-	//totalM2Model++;
 
+	Ptr<Texture> texture = StreamTextureLoader::CreateTexture(texName, 64, 64, 0, PixelFormat::A8R8G8B8, NULL, 0);
 
-	// 手动建立资源，并填充数据
-	Ptr<Texture> texture = SharedResourceServer::Instance()->CreateSharedResource(texName, Texture::RTTI, StreamTextureLoader::RTTI).downcast<Texture>();
-	texture->SetState(Resource::Loaded);
-	texture->SetupFromD3D9Texture(d3d9Texture);
-
-	/*char szout[256];
-	sprintf(szout, "d:\\%s", texName.AsCharPtr());
-	D3DXSaveTextureToFile(szout, D3DXIFF_TGA, d3d9Texture, NULL);*/
+	Texture::MapInfo info;
+	texture->Map(0, Texture::MapType::MapWriteDiscard, info);
+	Memory::Copy(srcData, info.data, srcNum);
+	texture->Unmap(0);
 
 	return texName;
 }
