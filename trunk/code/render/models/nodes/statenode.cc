@@ -159,19 +159,9 @@ StateNode::UnloadResources()
 void
 StateNode::SetupManagedTextureVariable(const AttrId& attrId, const Ptr<ShaderVariable>& var)
 {
-    Timing::Timer tt;
-	tt.Reset();
-	tt.Start();
-
     ResourceId resId = this->GetString(attrId);
     Ptr<ManagedTexture> managedTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
     this->managedTextureVariables.Append(ManagedTextureVariable(managedTexture, var));
-
-    tt.Stop();
-	float t = (float)tt.GetTime();
-	String output;
-	output.AppendFloat(t);
-	DebugView::Instance()->AddDebugString("SetupManagedTextureVariable", output);
 }
 
 //------------------------------------------------------------------------------
