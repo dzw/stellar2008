@@ -28,6 +28,8 @@ public:
 	const Ptr<IO::Stream> GetStream();
 	/// 
 	const Ptr<TerrainNode>& GetChunk(int x, int z);
+    ///
+    const String& GetTextureName(IndexT index);
 
 	/// Add a chunk to render
 	void AddRenderChunk(int x, int z);
@@ -44,7 +46,7 @@ protected:
 	/// buliding
 	//Util::Array<Ptr<InteriorEntity> interiors;
 	//Util::Array<Ptr<Graphics::ModelEntity> models;
-    //Util::Array<String> textureNames;
+    Util::Array<String> textureNames;
     //Util::Array<String> interiorNames;
     //Util::Array<String> modelNames;
 	
@@ -93,6 +95,13 @@ inline Math::float2
 TerrainTile::GetPos()const
 {
 	return Math::float2(this->x * TILESIZE, this->z * TILESIZE);
+}
+
+inline const String& 
+TerrainTile::GetTextureName(IndexT index)
+{
+    n_assert(index < this->textureNames.Size());
+    return this->textureNames[index];
 }
 
 } // namespace Models

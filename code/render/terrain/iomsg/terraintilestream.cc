@@ -251,9 +251,7 @@ void TerrainTileStream::ParseChunk(const Ptr<Stream>& stream, Ptr<TerrainNode>& 
 	stream->Read(&size, 4);
 
 	DWORD dataPos = stream->GetPosition();
-	/*MapChunkHeader*/void* header = stream->Map() + dataPos;
-	node->SetChunkHeaderData(header);
-	stream->Unmap();
+	node->SetResource(stream, dataPos);
 
  //   bool supportShaders = true;
 	//bool createAlphaTex = false;

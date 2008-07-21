@@ -42,7 +42,8 @@ public:
 	static void InitGlobalVBOs();
 
 	/// set resource data
-	void SetChunkHeaderData(void* data);
+    void SetResource(const Ptr<IO::Stream>& s, SizeT offset);
+	void ParseData();
 protected:
     Ptr<CoreGraphics::Mesh> mesh;
 	IndexT primGroupIndex;
@@ -57,21 +58,23 @@ protected:
 	DWORD areaId;
 
     Util::String shaderName;    // shd:terrain
+    int animated[4];            // 四层纹理是否有动画
 
-    TerrainChunkFVF dataBuf[8*8+9*9];	// size=9*9+8*8
+    TerrainChunkFVF *dataBuf;	// size=9*9+8*8
 	int dataSize;
 
 	unsigned char* blendbuf;	// TexBlend0	size=64*64*4
 	int bufSize;
 	bool isEmpty;				// 有时候没有混合纹理，需要用一张空纹理代替，避免shader出错，这个标志共享同一张空纹理，不要重复建立
 
-    bool isOk;                  // 数据加载完成
+    bool Loaded;                  // 数据加载完成
 
 	// render
 	CoreGraphics::PrimitiveGroup primGroup;
 	/// 指向chunk数据存放的地址
-	void* headerData;
-
+	SizeT headerOffset;
+	Ptr<IO::Stream> stream;
+	
 	static bool coordCreated;
 	static Math::float2 texCoord[mapbufsize];
 	static Math::float2 alphaCoord[mapbufsize];
