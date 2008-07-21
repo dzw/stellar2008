@@ -45,13 +45,9 @@ public:
     void SetResource(const Ptr<IO::Stream>& s, SizeT offset);
 	void ParseData();
 protected:
-    Ptr<CoreGraphics::Mesh> mesh;
-	IndexT primGroupIndex;
+	const String& CreateBlendTexture(void* srcData, SizeT srcNum);
 
-    Ptr<CoreGraphics::ShaderInstance> shaderInstance;
-    /// 前四个代表地形纹理，第五个是混合纹理
-    Ptr<CoreGraphics::ShaderVariable> diffMap[5];
-	Ptr<Resources::ManagedTexture> tex[5];
+    
 
     Math::vector posBase;
     int x, z;
@@ -59,17 +55,17 @@ protected:
 
     Util::String shaderName;    // shd:terrain
     int animated[4];            // 四层纹理是否有动画
+	int nTextures;
 
     TerrainChunkFVF *dataBuf;	// size=9*9+8*8
-	int dataSize;
 
 	unsigned char* blendbuf;	// TexBlend0	size=64*64*4
-	int bufSize;
-	bool isEmpty;				// 有时候没有混合纹理，需要用一张空纹理代替，避免shader出错，这个标志共享同一张空纹理，不要重复建立
-
-    bool Loaded;                  // 数据加载完成
+	
+    bool loaded;                  // 数据加载完成
 
 	// render
+	Ptr<CoreGraphics::Mesh> mesh;
+	IndexT primGroupIndex;
 	CoreGraphics::PrimitiveGroup primGroup;
 	/// 指向chunk数据存放的地址
 	SizeT headerOffset;
@@ -83,7 +79,7 @@ protected:
 Resources::Resource::State 
 TerrainNode::GetResourceState() const
 {
-    return isOk?Resources::Resource::Loaded:Resources::Resource::Initial;
+    return loaded?Resources::Resource::Loaded:Resources::Resource::Initial;
 }
 
 void 
