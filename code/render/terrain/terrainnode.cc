@@ -78,6 +78,8 @@ TerrainNode::SetResource(const Ptr<Stream>& s, SizeT offset)
 	this->posBase = vector(heard->xpos-1.0f + ZEROPOINT, heard->ypos, heard->zpos-1.0f + ZEROPOINT);
 	this->areaId = heard->areaid;
 	//this->boundingBox = heard->
+	this->layer = heard->nLayers;
+
 	this->stream->Unmap();
 }
 
@@ -149,26 +151,8 @@ TerrainNode::LoadResource()
 void 
 TerrainNode::Render()
 {
-	String feature = "Terrain1";
-	/*if (tex[0].isvalid())
-		diffMap[0]->SetTexture(tex[0]->GetTexture());
-	if (tex[1].isvalid())
-	{
-		diffMap[1]->SetTexture(tex[1]->GetTexture());
-		feature = "Terrain2";
-	}
-	if (tex[2].isvalid())
-	{
-		diffMap[2]->SetTexture(tex[2]->GetTexture());
-		feature = "Terrain3";
-	}
-	if (tex[3].isvalid())
-	{
-		diffMap[3]->SetTexture(tex[3]->GetTexture());
-		feature = "Terrain4";
-	}
-	if (tex[4].isvalid())
-		diffMap[4]->SetTexture(tex[4]->GetTexture());*/
+	String feature;
+	feature.Format("terrain%d", this->layer);
 
 	//StateNode::ApplySharedState();
 

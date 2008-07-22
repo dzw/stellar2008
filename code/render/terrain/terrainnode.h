@@ -56,6 +56,7 @@ protected:
     Util::String shaderName;    // shd:terrain
     int animated[4];            // 四层纹理是否有动画
 	int nTextures;
+	int layer;
 
     TerrainChunkFVF *dataBuf;	// size=9*9+8*8
 

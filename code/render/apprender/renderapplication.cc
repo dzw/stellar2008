@@ -516,7 +516,8 @@ RenderApplication::LoadMPQFile()
 
 		if (IoServer::Instance()->FileExists(path))
 		{
-			//this->ioServer->MountMPQArchive(path);
+			// io local
+			this->ioServer->MountMPQArchive(path);
 
 			// io thread
 			Ptr<Interface::MountMPQArchive> mountMPQArchiveMsg = Interface::MountMPQArchive::Create();

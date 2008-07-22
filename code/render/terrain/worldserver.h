@@ -76,13 +76,11 @@ public:
 
 
 	void OnFrame();
-	void UpdateViaiableChunk();
+	void UpdateVisiableChunk();
 
 private:
 
     bool isOpen;
-	/// 正在加载wdt文件，必需优先加载
-	bool isLoadedWorld;
 	bool oob;
 	/// 上一帧位置
 	Math::vector prePos;

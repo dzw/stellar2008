@@ -33,7 +33,6 @@ using namespace Graphics;
 */
 WorldServer::WorldServer() :
     isOpen(false),
-	isLoadedWorld(false),
 	managedWorld(NULL),
 	oob(false)
 {
@@ -67,6 +66,7 @@ WorldServer::Open()
 	resMapper->SetResourceClass(World::RTTI);
 	resMapper->SetResourceLoaderClass(StreamTerrainLoader::RTTI);
 	resMapper->SetManagedResourceClass(ManagedWorld::RTTI);
+	resMapper->SetAsyncEnabled(false);	// 主线程加载
 	ResourceManager::Instance()->AttachMapper(resMapper.upcast<ResourceMapper>());
 
 	// terrain tile resource
@@ -138,25 +138,15 @@ WorldServer::UnloadWorld()
 void 
 WorldServer::OnFrame()
 {
-	if (!isLoadedWorld)
+	if (this->camera.isvalid())
 	{
-		if (this->managedWorld->GetWorld()->IsLoaded())
+		vector pos = this->camera->GetTransform().getrow3();
+		if (this->prePos != pos)
 		{
-			isLoadedWorld = true;
-		}
-	}
-	else
-	{
-		if (this->camera.isvalid())
-		{
-			vector pos = this->camera->GetTransform().getrow3();
-			if (this->prePos != pos)
-			{
-				CheckTile(pos);
-				this->prePos = pos;
+			CheckTile(pos);
+			this->prePos = pos;
 
-				UpdateViaiableChunk();
-			}
+			UpdateViaiableChunk();
 		}
 	}
 }
@@ -298,7 +288,7 @@ WorldServer::RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile)
 	暂时只加载一个tile
 */
 void
-WorldServer::UpdateViaiableChunk()
+WorldServer::UpdateVisiableChunk()
 {
 	if (curMaptile[1][1].isvalid())
 		curMaptile[1][1]->GetTile()->AddAllChunk();
