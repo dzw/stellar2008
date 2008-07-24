@@ -92,8 +92,6 @@ FrameBatch::RenderBatch()
     VisResolver* visResolver = VisResolver::Instance();      
     LightServer* lightServer = LightServer::Instance(); 
 
-	DebugView::Instance()->Start();
-
     // for each visible model...
     const Array<Ptr<Model> >& models = visResolver->GetVisibleModels(this->nodeFilter);
     IndexT modelIndex;
@@ -164,8 +162,6 @@ FrameBatch::RenderBatch()
             }                
         }
     }
-
-	DebugView::Instance()->Stop("RenderBatch");
 }
 
 } // namespace Frame
