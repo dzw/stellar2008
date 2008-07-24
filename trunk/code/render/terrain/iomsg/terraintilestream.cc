@@ -226,8 +226,9 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
             name.Format("%d_%d", i, j);
             Ptr<TerrainNode> node = TerrainNode::Create();
             node->SetName(name);
+			node->ParseData(stream, mcnk_offsets[i<<4+j]);
             this->tile->AttachNode(node);
-            ParseChunk(stream, node);
+            //ParseChunk(stream, node);
             //node->Init(stream);
             //this->tile->chunk[i<<4+j] = TerrainChunk::Create();
             //this->tile->chunk[i<<4+j].Init(stream, this->tile);
@@ -244,14 +245,6 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
 */
 void TerrainTileStream::ParseChunk(const Ptr<Stream>& stream, Ptr<TerrainNode>& node)
 {
-
-	stream->Seek(4, Stream::Current);
-
-	int size;
-	stream->Read(&size, 4);
-
-	DWORD dataPos = stream->GetPosition();
-	node->SetResource(stream, dataPos);
 
  //   bool supportShaders = true;
 	//bool createAlphaTex = false;
