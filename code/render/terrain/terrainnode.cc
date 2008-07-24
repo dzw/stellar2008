@@ -65,24 +65,6 @@ TerrainNode::~TerrainNode()
 		n_delete_array(dataBuf);
 }
 
-void 
-TerrainNode::SetResource(const Ptr<Stream>& s, SizeT offset)
-{
-	this->stream = s;
-	this->headerOffset = offset;
-	
-	MapChunkHeader* heard = this->stream->Map() + offset;
-
-	this->x = heard->ix;
-	this->z = heard->iy;
-	this->posBase = vector(heard->xpos-1.0f + ZEROPOINT, heard->ypos, heard->zpos-1.0f + ZEROPOINT);
-	this->areaId = heard->areaid;
-	//this->boundingBox = heard->
-	this->layer = heard->nLayers;
-
-	this->stream->Unmap();
-}
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -166,11 +148,29 @@ TerrainNode::Render()
 	RenderDevice::Instance()->Draw();
 }
 
+//------------------------------------------------------------------------------
+/**
+	渲染前设置渲染所需的数据
+	可以在判断可见的时候就调用这个函数
+*/
 void 
 TerrainNode::AddToRender()
 {
+	if (!this->loaded)
+		return;
+
+	// 设置顶点
 	DWORD offset = WorldServer::Instance()->GetChunkCacha()->AddChunk(dataBuf);
 	SetVertexOffsetInCache(offset);
+
+	// 设置纹理
+	if (blendbuf == NULL)
+	{
+		String blendName = CreateBlendTexture(blendbuf, 64*64*4);
+		this->SetString(Attr::TexBlend0, blendName);
+		
+		StateNode::LoadResources();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -233,24 +233,42 @@ TerrainNode::InitGlobalVBOs()
 	}
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
 void
-TerrainNode::ParseData()
+TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 {
-    n_assert(this->stream.isvalid());
+    n_assert(stream.isvalid());
     n_assert(this->dataBuf == NULL);
+	n_assert(!this->loaded);
 
 	FourCC fourcc;
 	SizeT size;
-    this->stream->Seek(this->headerOffset, Stream::Begin);
-    int lastpos = this->stream->GetPosition();
+	int lastpos;
 	int nextpos;
+
+	stream->Seek(offset, Stream::Begin);
+	stream->Seek(4, Stream::Current);
+	stream->Read(&size, 4);
+	lastpos = this->stream->GetPosition()+size;
+
+	MapChunkHeader header;
+	stream->Read(&header, 0x80);
+
+	this->x = header->ix;
+	this->z = header->iy;
+	this->posBase = vector(header->xpos-1.0f + ZEROPOINT, header->ypos, header->zpos-1.0f + ZEROPOINT);
+	this->areaId = header->areaid;
+	this->layer = header->nLayers;
+	
 
     this->dataBuf = new TerrainChunkFVF[mapbufsize];
 
     vector vmin = vector( 9999999.0f, 9999999.0f, 9999999.0f);
 	vector vmax = vector(-9999999.0f,-9999999.0f,-9999999.0f);
 
-	unsigned char *blendbuf;
+	
 	blendbuf = n_new_array(unsigned char, 64*64*4); // 创建四张贴图，其中前三张为alpha map,最后一张shadow map
 	memset(blendbuf, 0, 64*64*4);
 
@@ -441,12 +459,6 @@ TerrainNode::ParseData()
 		this->dataBuf[i].tex = texCoord[i];
 		this->dataBuf[i].texblend = alphaCoord[i];
 	}
-	
-
-	String blendName = CreateBlendTexture(blendbuf, 64*64*4);
-	this->SetString(Attr::TexBlend0, blendName);
-
-	StateNode::LoadResources();
 
     this->loaded = true;
 }
@@ -454,8 +466,6 @@ TerrainNode::ParseData()
 //------------------------------------------------------------------------------
 /**
 	手动建立需要填充的纹理，如alpha、shadow
-
-	暂时这样写吧，直接用DX9了。应该扩展一下texture类，实现手动创建功能。
 */
 const String&
 TerrainNode::CreateBlendTexture(void* srcData, SizeT srcNum)

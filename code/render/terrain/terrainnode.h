@@ -41,13 +41,10 @@ public:
 
 	static void InitGlobalVBOs();
 
-	/// set resource data
-    void SetResource(const Ptr<IO::Stream>& s, SizeT offset);
-	void ParseData();
+	void ParseData(const Ptr<IO::Stream>& stream, SizeT offset);
 protected:
 	const String& CreateBlendTexture(void* srcData, SizeT srcNum);
 
-    
 
     Math::vector posBase;
     int x, z;
@@ -59,19 +56,15 @@ protected:
 	int layer;
 
     TerrainChunkFVF *dataBuf;	// size=9*9+8*8
-
 	unsigned char* blendbuf;	// TexBlend0	size=64*64*4
-	
+
     bool loaded;                  // 数据加载完成
 
 	// render
-	Ptr<CoreGraphics::Mesh> mesh;
 	IndexT primGroupIndex;
 	CoreGraphics::PrimitiveGroup primGroup;
-	/// 指向chunk数据存放的地址
-	SizeT headerOffset;
-	Ptr<IO::Stream> stream;
-	
+
+
 	static bool coordCreated;
 	static Math::float2 texCoord[mapbufsize];
 	static Math::float2 alphaCoord[mapbufsize];
