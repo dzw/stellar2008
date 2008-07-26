@@ -115,8 +115,6 @@ WorldServer::IsOpen() const
 inline const Ptr<World>& 
 WorldServer::GetWorld()const
 {
-	if (!isLoadedWorld)
-		n_assert(0);
 	return this->managedWorld->GetWorld();
 }
 

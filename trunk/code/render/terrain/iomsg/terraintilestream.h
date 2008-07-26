@@ -26,10 +26,10 @@ class TerrainTileStream : public Interface::ParseStream
 	///
 	virtual void ParseData(const Ptr<IO::Stream>& stream);
 	///
-	void ParseChunk();
+    void ParseChunk(const Ptr<IO::Stream>& stream, Ptr<TerrainNode>& node);
     //Ptr<ManagedTexture> CreateTextureResource(const String& name);
 
-protected:
+public:
 	//Ptr<Resources::ManagedTexture> CreateTextureResource(const String& name);
 
 	Ptr<TerrainTile> tile;

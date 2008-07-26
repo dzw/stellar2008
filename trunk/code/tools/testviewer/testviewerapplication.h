@@ -12,7 +12,7 @@
 #include "apprender/viewerapplication.h"
 #include "lighting/spotlightentity.h"
 #include "graphics/modelentity.h"
-#include "wow/world/worldmanager.h"
+#include "terrain/worldserver.h"
 
 //------------------------------------------------------------------------------
 namespace Tools
@@ -40,7 +40,7 @@ private:
     Ptr<Lighting::SpotLightEntity> localLight0;
     Ptr<Lighting::SpotLightEntity> localLight1;
 
-	Ptr<WOW::WorldManager> worldManager;
+    Ptr<Terrain::WorldServer> worldServer;
 };
 
 } // namespace Test

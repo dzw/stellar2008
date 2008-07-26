@@ -24,12 +24,12 @@ public:
 	TerrainTile();
 	~TerrainTile();
 
-	virtual void Unload();
+	//virtual void Unload();
 	const Ptr<IO::Stream> GetStream();
 	/// 
 	const Ptr<TerrainNode>& GetChunk(int x, int z);
     ///
-    const String& GetTextureName(IndexT index);
+    const Util::String& GetTextureName(IndexT index);
 
 	/// Add a chunk to render
 	void AddRenderChunk(int x, int z);
@@ -41,12 +41,13 @@ public:
 	void SetXZ(int x, int z);
 	Math::float2 GetPos()const;
 protected:
+    friend class TerrainTileStream;
 	/// 16*16¸öchunk
 	//Ptr<TerrainChunk> chunk[TILECHUNKSIZE*TILECHUNKSIZE];
 	/// buliding
 	//Util::Array<Ptr<InteriorEntity> interiors;
 	//Util::Array<Ptr<Graphics::ModelEntity> models;
-    Util::Array<String> textureNames;
+    Util::Array<Util::String> textureNames;
     //Util::Array<String> interiorNames;
     //Util::Array<String> modelNames;
 	
@@ -97,7 +98,7 @@ TerrainTile::GetPos()const
 	return Math::float2(this->x * TILESIZE, this->z * TILESIZE);
 }
 
-inline const String& 
+inline const Util::String& 
 TerrainTile::GetTextureName(IndexT index)
 {
     n_assert(index < this->textureNames.Size());

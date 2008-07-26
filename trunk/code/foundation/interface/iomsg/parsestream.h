@@ -5,6 +5,7 @@
 /**
     @class Interface::ParseStream
     
+    抽象类
 	多线程数据解析接口
     要线程解析数据时使用，继承的类在ParseData中解析具体数据。这样解析的类就可以
 	不用在foundation层实现
@@ -23,8 +24,13 @@ class ParseStream : public IOMessage
     DeclareMsgId;
 public:
 	/// 传入一个已打开的流
-    virtual void ParseData(const Ptr<IO::Stream>& stream)=0;
+    virtual void ParseData(const Ptr<IO::Stream>& stream);
 };
+
+inline void 
+ParseStream::ParseData(const Ptr<IO::Stream>& stream)
+{
+}
 
 } // namespace Interface
 //------------------------------------------------------------------------------

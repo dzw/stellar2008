@@ -10,6 +10,10 @@
 #include "io/memorystream.h"
 #include "resources/resource.h"
 #include "ddslib/ddslib.h"
+#include "util/string.h"
+#include "resources/SharedResourceServer.h"
+#include "coregraphics/StreamTextureLoader.h"
+#include "coregraphics/d3d9/d3d9types.h"
 
 namespace Direct3D9
 {
@@ -20,6 +24,7 @@ using namespace Resources;
 using namespace IO;
 using namespace Interface;
 using namespace Messaging;
+using namespace Util;
 
 //------------------------------------------------------------------------------
 /**
@@ -343,16 +348,18 @@ D3D9StreamTextureLoader::CreateTexture(const String& texName, SizeT width, SizeT
     Ptr<Texture> res;
     IDirect3DDevice9* d3d9Device = D3D9RenderDevice::Instance()->GetDirect3DDevice();
     IDirect3DTexture9* d3d9Texture = 0;
-	hr = d3d9Device->CreateTexture(width, height, level, 0, d3dFormat, D3DPOOL_MANAGED, &d3d9Texture, NULL);
+    D3DFORMAT d3dFormat = D3D9Types::AsD3D9PixelFormat(format);
+	HRESULT hr = d3d9Device->CreateTexture(width, height, level, 0, d3dFormat, D3DPOOL_MANAGED, &d3d9Texture, NULL);
 	if (FAILED(hr))
 	{
-		n_error("D3D9StreamTextureLoader: LoadBLP() failed for file '%s'!", this->resource->GetResourceId().Value().AsCharPtr());
+		n_error("D3D9StreamTextureLoader: LoadBLP() failed for file '%s'!", texName.AsCharPtr());
 		return res;
 	}
 
     if (srcData != 0)
     {
         // no level 
+        D3DLOCKED_RECT lockRect;
         d3d9Texture->LockRect(0, &lockRect, NULL, 0);
         Memory::Copy(srcData, lockRect.pBits, srcSize);
 		d3d9Texture->UnlockRect(0);

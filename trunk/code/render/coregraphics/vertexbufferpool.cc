@@ -4,15 +4,20 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "coregraphics/vertexbufferpool.h"
+#include "coregraphics/MemoryVertexBufferLoader.h"
+#include "resources/ResourceLoader.h"
 
 namespace CoreGraphics
 {
 ImplementClass(CoreGraphics::VertexBufferPool, 'VTBP', Core::RefCounted);
 
+using namespace CoreGraphics;
+using namespace Resources;
+
 VertexBufferPool::VertexBufferPool():
-	,blockSize(0)
-	,poolSize(0)
-	,buffer(0)
+	blockSize(0),
+	poolSize(0),
+	buffer(0)
 {
 }
 
@@ -44,8 +49,7 @@ VertexBufferPool::Reset(DWORD vertexSize, DWORD blockVertexCount, DWORD blockCou
 	Ptr<MemoryVertexBufferLoader> vbLoader = MemoryVertexBufferLoader::Create();
 	vbLoader->Setup(vertexComponents,
 		blockVertexCount*blockCount,	// 顶点数量
-		NULL,
-		blockSize,						// 缓存大小
+		blockSize*blockCount,						// 缓存大小
 		CoreGraphics::VertexBuffer::UsageDynamic, 
 		CoreGraphics::VertexBuffer::AccessWrite);
 	this->buffer->SetLoader(vbLoader.upcast<ResourceLoader>());

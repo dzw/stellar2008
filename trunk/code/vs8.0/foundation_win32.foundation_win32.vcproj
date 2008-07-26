@@ -744,14 +744,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\foundation\interface\iomsg\worldstream.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\interface\iomsg\worldstream.h"
-					>
-				</File>
-				<File
 					RelativePath="..\foundation\interface/iomsg\writestream.cc"
 					>
 				</File>

@@ -90,7 +90,10 @@ TestViewerApplication::Open()
 		this->worldManager->Open();
 		this->worldManager->InitWorld("Azeroth");*/
 
-		
+        this->worldServer = Terrain::WorldServer::Create();
+        this->worldServer->Open();
+        this->worldServer->SetCamera(cameraEntity);
+        this->worldServer->LoadWorld(ResourceId("Azeroth"));
 		
         return true;
     }
@@ -113,6 +116,9 @@ TestViewerApplication::Close()
 	//this->worldManager->Close();
 	//this->worldManager = 0;
 
+    this->worldServer->Close();
+    this->worldServer = 0;
+
     ViewerApplication::Close();
 }
 
@@ -122,17 +128,9 @@ TestViewerApplication::Close()
 void
 TestViewerApplication::OnUpdateFrame()
 {
-	Timing::Timer tt;
-	tt.Reset();
-	tt.Start();
-
+    this->worldServer->OnFrame();
 	//this->worldManager->Update();
 
-	tt.Stop();
-	float t = (float)tt.GetTime();
-	String output;
-	output.AppendFloat(t);
-	CoreGraphics::DebugView::Instance()->AddDebugString("OnUpdateFrame: ", output);
 /*
     point lookatPos = this->head->GetTransform().getrow3();
 

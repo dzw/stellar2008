@@ -532,14 +532,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\render\coregraphics\indexbufferpool.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\coregraphics\indexbufferpool.h"
-				>
-			</File>
-			<File
 				RelativePath="..\render\coregraphics\indextype.h"
 				>
 			</File>

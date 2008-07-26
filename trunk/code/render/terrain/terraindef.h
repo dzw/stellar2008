@@ -97,7 +97,7 @@ namespace Terrain
 	//------------------------------------------------------------------------------
 	/**
 	*/
-	void fixnamen(char *name, SizeT len)
+	inline void fixnamen(char *name, SizeT len)
 	{
 		for (size_t i=0; i<len; i++) {
 			if (i>0 && name[i]>='A' && name[i]<='Z' && isalpha(name[i-1])) {
@@ -111,7 +111,7 @@ namespace Terrain
 	//------------------------------------------------------------------------------
 	/**
 	*/
-	void fixname(Util::String &name)
+	inline void fixname(Util::String &name)
 	{
 		for (SizeT i=0; i<name.Length(); i++) {
 			if (i>0 && name[i]>='A' && name[i]<='Z' && isalpha(name[i-1])) {
