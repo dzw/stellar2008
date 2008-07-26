@@ -11,6 +11,7 @@
 #include "models/nodes/statenode.h"
 #include "Terrain/terraindef.h"
 #include "coregraphics/mesh.h"
+#include "io/stream.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
@@ -43,7 +44,7 @@ public:
 
 	void ParseData(const Ptr<IO::Stream>& stream, SizeT offset);
 protected:
-	const String& CreateBlendTexture(void* srcData, SizeT srcNum);
+    const Util::String CreateBlendTexture(void* srcData, SizeT srcNum);
 
 
     Math::vector posBase;
@@ -70,13 +71,13 @@ protected:
 	static Math::float2 alphaCoord[mapbufsize];
 };
 
-Resources::Resource::State 
+inline Resources::Resource::State 
 TerrainNode::GetResourceState() const
 {
     return loaded?Resources::Resource::Loaded:Resources::Resource::Initial;
 }
 
-void 
+inline void 
 TerrainNode::SetMesh(const Ptr<CoreGraphics::Mesh>& mesh)
 {
 	this->mesh = mesh;

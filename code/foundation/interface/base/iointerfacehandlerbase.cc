@@ -243,7 +243,7 @@ IOInterfaceHandlerBase::OnReadStream(const Ptr<Interface::ReadStream>& msg)
 /**
 */
 void
-IOInterfaceHandlerBase::OnTerrainTileReadStream(const Ptr<Interface::ParseStream>& msg)
+IOInterfaceHandlerBase::OnParseStream(const Ptr<Interface::ParseStream>& msg)
 {
 	//n_printf("IOInterface: ReadStream %s\n", msg->GetURI().AsString().AsCharPtr());
 

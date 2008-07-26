@@ -108,10 +108,16 @@ WorldServer::LoadWorld(const ResourceId& worldName)
 {
 	if (this->managedWorld.isvalid())
 		n_assert(0);
-	this->managedWorld = ResourceManager::Instance()->CreateManagedResource(World::RTTI, resId).downcast<ManagedWorld>();
+	this->managedWorld = ResourceManager::Instance()->CreateManagedResource(World::RTTI, worldName).downcast<ManagedWorld>();
 	this->managedWorld->SetPriority(ManagedResource::HighestPriority);
 
-	this->worldName = resId;
+	this->worldName = worldName;
+
+    if (this->camera.isvalid())
+    {
+        vector pos = this->camera->GetTransform().getrow3();
+        EnterTile(int(pos.x() / TILESIZE), int(pos.z() / TILESIZE));
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -146,7 +152,7 @@ WorldServer::OnFrame()
 			CheckTile(pos);
 			this->prePos = pos;
 
-			UpdateViaiableChunk();
+			UpdateVisiableChunk();
 		}
 	}
 }

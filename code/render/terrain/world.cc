@@ -49,7 +49,7 @@ World::World()
 
 	//drawfog = false;
 
-	//memset(maps,0,sizeof(maps));
+	memset(this->maps,0,sizeof(maps));
 }
 
 //------------------------------------------------------------------------------

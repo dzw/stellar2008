@@ -67,7 +67,7 @@ StreamTerrainLoader::OnLoadRequested()
 		if (this->resource->GetResourceId().Value().GetFileExtension() == "adt")
 		{
 			this->readStreamMsg = (Interface::IOMessage*)TerrainTileStream::Create();
-			this->readStreamMsg.downcast<TerrainTileStream>()->tile = this->resource;
+            this->readStreamMsg.downcast<TerrainTileStream>()->tile = this->resource.downcast<TerrainTile>();
 			this->readStreamMsg->SetURI(this->resource->GetResourceId().Value());
 		}
 		else
@@ -88,17 +88,16 @@ StreamTerrainLoader::OnLoadRequested()
     else
     {
 		// 其它模型不在这里加载，代替模型不可用
-		this->SetState(Resource::Loaded);
-		return true;
-        //// perform synchronous load
-        //Ptr<Stream> stream = IoServer::Instance()->CreateStream(this->resource->GetResourceId().Value());
-        //if (this->SetupModelFromStream())
-        //{
-        //    this->SetState(Resource::Loaded);
-        //    return true;
-        //}
+		
+        // perform synchronous load
+        Ptr<Stream> stream = IoServer::Instance()->CreateStream(this->resource->GetResourceId());
+        if (this->SetupModelFromStream())
+        {
+            this->SetState(Resource::Loaded);
+            return true;
+        }
         //// fallthrough: synchronous loading failed
-        //this->SetState(Resource::Failed);
+        this->SetState(Resource::Failed);
         return false;
     }
 }
@@ -166,7 +165,7 @@ StreamTerrainLoader::SetupModelFromStream()
     // first decide what ModelReader to use
     bool isLegacyFile = false;
     String fileExt = this->resource->GetResourceId().Value().GetFileExtension();
-    Ptr<ModelReader> modelReader;
+    //Ptr<ModelReader> modelReader;
 	fileExt.ToLower();
 	/*if (fileExt == "wmo")
 	{

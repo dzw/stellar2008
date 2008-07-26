@@ -9,9 +9,12 @@
 #include "coregraphics/renderdevice.h"
 #include "coregraphics/shaderserver.h"
 #include "coregraphics/shaderinstance.h"
+#include "coregraphics/streamtextureloader.h"
 #include "resources/managedtexture.h"
 #include "util/string.h"
-#include "coregraphics/streamtextureloader.h"
+#include "math/vector.h"
+#include "math/float2.h"
+#include "models/attributes.h"
 
 namespace Terrain
 {
@@ -21,6 +24,7 @@ using namespace CoreGraphics;
 using namespace Models;
 using namespace Util;
 using namespace IO;
+using namespace Math;
 
 bool TerrainNode::coordCreated = false;
 Math::float2 TerrainNode::texCoord[mapbufsize];
@@ -29,7 +33,7 @@ Math::float2 TerrainNode::alphaCoord[mapbufsize];
 //------------------------------------------------------------------------------
 /**
 */
-TerrainNode::TerrainNode()
+TerrainNode::TerrainNode():
 loaded(false),
 blendbuf(0),
 dataBuf(0),
@@ -246,7 +250,6 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 	FourCC fourcc;
 	SizeT size;
 	int lastpos;
-	int nextpos;
 
 	stream->Seek(offset, Stream::Begin);
 	stream->Seek(4, Stream::Current);
@@ -354,13 +357,13 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 				}
 
 				//texId[i] = tex;
-				if (i == 0)
+				if (i >= 0)
                     this->SetString(Attr::DiffMap0, tile->GetTextureName(tex));
-                if (i == 1)
+                if (i >= 1)
                     this->SetString(Attr::DiffMap1, tile->GetTextureName(tex));
-                if (i == 2)
+                if (i >= 2)
                     this->SetString(Attr::DiffMap2, tile->GetTextureName(tex));
-                if (i == 3)
+                if (i >= 3)
                     this->SetString(Attr::DiffMap3, tile->GetTextureName(tex));
 			}
 		}
@@ -467,7 +470,7 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 /**
 	手动建立需要填充的纹理，如alpha、shadow
 */
-const String&
+const String
 TerrainNode::CreateBlendTexture(void* srcData, SizeT srcNum)
 {
 	String texName = "Tex_";
@@ -476,7 +479,7 @@ TerrainNode::CreateBlendTexture(void* srcData, SizeT srcNum)
 	Ptr<Texture> texture = StreamTextureLoader::CreateTexture(texName, 64, 64, 0, PixelFormat::A8R8G8B8, NULL, 0);
 
 	Texture::MapInfo info;
-	texture->Map(0, Texture::MapType::MapWriteDiscard, info);
+	texture->Map(0, Texture::MapWriteDiscard, info);
 	Memory::Copy(srcData, info.data, srcNum);
 	texture->Unmap(0);
 

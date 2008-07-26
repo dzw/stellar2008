@@ -5,6 +5,8 @@
 #include "stdneb.h"
 #include "terrain/iomsg/terraintilestream.h"
 #include "terrain/terrainnode.h"
+#include "models/modelnode.h"
+#include "util/array.h"
 
 namespace Terrain
 {
@@ -12,6 +14,9 @@ ImplementClass(Terrain::TerrainTileStream, 'TTSM', Interface::ParseStream);
 ImplementMsgId(TerrainTileStream);
 
 using namespace IO;
+using namespace Util;
+using namespace Math;
+using namespace Models;
 
 //------------------------------------------------------------------------------
 /**
@@ -125,7 +130,7 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
 					fixname(path);
 
 					//gWorld->modelmanager.add(path);
-					this->tile->modelNames.Append(path);
+					//this->tile->modelNames.Append(path);
 				}
 				delete[] buf;
 			}
@@ -143,7 +148,7 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
 					fixname(path);
 
 					//gWorld->wmomanager.add(path);
-                    this->tile->interiorNames.Append(path);
+                    //this->tile->interiorNames.Append(path);
 				}
 				delete[] buf;
 			}
@@ -228,6 +233,7 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
             node->SetName(name);
 			node->ParseData(stream, mcnk_offsets[i<<4+j]);
             this->tile->AttachNode(node);
+
             //ParseChunk(stream, node);
             //node->Init(stream);
             //this->tile->chunk[i<<4+j] = TerrainChunk::Create();
@@ -235,7 +241,7 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
         }
     }
 
-	this->tile->SetState(Resource::Loaded);
+    this->tile->SetState(Resources::Resource::Loaded);
     //this->tile->LoadResources();
 }
 
