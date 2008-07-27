@@ -37,6 +37,7 @@ private:
     bool SetupModelFromStream();
 
 	Ptr<Interface::IOMessage> readStreamMsg;
+	Ptr<IO::Stream> stream;
 };
 
 } // namespace Models

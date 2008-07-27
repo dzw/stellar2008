@@ -68,7 +68,7 @@ bool
 IOInterfaceHandlerBase::HandleMessage(const Ptr<Message>& msg)
 {
     n_assert(msg.isvalid());
-	if (msg->CheckId(ParseStream::Id))
+	if (msg->IsA(ParseStream::RTTI)/*msg->CheckId(ParseStream::Id)*/)	// 解析线程消息机制有冲突，可以再启用一个新的线程专做解析
 	{
 		this->OnParseStream(msg.downcast<Interface::ParseStream>());
 	}

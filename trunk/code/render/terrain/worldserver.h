@@ -65,7 +65,7 @@ public:
 	///
 	bool CheckValidTile(int i, int j)const;
 	/// 创建一个tile,可能需要为每个tile创建quadtree
-	const Ptr<ManagedTerrainTile>& CreateTerrainTile(const Resources::ResourceId& resId, int x, int z);
+	Ptr<ManagedTerrainTile> CreateTerrainTile(const Resources::ResourceId& resId, int x, int z);
 	///
 	void RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile);
 
@@ -97,7 +97,7 @@ private:
 	/// 用于渲染所有可见块
 	//Ptr<TerrainEntity> terrain;
 	int cx, cz;
-	Resources::ResourceId worldName;
+	Resources::ResourceId baseName;
 };
 
 //------------------------------------------------------------------------------

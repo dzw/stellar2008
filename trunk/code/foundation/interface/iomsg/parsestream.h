@@ -20,17 +20,12 @@ namespace Interface
 {
 class ParseStream : public IOMessage
 {
-    DeclareClass(ParseStream);
+    DeclareAbstractClass(ParseStream);
     DeclareMsgId;
 public:
 	/// 传入一个已打开的流
-    virtual void ParseData(const Ptr<IO::Stream>& stream);
+    virtual void ParseData(const Ptr<IO::Stream>& stream)=0;
 };
-
-inline void 
-ParseStream::ParseData(const Ptr<IO::Stream>& stream)
-{
-}
 
 } // namespace Interface
 //------------------------------------------------------------------------------

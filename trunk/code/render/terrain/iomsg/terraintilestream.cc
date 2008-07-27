@@ -11,7 +11,7 @@
 namespace Terrain
 {
 ImplementClass(Terrain::TerrainTileStream, 'TTSM', Interface::ParseStream);
-ImplementMsgId(TerrainTileStream);
+//ImplementMsgId(TerrainTileStream);
 
 using namespace IO;
 using namespace Util;
@@ -232,7 +232,7 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
             Ptr<TerrainNode> node = TerrainNode::Create();
             node->SetName(name);
 			node->ParseData(stream, mcnk_offsets[i<<4+j]);
-            this->tile->AttachNode(node);
+            this->tile->AttachNode(node.upcast<ModelNode>());
 
             //ParseChunk(stream, node);
             //node->Init(stream);

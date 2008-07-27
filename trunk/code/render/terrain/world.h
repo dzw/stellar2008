@@ -30,7 +30,10 @@ public:
     virtual void Unload();
 
 	bool IsValidTile(int i, int j)const;
+	bool* GetMaps()const;
 protected:
+	friend class WorldReader;
+
 	bool maps[64][64];
 	Util::String name;
 };
@@ -44,6 +47,11 @@ World::IsValidTile(int i, int j)const
 	return this->maps[i][j];
 }
 
+inline bool* 
+World::GetMaps()const
+{
+	return (bool*)&this->maps[0][0];
+}
 //------------------------------------------------------------------------------
 /**
 */

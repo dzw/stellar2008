@@ -32,7 +32,6 @@ public:
 
 	/// create a model node instance
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
-	void SetMesh(const Ptr<CoreGraphics::Mesh>& mesh);
 
 	/// 在terrainnodeinstance中调用设置渲染
 	void Render();
@@ -75,12 +74,6 @@ inline Resources::Resource::State
 TerrainNode::GetResourceState() const
 {
     return loaded?Resources::Resource::Loaded:Resources::Resource::Initial;
-}
-
-inline void 
-TerrainNode::SetMesh(const Ptr<CoreGraphics::Mesh>& mesh)
-{
-	this->mesh = mesh;
 }
 
 //------------------------------------------------------------------------------

@@ -41,9 +41,7 @@ nTextures(0),
 areaId(0),
 x(0),
 z(0),
-primGroupIndex(0),
-headerOffset(0),
-stream(0)
+primGroupIndex(0)
 {
 	if (!TerrainNode::coordCreated)
 		TerrainNode::InitGlobalVBOs();
@@ -254,16 +252,16 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 	stream->Seek(offset, Stream::Begin);
 	stream->Seek(4, Stream::Current);
 	stream->Read(&size, 4);
-	lastpos = this->stream->GetPosition()+size;
+	lastpos = stream->GetPosition()+size;
 
 	MapChunkHeader header;
 	stream->Read(&header, 0x80);
 
-	this->x = header->ix;
-	this->z = header->iy;
-	this->posBase = vector(header->xpos-1.0f + ZEROPOINT, header->ypos, header->zpos-1.0f + ZEROPOINT);
-	this->areaId = header->areaid;
-	this->layer = header->nLayers;
+	this->x = header.ix;
+	this->z = header.iy;
+	this->posBase = vector(header.xpos-1.0f + ZEROPOINT, header.ypos, header.zpos-1.0f + ZEROPOINT);
+	this->areaId = header.areaid;
+	this->layer = header.nLayers;
 	
 
     this->dataBuf = new TerrainChunkFVF[mapbufsize];
