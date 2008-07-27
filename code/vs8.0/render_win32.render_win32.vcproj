@@ -2228,6 +2228,14 @@
 					RelativePath="..\render\terrain\streamterrainloader.h"
 					>
 				</File>
+				<File
+					RelativePath="..\render\terrain\worldreader.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\terrain\worldreader.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="render"

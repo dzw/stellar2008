@@ -18,7 +18,7 @@ namespace Terrain
 class TerrainTileStream : public Interface::ParseStream
 {
     DeclareClass(TerrainTileStream);
-    DeclareMsgId;
+    //DeclareMsgId;
 
     TerrainTileStream();
 	///

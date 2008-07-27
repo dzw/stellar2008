@@ -11,6 +11,7 @@
 #include "attr/attributecontainer.h"
 #include "math/vector3.h"
 #include "Terrain/terraintile.h"
+#include "terrain/worldreader.h"
 
 namespace Terrain
 {
@@ -90,8 +91,8 @@ StreamTerrainLoader::OnLoadRequested()
 		// 其它模型不在这里加载，代替模型不可用
 		
         // perform synchronous load
-        Ptr<Stream> stream = IoServer::Instance()->CreateStream(this->resource->GetResourceId());
-        if (this->SetupModelFromStream())
+        this->stream = IoServer::Instance()->CreateStream(this->resource->GetResourceId().Value());
+	    if (this->SetupModelFromStream())
         {
             this->SetState(Resource::Loaded);
             return true;
@@ -180,9 +181,20 @@ StreamTerrainLoader::SetupModelFromStream()
 	}
 	else if (fileExt == "wdt")
 	{
-//		modelReader = (ModelReader*)WDTReader::Create();
-//		modelReader->SetModelResId(this->resource->GetResourceId());
-		//modelReader.downcast<WDTReader>()->SetWDT(this->resource.downcast<WDT>());
+		bool isOk = false;
+		Ptr<WorldReader> reader = WorldReader::Create();
+		reader->SetStream(this->stream);
+		reader->SetResource(this->resource);
+		if (reader->Open())
+		{
+			isOk = reader->FillModel();
+			reader->Close();
+		}
+		reader = 0;
+		this->stream = 0;
+		if (isOk)
+			return true;
+		return false;
 	}
 	else if (fileExt == "wdl")
 	{

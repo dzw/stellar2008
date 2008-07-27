@@ -7,7 +7,7 @@
 
 namespace Interface
 {
-ImplementClass(Interface::ParseStream, 'PEST', Interface::IOMessage);
+ImplementAbstractClass(Interface::ParseStream, 'PEST', Interface::IOMessage);
 ImplementMsgId(ParseStream);
 
 } // namespace IO

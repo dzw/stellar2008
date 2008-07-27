@@ -33,10 +33,24 @@ using namespace Graphics;
 */
 WorldServer::WorldServer() :
     isOpen(false),
-	managedWorld(NULL),
+	managedWorld(0),
+	camera(0),
+	stage(0),
+	chunkCache(0),
 	oob(false)
 {
     ConstructSingleton;
+
+	for (SizeT i = 0; i < 3; i++)
+	{
+		for (SizeT j = 0;j < 3; j++)
+		{
+			this->curMaptile[i][j] = 0;
+		}
+	}
+
+	for (SizeT i = 0; i < MAPTILECACHESIZE; i++)
+		this->mapTileCache[i] = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -108,10 +122,12 @@ WorldServer::LoadWorld(const ResourceId& worldName)
 {
 	if (this->managedWorld.isvalid())
 		n_assert(0);
-	this->managedWorld = ResourceManager::Instance()->CreateManagedResource(World::RTTI, worldName).downcast<ManagedWorld>();
+	String wName;
+	wName.Format("wow:World\\Maps\\%s\\%s.wdt", worldName.Value().AsCharPtr() , worldName.Value().AsCharPtr());
+	this->managedWorld = ResourceManager::Instance()->CreateManagedResource(World::RTTI, wName).downcast<ManagedWorld>();
 	this->managedWorld->SetPriority(ManagedResource::HighestPriority);
 
-	this->worldName = worldName;
+	this->baseName = worldName;
 
     if (this->camera.isvalid())
     {
@@ -174,7 +190,11 @@ void
 WorldServer::CheckTile(const vector& pos)
 {
 	//vector pos = this->camera->GetTransform().getrow3();
-	if (this->curMaptile[1][1].isvalid() || oob)
+	if (!this->curMaptile[1][1].isvalid())
+	{
+		EnterTile(int(pos.x() / TILESIZE), int(pos.z() / TILESIZE));
+	}
+	else if (oob)
 	{
 		float2 centerPos = this->curMaptile[1][1]->GetTile()->GetPos();
 		if (oob || (pos.x() < centerPos.x() || (pos.x() > (centerPos.x() + TILESIZE))
@@ -214,7 +234,7 @@ WorldServer::EnterTile(int x, int z)
 Ptr<ManagedTerrainTile>& 
 WorldServer::LoadTile(int x, int z)
 {
-	if (!CheckValidTile(x, z) || this->managedWorld->IsValidTile(z, x))
+	if (!CheckValidTile(x, z) || !this->managedWorld->IsValidTile(z, x))
 		return Ptr<ManagedTerrainTile>(0);
 
 	vector pos(x * TILESIZE, 0, z * TILESIZE);
@@ -257,7 +277,7 @@ WorldServer::LoadTile(int x, int z)
 	}
 
 	char name[256];
-	sprintf(name,"wow:World\\Maps\\%s\\%s_%d_%d.adt", worldName.Value().AsCharPtr(), worldName.Value().AsCharPtr(), x, z);
+	sprintf(name,"wow:World\\Maps\\%s\\%s_%d_%d.adt", this->baseName.Value().AsCharPtr(), this->baseName.Value().AsCharPtr(), x, z);
 
 	this->mapTileCache[firstnull] = CreateTerrainTile(ResourceId(name), x, z);
 
@@ -267,7 +287,7 @@ WorldServer::LoadTile(int x, int z)
 //------------------------------------------------------------------------------
 /**
 */
-const Ptr<ManagedTerrainTile>& 
+Ptr<ManagedTerrainTile> 
 WorldServer::CreateTerrainTile(const Resources::ResourceId& resId, int x, int z)
 {
 	Ptr<ManagedTerrainTile> tile = ResourceManager::Instance()->CreateManagedResource(TerrainTile::RTTI, resId).downcast<ManagedTerrainTile>();
