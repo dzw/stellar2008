@@ -34,14 +34,16 @@ public:
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
 
 	/// 在terrainnodeinstance中调用设置渲染
-	void Render();
 	TerrainChunkFVF* GetVertexData();
 	void SetVertexOffsetInCache(SizeT offset);
 	void AddToRender();
+    void FreeVertexOffset();
 
 	static void InitGlobalVBOs();
 
 	void ParseData(const Ptr<IO::Stream>& stream, SizeT offset);
+
+    void CreateTemp();
 protected:
     const Util::String CreateBlendTexture(void* srcData, SizeT srcNum);
 
@@ -59,11 +61,12 @@ protected:
 	unsigned char* blendbuf;	// TexBlend0	size=64*64*4
 
     bool loaded;                  // 数据加载完成
+    bool loadDetail;              // 细节数据加载
 
 	// render
-	IndexT primGroupIndex;
 	CoreGraphics::PrimitiveGroup primGroup;
-
+    Ptr<CoreGraphics::Mesh> mesh;
+    SizeT vertexOffset;
 
 	static bool coordCreated;
 	static Math::float2 texCoord[mapbufsize];
@@ -92,6 +95,7 @@ TerrainNode::SetVertexOffsetInCache(SizeT offset)
 	this->primGroup.SetNumVertices(8*8+9*9);
 	this->primGroup.SetBaseIndex(0);
 	this->primGroup.SetNumIndices(samplerstripsize);
+    this->primGroup.SetPrimitiveTopology(CoreGraphics::PrimitiveTopology::TriangleList);
 }
 
 } // namespace Models

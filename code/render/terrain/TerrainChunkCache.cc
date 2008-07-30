@@ -41,6 +41,12 @@ TerrainChunkCache::AddChunk(void* data)
 	return this->vertexBufferPool->Alloc(data);
 }
 
+void 
+TerrainChunkCache::FreeChunk(DWORD offset)
+{
+    this->vertexBufferPool->Free(offset);
+}
+
 //------------------------------------------------------------------------------
 /**
 */

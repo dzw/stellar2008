@@ -33,20 +33,20 @@ TerrainTile::GetChunk(int x, int z)
 	return LookupNode(nodeName).downcast<TerrainNode>();*/
 }
 
-inline void 
-TerrainTile::AddRenderChunk(int x, int z)
-{
-	this->nodes[x<<4+z].downcast<TerrainNode>()->AddToRender();
-}
-
-void 
-TerrainTile::AddAllChunk()
-{
-	for (SizeT i = 0; i < this->nodes.Size(); i++)
-	{
-		if (this->nodes[i].isvalid() && this->nodes[i]->GetResourceState() == Resources::Resource::Loaded)
-			this->nodes[i].downcast<TerrainNode>()->AddToRender();
-	}
-}
+//inline void 
+//TerrainTile::AddRenderChunk(int x, int z)
+//{
+//	this->nodes[x<<4+z].downcast<TerrainNode>()->AddToRender();
+//}
+//
+//void 
+//TerrainTile::AddAllChunk()
+//{
+//	for (SizeT i = 0; i < this->nodes.Size(); i++)
+//	{
+//		if (this->nodes[i].isvalid() && this->nodes[i]->GetResourceState() == Resources::Resource::Loaded)
+//			this->nodes[i].downcast<TerrainNode>()->AddToRender();
+//	}
+//}
 
 } // namespace Models

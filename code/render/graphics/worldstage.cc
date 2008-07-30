@@ -11,6 +11,7 @@ namespace Graphics
 ImplementClass(Graphics::WorldStage, 'GWSG', Graphics::Stage);
 
 using namespace Util;
+using namespace Graphics;
 
 //------------------------------------------------------------------------------
 /**
@@ -42,7 +43,7 @@ WorldStage::AttachEntity(const Ptr<GraphicsEntity>& entity)
     n_assert(!entity->IsAttachedToStage());
     n_assert(entity->GetType() < GraphicsEntity::NumTypes);
 
-	if (entity->IsStaticEntity())
+    if (entity->GetUpdateType() == GraphicsEntity::NoUpdate)
 	{
 		this->staticEntities.Append(entity);
 		this->entitiesByType[entity->GetType()].Append(entity);
@@ -73,7 +74,7 @@ WorldStage::RemoveEntity(const Ptr<GraphicsEntity>& entity)
     n_assert(entity->IsAttachedToCell());
     n_assert(entity->GetType() < GraphicsEntity::NumTypes);
 
-	if (entity->IsStaticEntity())
+	if (entity->GetUpdateType() == GraphicsEntity::NoUpdate)
 	{
 		// first remove entity from its cell, stage and deactivate it
 		entity->GetCell()->RemoveEntity(entity);

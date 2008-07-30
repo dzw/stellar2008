@@ -7,13 +7,13 @@
     
     (C) 
 */
-#include "resources/managedresource.h"
+#include "models/managedmodel.h"
 #include "terrain/terraintile.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
 {
-class ManagedTerrainTile : public Resources::ManagedResource
+class ManagedTerrainTile : public Models::ManagedModel
 {
     DeclareClass(ManagedTerrainTile);
 public:

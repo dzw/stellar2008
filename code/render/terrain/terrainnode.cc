@@ -16,15 +16,23 @@
 #include "math/float2.h"
 #include "models/attributes.h"
 
+
+#include "coregraphics/MemoryVertexBufferLoader.h"
+#include "coregraphics/MemoryIndexBufferLoader.h"
+#include "resources/resourceloader.h"
+#include "resources/SharedResourceServer.h"
+#include "coregraphics/StreamMeshLoader.h"
+
 namespace Terrain
 {
-ImplementClass(Terrain::TerrainNode, 'TNNE', Models::ModelNode);
+ImplementClass(Terrain::TerrainNode, 'TNNE', Models::StateNode  );
 
 using namespace CoreGraphics;
 using namespace Models;
 using namespace Util;
 using namespace IO;
 using namespace Math;
+using namespace Resources;
 
 bool TerrainNode::coordCreated = false;
 Math::float2 TerrainNode::texCoord[mapbufsize];
@@ -35,25 +43,17 @@ Math::float2 TerrainNode::alphaCoord[mapbufsize];
 */
 TerrainNode::TerrainNode():
 loaded(false),
+loadDetail(false),
 blendbuf(0),
 dataBuf(0),
 nTextures(0),
 areaId(0),
 x(0),
 z(0),
-primGroupIndex(0)
+vertexOffset(-1)
 {
 	if (!TerrainNode::coordCreated)
 		TerrainNode::InitGlobalVBOs();
-
-    //this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(ResourceId("shd:terrain"));
-    /*this->diffMap[0] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
-    this->diffMap[1] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap1"));
-    this->diffMap[2] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap2"));
-    this->diffMap[3] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap3"));
-    this->diffMap[4] = this->shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("TexBlend0"));
-    for (IndexT i = 0; i < 5; i++)
-        this->tex[i] = 0;*/
 }
 
 //------------------------------------------------------------------------------
@@ -74,9 +74,16 @@ void
 TerrainNode::ApplySharedState()
 {
 	StateNode::ApplySharedState();
-	// 提交缓冲中的顶点数据,在instance中使用这些数据渲染(参考ShapeNode::ApplySharedState)
-	//const Ptr<Mesh>& mesh = this->mesh->GetMesh();
-	//mesh->ApplyPrimitives(this->primGroupIndex);
+    
+    String feature;
+	feature.Format("Terrain%d", this->layer);
+
+	ShaderServer* shdServer = ShaderServer::Instance();
+	shdServer->SetFeatureBits(shdServer->FeatureStringToMask(feature));
+
+    WorldServer::Instance()->ApplyCache();
+    RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
+    //this->mesh->ApplyPrimitives(0);
 }
 
 //------------------------------------------------------------------------------
@@ -93,61 +100,6 @@ void
 TerrainNode::LoadResource()
 {
     StateNode::LoadResources();
-
-    // create a managed mesh resource
-	/*ResourceId meshResId = this->GetString(Attr::MeshResourceId);
-	this->primGroupIndex = this->GetInt(Attr::MeshGroupIndex);
-	this->managedMesh = ResourceManager::Instance()->CreateManagedResource(Mesh::RTTI, meshResId).downcast<ManagedMesh>();
-	n_assert(this->managedMesh.isvalid());*/
-
-    // create texture
- //   ResourceId resId;
- //   
- //   // 纹理不能这样直接创建！使用纹理缓冲。
-	//if (this->HasAttr(Attr::DiffMap0))
-	//{
-	//	resId = this->GetString(Attr::DiffMap0);
-	//	tex[0] = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
-	//}
-	//if (this->HasAttr(Attr::DiffMap1))
-	//{
-	//	resId = this->GetString(Attr::DiffMap1);
-	//	tex[1] = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
-	//}
-	//if (this->HasAttr(Attr::DiffMap2))
-	//{
-	//	tex[2] = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
-	//	resId = this->GetString(Attr::DiffMap2);
-	//}
-	//if (this->HasAttr(Attr::DiffMap3))
-	//{
-	//	resId = this->GetString(Attr::DiffMap3);
-	//	tex[3] = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
-	//}
-
-	//if (this->HasAttr(Attr::TexBlend0))
-	//{
-	//	resId = this->GetString(Attr::TexBlend0);
-	//	tex[4] = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
-	//}
-}
-
-void 
-TerrainNode::Render()
-{
-	String feature;
-	feature.Format("terrain%d", this->layer);
-
-	//StateNode::ApplySharedState();
-
-	ShaderServer* shdServer = ShaderServer::Instance();
-	shdServer->SetFeatureBits(shdServer->FeatureStringToMask(feature));
-	
-
-	ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
-	WorldServer::Instance()->ApplyCache();
-	RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
-	RenderDevice::Instance()->Draw();
 }
 
 //------------------------------------------------------------------------------
@@ -161,18 +113,41 @@ TerrainNode::AddToRender()
 	if (!this->loaded)
 		return;
 
-	// 设置顶点
-	DWORD offset = WorldServer::Instance()->GetChunkCacha()->AddChunk(dataBuf);
-	SetVertexOffsetInCache(offset);
+    // 设置顶点
+    if (this->vertexOffset == -1)
+    {
+        this->vertexOffset = WorldServer::Instance()->GetChunkCacha()->AddChunk(dataBuf);
+        n_assert(this->vertexOffset != -1);
+        SetVertexOffsetInCache(this->vertexOffset);
+    }
 
-	// 设置纹理
-	if (blendbuf == NULL)
+    // 设置纹理
+	if (!loadDetail)
 	{
 		String blendName = CreateBlendTexture(blendbuf, 64*64*4);
 		this->SetString(Attr::TexBlend0, blendName);
 		
-		StateNode::LoadResources();
+		LoadResources();
+        loadDetail = true;
+
+        CreateTemp();
 	}
+
+    //if (!this->shaderInstance.isvalid())
+    //    this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(Resources::ResourceId("shd:terrain"));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void 
+TerrainNode::FreeVertexOffset()
+{
+    if (this->vertexOffset != -1)
+    {
+        WorldServer::Instance()->GetChunkCacha()->FreeChunk(this->vertexOffset);
+        this->vertexOffset = -1;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -259,7 +234,7 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 
 	this->x = header.ix;
 	this->z = header.iy;
-	this->posBase = vector(header.xpos-1.0f + ZEROPOINT, header.ypos, header.zpos-1.0f + ZEROPOINT);
+	this->posBase = vector(float(this->x) * CHUNKSIZE/*header.xpos-1.0f + ZEROPOINT*/, header.ypos, float(this->z) * CHUNKSIZE/*header.zpos-1.0f + ZEROPOINT*/);
 	this->areaId = header.areaid;
 	this->layer = header.nLayers;
 	
@@ -314,15 +289,16 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 					if (j%2) {
 						xpos += UNITSIZE*0.5f;
 					}
-					vector v = vector(/*xbase+*/xpos, /*ybase+*/h, /*zbase+*/zpos);
+					//vector v = vector(/*xbase+*/xpos, /*ybase+*/h, /*zbase+*/zpos);
 					//*ttv++ = v;
-                    ttv->x = xpos;
-                    ttv->y = h;
-                    ttv->z = zpos;
-                    ttv++;
+                    ttv->x = this->posBase.x() + xpos;
+                    ttv->y = this->posBase.y() + h;
+                    ttv->z = this->posBase.z() + zpos;
 
-					if (v.y() < vmin.y()) vmin.y() = v.y();
-					if (v.y() > vmax.y()) vmax.y() = v.y();
+					if (ttv->y < vmin.y()) vmin.y() = ttv->y;
+					if (ttv->y > vmax.y()) vmax.y() = ttv->y;
+                    
+                    ttv++;
 				}
 			}
 
@@ -453,6 +429,8 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 	}
 
 	vector vcenter = (vmin + vmax) * 0.5f;
+    this->SetFloat4(Attr::BoxCenter, vcenter);
+    this->SetFloat4(Attr::BoxExtents, (vmax - vmin) * 0.5f);
 
 	// 可以直接放到GPU中计算，减少CPU时间!!!
 	for (int i = 0; i < mapbufsize; i++)
@@ -460,6 +438,8 @@ TerrainNode::ParseData(const Ptr<Stream>& stream, SizeT offset)
 		this->dataBuf[i].tex = texCoord[i];
 		this->dataBuf[i].texblend = alphaCoord[i];
 	}
+
+    this->SetString(Attr::Shader, "shd:terrain");
 
     this->loaded = true;
 }
@@ -478,11 +458,100 @@ TerrainNode::CreateBlendTexture(void* srcData, SizeT srcNum)
 
 	Texture::MapInfo info;
 	texture->Map(0, Texture::MapWriteDiscard, info);
-	Memory::Copy(srcData, info.data, srcNum);
-	texture->Unmap(0);
+    if (info.data != NULL)
+    {
+	    Memory::Copy(srcData, info.data, srcNum);
+	    texture->Unmap(0);
+    }
 
 	return texName;
 }
 
+void 
+TerrainNode::CreateTemp()
+{
+ //   Util::Array<CoreGraphics::VertexComponent> vertexComponents;
+ //   if (vertexComponents.Size() == 0)
+	//{
+	//	vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+	//	vertexComponents.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
+	//	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+	//	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 1, VertexComponent::Float2));
+	//}
+
+ //   // setup new vertex buffer
+	//Ptr<VertexBuffer> vertexBuffer = VertexBuffer::Create();
+	//Ptr<MemoryVertexBufferLoader> vbLoader = MemoryVertexBufferLoader::Create();
+	//vbLoader->Setup(vertexComponents, 8*8+9*9, dataBuf, (8*8+9*9) * sizeof(TerrainChunkFVF));
+	//vertexBuffer->SetLoader(vbLoader.upcast<ResourceLoader>());
+	//vertexBuffer->Load();
+	//vertexBuffer->SetLoader(0);
+	//n_assert(vertexBuffer->GetState() == VertexBuffer::Loaded);
+
+
+ //   uint16 indexBufferData[samplerstripsize];
+ //   for (int j = 0; j < 8; j++)
+	//{
+	//	for (int i = 0; i < 8; i++)
+	//	{
+	//		indexBufferData[(j*8+i)*12+0] = j*9+j*8+i;
+	//		indexBufferData[(j*8+i)*12+1] = (j+1)*9+j*8+i;
+	//		indexBufferData[(j*8+i)*12+2] = (j+1)*9+(j+1)*8+i;
+
+	//		indexBufferData[(j*8+i)*12+3] = j*9+j*8+i;
+	//		indexBufferData[(j*8+i)*12+4] = j*9+j*8+i+1;
+	//		indexBufferData[(j*8+i)*12+5] = (j+1)*9+j*8+i;
+
+	//		indexBufferData[(j*8+i)*12+6] = (j+1)*9+j*8+i;
+	//		indexBufferData[(j*8+i)*12+7] = j*9+j*8+i+1;
+	//		indexBufferData[(j*8+i)*12+8] = (j+1)*9+(j+1)*8+i+1;
+
+	//		indexBufferData[(j*8+i)*12+9] = (j+1)*9+(j+1)*8+i;
+	//		indexBufferData[(j*8+i)*12+10] = (j+1)*9+j*8+i;
+	//		indexBufferData[(j*8+i)*12+11] = (j+1)*9+(j+1)*8+i+1;
+	//	}
+	//}
+
+ //   Ptr<IndexBuffer> indexBuffer = IndexBuffer::Create();
+	//Ptr<MemoryIndexBufferLoader> ibLoader = MemoryIndexBufferLoader::Create();
+	//ibLoader->Setup(IndexType::Index16, samplerstripsize, indexBufferData, sizeof(uint16)*samplerstripsize);
+	//indexBuffer->SetLoader(ibLoader.upcast<ResourceLoader>());
+	//indexBuffer->Load();
+	//indexBuffer->SetLoader(0);
+	//n_assert(indexBuffer->GetState() == IndexBuffer::Loaded);
+
+
+
+
+
+ //   Util::Array<CoreGraphics::PrimitiveGroup> primGroups;
+	//IndexT vstart, vcount, istart, icount;
+	//PrimitiveGroup primGroup;
+
+	//vstart = 0;
+	//vcount = 9*9+8*8;
+	//istart = 0;
+	//icount = samplerstripsize;//stripsize;
+
+	//primGroup.SetBaseVertex(vstart);
+	//primGroup.SetNumVertices(vcount);
+	//primGroup.SetBaseIndex(istart);   // firstTriangle
+	//primGroup.SetNumIndices(icount);   // numTriangles
+
+	//primGroup.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
+	//primGroups.Append(primGroup);
+
+
+ //   static int totalM2Model = 0;
+	//String meshName = "ck_";
+	//meshName.AppendInt(totalM2Model);
+	//totalM2Model++;
+
+ //   this->mesh = SharedResourceServer::Instance()->CreateSharedResource(meshName, Mesh::RTTI, StreamMeshLoader::RTTI).downcast<Mesh>();
+	//mesh->SetState(Resource::Loaded);
+	//mesh->SetVertexBuffer(vertexBuffer);
+	//mesh->SetIndexBuffer(indexBuffer);
+	//mesh->SetPrimitiveGroups(primGroups);
+}
 
 } // namespace Models

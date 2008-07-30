@@ -7,5 +7,5 @@
 
 namespace Terrain
 {
-ImplementClass(Terrain::ManagedTerrainTile, 'MDTT', Resources::ManagedResource);
+ImplementClass(Terrain::ManagedTerrainTile, 'MDTT', Models::ManagedModel);
 } // namespace WOW

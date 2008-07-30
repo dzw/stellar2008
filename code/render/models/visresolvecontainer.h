@@ -38,7 +38,8 @@ private:
         Entry() : resolved(false) {};
 
         Util::Array<Ptr<TYPE> > nodes;
-        bool resolved;
+        /// 某种类型(solid,alpha等)实例是否需要加入渲染列表
+        bool resolved;  
     };
     Util::FixedArray<Entry> entries;
     uint frameIndex;

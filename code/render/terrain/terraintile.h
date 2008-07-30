@@ -32,9 +32,9 @@ public:
     const Util::String& GetTextureName(IndexT index);
 
 	/// Add a chunk to render
-	void AddRenderChunk(int x, int z);
+	//void AddRenderChunk(int x, int z);
 	/// 测试用的，渲染整个tile
-	void AddAllChunk();
+	//void AddAllChunk();
 
 	int GetX()const;
 	int GetZ()const;

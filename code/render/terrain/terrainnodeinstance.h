@@ -24,15 +24,9 @@ public:
 
 	/// perform rendering
 	virtual void Render();
-	/// apply per-instance state prior to rendering
-	virtual void ApplyState();
 protected:
 	/// notify that we are visible
 	virtual void OnNotifyVisible(IndexT frameIndex);
-	/// called when attached to ModelInstance
-	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
-	/// called when removed from ModelInstance
-	virtual void OnRemoveFromModelInstance();
 };
 
 } // namespace Models
