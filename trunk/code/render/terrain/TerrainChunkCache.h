@@ -32,6 +32,7 @@ public:
 	void CreateChunkCache(SizeT chunkNum);
 	/// 增加一个chunk
 	DWORD AddChunk(void *data);
+    void FreeChunk(DWORD offset);
 
 protected:
 	void CreateIndexBuffer();

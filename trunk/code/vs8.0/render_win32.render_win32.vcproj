@@ -2148,6 +2148,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\terrain\terrainentity.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\terrain\terrainentity.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\terrain\world.cc"
 				>
 				<FileConfiguration

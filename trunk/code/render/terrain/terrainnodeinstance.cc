@@ -38,13 +38,10 @@ TerrainNodeInstance::~TerrainNodeInstance()
 void
 TerrainNodeInstance::Render()
 {
-	//ModelNodeInstance::Render();
-	//RenderDevice::Instance()->Draw();
-
     const Ptr<TerrainNode> node = GetModelNode().downcast<TerrainNode>();
     if (node->GetResourceState() == Resources::Resource::Loaded)
     {
-        node->Render();
+        RenderDevice::Instance()->Draw();
     }
 }    
 
@@ -54,38 +51,19 @@ TerrainNodeInstance::Render()
 void
 TerrainNodeInstance::OnNotifyVisible(IndexT frameIndex)
 {
-	// just tell our model node that we are a visible instance
-	this->modelNode->AddVisibleNodeInstance(frameIndex, this);
+    const Ptr<TerrainNode> node = GetModelNode().downcast<TerrainNode>();
+    if (this->IsVisible())
+    {
+        if (node->GetResourceState() == Resources::Resource::Loaded)
+        {
+            node->AddToRender();
+	        this->modelNode->AddVisibleNodeInstance(frameIndex, this);
+        }
+    }
+    else
+    {
+        node->FreeVertexOffset();
+    }
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-void
-TerrainNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst)
-{
-	ModelNodeInstance::OnAttachToModelInstance(inst, node, parentNodeInst);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-TerrainNodeInstance::OnRemoveFromModelInstance()
-{
-	ModelNodeInstance::OnRemoveFromModelInstance();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-TerrainNodeInstance::ApplyState()
-{
-	//TransformNodeInstance::ApplyState();
-
-	//// apply any needed model transform state to shader
-	//TransformDevice* transformDevice = TransformDevice::Instance();
-	//transformDevice->ApplyModelTransforms();
-}
 } // namespace Models

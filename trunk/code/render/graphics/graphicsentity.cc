@@ -26,7 +26,7 @@ GraphicsEntity::GraphicsEntity() :
     boundingBoxChanged(false),
     transformChanged(false),
     transform(matrix44::identity()),
-	isStatic(false)
+	uType(UpdateEveryTimes)
 {
     this->links.SetSize(NumLinkTypes);
     // empty

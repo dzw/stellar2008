@@ -18,7 +18,7 @@
 #include "terrain/world.h"
 #include "terrain/managedWorld.h"
 #include "Terrain/terraindef.h"
-//#include "terrain/Terrainentity.h"
+#include "terrain/Terrainentity.h"
 #include "terrain/managedterraintile.h"
 #include "terrain/TerrainChunkCache.h"
 
@@ -46,7 +46,7 @@ public:
 
 	/// set a camera for the world
 	void SetCamera(const Ptr<Graphics::CameraEntity>& camera);
-	
+    void SetStage(const Ptr<Graphics::Stage>& stage);
 
 	/// load a managed World from URI
 	void LoadWorld(const Resources::ResourceId& worldName);
@@ -55,28 +55,20 @@ public:
 	/// get world resource
 	const Ptr<World>& GetWorld()const;
 
-
 	/// check if change current position
 	void CheckTile(const Math::vector& pos);
 	///
 	void EnterTile(int x, int z);
 	/// load terrain tile
-	Ptr<ManagedTerrainTile>&  LoadTile(int x, int z);
+	Ptr<TerrainEntity>&  LoadTile(int x, int z);
 	///
 	bool CheckValidTile(int i, int j)const;
-	/// 创建一个tile,可能需要为每个tile创建quadtree
-	Ptr<ManagedTerrainTile> CreateTerrainTile(const Resources::ResourceId& resId, int x, int z);
-	///
-	void RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile);
-
 
 	///
 	const Ptr<TerrainChunkCache>& GetChunkCacha()const;
 	void ApplyCache();
 
-
 	void OnFrame();
-	void UpdateVisiableChunk();
 
 private:
 
@@ -88,9 +80,9 @@ private:
 	Ptr<TerrainChunkCache> chunkCache;
 	Ptr<ManagedWorld> managedWorld;
 	/// 当前地图 3*3
-	Ptr<ManagedTerrainTile> curMaptile[3][3];
+	Ptr<TerrainEntity> curMaptile[3][3];
 	/// 地图缓冲 4*4
-	Ptr<ManagedTerrainTile> mapTileCache[MAPTILECACHESIZE];
+	Ptr<TerrainEntity> mapTileCache[MAPTILECACHESIZE];
 
 	Ptr<Graphics::CameraEntity> camera;
 	Ptr<Graphics::Stage> stage;
@@ -99,6 +91,15 @@ private:
 	int cx, cz;
 	Resources::ResourceId baseName;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline void 
+WorldServer::SetStage(const Ptr<Graphics::Stage>& stage)
+{
+    this->stage = stage;
+}
 
 //------------------------------------------------------------------------------
 /**

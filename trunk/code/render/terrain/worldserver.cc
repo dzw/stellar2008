@@ -125,7 +125,6 @@ WorldServer::LoadWorld(const ResourceId& worldName)
 	String wName;
 	wName.Format("wow:World\\Maps\\%s\\%s.wdt", worldName.Value().AsCharPtr() , worldName.Value().AsCharPtr());
 	this->managedWorld = ResourceManager::Instance()->CreateManagedResource(World::RTTI, wName).downcast<ManagedWorld>();
-	this->managedWorld->SetPriority(ManagedResource::HighestPriority);
 
 	this->baseName = worldName;
 
@@ -168,7 +167,7 @@ WorldServer::OnFrame()
 			CheckTile(pos);
 			this->prePos = pos;
 
-			UpdateVisiableChunk();
+			//UpdateVisiableChunk();
 		}
 	}
 }
@@ -196,7 +195,7 @@ WorldServer::CheckTile(const vector& pos)
 	}
 	else if (oob)
 	{
-		float2 centerPos = this->curMaptile[1][1]->GetTile()->GetPos();
+		float2 centerPos = this->curMaptile[1][1]->GetPos();
 		if (oob || (pos.x() < centerPos.x() || (pos.x() > (centerPos.x() + TILESIZE))
 				|| pos.z() < centerPos.y() || (pos.z() > (centerPos.y() + TILESIZE))))
 		{
@@ -211,6 +210,25 @@ WorldServer::CheckTile(const vector& pos)
 void 
 WorldServer::EnterTile(int x, int z)
 {
+    // test
+    static bool IsFirst = false;
+    if (IsFirst)
+        return ;
+    IsFirst = true;
+    x = 36;
+    z = 26;
+
+    char name[256];
+	sprintf(name,"wow:World\\Maps\\%s\\%s_%d_%d.adt", this->baseName.Value().AsCharPtr(), this->baseName.Value().AsCharPtr(), x, z);
+
+    this->curMaptile[1][1] = TerrainEntity::Create();
+    this->curMaptile[1][1]->SetResourceId(ResourceId(name));
+    this->curMaptile[1][1]->SetXZ(x, z);
+    this->stage->AttachEntity(this->curMaptile[1][1].upcast<GraphicsEntity>());
+
+    return;
+
+
 	if (!CheckValidTile(x,z)) 
 	{
 		this->oob = true;
@@ -231,11 +249,11 @@ WorldServer::EnterTile(int x, int z)
 //------------------------------------------------------------------------------
 /**
 */
-Ptr<ManagedTerrainTile>& 
+Ptr<TerrainEntity>& 
 WorldServer::LoadTile(int x, int z)
 {
 	if (!CheckValidTile(x, z) || !this->managedWorld->IsValidTile(z, x))
-		return Ptr<ManagedTerrainTile>(0);
+		return Ptr<TerrainEntity>(0);
 
 	vector pos(x * TILESIZE, 0, z * TILESIZE);
 	IndexT firstnull = MAPTILECACHESIZE;
@@ -243,7 +261,7 @@ WorldServer::LoadTile(int x, int z)
 	{
 		if (this->mapTileCache[i].isvalid())
 		{
-			if (this->mapTileCache[i]->GetTile()->GetX() == x && this->mapTileCache[i]->GetTile()->GetZ() == z)
+			if (this->mapTileCache[i]->GetX() == x && this->mapTileCache[i]->GetZ() == z)
 				return this->mapTileCache[i];
 		}
 		else
@@ -258,8 +276,8 @@ WorldServer::LoadTile(int x, int z)
 		int score, maxscore = 0, maxidx = 0; 
 		for (IndexT i = 0; i < MAPTILECACHESIZE; i++)
 		{
-			int X = this->mapTileCache[i]->GetTile()->GetX();
-			int Z = this->mapTileCache[i]->GetTile()->GetZ();
+			int X = this->mapTileCache[i]->GetX();
+			int Z = this->mapTileCache[i]->GetZ();
 
 			score = int(n_abs(X - cx) + n_abs(Z - cz));
 			if (score > maxscore)
@@ -270,54 +288,20 @@ WorldServer::LoadTile(int x, int z)
 		}
 
 		// 释放MapTile相关的资源
-		this->RemoveTerrainTile(this->mapTileCache[maxidx]);
 		this->mapTileCache[maxidx] = 0;
-
+        
 		firstnull = maxidx;
 	}
 
 	char name[256];
 	sprintf(name,"wow:World\\Maps\\%s\\%s_%d_%d.adt", this->baseName.Value().AsCharPtr(), this->baseName.Value().AsCharPtr(), x, z);
 
-	this->mapTileCache[firstnull] = CreateTerrainTile(ResourceId(name), x, z);
+    this->mapTileCache[firstnull] = TerrainEntity::Create();
+    this->mapTileCache[firstnull]->SetResourceId(ResourceId(name));
+    this->mapTileCache[firstnull]->SetXZ(x, z);
+    this->stage->AttachEntity(this->mapTileCache[firstnull].upcast<GraphicsEntity>());
 
 	return this->mapTileCache[firstnull];
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-Ptr<ManagedTerrainTile> 
-WorldServer::CreateTerrainTile(const Resources::ResourceId& resId, int x, int z)
-{
-	Ptr<ManagedTerrainTile> tile = ResourceManager::Instance()->CreateManagedResource(TerrainTile::RTTI, resId).downcast<ManagedTerrainTile>();
-	if (tile.isvalid())
-	{
-		tile->GetTile()->SetXZ(x, z);
-	}
-
-	return tile;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void 
-WorldServer::RemoveTerrainTile(const Ptr<ManagedTerrainTile>& tile)
-{
-	ResourceManager::Instance()->DiscardManagedResource(tile.upcast<ManagedResource>());
-}
-
-//------------------------------------------------------------------------------
-/**
-	这里可以从camera获得可见的quadtreecell，然后更新可见chunk
-	暂时只加载一个tile
-*/
-void
-WorldServer::UpdateVisiableChunk()
-{
-	if (curMaptile[1][1].isvalid())
-		curMaptile[1][1]->GetTile()->AddAllChunk();
 }
 
 } // namespace Models

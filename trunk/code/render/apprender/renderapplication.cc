@@ -122,7 +122,7 @@ RenderApplication::Open()
         }
 
 		// wow mpq assign		E:\\game\\wow\\data  D:\\game\\World of Warcraft\\Data
-		this->ioServer->SetAssign(Assign("mpq", "E:\\game\\wow\\data"));
+		this->ioServer->SetAssign(Assign("mpq", "D:\\game\\World of Warcraft\\Data"));
 		this->ioServer->SetAssign(Assign("wow", "mpqModel://"));
 		//this->ioServer->RegisterUriScheme("mpqModel", MPQFileStream::RTTI);
 		LoadMPQFile();
@@ -493,7 +493,18 @@ RenderApplication::LoadMPQFile()
 	"\\zhcn\\patch-zhCN.MPQ",
 	"\\zhcn\\speech-zhCN.MPQ"
 	*/
-	const char* archiveNames[] = { "patch.mpq", 
+	const char* archiveNames[] = { 
+                                    "model.mpq",
+	                                "backup.mpq", 
+	                                "base.mpq",
+	                                "dbc.mpq",
+	                                "fonts.mpq",
+	                                "interface.mpq",
+	                                "misc.mpq",
+	                                "terrain.mpq",
+	                                "wmo.mpq",
+	                                "texture.mpq",
+                                    "patch.mpq", 
 								   "common.MPQ",
 								   "expansion.MPQ",
 								   "patch-2.MPQ",

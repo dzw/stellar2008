@@ -75,7 +75,6 @@ protected:
     friend class Model;
     friend class VisResolver;
     friend class Graphics::ModelEntity;
-	friend class Graphics::TerrainChunkEntity;
 
     /// set pointer to ModelEntity which owns this instance
     void SetModelEntity(const Ptr<Graphics::ModelEntity>& mdlEntity);

@@ -219,6 +219,9 @@ Stage::UpdateEntities(Timing::Time curTime, IndexT curFrameCount)
         SizeT numEntities = this->entities.Size();
         for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
         {
+            if (this->entities[entityIndex]->GetUpdateType() == GraphicsEntity::NoUpdate)
+                continue;
+
 			/*if (entityIndex > 10)
 				break;*/
             this->entities[entityIndex]->SetTime(curTime);
@@ -262,7 +265,7 @@ Stage::UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity)
     if (cameraEntity.isvalid())
     {
         // resolve visible model and light entities from this camera
-        uint entityTypeMask = (1 << GraphicsEntity::ModelType) | (1 << GraphicsEntity::LightType);
+        uint entityTypeMask = (1 << GraphicsEntity::ModelType) | (1 << GraphicsEntity::LightType) | (1 << GraphicsEntity::TerrainType);
         this->rootCell->UpdateLinks(cameraEntity.upcast<GraphicsEntity>(), entityTypeMask, GraphicsEntity::CameraLink);
     }
 

@@ -70,9 +70,9 @@ TestViewerApplication::Open()
 		this->view->SetFrameShader(Frame::FrameServer::Instance()->GetFrameShaderByName(ResourceId("DX9Sample")));
 
         // setup models
-        this->ground = ModelEntity::Create();
+        /*this->ground = ModelEntity::Create();
         this->ground->SetResourceId(ResourceId("mdl:examples/ground.n2"));
-        this->stage->AttachEntity(ground.upcast<GraphicsEntity>());
+        this->stage->AttachEntity(ground.upcast<GraphicsEntity>());*/
 
 		/*this->head = ModelEntity::Create();
         this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
@@ -81,10 +81,10 @@ TestViewerApplication::Open()
 
 		// wow:World\\AZEROTH\\BootyBay\\PassiveDoodad\\FishingBox\\FishingBox.m2
 		// wow:creature\\deer\\deer.m2
-		this->tree = ModelEntity::Create();
+		//this->tree = ModelEntity::Create();
 		//this->tree->SetResourceId(ResourceId("wow:creature\\deer\\deer.m2"));
-		this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
-		this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
+		//this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
+		//this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
 		
 		/*this->worldManager = WOW::WorldManager::Create();
 		this->worldManager->Open();
@@ -93,6 +93,7 @@ TestViewerApplication::Open()
         this->worldServer = Terrain::WorldServer::Create();
         this->worldServer->Open();
         this->worldServer->SetCamera(cameraEntity);
+        this->worldServer->SetStage(this->stage);
         this->worldServer->LoadWorld(ResourceId("Azeroth"));
 		
         return true;
@@ -129,6 +130,7 @@ void
 TestViewerApplication::OnUpdateFrame()
 {
     this->worldServer->OnFrame();
+
 	//this->worldManager->Update();
 
 /*

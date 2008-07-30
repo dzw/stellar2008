@@ -86,7 +86,7 @@ ViewerApplication::Open()
         //cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 		//cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
 		//cameraEntity->SetTransform(this->quaternionCameraUtil.GetCameraTransform());
-		cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
+		cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
         this->stage->AttachEntity(cameraEntity.upcast<GraphicsEntity>());
 
         // setup a default view
@@ -300,7 +300,7 @@ ViewerApplication::OnProcessInput()
         this->mayaCameraUtil.SetZoomIn(zoomIn);
         this->mayaCameraUtil.SetZoomOut(zoomOut);
         this->mayaCameraUtil.Update();
-        this->cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
+        this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F5))

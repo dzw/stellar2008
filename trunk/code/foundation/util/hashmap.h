@@ -49,7 +49,6 @@ protected:
 template<class KEYTYPE, class VALUETYPE, class COMPARE>
 HashMap<KEYTYPE, VALUETYPE, COMPARE>::HashMap()
 {
-	this->curIter = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -172,12 +171,11 @@ HashMap<KEYTYPE, VALUETYPE, COMPARE>::GetFirstValue()
 template<class KEYTYPE, class VALUETYPE, class COMPARE> inline VALUETYPE& 
 HashMap<KEYTYPE, VALUETYPE, COMPARE>::GetNextValue()
 {
-	n_assert(this->IsEmpty() || this->curIter == NULL);
+	n_assert(this->IsEmpty());
 	this->curIter++;
 	if (this->curIter != this->pairs.end())
 		return this->curIter->second;
 
-	this->curIter = NULL;
 	return (VALUETYPE)0;
 }
 

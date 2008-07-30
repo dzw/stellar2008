@@ -44,7 +44,7 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
 		return;
 
 	const Ptr<Stream>& stream = this->tile->GetStream();
-	stream->SetAccessMode(Stream::WriteAccess);
+	stream->SetAccessMode(Stream::ReadAccess);
 	Stream::Size srcSize = s->GetSize();
 	n_assert(srcSize > 0);
 	stream->SetSize(srcSize);
@@ -221,18 +221,18 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
 		stream->Seek((int)nextpos, Stream::Begin);
 	}
 
-    for (SizeT i = 0; i < TILECHUNKSIZE; i++)
+    for (SizeT i = 0; i < 2/*TILECHUNKSIZE*/; i++)
     {
-        for (SizeT j = 0; j < TILECHUNKSIZE; j++)
+        for (SizeT j = 0; j < 2/*TILECHUNKSIZE*/; j++)
         {
-            stream->Seek(mcnk_offsets[i<<4+j], Stream::Begin);
+            stream->Seek(mcnk_offsets[(i<<4)+j], Stream::Begin);
 
             String name;
             name.Format("%d_%d", i, j);
             Ptr<TerrainNode> node = TerrainNode::Create();
             node->SetName(name);
-			node->ParseData(stream, mcnk_offsets[i<<4+j]);
             this->tile->AttachNode(node.upcast<ModelNode>());
+            node->ParseData(stream, mcnk_offsets[(i<<4)+j]);
 
             //ParseChunk(stream, node);
             //node->Init(stream);
@@ -241,7 +241,12 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
         }
     }
 
-    this->tile->SetState(Resources::Resource::Loaded);
+    bbox box;
+    box.pmin = vector(-9999.0f, -9999.0f, -9999.0f);
+    box.pmax = vector(9999.0f, 9999.0f, 9999.0f);
+    this->tile->SetBoundingBox(box);
+
+    //this->tile->SetState(Resources::Resource::Loaded);
     //this->tile->LoadResources();
 }
 

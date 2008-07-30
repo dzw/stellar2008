@@ -3,13 +3,16 @@
 #define TERRAIN_TERRAINENTITY_H
 //------------------------------------------------------------------------------
 /**
+    cTuo
 */
-#include "graphics/graphicsentity.h"
+#include "graphics/modelentity.h"
+#include "terrain/terraindef.h"
+#include "terrain/managedterraintile.h"
 
 //------------------------------------------------------------------------------
 namespace Terrain
 {
-class TerrainEntity : public Graphics::GraphicsEntity
+class TerrainEntity : public Graphics::ModelEntity
 {
     DeclareClass(TerrainEntity);
 public:
@@ -17,18 +20,57 @@ public:
     TerrainEntity();
     /// destructor
     virtual ~TerrainEntity();
+	
+    virtual void OnActivate();
+    virtual void OnDeactivate();
+    //virtual void OnUpdate();
 
-	/// 创建渲染块
-	void CreateTerrainCacha(SizeT num);
-	/// 加入需要渲染的块
-	//void AddChunkToRender(const Ptr<TerrainChunk>& chunk);
-
+    int GetX()const;
+	int GetZ()const;
+	void SetXZ(int x, int z);
+	Math::float2 GetPos()const;
 protected:
-	Ptr<Models::Model> terrain;
-	Ptr<Models::ModelInstance> terrainInstance;
+    //void ValidateModelInstance();
 
-	SizeT curChunkNum;
+    //Ptr<ManagedTerrainTile> managedTerrainTile;
+    
+    int x;
+    int z;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline int 
+TerrainEntity::GetX()const
+{
+	return this->x;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline int 
+TerrainEntity::GetZ()const
+{
+	return this->z;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline void 
+TerrainEntity::SetXZ(int x, int z)
+{
+	this->x = x;
+	this->z = z;
+}
+
+inline Math::float2 
+TerrainEntity::GetPos()const
+{
+	return Math::float2(this->x * TILESIZE, this->z * TILESIZE);
+}
 
 } // namespace Graphics
 //------------------------------------------------------------------------------

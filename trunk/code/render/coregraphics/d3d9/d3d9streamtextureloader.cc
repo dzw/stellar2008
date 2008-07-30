@@ -371,6 +371,8 @@ D3D9StreamTextureLoader::CreateTexture(const String& texName, SizeT width, SizeT
      res->SetWidth(width);
      res->SetNumMipLevels(level);
      res->SetPixelFormat(format);
+     res->SetUsage(Texture::UsageDynamic);
+     res->SetAccess(Texture::AccessWrite);
      res->SetupFromD3D9Texture(d3d9Texture);
 
      return res;

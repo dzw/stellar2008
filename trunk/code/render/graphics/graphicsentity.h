@@ -59,6 +59,16 @@ public:
         NumLinkTypes,
     };
 
+    /// update type
+    enum UpdateType
+    {
+        UpdateEveryTimes = 0,   // 动画需要每帧都更新
+        UpdateOnce,             
+        NoUpdate,               // 静态物件不需要更新
+
+        NumUpdateTypes,
+    };
+
     /// constructor
     GraphicsEntity();
     /// destructor
@@ -70,6 +80,10 @@ public:
     bool IsValid() const;
     /// get the entity type
     Type GetType() const;
+    ///
+    void SetUpdateType(UpdateType t);
+    /// get the entity update type
+    UpdateType GetUpdateType() const;
     /// set the entity's world space transform
     void SetTransform(const Math::matrix44& m);
     /// get the entity's world space transform
@@ -106,9 +120,6 @@ public:
     /// get graphics time
     Timing::Time GetTime() const;
 
-	bool IsStaticEntity()const;
-	/// set this is a static entity
-	void SetStaticEnttiy();
 protected:
     friend class Cell;
     friend class Stage;
@@ -161,32 +172,14 @@ protected:
     Ptr<Cell> cell;
     Util::FixedArray<Util::Array<Ptr<GraphicsEntity> > > links;
     Type type;
+    UpdateType uType;
     bool isActive;
     bool isValid;
     bool isVisible;
     bool globalBoxDirty;
     bool transformChanged;
     bool boundingBoxChanged;
-	bool isStatic;	// 静态模型（不需要在每帧更新）
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-GraphicsEntity::SetStaticEnttiy()
-{
-	this->isStatic = true;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline bool 
-GraphicsEntity::IsStaticEntity()const
-{
-	return this->isStatic;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -231,6 +224,24 @@ inline GraphicsEntity::Type
 GraphicsEntity::GetType() const
 {
     return this->type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline void
+GraphicsEntity::SetUpdateType(UpdateType t)
+{
+    this->uType = t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline GraphicsEntity::UpdateType
+GraphicsEntity::GetUpdateType() const
+{
+    return this->uType;
 }
 
 //------------------------------------------------------------------------------

@@ -24,11 +24,6 @@ namespace Resources
 {
 	class DynamicMeshResourceLoader;
 }
-namespace Models
-{
-	class M2ModelReader;
-	class TerrainChunk;
-}
 
 //------------------------------------------------------------------------------
 namespace Base
@@ -62,14 +57,15 @@ public:
     /// set primitive groups
     void SetPrimitiveGroups(const Util::Array<CoreGraphics::PrimitiveGroup>& groups);
  
-protected:
-    friend class CoreGraphics::StreamMeshLoader;
-	friend class Resources::DynamicMeshResourceLoader;
-
+    
     /// set the vertex buffer object
     void SetVertexBuffer(const Ptr<CoreGraphics::VertexBuffer>& vb);
     /// set the index buffer object
     void SetIndexBuffer(const Ptr<CoreGraphics::IndexBuffer>& ib);
+protected:
+    friend class CoreGraphics::StreamMeshLoader;
+	friend class Resources::DynamicMeshResourceLoader;
+    
    
     Ptr<CoreGraphics::VertexBuffer> vertexBuffer;
     Ptr<CoreGraphics::IndexBuffer> indexBuffer;

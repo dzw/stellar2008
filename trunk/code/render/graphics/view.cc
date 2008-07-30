@@ -147,7 +147,8 @@ View::ResolveVisibleModelNodeInstances()
     for (i = 0; i < num; i++)
     {
         const Ptr<GraphicsEntity>& curEntity = visLinks[i];
-        if (GraphicsEntity::ModelType == curEntity->GetType())
+        if (GraphicsEntity::ModelType == curEntity->GetType() ||
+            GraphicsEntity::TerrainType == curEntity->GetType())
         {
 			const Ptr<ModelEntity>& modelEntity = curEntity.downcast<ModelEntity>();
             visResolver->AttachVisibleModelInstance(modelEntity->GetModelInstance());

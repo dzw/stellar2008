@@ -77,7 +77,7 @@ VertexBufferPool::Full()const
 DWORD 
 VertexBufferPool::Alloc(void *data)
 {
-    if (this->freeList.IsEmpty())
+    if (!this->freeList.IsEmpty())
     {
         DWORD ret = this->freeList.Back();
 		this->freeList.EraseIndex(this->freeList.Size()-1);
