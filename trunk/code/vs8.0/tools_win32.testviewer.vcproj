@@ -298,7 +298,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib foundation_win32.lib render_win32.lib lua_win32.lib tinyxml_win32.lib zlib_win32.lib nebula2_win32.lib db_win32.lib sqlite_win32.lib ddslib_win32.lib mpq_win32.lib"
+				AdditionalDependencies="gdi32.lib shell32.lib user32.lib dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib foundation_win32.lib render_win32.lib lua_win32.lib tinyxml_win32.lib zlib_win32.lib nebula2_win32.lib db_win32.lib sqlite_win32.lib ddslib_win32.lib mpq_win32.lib"
 				OutputFile="..\..\bin\win32\testviewer.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"

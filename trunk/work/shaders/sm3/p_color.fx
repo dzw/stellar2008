@@ -19,7 +19,7 @@ technique t0
         AlphaBlendEnable  = False;
         AlphaTestEnable   = False;
         ScissorTestEnable = False;
-        CullMode          = CW;
+        CullMode          = None;//CW;
         FillMode		  		= solid;
     }
 }
