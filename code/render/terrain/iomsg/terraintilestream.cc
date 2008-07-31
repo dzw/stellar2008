@@ -221,9 +221,9 @@ void TerrainTileStream::ParseData(const Ptr<Stream>& s)
 		stream->Seek((int)nextpos, Stream::Begin);
 	}
 
-    for (SizeT i = 0; i < 2/*TILECHUNKSIZE*/; i++)
+    for (SizeT i = 0; i < 1/*TILECHUNKSIZE*/; i++)
     {
-        for (SizeT j = 0; j < 2/*TILECHUNKSIZE*/; j++)
+        for (SizeT j = 0; j < 1/*TILECHUNKSIZE*/; j++)
         {
             stream->Seek(mcnk_offsets[(i<<4)+j], Stream::Begin);
 

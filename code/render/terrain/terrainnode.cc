@@ -81,9 +81,9 @@ TerrainNode::ApplySharedState()
 	ShaderServer* shdServer = ShaderServer::Instance();
 	shdServer->SetFeatureBits(shdServer->FeatureStringToMask(feature));
 
-    WorldServer::Instance()->ApplyCache();
-    RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
-    //this->mesh->ApplyPrimitives(0);
+    //WorldServer::Instance()->ApplyCache();
+    //RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
+    this->mesh->ApplyPrimitives(0);
 }
 
 //------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ TerrainNode::AddToRender()
 		return;
 
     // ÉèÖÃ¶¥µã
-    if (this->vertexOffset == -1)
+    if (0&&this->vertexOffset == -1)
     {
         this->vertexOffset = WorldServer::Instance()->GetChunkCacha()->AddChunk(dataBuf);
         n_assert(this->vertexOffset != -1);
@@ -127,14 +127,11 @@ TerrainNode::AddToRender()
 		String blendName = CreateBlendTexture(blendbuf, 64*64*4);
 		this->SetString(Attr::TexBlend0, blendName);
 		
-		LoadResources();
+		this->LoadResources();
         loadDetail = true;
 
         CreateTemp();
 	}
-
-    //if (!this->shaderInstance.isvalid())
-    //    this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(Resources::ResourceId("shd:terrain"));
 }
 
 //------------------------------------------------------------------------------
@@ -470,88 +467,101 @@ TerrainNode::CreateBlendTexture(void* srcData, SizeT srcNum)
 void 
 TerrainNode::CreateTemp()
 {
- //   Util::Array<CoreGraphics::VertexComponent> vertexComponents;
- //   if (vertexComponents.Size() == 0)
-	//{
-	//	vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
-	//	vertexComponents.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
-	//	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
-	//	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 1, VertexComponent::Float2));
-	//}
+    Util::Array<CoreGraphics::VertexComponent> vertexComponents;
+    if (vertexComponents.Size() == 0)
+	{
+		vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+		vertexComponents.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
+		vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+		vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 1, VertexComponent::Float2));
+	}
 
- //   // setup new vertex buffer
-	//Ptr<VertexBuffer> vertexBuffer = VertexBuffer::Create();
-	//Ptr<MemoryVertexBufferLoader> vbLoader = MemoryVertexBufferLoader::Create();
-	//vbLoader->Setup(vertexComponents, 8*8+9*9, dataBuf, (8*8+9*9) * sizeof(TerrainChunkFVF));
-	//vertexBuffer->SetLoader(vbLoader.upcast<ResourceLoader>());
-	//vertexBuffer->Load();
-	//vertexBuffer->SetLoader(0);
-	//n_assert(vertexBuffer->GetState() == VertexBuffer::Loaded);
+    
+    // setup new vertex buffer
+	Ptr<VertexBuffer> vertexBuffer = VertexBuffer::Create();
+	Ptr<MemoryVertexBufferLoader> vbLoader = MemoryVertexBufferLoader::Create();
+	vbLoader->Setup(vertexComponents, 8*8+9*9, /*dataBuf,*/ (8*8+9*9) * sizeof(TerrainChunkFVF),
+        CoreGraphics::VertexBuffer::UsageDynamic, 
+		CoreGraphics::VertexBuffer::AccessWrite);
+	vertexBuffer->SetLoader(vbLoader.upcast<ResourceLoader>());
+	vertexBuffer->Load();
+	vertexBuffer->SetLoader(0);
+	n_assert(vertexBuffer->GetState() == VertexBuffer::Loaded);
 
-
- //   uint16 indexBufferData[samplerstripsize];
- //   for (int j = 0; j < 8; j++)
-	//{
-	//	for (int i = 0; i < 8; i++)
-	//	{
-	//		indexBufferData[(j*8+i)*12+0] = j*9+j*8+i;
-	//		indexBufferData[(j*8+i)*12+1] = (j+1)*9+j*8+i;
-	//		indexBufferData[(j*8+i)*12+2] = (j+1)*9+(j+1)*8+i;
-
-	//		indexBufferData[(j*8+i)*12+3] = j*9+j*8+i;
-	//		indexBufferData[(j*8+i)*12+4] = j*9+j*8+i+1;
-	//		indexBufferData[(j*8+i)*12+5] = (j+1)*9+j*8+i;
-
-	//		indexBufferData[(j*8+i)*12+6] = (j+1)*9+j*8+i;
-	//		indexBufferData[(j*8+i)*12+7] = j*9+j*8+i+1;
-	//		indexBufferData[(j*8+i)*12+8] = (j+1)*9+(j+1)*8+i+1;
-
-	//		indexBufferData[(j*8+i)*12+9] = (j+1)*9+(j+1)*8+i;
-	//		indexBufferData[(j*8+i)*12+10] = (j+1)*9+j*8+i;
-	//		indexBufferData[(j*8+i)*12+11] = (j+1)*9+(j+1)*8+i+1;
-	//	}
-	//}
-
- //   Ptr<IndexBuffer> indexBuffer = IndexBuffer::Create();
-	//Ptr<MemoryIndexBufferLoader> ibLoader = MemoryIndexBufferLoader::Create();
-	//ibLoader->Setup(IndexType::Index16, samplerstripsize, indexBufferData, sizeof(uint16)*samplerstripsize);
-	//indexBuffer->SetLoader(ibLoader.upcast<ResourceLoader>());
-	//indexBuffer->Load();
-	//indexBuffer->SetLoader(0);
-	//n_assert(indexBuffer->GetState() == IndexBuffer::Loaded);
+    //Memory::Clear(dataBuf, (8*8+9*9) * sizeof(TerrainChunkFVF));
+    void* dest = vertexBuffer->Map(CoreGraphics::VertexBuffer::MapWriteNoOverwrite, 0, (8*8+9*9) * sizeof(TerrainChunkFVF));
+    if(dest)
+    {
+		Memory::Copy(dataBuf, dest, (8*8+9*9) * sizeof(TerrainChunkFVF));
+        vertexBuffer->Unmap();
+    }
 
 
+    uint16 indexBufferData[samplerstripsize];
+    for (int j = 0; j < 8; j++)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			indexBufferData[(j*8+i)*12+0] = j*9+j*8+i;
+			indexBufferData[(j*8+i)*12+1] = (j+1)*9+j*8+i;
+			indexBufferData[(j*8+i)*12+2] = (j+1)*9+(j+1)*8+i;
+
+			indexBufferData[(j*8+i)*12+3] = j*9+j*8+i;
+			indexBufferData[(j*8+i)*12+4] = j*9+j*8+i+1;
+			indexBufferData[(j*8+i)*12+5] = (j+1)*9+j*8+i;
+
+			indexBufferData[(j*8+i)*12+6] = (j+1)*9+j*8+i;
+			indexBufferData[(j*8+i)*12+7] = j*9+j*8+i+1;
+			indexBufferData[(j*8+i)*12+8] = (j+1)*9+(j+1)*8+i+1;
+
+			indexBufferData[(j*8+i)*12+9] = (j+1)*9+(j+1)*8+i;
+			indexBufferData[(j*8+i)*12+10] = (j+1)*9+j*8+i;
+			indexBufferData[(j*8+i)*12+11] = (j+1)*9+(j+1)*8+i+1;
+		}
+	}
+
+    Ptr<IndexBuffer> indexBuffer = IndexBuffer::Create();
+	Ptr<MemoryIndexBufferLoader> ibLoader = MemoryIndexBufferLoader::Create();
+	ibLoader->Setup(IndexType::Index16, samplerstripsize, indexBufferData, sizeof(uint16)*samplerstripsize);
+	indexBuffer->SetLoader(ibLoader.upcast<ResourceLoader>());
+	indexBuffer->Load();
+	indexBuffer->SetLoader(0);
+	n_assert(indexBuffer->GetState() == IndexBuffer::Loaded);
 
 
 
- //   Util::Array<CoreGraphics::PrimitiveGroup> primGroups;
-	//IndexT vstart, vcount, istart, icount;
-	//PrimitiveGroup primGroup;
-
-	//vstart = 0;
-	//vcount = 9*9+8*8;
-	//istart = 0;
-	//icount = samplerstripsize;//stripsize;
-
-	//primGroup.SetBaseVertex(vstart);
-	//primGroup.SetNumVertices(vcount);
-	//primGroup.SetBaseIndex(istart);   // firstTriangle
-	//primGroup.SetNumIndices(icount);   // numTriangles
-
-	//primGroup.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
-	//primGroups.Append(primGroup);
 
 
- //   static int totalM2Model = 0;
-	//String meshName = "ck_";
-	//meshName.AppendInt(totalM2Model);
-	//totalM2Model++;
+    Util::Array<CoreGraphics::PrimitiveGroup> primGroups;
+	IndexT vstart, vcount, istart, icount;
+	PrimitiveGroup primGroup;
 
- //   this->mesh = SharedResourceServer::Instance()->CreateSharedResource(meshName, Mesh::RTTI, StreamMeshLoader::RTTI).downcast<Mesh>();
-	//mesh->SetState(Resource::Loaded);
-	//mesh->SetVertexBuffer(vertexBuffer);
-	//mesh->SetIndexBuffer(indexBuffer);
-	//mesh->SetPrimitiveGroups(primGroups);
+	vstart = 0;
+	vcount = 9*9+8*8;
+	istart = 0;
+	icount = samplerstripsize;//stripsize;
+
+	primGroup.SetBaseVertex(vstart);
+	primGroup.SetNumVertices(vcount);
+	primGroup.SetBaseIndex(istart);   // firstTriangle
+	primGroup.SetNumIndices(icount);   // numTriangles
+
+	primGroup.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
+	primGroups.Append(primGroup);
+
+
+    static int totalM2Model = 0;
+	String meshName = "ck_";
+	meshName.AppendInt(totalM2Model);
+	totalM2Model++;
+
+    this->mesh = SharedResourceServer::Instance()->CreateSharedResource(meshName, Mesh::RTTI, StreamMeshLoader::RTTI).downcast<Mesh>();
+	mesh->SetState(Resource::Loaded);
+	mesh->SetVertexBuffer(vertexBuffer);
+	mesh->SetIndexBuffer(indexBuffer);
+	mesh->SetPrimitiveGroups(primGroups);
+
+    
 }
 
 } // namespace Models

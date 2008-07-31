@@ -339,3 +339,13 @@ technique t0<string Mask = "Solid|Terrain4";>
         PixelShader = compile ps_2_0 PixelShaderFunc4();
     }
 }
+
+
+technique t0<string Mask = "Solid";>
+{
+    pass p0
+    {
+        //VertexShader = compile vs_2_0 VertexShaderFunc();
+        //PixelShader = compile ps_2_0 PixelShaderFunc4();
+    }
+}

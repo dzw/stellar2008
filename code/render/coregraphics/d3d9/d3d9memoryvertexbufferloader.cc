@@ -43,6 +43,7 @@ D3D9MemoryVertexBufferLoader::OnLoadRequested()
         (this->vertexBufferUsage==VertexBuffer::UsageDynamic?D3DPOOL_DEFAULT:D3DPOOL_MANAGED),            // Pool
                                                 &d3dVertexBuffer,           // ppVertexBuffer
                                                 NULL);                      // pSharedHandle
+
     n_assert(SUCCEEDED(hr));
     n_assert(0 != d3dVertexBuffer);
 

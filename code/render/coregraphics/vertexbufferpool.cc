@@ -83,7 +83,7 @@ VertexBufferPool::Alloc(void *data)
 		this->freeList.EraseIndex(this->freeList.Size()-1);
         if(data)
         {
-			void* dest = buffer->Map(CoreGraphics::VertexBuffer::MapWriteDiscard, ret, blockSize);
+			void* dest = buffer->Map(CoreGraphics::VertexBuffer::MapWriteNoOverwrite, ret, blockSize);
             if(dest)
             {
 				Memory::Copy(data, dest, blockSize);

@@ -92,7 +92,7 @@ WorldServer::Open()
 	ResourceManager::Instance()->AttachMapper(resMapper.upcast<ResourceMapper>());
 
 	this->chunkCache = TerrainChunkCache::Create();
-	this->chunkCache->CreateChunkCache(256);
+	this->chunkCache->CreateChunkCache(2);
 }
 
 //------------------------------------------------------------------------------
