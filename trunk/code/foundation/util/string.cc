@@ -7,9 +7,10 @@
 
 namespace Util
 {
+#if !NEBULA3_MEMORYPOOL
 Memory::Heap* String::DataHeap = 0;
 Memory::Heap* String::ObjectHeap = 0;
-
+#endif
 //------------------------------------------------------------------------------
 /**
 */
@@ -493,7 +494,11 @@ String::ANSItoUTF8()
 {
     n_assert(!this->IsEmpty());
     SizeT bufSize = this->strLen * 2 + 1;
+#if NEBULA3_MEMORYPOOL
+	char* buffer = (char*) Memory::Alloc(bufSize);
+#else
     char* buffer = (char*) DataHeap->Alloc(bufSize);
+#endif
     char* dstPtr = buffer;
     const char* srcPtr = this->AsCharPtr();
     unsigned char c;
@@ -513,7 +518,11 @@ String::ANSItoUTF8()
     }
     *dstPtr = 0;
     this->SetCharPtr(buffer);
+#if NEBULA3_MEMORYPOOL
+	Memory::Free(buffer);
+#else
     DataHeap->Free(buffer);
+#endif
 }
 
 //------------------------------------------------------------------------------

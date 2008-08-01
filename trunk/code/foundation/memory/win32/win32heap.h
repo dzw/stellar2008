@@ -16,6 +16,7 @@
 #include "threading/criticalsection.h"
 #include "util/array.h"
 #include "util/list.h"
+#include "memory/win32/win32memorypool.h"
 
 //------------------------------------------------------------------------------
 namespace Win32

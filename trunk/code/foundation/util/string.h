@@ -252,8 +252,10 @@ private:
     char localBuffer[LocalStringSize];
     SizeT strLen;
     SizeT heapBufferSize;
+#if !NEBULA3_MEMORYPOOL 
     static Memory::Heap* DataHeap;
     static Memory::Heap* ObjectHeap;
+#endif
 	mutable IndexT hash;
 	mutable bool isDirty;
 };
@@ -264,10 +266,12 @@ private:
 inline void
 String::Setup()
 {
+#if !NEBULA3_MEMORYPOOL
     n_assert(0 == DataHeap);
     n_assert(0 == ObjectHeap);
     ObjectHeap = new Memory::Heap("Util.String.ObjectHeap");
     DataHeap = new Memory::Heap("Util.String.DataHeap");
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -276,8 +280,12 @@ String::Setup()
 inline void*
 String::operator new(size_t size)
 {
-    n_assert(0 != ObjectHeap);
-    return ObjectHeap->Alloc(size);
+#if NEBULA3_MEMORYPOOL
+	return Memory::Alloc(size);
+#else
+	n_assert(0 != ObjectHeap);
+	return ObjectHeap->Alloc(size);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -286,8 +294,12 @@ String::operator new(size_t size)
 inline void
 String::operator delete(void* p)
 {
-    n_assert(0 != ObjectHeap);
-    ObjectHeap->Free(p);
+#if NEBULA3_MEMORYPOOL
+	return Memory::Free(p);
+#else
+	n_assert(0 != ObjectHeap);
+	ObjectHeap->Free(p);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -312,8 +324,12 @@ String::Delete()
 {
     if (this->heapBuffer)
     {
-        n_assert(0 != DataHeap);
-        DataHeap->Free((void*)this->heapBuffer);
+#if NEBULA3_MEMORYPOOL
+        Memory::Free((void*)this->heapBuffer);
+#else
+		n_assert(0 != DataHeap);
+		DataHeap->Free((void*)this->heapBuffer);
+#endif
         this->heapBuffer = 0;
     }
     this->localBuffer[0] = 0;
@@ -339,17 +355,27 @@ String::Allocate(SizeT newSize)
 {
     n_assert(newSize > (this->strLen + 1));
     n_assert(newSize > this->heapBufferSize);
+#if !NEBULA3_MEMORYPOOL
     n_assert(0 != DataHeap);
+#endif
 
     // free old buffer
     if (this->heapBuffer)
     {
-        DataHeap->Free((void*) this->heapBuffer);
+#if NEBULA3_MEMORYPOOL
+        Memory::Free((void*)this->heapBuffer);
+#else
+		DataHeap->Free((void*) this->heapBuffer);
+#endif
         this->heapBuffer = 0;
     }
 
     // allocate new buffer
-    this->heapBuffer = (char*) DataHeap->Alloc(newSize);
+#if NEBULA3_MEMORYPOOL
+	this->heapBuffer = (char*) Memory::Alloc(newSize);
+#else
+	this->heapBuffer = (char*) DataHeap->Alloc(newSize);
+#endif
     this->heapBufferSize = newSize;
     this->localBuffer[0] = 0;
 
@@ -365,11 +391,16 @@ String::Reallocate(SizeT newSize)
 {
     n_assert(newSize > (this->strLen + 1));
     n_assert(newSize > this->heapBufferSize);
+#if !NEBULA3_MEMORYPOOL
     n_assert(0 != DataHeap);
+#endif
 
     // allocate a new buffer
-    char* newBuffer = (char*) DataHeap->Alloc(newSize);
-
+#if NEBULA3_MEMORYPOOL
+    char* newBuffer = (char*) Memory::Alloc(newSize);
+#else
+	char* newBuffer = (char*) DataHeap->Alloc(newSize);
+#endif
     // copy existing contents there...
     if (this->strLen > 0)
     {
@@ -381,7 +412,11 @@ String::Reallocate(SizeT newSize)
     // assign new buffer
     if (this->heapBuffer)
     {
-        DataHeap->Free((void*) this->heapBuffer);
+#if NEBULA3_MEMORYPOOL
+        Memory::Free((void*)this->heapBuffer);
+#else
+		DataHeap->Free((void*) this->heapBuffer);
+#endif
         this->heapBuffer = 0;
     }
     this->localBuffer[0] = 0;

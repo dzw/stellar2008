@@ -8,6 +8,10 @@
 
 namespace Memory
 {
+#if NEBULA3_MEMORYPOOL
+	Win32::MemoryPool* memMalloc = NULL;
+#endif
+
 HANDLE volatile Win32ProcessHeap = 0;
 #if NEBULA3_MEMORY_STATS
 int volatile AllocCount = 0;
@@ -31,6 +35,8 @@ Validate()
 }
 
 #endif
+
+
 } // namespace Memory
 
 

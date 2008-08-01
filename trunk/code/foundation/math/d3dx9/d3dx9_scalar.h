@@ -314,6 +314,16 @@ n_pow(scalar x, scalar y)
     return powf(x, y);
 }
 
+//------------------------------------------------------------------------------
+/**
+    Êý¾Ý¶ÔÆë
+*/
+__forceinline DWORD
+n_iAlign(DWORD ptr, DWORD alignment)
+{
+    return (ptr + alignment - 1) & ~(alignment - 1);
+}
+
 } // namespace Math
 //------------------------------------------------------------------------------
 #endif

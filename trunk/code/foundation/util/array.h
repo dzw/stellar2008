@@ -344,7 +344,7 @@ Array<TYPE>::Grow()
     }
     else
     {
-        growToSize = 2 * this->capacity;
+        growToSize = size + 3*size/8+32; //2 * this->capacity;
     }
     this->GrowTo(growToSize);
 }
