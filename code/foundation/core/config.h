@@ -34,6 +34,8 @@
 // Nebula3's main window class
 #define NEBULA3_WINDOW_CLASS "Nebula3::MainWindow"
 
+// use heap or memory pool
+#define NEBULA3_MEMORYPOOL (1)
 
 //------------------------------------------------------------------------------
 /**

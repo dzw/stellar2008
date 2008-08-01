@@ -13,7 +13,8 @@
     
     (C) 2006 Radon Labs GmbH
 */
-#include "core/types.h"
+//#include "core/types.h"
+#include <windows.h>
 
 //------------------------------------------------------------------------------
 namespace Win32

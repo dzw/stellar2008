@@ -34,6 +34,8 @@ void n_barf2(const char*, const char*, const char*, int) __attribute__((noreturn
 // dx9 specific: check HRESULT and display DX9 specific message box
 #define n_dxtrace(hr, msg) { if (FAILED(hr)) DXTrace(__FILE__,__LINE__,hr,msg,true); }
 
+#define n_verify(exp) n_assert(exp)
+#define n_verify2(exp,imsg) n_assert2(exp,imsg)
 #endif
 //------------------------------------------------------------------------------
 #endif

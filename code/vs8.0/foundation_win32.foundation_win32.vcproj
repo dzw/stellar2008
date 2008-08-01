@@ -1192,6 +1192,14 @@
 					RelativePath="..\foundation\memory/win32\win32memory.h"
 					>
 				</File>
+				<File
+					RelativePath="..\foundation\memory\win32\win32MemoryPool.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\foundation\memory\win32\win32MemoryPool.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1440,6 +1448,10 @@
 			</File>
 			<File
 				RelativePath="..\foundation\threading\safequeue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\foundation\threading\scopelock.h"
 				>
 			</File>
 			<File

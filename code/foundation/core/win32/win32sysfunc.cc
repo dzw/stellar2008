@@ -28,6 +28,7 @@ SysFunc::Setup()
     if (!SetupCalled)
     {
         SetupCalled = true;
+		Memory::CreateAllocator();
         Memory::Heap::Setup();
         Blob::Setup();
         String::Setup();

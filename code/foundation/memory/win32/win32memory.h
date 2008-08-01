@@ -12,14 +12,33 @@
 #include "core/config.h"
 #include "core/debug.h"
 #include "threading/interlocked.h"
+#include "memory/win32/win32memorypool.h"
+#include "threading/scopelock.h"
 
 namespace Memory
 {
+
 extern HANDLE volatile Win32ProcessHeap;
 #if NEBULA3_MEMORY_STATS
-extern int volatile AllocCount;
-extern int volatile AllocSize;
+	extern int volatile AllocCount;
+	extern int volatile AllocSize;
 #endif
+
+#if NEBULA3_MEMORYPOOL
+    extern Win32::MemoryPool *memMalloc;
+#endif
+
+__forceinline void
+CreateAllocator()
+{
+#if NEBULA3_MEMORYPOOL
+	if (!memMalloc)
+	{
+		memMalloc = new Win32::MemoryPool;
+		memMalloc->Init();
+	}
+#endif
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -28,15 +47,20 @@ extern int volatile AllocSize;
 __forceinline void*
 Alloc(size_t size)
 {
-    if (0 == Win32ProcessHeap)
-    {
-        Win32ProcessHeap = GetProcessHeap();
-    }
-    #if NEBULA3_MEMORY_STATS
-    Threading::Interlocked::Increment(AllocCount);
-    Threading::Interlocked::Add(AllocSize, int(size));
-    #endif
-    return HeapAlloc(Win32ProcessHeap, HEAP_GENERATE_EXCEPTIONS, size);
+#if NEBULA3_MEMORYPOOL
+	n_assert(memMalloc);
+	return memMalloc->Malloc(size);
+#else
+	if (0 == Win32ProcessHeap)
+	{
+		Win32ProcessHeap = GetProcessHeap();
+	}
+#if NEBULA3_MEMORY_STATS
+	Threading::Interlocked::Increment(AllocCount);
+	Threading::Interlocked::Add(AllocSize, int(size));
+#endif
+	return HeapAlloc(Win32ProcessHeap, HEAP_GENERATE_EXCEPTIONS, size);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -46,12 +70,17 @@ Alloc(size_t size)
 __forceinline void*
 Realloc(void* ptr, size_t size)
 {
-    n_assert(0 != Win32ProcessHeap);
-    #if NEBULA3_MEMORY_STATS
-    size_t curSize = HeapSize(Win32ProcessHeap, 0, ptr);
-    Threading::Interlocked::Add(AllocSize, int(size - curSize));
-    #endif
-    return HeapReAlloc(Win32ProcessHeap, HEAP_GENERATE_EXCEPTIONS, ptr, size);
+#if NEBULA3_MEMORYPOOL
+	n_assert(memMalloc);
+	return memMalloc->Realloc(ptr, size);
+#else
+	n_assert(0 != Win32ProcessHeap);
+#if NEBULA3_MEMORY_STATS
+	size_t curSize = HeapSize(Win32ProcessHeap, 0, ptr);
+	Threading::Interlocked::Add(AllocSize, int(size - curSize));
+#endif
+	return HeapReAlloc(Win32ProcessHeap, HEAP_GENERATE_EXCEPTIONS, ptr, size);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -61,15 +90,20 @@ Realloc(void* ptr, size_t size)
 __forceinline void
 Free(void* ptr)
 {
-    n_assert(0 != ptr);
-    n_assert(0 != Win32ProcessHeap);
-    #if NEBULA3_MEMORY_STATS
-    n_assert(0 != ptr);
-    size_t size = HeapSize(Win32ProcessHeap, 0, ptr);
-    Threading::Interlocked::Add(AllocSize, -int(size));
-    Threading::Interlocked::Decrement(AllocCount);
-    #endif
-    HeapFree(Win32ProcessHeap, 0, ptr);
+#if NEBULA3_MEMORYPOOL
+	n_assert(memMalloc);
+	return memMalloc->Free(ptr);
+#else
+	n_assert(0 != ptr);
+	n_assert(0 != Win32ProcessHeap);
+#if NEBULA3_MEMORY_STATS
+	n_assert(0 != ptr);
+	size_t size = HeapSize(Win32ProcessHeap, 0, ptr);
+	Threading::Interlocked::Add(AllocSize, -int(size));
+	Threading::Interlocked::Decrement(AllocCount);
+#endif
+	HeapFree(Win32ProcessHeap, 0, ptr);
+#endif
 }
 
 //------------------------------------------------------------------------------

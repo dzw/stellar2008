@@ -43,6 +43,7 @@
 #include <rpc.h>
 #include <dbghelp.h>
 #include <intrin.h>
+#include <mmsystem.h>
 
 // crt headers
 #include <math.h>
