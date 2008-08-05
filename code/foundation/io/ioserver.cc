@@ -9,7 +9,7 @@
 #include "util/stack.h"
 #include "util/crc.h"
 
-#ifndef __NOZIP__
+#ifdef __ZIP__
 #include "io/zipfs/ziparchive.h"
 #include "io/zipfs/zipfilesystem.h"
 #include "io/zipfilestream.h"
@@ -17,8 +17,15 @@
 
 #include "io/assign.h"
 
+#ifdef __MPQ__
 #include "io/mpqfs/mpqfilesystem.h"
 #include "io/mpqfilestream.h"
+#endif
+#ifdef __LPQ__
+#include "io/lpqfs/lpqfilesystem.h"
+#include "io/lpqfilestream.h"
+#endif
+
 namespace IO
 {
 ImplementClass(IO::IoServer, 'IOSV', Core::RefCounted);
@@ -57,13 +64,21 @@ IoServer::IoServer() :
         this->SetAssign(Assign("user", userLocation));
     }
 
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     // setup a zip filesystem singleton
     this->zipFileSystem = ZipFileSystem::Create();
     this->RegisterUriScheme("zip", ZipFileStream::RTTI);
     #endif
+
+	#ifdef __MPQ__
 	this->mpqFileSystem = MPQFileSystem::Create();
 	this->RegisterUriScheme("mpqModel", MPQFileStream::RTTI);
+	#endif
+
+	#ifdef __LPQ__
+	this->lpqFileSystem = LPQFileSystem::Create();
+	this->RegisterUriScheme("lpq", LPQFileStream::RTTI);
+	#endif
 }
 
 //------------------------------------------------------------------------------
@@ -71,12 +86,19 @@ IoServer::IoServer() :
 */
 IoServer::~IoServer()
 {
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     this->zipFileSystem = 0;
     #endif
     
+	#ifdef __MPQ__
 	this->mpqFileSystem = 0;
-    DestructSingleton;
+	#endif
+
+	#ifdef __LPQ__
+	this->lpqFileSystem = 0;
+	#endif
+
+	DestructSingleton;
 }
 
 //------------------------------------------------------------------------------
@@ -136,6 +158,7 @@ IoServer::CreateStream(const URI& uri) const
     n_assert(!uri.IsEmpty());
     n_assert(this->IsUriSchemeRegistered(uri.Scheme()));
 
+	#ifdef __MPQ__
 	if (MPQFileSystem::Instance()->IsMPQFile(uri))
 	{
 		URI newUri = MPQFileSystem::Instance()->ConvertFileToMPQURIIfExists(uri);
@@ -143,7 +166,19 @@ IoServer::CreateStream(const URI& uri) const
 		stream->SetURI(newUri);
 		return stream;
 	}
-	#ifndef __NOZIP__
+	else
+	#endif
+	#ifdef __LPQ__
+	if (LPQFileSystem::Instance()->IsLPQFile(uri))
+	{
+		URI newUri = LPQFileSystem::Instance()->ConvertFileToLPQURIIfExists(uri);
+		Ptr<Stream> stream = (Stream*) this->streamClassRegistry[newUri.Scheme()]->Create();
+		stream->SetURI(newUri);
+		return stream;
+	}
+	else
+	#endif
+	#ifdef __ZIP__
     // check if the URI points into a mounted ZIP archive
     if (this->IsZipFileSystemEnabled())
     {
@@ -161,6 +196,7 @@ IoServer::CreateStream(const URI& uri) const
     }
 }
 
+#ifdef __MPQ__
 //------------------------------------------------------------------------------
 /**
 */
@@ -179,20 +215,41 @@ IoServer::UnmountMPQArchive(const URI& uri)
 {
 	this->mpqFileSystem->Unmount(uri);
 }
+#endif
 
-#ifndef __NOZIP__
+#ifdef __LPQ__
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+IoServer::MountLPQArchive(const URI& uri)
+{
+	Ptr<LPQArchive> lpqArchive = this->lpqFileSystem->Mount(uri);
+	return lpqArchive.isvalid();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+IoServer::UnmountLPQArchive(const URI& uri)
+{
+	this->lpqFileSystem->Unmount(uri);
+}
+#endif
+
+#ifdef __ZIP__
 //------------------------------------------------------------------------------
 /**
 */
 bool
 IoServer::MountZipArchive(const URI& uri)
 {
+	
     Ptr<ZipArchive> zipArchive = this->zipFileSystem->Mount(uri);
     return zipArchive.isvalid();
 }
-#endif
 
-#ifndef __NOZIP__
 //------------------------------------------------------------------------------
 /**
 */
@@ -201,9 +258,8 @@ IoServer::UnmountZipArchive(const URI& uri)
 {
     this->zipFileSystem->Unmount(uri);
 }
-#endif
 
-#ifndef __NOZIP__
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -216,6 +272,7 @@ IoServer::IsZipArchiveMounted(const URI& uri) const
 
 //------------------------------------------------------------------------------
 /**
+	增加目录
 */
 void
 IoServer::SetAssign(const Assign& assign)
@@ -318,16 +375,24 @@ IoServer::ResolveAssignsInString(const String& uriString) const
                     replace.Append("/");
                     replace.Append(postAssignString);
                 }
+				#ifdef __MPQ__
 				// m2文件不需要路径 #####
-				if (/*(result.GetFileExtension() == "m2" && assignString != "m2") ||
-					result.GetFileExtension() == "blp"*/
-					MPQFileSystem::Instance()->IsMPQFile(result))
+				if (MPQFileSystem::Instance()->IsMPQFile(result))
 				{
 					result.Clear();
 					result.Append("mpqModel:///");
 					result.Append(postAssignString);
 				}
 				else
+				#endif
+				#ifdef __LPQ__
+				if (LPQFileSystem::Instance()->IsLPQFile(result))
+				{
+					result.Clear();
+					result.Append("lpq:///");
+					result.Append(postAssignString);
+				}
+				#endif
                 result = replace;
             }
             else break;
@@ -391,7 +456,7 @@ IoServer::CopyFile(const URI& fromUri, const URI& toUri) const
     // transparent zip archive support...
     URI srcUri = fromUri;
     
-    #ifndef __NOZIP__
+    #ifdef __ZIP__
     if (this->IsZipFileSystemEnabled())
     {
         srcUri = ZipFileSystem::Instance()->ConvertFileToZipURIIfExists(fromUri);
@@ -504,7 +569,7 @@ IoServer::DeleteDirectory(const URI& uri) const
 bool
 IoServer::FileExists(const URI& uri) const
 {
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     // transparent zip archive support
     if (this->IsZipFileSystemEnabled())
     {
@@ -528,7 +593,7 @@ IoServer::FileExists(const URI& uri) const
 bool
 IoServer::DirectoryExists(const URI& uri) const
 {
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     // transparent zip archive support
     if (this->IsZipFileSystemEnabled())
     {
@@ -566,7 +631,7 @@ IoServer::IsReadOnly(const URI& uri) const
 {
     n_assert(uri.Scheme() == "file");
 
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     // transparent zip file system support
     if (this->IsZipFileSystemEnabled())
     {
@@ -606,7 +671,7 @@ IoServer::ListFiles(const URI& uri, const String& pattern) const
 {
     n_assert(pattern.IsValid());
 
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     // transparent zip file system support
     if (this->IsZipFileSystemEnabled())
     {
@@ -631,7 +696,7 @@ IoServer::ListDirectories(const URI& uri, const String& pattern) const
 {
     n_assert(pattern.IsValid());
 
-	#ifndef __NOZIP__
+	#ifdef __ZIP__
     // transparent zip file system support
     if (this->IsZipFileSystemEnabled())
     {

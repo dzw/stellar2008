@@ -50,6 +50,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <algorithm>
+#include <time.h>
 
 // DirectX headers
 #if _DEBUG

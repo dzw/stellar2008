@@ -106,7 +106,9 @@ FrameBatch::RenderBatch()
             shaderServer->ResetFeatureBits();
             shaderServer->SetFeatureBits(this->shaderFeatures);
             const Ptr<ModelNode>& modelNode = modelNodes[modelNodeIndex];            
-            modelNode->ApplySharedState();
+			// 资源没准备好，不渲染
+            if (!modelNode->ApplySharedState())
+				continue;
 
             // if lighting mode is Off, we can render all node instances with the same shader
             const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();

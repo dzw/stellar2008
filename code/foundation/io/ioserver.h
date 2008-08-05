@@ -28,13 +28,18 @@
 namespace IO
 {
 
-#ifndef __NOZIP__
+#ifdef __ZIP__
 class ZipFileSystem;
 #endif
-
+#ifdef __MPQ__
+class MPQFileSystem;
+#endif
+#ifdef __LPQ__
+class LPQFileSystem;
+#endif
 class Stream;
 class URI;
-class MPQFileSystem;
+
 
 class IoServer : public Core::RefCounted
 {
@@ -59,6 +64,7 @@ public:
     /// create a stream object for the given uri
     Ptr<Stream> CreateStream(const URI& uri) const;
 
+	#ifdef __ZIP__ 
     /// mount a zip file archive
     bool MountZipArchive(const URI& uri);
     /// unmount a zip file archive
@@ -69,6 +75,7 @@ public:
     void SetZipFileSystemEnabled(bool b);
     /// return true if transparent zip filesystem is enabled
     bool IsZipFileSystemEnabled() const;
+	#endif
 
     /// define a directory assign
     void SetAssign(const Assign& assign);
@@ -112,20 +119,32 @@ public:
     /// list all subdirectories matching a pattern in a directory
     Util::Array<Util::String> ListDirectories(const URI& dir, const Util::String& pattern) const;
 
+	#ifdef __MPQ__
 	bool MountMPQArchive(const URI& uri);
 	void UnmountMPQArchive(const URI& uri);
+	#endif
+
+	#ifdef __LPQ__
+	bool MountLPQArchive(const URI& uri);
+	void UnmountLPQArchive(const URI& uri);
+	#endif
 private:
     bool zipFileSystemEnabled;
     
-    #ifndef __NOZIP__
+    #ifdef __ZIP__
     Ptr<ZipFileSystem> zipFileSystem;
     #endif
-    
+	#ifdef __MPQ__
 	Ptr<MPQFileSystem> mpqFileSystem;
+	#endif
+	#ifdef __LPQ__
+	Ptr<LPQFileSystem> lpqFileSystem;
+	#endif
     Util::HashTable<Util::String,Util::String> assignTable;
     Util::Dictionary<Util::String, const Core::Rtti*> streamClassRegistry;
 };
 
+#ifdef __ZIP__
 //------------------------------------------------------------------------------
 /**
 */
@@ -143,6 +162,7 @@ IoServer::IsZipFileSystemEnabled() const
 {
     return this->zipFileSystemEnabled;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /**

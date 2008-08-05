@@ -21,6 +21,7 @@ Application::Application() :
 {
     ConstructSingleton;
     Core::SysFunc::Setup();
+
 }
 
 //------------------------------------------------------------------------------

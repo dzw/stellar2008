@@ -8,6 +8,7 @@
 #include "debug/minidump.h"
 #include "util/blob.h"
 #include "util/guid.h"
+#include "memory/memory.h"
 
 namespace Win32
 {

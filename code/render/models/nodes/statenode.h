@@ -29,7 +29,7 @@ public:
     /// get overall state of contained resources (Initial, Loaded, Pending, Failed, Cancelled)
     virtual Resources::Resource::State GetResourceState() const;
     /// apply state shared by all my ModelNodeInstances
-    virtual void ApplySharedState();
+    virtual bool ApplySharedState();
     /// get pointer to contained shader instance
     const Ptr<CoreGraphics::ShaderInstance>& GetShaderInstance() const;
 
@@ -43,7 +43,7 @@ protected:
     /// setup a new managed texture variable
     void SetupManagedTextureVariable(const Attr::AttrId& resAttrId, const Ptr<CoreGraphics::ShaderVariable>& var);
     /// update managed texture variables
-    void UpdateManagedTextureVariables();
+    bool UpdateManagedTextureVariables();
 
     class ManagedTextureVariable
     {

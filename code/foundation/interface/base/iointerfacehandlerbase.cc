@@ -72,6 +72,10 @@ IOInterfaceHandlerBase::HandleMessage(const Ptr<Message>& msg)
 	{
 		this->OnParseStream(msg.downcast<Interface::ParseStream>());
 	}
+	else if (msg->CheckId(MountLPQArchive::Id))
+	{
+		this->OnMountLPQArchive(msg.downcast<Interface::MountLPQArchive>());
+	}
 	else if (msg->CheckId(MountMPQArchive::Id))
 	{
 		this->OnMountMPQArchive(msg.downcast<Interface::MountMPQArchive>());
@@ -119,8 +123,22 @@ IOInterfaceHandlerBase::HandleMessage(const Ptr<Message>& msg)
 void
 IOInterfaceHandlerBase::OnMountMPQArchive(const Ptr<Interface::MountMPQArchive>& msg)
 {
+	#ifdef __MPQ__
 	n_printf("IOInterface: MountMPQArchive %s\n", msg->GetURI().AsString().AsCharPtr());
 	IO::IoServer::Instance()->MountMPQArchive(msg->GetURI());
+	#endif
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+IOInterfaceHandlerBase::OnMountLPQArchive(const Ptr<Interface::MountLPQArchive>& msg)
+{
+	#ifdef __LPQ__
+	n_printf("IOInterface: MountLPQArchive %s\n", msg->GetURI().AsString().AsCharPtr());
+	IO::IoServer::Instance()->MountLPQArchive(msg->GetURI());
+	#endif
 }
 
 //------------------------------------------------------------------------------

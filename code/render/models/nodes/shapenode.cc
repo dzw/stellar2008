@@ -101,7 +101,7 @@ ShapeNode::UnloadResources()
 //------------------------------------------------------------------------------
 /**
 */
-void
+bool
 ShapeNode::ApplySharedState()
 {
     n_assert(this->managedMesh.isvalid());
@@ -119,11 +119,15 @@ ShapeNode::ApplySharedState()
     }
     else
     {
+		#if NEBULA3_USEPLACEHOLDER
         mesh->ApplyPrimitives(0);        
+		#endif
+		return false;
     }
 
     // @todo: visible ShapeNodeInstances must provide render feedback (screen size)
     // to our managed mesh!
+	return true;
 }
 
 } // namespace Models

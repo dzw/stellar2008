@@ -112,6 +112,7 @@ RenderApplication::Open()
         // mount asset zip archives
         if (IoServer::Instance()->FileExists("home:export.zip"))
         {
+			#ifdef __ZIP__
             // main thread
             this->ioServer->MountZipArchive("home:export.zip");
 
@@ -119,13 +120,17 @@ RenderApplication::Open()
             Ptr<Interface::MountZipArchive> mountZipArchiveMsg = Interface::MountZipArchive::Create();
             mountZipArchiveMsg->SetURI("home:export.zip");
             this->ioInterface->Send(mountZipArchiveMsg.upcast<Messaging::Message>());
+			#endif
         }
 
+		#ifdef __MPQ__
 		// wow mpq assign		E:\\game\\wow\\data  D:\\game\\World of Warcraft\\Data
 		this->ioServer->SetAssign(Assign("mpq", "D:\\game\\World of Warcraft\\Data"));
 		this->ioServer->SetAssign(Assign("wow", "mpqModel://"));
 		//this->ioServer->RegisterUriScheme("mpqModel", MPQFileStream::RTTI);
 		LoadMPQFile();
+		#endif
+
 #if !__WII__
         // setup debug http server
         this->httpServer = Http::HttpServer::Create();
@@ -466,6 +471,7 @@ RenderApplication::UpdateTime()
     this->time = curTime;
 }
 
+#ifdef __MPQ__
 //------------------------------------------------------------------------------
 /**
 */
@@ -537,4 +543,6 @@ RenderApplication::LoadMPQFile()
 		}
 	}
 }
+#endif
+
 } // namespace App

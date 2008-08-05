@@ -40,8 +40,8 @@ public:
     /// destructor
     virtual ~ModelNode();
 
-    /// apply state shared by all my ModelNodeInstances
-    virtual void ApplySharedState();
+    /// apply state shared by all my ModelNodeInstances 当资源未准备好时返回flash,不渲染（不使用替代物件）
+    virtual bool ApplySharedState();
 
     /// get overall state of contained resources (Initial, Loaded, Pending, Failed, Cancelled)
     virtual Resources::Resource::State GetResourceState() const;
