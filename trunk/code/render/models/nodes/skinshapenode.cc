@@ -57,15 +57,18 @@ SkinShapeNode::CreateNodeInstance() const
     constant across all instance nodes, this only happens once before
     rendering an instance set.
 */
-void
+bool
 SkinShapeNode::ApplySharedState()
 {     
     // set mesh
-    ShapeNode::ApplySharedState();
+    if (!ShapeNode::ApplySharedState())
+		return false;
    
     // set skinned shader feature
     ShaderServer* shdServer = ShaderServer::Instance();
     shdServer->SetFeatureBits(shdServer->FeatureStringToMask("Skinned"));
+
+	return true;
 }
 
 //------------------------------------------------------------------------------

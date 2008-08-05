@@ -307,10 +307,15 @@ ManagedResource::GetResource() const
     {
         return this->resource;
     }
+	#if NEBULA3_USEPLACEHOLDER
     else
     {
         return this->placeholder;
     }
+	#endif
+
+	static Ptr<Resource> tmp;
+	return tmp;
 }
 
 //------------------------------------------------------------------------------

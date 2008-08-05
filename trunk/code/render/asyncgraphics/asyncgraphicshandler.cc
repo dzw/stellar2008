@@ -82,7 +82,9 @@ AsyncGraphicsHandler::Open()
     // FIXME: redundant! IoInterface should be sole IO-Server-Replacement!
     if (IoServer::Instance()->FileExists("home:export.zip"))
     {
+		#ifdef __ZIP__
         this->ioServer->MountZipArchive("home:export.zip");
+		#endif
     }
 
     // setup the required objects, but do not open them, this will

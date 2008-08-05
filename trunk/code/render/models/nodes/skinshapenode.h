@@ -34,7 +34,7 @@ public:
     /// create a model node instance
     virtual Ptr<ModelNodeInstance> CreateNodeInstance() const;    
     /// apply state shared by all my SkinShapeNodeInstances
-    virtual void ApplySharedState();
+    virtual bool ApplySharedState();
 
     /// begin defining mesh fragments
     void BeginFragments(int num);

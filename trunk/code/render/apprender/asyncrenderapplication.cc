@@ -76,6 +76,7 @@ AsyncRenderApplication::Open()
         // mount asset zip archives
         if (IoServer::Instance()->FileExists("home:export.zip"))
         {
+			#ifdef __ZIP__
             // main thread
             this->ioServer->MountZipArchive("home:export.zip");
 
@@ -83,6 +84,7 @@ AsyncRenderApplication::Open()
             Ptr<Interface::MountZipArchive> mountZipArchiveMsg = Interface::MountZipArchive::Create();
             mountZipArchiveMsg->SetURI("home:export.zip");
             this->ioInterface->Send(mountZipArchiveMsg.upcast<Messaging::Message>());
+			#endif
         }
 
         // setup debug http server

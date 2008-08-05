@@ -70,11 +70,12 @@ TerrainNode::~TerrainNode()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+bool 
 TerrainNode::ApplySharedState()
 {
-	StateNode::ApplySharedState();
-    
+	if (!StateNode::ApplySharedState())
+		return false;
+
     String feature;
 	feature.Format("Terrain%d", this->layer);
 
@@ -84,6 +85,8 @@ TerrainNode::ApplySharedState()
     //WorldServer::Instance()->ApplyCache();
     //RenderDevice::Instance()->SetPrimitiveGroup(this->primGroup);
     this->mesh->ApplyPrimitives(0);
+
+	return true;
 }
 
 //------------------------------------------------------------------------------

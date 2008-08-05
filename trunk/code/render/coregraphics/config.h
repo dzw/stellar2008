@@ -23,5 +23,8 @@
 #else
 #define NEBULA3_DIRECT3D_DEVICETYPE D3DDEVTYPE_HAL
 #endif
+
+#define NEBULA3_USEPLACEHOLDER (0)
+
 //------------------------------------------------------------------------------
 #endif

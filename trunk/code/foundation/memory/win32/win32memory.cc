@@ -9,7 +9,7 @@
 namespace Memory
 {
 #if NEBULA3_MEMORYPOOL
-	Win32::MemoryPool* memMalloc = NULL;
+	Win32::MemoryPool* MemMalloc = NULL;
 #endif
 
 HANDLE volatile Win32ProcessHeap = 0;

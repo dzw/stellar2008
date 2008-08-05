@@ -171,7 +171,7 @@ StateNode::SetupManagedTextureVariable(const AttrId& attrId, const Ptr<ShaderVar
     the actual texture of a managed texture may change from frame to frame
     because of resource management.
 */
-void
+bool
 StateNode::UpdateManagedTextureVariables()
 {
     // @todo: don't update if contained texture hasn't changed,
@@ -181,24 +181,32 @@ StateNode::UpdateManagedTextureVariables()
     {
         const Ptr<ManagedTexture>& tex = this->managedTextureVariables[i].managedTexture;
         const Ptr<ShaderVariable>& var = this->managedTextureVariables[i].shaderVariable;
+
+		if (!tex->GetTexture().isvalid())
+			return false;
+		
         var->SetTexture(tex->GetTexture());
     }
+	return true;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-void
+bool
 StateNode::ApplySharedState()
 {
     // up to parent class
     TransformNode::ApplySharedState();
 
     // apply managed textures (actually contained texture may have changed)
-    this->UpdateManagedTextureVariables();
+    if (!this->UpdateManagedTextureVariables())
+		return false;
 
     // set our shader instance as current
     ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
+
+	return true;
 }
 
 } // namespace Models

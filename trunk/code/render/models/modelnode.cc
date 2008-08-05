@@ -158,10 +158,11 @@ ModelNode::GetResourceState() const
     constant across all instance nodes, this only happens once before
     rendering an instance set.
 */
-void
+bool
 ModelNode::ApplySharedState()
 {
     // n_printf("ModelNode::ApplySharedState() called on '%s'!\n", this->GetName().Value().AsCharPtr());
+	return true;
 }
 
 //------------------------------------------------------------------------------

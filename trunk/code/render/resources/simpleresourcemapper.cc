@@ -19,8 +19,10 @@ using namespace Util;
 SimpleResourceMapper::SimpleResourceMapper() :
     resourceClass(0),
     resLoaderClass(0),
-    managedResourceClass(0),
-    placeholderResource(0)
+    managedResourceClass(0)
+	#if NEBULA3_USEPLACEHOLDER
+    ,placeholderResource(0)
+	#endif
 {
     // empty
 }
@@ -59,6 +61,7 @@ SimpleResourceMapper::OnAttachToResourceManager()
     n_assert(this->managedResources.IsEmpty());
     n_assert(this->pendingResources.IsEmpty());
 
+	#if NEBULA3_USEPLACEHOLDER
     // load placeholder resource
     this->placeholderResource = (Resource*) this->resourceClass->Create();
     this->placeholderResource->SetResourceId(this->placeholderResourceId);
@@ -70,6 +73,7 @@ SimpleResourceMapper::OnAttachToResourceManager()
         n_error("SimpleResourceMapper::OnAttachToServer(): could not not load placeholder resource '%s' of class '%s'!",
             this->placeholderResourceId.Value().AsCharPtr(), this->resourceClass->GetName().AsCharPtr());
     }
+	#endif
 }
 
 //------------------------------------------------------------------------------
@@ -92,10 +96,12 @@ SimpleResourceMapper::OnRemoveFromResourceManager()
 	this->managedResources.Clear();
     n_assert(this->pendingResources.IsEmpty());
 
+	#if NEBULA3_USEPLACEHOLDER
     // unload the placeholder resource
     this->placeholderResource->Unload();
     this->placeholderResource->SetLoader(0);
     this->placeholderResource = 0;
+	#endif
 
     // finally call parent class
     ResourceMapper::OnRemoveFromResourceManager();
@@ -132,7 +138,9 @@ SimpleResourceMapper::OnCreateManagedResource(const Rtti& resType, const Resourc
     managedResource->IncrClientCount();
     managedResource->SetResourceId(resId);
     managedResource->SetResourceType(&this->GetResourceType());
+	#if NEBULA3_USEPLACEHOLDER
     managedResource->SetPlaceholder(this->placeholderResource);
+	#endif
     this->managedResources.Add(resId.Value(), managedResource);
 
     // check if the resource already exists as shared resource

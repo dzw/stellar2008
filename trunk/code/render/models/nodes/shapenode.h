@@ -30,7 +30,7 @@ public:
     /// get overall state of contained resources (Initial, Loaded, Pending, Failed, Cancelled)
     virtual Resources::Resource::State GetResourceState() const;
     /// apply state shared by all my ModelNodeInstances
-    virtual void ApplySharedState();
+    virtual bool ApplySharedState();
 	
     /// get managed mesh
     const Ptr<Resources::ManagedMesh>& GetManagedMesh() const;

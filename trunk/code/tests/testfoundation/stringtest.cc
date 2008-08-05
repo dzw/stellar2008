@@ -206,30 +206,34 @@ StringTest::Run()
     str.ReplaceIllegalFilenameChars('_');
     this->Verify(str == "gfxlib___dummies_()cube");
 
-	n_printf("==========================================start string================\n");
-	Timing::Timer t;
-	t.Start();
-	for (int i = 0; i < 1000000; i++ )
-	{
-		String *sss = new String("sss");
-	}
-	t.Stop();
-	Timing::Time tt = t.GetTime();
-	n_printf("==========================================end string================\n");
-	n_printf("%f", tt);
+	//n_printf("==========================================start string================\n");
+	//Timing::Timer t;
+	//t.Start();
+	//for (int i = 0; i < 10000000; i++ )
+	//{
+	//	int *sss = new int;
+	//}
+	//t.Stop();
+	//Timing::Time tt = t.GetTime();
+	//n_printf("%f\n", tt);
+	//n_printf("==========================================end string================\n");
+	//
 
-	/*n_printf("==========================================start string================\n");
-	str.Clear();
-	t.Reset();
-	t.Start();
-	for (int i = 0; i < 5000000; i++ )
-	{
-		str += "1";
-	}
-	t.Stop();
-	tt = t.GetTime();
-	n_printf("==========================================end string================\n");
-	n_printf("%f", tt);*/
+	//Memory::MemoryStack mm;
+	//mm.Init(65536);
+	//Memory::MemoryMark memMark(mm);
+
+	//n_printf("===================================START string================\n");
+	//t.Reset();
+	//t.Start();
+	//for (int i = 0; i < 10000000; i++)
+	//{
+	//	int *sss = new(mm, 1, 8)int;
+	//}
+	//t.Stop();
+	//tt = t.GetTime();
+	//n_printf("%f\n", tt);
+	//n_printf("===================================END string================\n");
 
 	getchar();
 }

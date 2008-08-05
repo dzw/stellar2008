@@ -26,7 +26,7 @@ public:
     virtual ~TerrainNode();
 
 	/// apply state shared by all my ModelNodeInstances
-	virtual void ApplySharedState();
+	virtual bool ApplySharedState();
     virtual Resources::Resource::State GetResourceState() const;
 	virtual void LoadResource();
 

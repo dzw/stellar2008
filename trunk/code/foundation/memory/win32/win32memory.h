@@ -12,8 +12,8 @@
 #include "core/config.h"
 #include "core/debug.h"
 #include "threading/interlocked.h"
+#include "memory/win32/win32mm.h"
 #include "memory/win32/win32memorypool.h"
-#include "threading/scopelock.h"
 
 namespace Memory
 {
@@ -25,17 +25,17 @@ extern HANDLE volatile Win32ProcessHeap;
 #endif
 
 #if NEBULA3_MEMORYPOOL
-    extern Win32::MemoryPool *memMalloc;
+    extern Win32::MemoryPool *MemMalloc;
 #endif
 
 __forceinline void
 CreateAllocator()
 {
 #if NEBULA3_MEMORYPOOL
-	if (!memMalloc)
+	if (!MemMalloc)
 	{
-		memMalloc = new Win32::MemoryPool;
-		memMalloc->Init();
+		MemMalloc = new Win32::MemoryPool;
+		MemMalloc->Init();
 	}
 #endif
 }
@@ -48,8 +48,8 @@ __forceinline void*
 Alloc(size_t size)
 {
 #if NEBULA3_MEMORYPOOL
-	n_assert(memMalloc);
-	return memMalloc->Malloc(size);
+	n_assert(MemMalloc);
+	return MemMalloc->Malloc(size);
 #else
 	if (0 == Win32ProcessHeap)
 	{
@@ -71,8 +71,8 @@ __forceinline void*
 Realloc(void* ptr, size_t size)
 {
 #if NEBULA3_MEMORYPOOL
-	n_assert(memMalloc);
-	return memMalloc->Realloc(ptr, size);
+	n_assert(MemMalloc);
+	return MemMalloc->Realloc(ptr, size);
 #else
 	n_assert(0 != Win32ProcessHeap);
 #if NEBULA3_MEMORY_STATS
@@ -91,8 +91,8 @@ __forceinline void
 Free(void* ptr)
 {
 #if NEBULA3_MEMORYPOOL
-	n_assert(memMalloc);
-	return memMalloc->Free(ptr);
+	n_assert(MemMalloc);
+	return MemMalloc->Free(ptr);
 #else
 	n_assert(0 != ptr);
 	n_assert(0 != Win32ProcessHeap);
@@ -108,69 +108,16 @@ Free(void* ptr)
 
 //------------------------------------------------------------------------------
 /**
-    Copy a chunk of memory (note the argument order is different 
-    from memcpy()!!!)
-*/
-__forceinline void
-Copy(const void* from, void* to, size_t numBytes)
-{
-    if (numBytes > 0)
-    {
-        n_assert(0 != from);
-        n_assert(0 != to);
-        n_assert(from != to);
-        CopyMemory(to, from, numBytes);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Overwrite a chunk of memory with 0's.
-*/
-__forceinline void
-Clear(void* ptr, size_t numBytes)
-{
-    ZeroMemory(ptr, numBytes);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Duplicate a 0-terminated string.
+Duplicate a 0-terminated string.
 */
 __forceinline char*
 DuplicateCString(const char* from)
 {
-    n_assert(0 != from);
-    size_t len = (unsigned int) strlen(from) + 1;
-    char* to = (char*) Memory::Alloc(len);
-    Memory::Copy((void*)from, to, len);
-    return to;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the system's total current memory, this does not only include
-    Nebula3's memory allocations but the memory usage of the entire system.
-*/
-struct MemoryStatus
-{
-    unsigned int totalPhysical;
-    unsigned int availPhysical;
-    unsigned int totalVirtual;
-    unsigned int availVirtual;
-};
-
-inline MemoryStatus
-GetMemoryStatus()
-{
-    MEMORYSTATUS stats = { NULL };
-    GlobalMemoryStatus(&stats);
-    MemoryStatus result;
-    result.totalPhysical = (unsigned int) stats.dwTotalPhys;
-    result.availPhysical = (unsigned int) stats.dwAvailPhys;
-    result.totalVirtual  = (unsigned int) stats.dwTotalVirtual;
-    result.availVirtual  = (unsigned int) stats.dwAvailVirtual;
-    return result;
+	n_assert(0 != from);
+	size_t len = (unsigned int) strlen(from) + 1;
+	char* to = (char*) Memory::Alloc(len);
+	Memory::Copy((void*)from, to, len);
+	return to;
 }
 
 //------------------------------------------------------------------------------
@@ -231,6 +178,7 @@ __cdecl operator delete[](void* p)
 {
     Memory::Free(p);
 }
+
 
 #define n_new(type) new type
 #define n_new_array(type,size) new type[size]
