@@ -592,8 +592,8 @@ D3D9RenderDevice::Draw()
         HRESULT hr;
         hr = this->d3d9Device->DrawIndexedPrimitive(
                 d3dPrimType,                                        // Type
-                0,                                                  // BaseVertexIndex
-                this->primitiveGroup.GetBaseVertex(),               // MinIndex
+                this->primitiveGroup.GetBaseVertex(),               // BaseVertexIndex
+                0,									                // MinIndex
                 this->primitiveGroup.GetNumVertices(),              // NumVertices
                 this->primitiveGroup.GetBaseIndex(),                // StartIndex
                 this->primitiveGroup.GetNumPrimitives());           // PrimitiveCount
