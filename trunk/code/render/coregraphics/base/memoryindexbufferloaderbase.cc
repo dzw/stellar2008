@@ -67,7 +67,7 @@ MemoryIndexBufferLoaderBase::Setup(IndexType::Code type, SizeT num,  SizeT numBy
     this->indexDataPtr = 0;
 		
 	this->indexBufferUsage = usage;
-	this->accessMode = accessMode;
+	this->accessMode = access;
 	
 
 }
@@ -93,7 +93,7 @@ MemoryIndexBufferLoaderBase::Setup(IndexType::Code type, SizeT num, void* ptr, S
     this->indexDataSize = numBytes;
 		
 	this->indexBufferUsage = usage;
-	this->accessMode = accessMode;
+	this->accessMode = access;
 	
 
 }
