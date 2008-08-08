@@ -5,6 +5,16 @@
 /**
 	动态mesh缓冲池，相同的索引，动态分配顶点
 	
+	this->meshPool = MeshPool::Create();
+	this->meshPool->Reset(ResourceId("aa"), sizeof(MeshTest), vertexSize, 3, indexSize, vertexComponents);
+	iii = this->meshPool->LockIndexed();
+	Memory::Copy(indices, iii, indexSize*sizeof(WORD));
+	this->meshPool->UnlockIndexed();
+
+	this->curGroup = this->meshPool->Alloc(vertices);
+
+	在用到的地方调用ApplyPrimitive设置渲染哪组缓冲（偏移位置）
+
 	2008 cTuo
 */    
 #include "coregraphics/dynamicmesh.h"

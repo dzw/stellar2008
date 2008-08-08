@@ -57,7 +57,7 @@ __cdecl main()
 
     // setup and run test runner
     Ptr<TestRunner> testRunner = TestRunner::Create();
-	testRunner->AttachTestCase(LpqFSTest::Create());
+	//testRunner->AttachTestCase(LpqFSTest::Create());
     testRunner->AttachTestCase(Matrix44Test::Create());
     testRunner->AttachTestCase(Float4Test::Create());
     testRunner->AttachTestCase(AtomTest::Create());

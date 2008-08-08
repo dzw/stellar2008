@@ -3,9 +3,21 @@
 //------------------------------------------------------------------------------
 /**
     @class DynamicMesh
-    
-	调用AddPrimitiveGroup增加多个渲染组，动态更新每组。
 
+	this->dynaMesh = DynamicMesh::Create();
+	this->dynaMesh->Initialize(ResourceId("d"), PrimitiveTopology::TriangleList, vertexComponents, true, vertexSize*2, indexSize);
+	this->dynaMesh->AddPrimitiveGroup(primGroups);
+	void* v;
+	this->dynaMesh->Begin(v, vertexSize*sizeof(MeshTest), vertexSize*sizeof(MeshTest));
+	Memory::Copy(vertices, v, vertexSize*sizeof(MeshTest));
+	//Memory::Copy(vertices, (char*)v+(vertexSize*sizeof(MeshTest)), vertexSize*sizeof(MeshTest));
+	this->dynaMesh->End();
+	ushort* iii;
+	this->dynaMesh->BeginIndexed(iii);
+	Memory::Copy(indices, iii, indexSize*sizeof(WORD));
+	this->dynaMesh->EndIndexed();
+
+	调用AddPrimitiveGroup增加多个渲染组，动态更新每组。
     (C) 2008 cTuo
 */
 

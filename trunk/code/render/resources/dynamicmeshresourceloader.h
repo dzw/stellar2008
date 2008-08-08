@@ -163,6 +163,7 @@ DynamicMeshResourceLoader::SetVertexAccessMode(CoreGraphics::VertexBuffer::Acces
 inline void 
 DynamicMeshResourceLoader::SetIndexBufferType(CoreGraphics::IndexType::Code type)
 {
+	this->indexBufferType = type;
 }
 //------------------------------------------------------------------------------
 /**

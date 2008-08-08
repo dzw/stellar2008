@@ -89,7 +89,7 @@ DXUTCameraUtil::ViewChange()
 	at.w() = 1.0f;
 	float4 upp = up;
 	upp.w() = 1.0f;
-	this->cameraTransform = matrix44::lookatrh(eye, at, upp);
+	this->cameraTransform = matrix44::lookatlh(eye, at, upp);
 
 	//float4 r0, r1, r2, r3;
 	//vector zaxis = vector::normalize(lookAt - right);

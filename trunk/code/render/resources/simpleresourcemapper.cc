@@ -54,7 +54,9 @@ SimpleResourceMapper::OnAttachToResourceManager()
     n_assert2(0 != this->resourceClass, "SimpleResourceMapper::SetResourceClass() not called!");
     n_assert2(0 != this->managedResourceClass, "SimpleResourceMapper::SetManagedResourceClass() not called!");
     n_assert2(0 != this->resLoaderClass, "SimpleResourceMapper::SetResourceLoaderClass() not called!");
-    n_assert2(this->placeholderResourceId.IsValid(), "SimpleResourceMapper::SetPlaceholderResourceId() not called!"); 
+	#if NEBULA3_USEPLACEHOLDER
+	n_assert2(this->placeholderResourceId.IsValid(), "SimpleResourceMapper::SetPlaceholderResourceId() not called!"); 
+	#endif
 
     // call parent class
     ResourceMapper::OnAttachToResourceManager();
