@@ -1,7 +1,7 @@
 #include "stdneb.h"
 #include "dynamicmeshresourceloader.h"
 #include "coregraphics/mesh.h"
-
+#include "coregraphics/indextype.h"
 
 namespace Resources
 {
@@ -59,7 +59,7 @@ DynamicMeshResourceLoader::OnLoadRequested()
 	n_assert(this->vertexWidth > 0);
 	
 	//check if a index buffer should be initialized
-	if(0 > this->numIndices)
+	if(0 < this->numIndices)
 	{
 		this->indexBufferLoader = CoreGraphics::MemoryIndexBufferLoader::Create();
 		n_assert(this->indexBufferLoader.isvalid());
@@ -67,13 +67,15 @@ DynamicMeshResourceLoader::OnLoadRequested()
 		if(0 == this->indexData)
 		{
 			this->indexBufferLoader->Setup(this->indexBufferType,this->numIndices,
-											this->indexBufferType * numVertices,this->indexUsage,
+											CoreGraphics::IndexType::SizeOf(this->indexBufferType) * this->numIndices,
+											this->indexUsage,
 											this->indexAccessMode);
 		}
 		else
 		{
 			this->indexBufferLoader->Setup(this->indexBufferType,this->numIndices,this->indexData,
-											this->indexBufferType * numVertices,this->indexUsage,
+											CoreGraphics::IndexType::SizeOf(this->indexBufferType) * this->numIndices,
+											this->indexUsage,
 											this->indexAccessMode);
 		}
 		//setup index buffer

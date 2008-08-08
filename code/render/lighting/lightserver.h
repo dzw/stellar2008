@@ -11,10 +11,12 @@
     (C) 2007 Radon Labs GmbH
 */
 #if (__WIN32__ || __XBOX360__)
-#include "lighting/sm30/sm30lightserver.h"
+//#include "lighting/sm30/sm30lightserver.h"
+#include "lighting/base/lightserverbase.h"
+
 namespace Lighting
 {
-class LightServer : public SM30LightServer
+class LightServer : public LightServerBase/*SM30LightServer*/
 {
     DeclareClass(LightServer);
     DeclareSingleton(LightServer);

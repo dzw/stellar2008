@@ -71,7 +71,7 @@ WorldServer::~WorldServer()
 void
 WorldServer::Open()
 {
-    n_assert(!this->IsOpen())
+    n_assert(!this->IsOpen());
     this->isOpen = true;
 
 	// setup resource mapper for world

@@ -12,6 +12,8 @@ namespace Memory
 	Win32::MemoryPool* MemMalloc = NULL;
 #endif
 
+MemoryStack MemStack;
+
 HANDLE volatile Win32ProcessHeap = 0;
 #if NEBULA3_MEMORY_STATS
 int volatile AllocCount = 0;

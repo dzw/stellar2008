@@ -147,8 +147,10 @@ IOInterfaceHandlerBase::OnMountLPQArchive(const Ptr<Interface::MountLPQArchive>&
 void
 IOInterfaceHandlerBase::OnMountZipArchive(const Ptr<Interface::MountZipArchive>& msg)
 {
+	#ifdef __ZIP__
     n_printf("IOInterface: MountZipArchive %s\n", msg->GetURI().AsString().AsCharPtr());
     IO::IoServer::Instance()->MountZipArchive(msg->GetURI());
+	#endif
 }
 
 //------------------------------------------------------------------------------

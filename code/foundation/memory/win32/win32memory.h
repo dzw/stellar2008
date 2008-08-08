@@ -14,6 +14,7 @@
 #include "threading/interlocked.h"
 #include "memory/win32/win32mm.h"
 #include "memory/win32/win32memorypool.h"
+#include "memory/win32/win32memstack.h"
 
 namespace Memory
 {
@@ -28,6 +29,8 @@ extern HANDLE volatile Win32ProcessHeap;
     extern Win32::MemoryPool *MemMalloc;
 #endif
 
+extern	MemoryStack MemStack;
+
 __forceinline void
 CreateAllocator()
 {
@@ -36,6 +39,8 @@ CreateAllocator()
 	{
 		MemMalloc = new Win32::MemoryPool;
 		MemMalloc->Init();
+
+		MemStack.Init(65536);
 	}
 #endif
 }

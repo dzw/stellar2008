@@ -8,7 +8,7 @@
 namespace Lighting
 {
 #if (__WIN32__ || __XBOX360__)
-ImplementClass(Lighting::LightServer, 'LISV', Lighting::SM30LightServer);
+ImplementClass(Lighting::LightServer, 'LISV', Lighting::LightServerBase/*SM30LightServer*/);
 #elif __WII__
 ImplementClass(Lighting::LightServer, 'LISV', Lighting::WiiLightServer);
 #else

@@ -207,33 +207,33 @@ StringTest::Run()
     this->Verify(str == "gfxlib___dummies_()cube");
 
 	//n_printf("==========================================start string================\n");
-	//Timing::Timer t;
+	Timing::Timer t;
 	//t.Start();
 	//for (int i = 0; i < 10000000; i++ )
 	//{
 	//	int *sss = new int;
 	//}
 	//t.Stop();
-	//Timing::Time tt = t.GetTime();
+	Timing::Time tt = t.GetTime();
 	//n_printf("%f\n", tt);
 	//n_printf("==========================================end string================\n");
 	//
 
-	//Memory::MemoryStack mm;
-	//mm.Init(65536);
-	//Memory::MemoryMark memMark(mm);
+	/*Memory::MemoryStack mm;
+	mm.Init(65536);*/
+	Memory::MemoryMark memMark(Memory::MemStack);
 
-	//n_printf("===================================START string================\n");
-	//t.Reset();
-	//t.Start();
-	//for (int i = 0; i < 10000000; i++)
-	//{
-	//	int *sss = new(mm, 1, 8)int;
-	//}
-	//t.Stop();
-	//tt = t.GetTime();
-	//n_printf("%f\n", tt);
-	//n_printf("===================================END string================\n");
+	n_printf("===================================START string================\n");
+	t.Reset();
+	t.Start();
+	for (int i = 0; i < 10000000; i++)
+	{
+		int *sss = new(Memory::MemStack/*, 1, 8*/)int;
+	}
+	t.Stop();
+	tt = t.GetTime();
+	n_printf("%f\n", tt);
+	n_printf("===================================END string================\n");
 
 	getchar();
 }

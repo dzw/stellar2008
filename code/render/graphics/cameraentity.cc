@@ -22,7 +22,8 @@ CameraEntity::CameraEntity() :
 {
     this->SetType(CameraType);
     float aspectRatio = DisplayDevice::Instance()->GetDisplayMode().GetAspectRatio();
-    this->SetupPerspectiveFov(n_deg2rad(60.0f), aspectRatio, 0.01f, 500.0f);
+    //this->SetupPerspectiveFov(n_deg2rad(60.0f), aspectRatio, 0.01f, 500.0f);
+	this->SetupPerspectiveFov(n_deg2rad(45.0f), aspectRatio, 0.01f, 2000.0f);
     this->viewMatrix = matrix44::identity();
     this->viewProjMatrix = matrix44::identity();
 }
@@ -101,7 +102,7 @@ CameraEntity::SetupPerspectiveFov(float fov_, float aspect_, float zNear_, float
     this->fov     = fov_;
     this->aspect  = aspect_;
 
-    this->projMatrix = matrix44::perspfovrh(this->fov, this->aspect, this->zNear, this->zFar);
+    this->projMatrix = matrix44::perspfovlh(this->fov, this->aspect, this->zNear, this->zFar);
 
     this->nearWidth  = 2.0f * this->zNear / this->projMatrix.getrow0().x();
     this->nearHeight = 2.0f * this->zNear / this->projMatrix.getrow1().y();

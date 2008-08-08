@@ -13,7 +13,8 @@
 namespace Memory
 {
 // Default boundary to align memory allocations on.
-enum {DEFAULT_ALIGNMENT = 8};
+//enum {DEFAULT_ALIGNMENT = 8};
+#define DEFAULT_ALIGNMENT 8
 
 // Enums for specifying memory allocation type.
 enum EMemZeroed {MEM_Zeroed=1};
@@ -174,38 +175,38 @@ template <class T> inline T* NewOned( Memory::MemoryStack& Mem, size_t Count=1, 
 MemoryStack operator new's.
 -----------------------------------------------------------------------------*/
 // Operator new for typesafe memory stack allocation.
-inline void* operator new( size_t Size, Memory::MemoryStack& Mem, size_t Count, size_t Align )
+inline void* operator new( size_t Size, Memory::MemoryStack& Mem, size_t Count=1, size_t Align=DEFAULT_ALIGNMENT )
 {
 	// Get uninitialized memory.
 	return Mem.PushBytes( Size*Count, Align );
 }
-inline void* operator new( size_t Size, Memory::MemoryStack& Mem, Memory::EMemZeroed Tag, size_t Count, size_t Align )
+inline void* operator new( size_t Size, Memory::MemoryStack& Mem, Memory::EMemZeroed Tag, size_t Count=1, size_t Align=DEFAULT_ALIGNMENT )
 {
 	// Get zero-filled memory.
 	BYTE* Result = Mem.PushBytes( Size*Count, Align );
 	Memory::Clear( Result, Size*Count );
 	return Result;
 }
-inline void* operator new( size_t Size, Memory::MemoryStack& Mem, Memory::EMemOned Tag, size_t Count, size_t Align )
+inline void* operator new( size_t Size, Memory::MemoryStack& Mem, Memory::EMemOned Tag, size_t Count=1, size_t Align=DEFAULT_ALIGNMENT )
 {
 	// Get one-filled memory.
 	BYTE* Result = Mem.PushBytes( Size*Count, Align );
 	Memory::Fill( Result, 0xff, Size*Count );
 	return Result;
 }
-inline void* operator new[]( size_t Size, Memory::MemoryStack& Mem, size_t Count, size_t Align )
+inline void* operator new[]( size_t Size, Memory::MemoryStack& Mem, size_t Count=1, size_t Align=DEFAULT_ALIGNMENT )
 {
 	// Get uninitialized memory.
 	return Mem.PushBytes( Size*Count, Align );
 }
-inline void* operator new[]( size_t Size, Memory::MemoryStack& Mem, Memory::EMemZeroed Tag, size_t Count, size_t Align )
+inline void* operator new[]( size_t Size, Memory::MemoryStack& Mem, Memory::EMemZeroed Tag, size_t Count=1, size_t Align=DEFAULT_ALIGNMENT )
 {
 	// Get zero-filled memory.
 	BYTE* Result = Mem.PushBytes( Size*Count, Align );
 	Memory::Clear( Result, Size*Count );
 	return Result;
 }
-inline void* operator new[]( size_t Size, Memory::MemoryStack& Mem, Memory::EMemOned Tag, size_t Count, size_t Align )
+inline void* operator new[]( size_t Size, Memory::MemoryStack& Mem, Memory::EMemOned Tag, size_t Count=1, size_t Align=DEFAULT_ALIGNMENT )
 {
 	// Get one-filled memory.
 	BYTE* Result = Mem.PushBytes( Size*Count, Align );
