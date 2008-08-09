@@ -2413,6 +2413,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\kokterrain\terraininstance.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\kokterrain\terraininstance.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\kokterrain\terrainmeshgrid.cc"
 				>
 			</File>
