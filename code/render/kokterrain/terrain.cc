@@ -349,6 +349,10 @@ Terrain::LoadDistrict(int x, int z)
 	newNode->SetPosition(x, z);
 	this->AttachNode(newNode.upcast<Models::ModelNode>());
 
+	Ptr<ModelNodeInstance> nodeInstance = newNode->CreateNodeInstance();
+	nodeInstance->OnAttachToModelInstance(this, modelNode, NULL);
+	this->nodeInstances.Append(nodeInstance);
+
 	return newNode;
 }
 

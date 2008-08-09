@@ -63,10 +63,10 @@ public:
     const Ptr<ModelNodeInstance>& LookupNodeInstanceByRTTI(const Core::Rtti& rtti) const;
 
     /// perform per-frame update (after setting transform, visibility, time, etc)
-    void Update();
+    virtual void Update();
 
     /// render node specific debug shape
-    void RenderDebug();
+    virtual void RenderDebug();
 
     /// set all modelnode instances visible
     void SetAllNodeInstancesVisible(bool b);
