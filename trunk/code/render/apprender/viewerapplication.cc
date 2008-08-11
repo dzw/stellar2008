@@ -172,8 +172,8 @@ ViewerApplication::OnProcessInput()
         this->mayaCameraUtil.SetMouseMovement(mouse->GetMovement());
         
         this->dxutCameraUtil.SetMouseMovement(mouse->GetMovement());
-		if (mouse->WheelBackward() || mouse->WheelForward())
-			this->dxutCameraUtil.MoveVertical(mouse->WheelBackward());
+		this->dxutCameraUtil.MoveUp(mouse->WheelBackward());
+		this->dxutCameraUtil.MoveDown(mouse->WheelForward());
 		this->dxutCameraUtil.SetLeftButton(mouse->ButtonPressed(MouseButton::LeftButton));
 		/*this->quaternionCameraUtil.SetMouseMovement(mouse->GetMovement());
 		this->quaternionCameraUtil.SetLeftButton(mouse->ButtonPressed(MouseButton::LeftButton));*/
@@ -249,13 +249,21 @@ ViewerApplication::OnProcessInput()
 		}
 		if (keyboard->KeyPressed(Key::D))
 		{
-			kbDir.x() -= 0.1f;
+			// right hand
+			//kbDir.x() -= 0.1f;
+
+			// left hand
+			kbDir.x() += 0.1f;
 
 			this->freeCameraUtil.MoveRight(moveScaler);
 		}
 		if (keyboard->KeyPressed(Key::A))
 		{
-			kbDir.x() += 0.1f;
+			// right hand
+			//kbDir.x() += 0.1f;
+
+			// left hand
+			kbDir.x() -= 0.1f;
 
 			this->freeCameraUtil.MoveRight(-moveScaler);
 		}

@@ -8,7 +8,6 @@
     (C) 2008 cTuo
 */
 #include "models/model.h"
-#include "coregraphics/meshpool.h"
 #include "kokterrain/terraindef.h"
 #include "kokterrain/terraininfo.h"
 #include "kokterrain/terrainmeshgrid.h"
@@ -28,6 +27,7 @@ public:
     /// destructor
     virtual ~Terrain();
 
+	virtual Ptr<Models::ModelInstance> CreateInstance();
     /// unload the resource, or cancel the pending load
     virtual void Unload();
 
@@ -45,24 +45,18 @@ public:
 	float GetHight(int x, int z);
 	/// 返回一个district的大小
 	int GetDistrictSize()const;
-
-	/// 顶点缓冲
-	const Ptr<CoreGraphics::MeshPool>& GetMeshPool()const;
-	/// 更新缓冲区
-	void UpdateMeshPool();
+	
 
 	void SetMapSize(SizeT size);
 
-	bool CheckValidDistrict(int x, int z);
-	void CheckDistrict(const Math::vector& pos);
-	void EnterDistrict(int x, int z);
-	Ptr<DistrictNode> LoadDistrict(int x, int z);
+	///
+	const Ptr<TerrainMeshGrid>& GetTerrainMeshGrid()const;
+	///
+	Ptr<DistrictNode> CreateNewDistrict(int x, int z);
 protected:
 	friend class TerrainReader;
 
 	void UpdateTileTex(int iX, int iY);
-
-	Ptr<CoreGraphics::MeshPool> distMeshPool;
 
 	/// 基础信息
     TerrainInfo					terrInfo;
@@ -77,10 +71,14 @@ protected:
 
 	ThingTex**					thingTex;			// 地表各层贴图ID
 
-	Ptr<DistrictNode>			centerDist;			// 中心位置的District
-	int							curX;				// 当前位置
-	int							curZ;
+	
 };
+
+inline const Ptr<TerrainMeshGrid>& 
+Terrain::GetTerrainMeshGrid()const
+{
+	return this->terrMeshGrid;
+}
 
 inline SizeT 
 Terrain::DistrictPos2TilePos(SizeT x, SizeT z)
@@ -112,11 +110,7 @@ Terrain::GetMapWide()
 	return this->terrInfo.GetTileCountX();
 }
 
-inline const Ptr<CoreGraphics::MeshPool>& 
-Terrain::GetMeshPool()const
-{
-	return this->distMeshPool;
-}
+
 
 } // namespace Models
 //------------------------------------------------------------------------------

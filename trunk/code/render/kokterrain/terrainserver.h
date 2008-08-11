@@ -16,6 +16,7 @@
 #include "graphics/cameraentity.h"
 #include "graphics/stage.h"
 #include "kokterrain/terrainentity.h"
+#include "coregraphics/meshpool.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -39,11 +40,23 @@ public:
     bool IsOpen() const;
 
 	void LoadTerrain(const Resources::ResourceId resId);
+	const Ptr<CoreGraphics::MeshPool>& GetMeshPool()const;
 private:
+	void CreateMeshPool();
+
+	Ptr<CoreGraphics::MeshPool> distMeshPool;
+
 	bool isOpen;
 	Resources::ResourceId resId;
 	Ptr<TerrainEntity> terrain;
 };
+
+inline const Ptr<CoreGraphics::MeshPool>& 
+TerrainServer::GetMeshPool()const
+{
+	n_assert(this->distMeshPool.isvalid());
+	return this->distMeshPool;
+}
 
 inline bool
 TerrainServer::IsOpen()const

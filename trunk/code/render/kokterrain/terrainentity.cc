@@ -6,11 +6,11 @@
 #include "kokterrain/terrainentity.h"
 #include "kokterrain/districtnode.h"
 #include "kokterrain/districtnodeinstance.h"
+#include "kokterrain/terraininstance.h"
 #include "models/model.h"
 #include "resources/resourcemanager.h"
 #include "models/modelinstance.h"
-#include "graphics/graphicsserver.h"
-#include "graphics/view.h"
+
 
 namespace KOK
 {
@@ -80,18 +80,6 @@ void
 TerrainEntity::OnUpdate()
 {
 	ModelEntity::OnUpdate();
-
-	if (this->managedModel.isvalid())
-	{
-		vector camPos = GraphicsServer::Instance()->GetDefaultView()->GetCameraEntity()->GetTransform().getrow3();
-		if (camPos != savePos)
-		{
-			Ptr<Terrain> terr = this->managedModel.downcast<ManagedTerrain>()->GetTerrain();
-			if (terr.isvalid())
-				terr->CheckDistrict(camPos);
-			savePos = camPos;
-		}
-	}
 }
 
 } // namespace Graphics

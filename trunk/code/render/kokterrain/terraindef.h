@@ -28,7 +28,7 @@ namespace KOK
 #define TERRAIN_MINDTC 300.0f                                 // 最小可视距离
 #define TERRAIN_RANGEDTC (TERRAIN_MAXDTC - TERRAIN_MINDTC)
 
-#define DISTRICTCACHESIZE		16							  // district缓冲大小(4*4)
+#define DISTRICTCACHESIZE		9							  // district缓冲大小(4*4)
 
 /*****************************/
 /*	map pos <--> tile
@@ -182,7 +182,10 @@ struct TileMesh
 // 测试
 struct MeshTest 
 {
-	Math::vector p;
+	/*Math::vector p;
+	Math::float2 tex;*/
+	float x,y,z;
+	float tu,tv;
 };
 
 struct tApexRepeat

@@ -48,7 +48,8 @@ public:
 	/// 加速
 	void SetSpeedUp(float speed);
 	// 上下移动
-	void MoveVertical(bool isUp);
+	void MoveUp(bool b);
+	void MoveDown(bool b);
 private:
 
 	Math::vector keyboardDirection;
@@ -79,22 +80,11 @@ private:
 
 	bool dirtyMove;
 	bool dirtyRotate;
+	// 上下移动
+	bool dirtyVertical;
 	/// 鼠标左键按下
 	bool mleftButton;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-DXUTCameraUtil::MoveVertical(bool isUp)
-{
-	if (isUp)
-		this->keyboardDirection = Math::vector(0.0f, 0.1f, 0.0f);
-	else
-		this->keyboardDirection = Math::vector(0.0f, -0.1f, 0.0f);
-	this->dirtyMove = true;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -112,6 +102,26 @@ inline void
 DXUTCameraUtil::SetLeftButton(bool b)
 {
 	this->mleftButton = b;
+}
+
+inline void
+DXUTCameraUtil::MoveUp(bool b)
+{
+	if (b)
+	{
+		this->keyboardDirection += Math::vector(0.0f, 0.1f, 0.0f);
+		dirtyVertical = true;
+	}
+}
+
+inline void
+DXUTCameraUtil::MoveDown(bool b)
+{
+	if (b)
+	{
+		this->keyboardDirection += Math::vector(0.0f, -0.1f, 0.0f);
+		dirtyVertical = true;
+	}
 }
 
 //------------------------------------------------------------------------------

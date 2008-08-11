@@ -5,9 +5,8 @@
 #include "stdneb.h"
 #include "kokterrain/terrain.h"
 #include "kokterrain/districtnode.h"
-#include "coregraphics/vertexcomponent.h"
-#include "models/visresolver.h"
 #include "models/attributes.h"
+#include "kokterrain/terraininstance.h"
 
 namespace KOK
 {
@@ -23,36 +22,10 @@ using namespace Math;
 /**
 */
 Terrain::Terrain():
-	tileMeshScale(1)
+	tileMeshScale(1),
+	tilePosOffset(0.0)
 {
-	// 设置顶点缓冲
-	int vertexSize = DISTRICT_VERTS*DISTRICT_VERTS*4;
-	int indexSize = DISTRICT_VERTS*DISTRICT_VERTS*6;
-	WORD indices[DISTRICT_VERTS*DISTRICT_VERTS*6];
-
-	SizeT curIndex = 0;
-	for (SizeT i = 0; i < indexSize; i+=6)
-	{
-		indices[i + 0] = curIndex + 0;
-		indices[i + 1] = curIndex + 1;
-		indices[i + 2] = curIndex + 2;
-
-		indices[i + 3] = curIndex + 1;
-		indices[i + 4] = curIndex + 3;
-		indices[i + 5] = curIndex + 2;
-
-		curIndex += 4;
-	}
-
-	Util::Array<CoreGraphics::VertexComponent> vertexComponents;
-	vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float4));
 	
-	this->distMeshPool = MeshPool::Create();
-	this->distMeshPool->Reset(ResourceId("distMeshPool"), sizeof(MeshTest), vertexSize, 32, indexSize, vertexComponents);
-	ushort* indexPtr = this->distMeshPool->LockIndexed();
-	Memory::Copy(indices, indexPtr, indexSize*sizeof(WORD));
-	this->distMeshPool->UnlockIndexed();
-
 	
 	// 设置district缓冲
 	//for (SizeT i = 0; i < DISTRICTCACHESIZE; i++)
@@ -83,9 +56,16 @@ Terrain::Terrain():
 */
 Terrain::~Terrain()
 {
-    this->distMeshPool = 0;
 	this->terrMeshGrid = 0;
 	this->cliffTable = 0;
+}
+
+Ptr<ModelInstance> 
+Terrain::CreateInstance()
+{
+	Ptr<ModelInstance> modelInstance = (ModelInstance*)TerrainInstance::Create();
+	this->AttachInstance(modelInstance);
+	return modelInstance;
 }
 
 //------------------------------------------------------------------------------
@@ -206,22 +186,7 @@ Terrain::UpdateTileTex(int iX, int iY)
 	//}
 }
 
-//------------------------------------------------------------------------------
-/**
-	释放不用的顶点缓冲
-*/
-void
-Terrain::UpdateMeshPool()
-{
-	IndexT indexFrame = VisResolver::Instance()->GetFrameIndex();
 
-	if (this->distMeshPool->Full())
-	{
-		Array<Ptr<ModelNode> > nodes =  this->GetNodes();
-		for (IndexT i = 0; i < nodes.Size(); i++)
-			nodes[i].downcast<DistrictNode>()->FreeMeshPool(indexFrame);
-	}
-}
 
 void 
 Terrain::SetMapSize(SizeT mapSize)
@@ -243,115 +208,27 @@ Terrain::SetMapSize(SizeT mapSize)
 	this->SetBoundingBox(box);
 }
 
-// district
-bool
-Terrain::CheckValidDistrict(int x, int z)
-{
-	return x>=0 && z >= 0 && x< GetMapWide() && z<GetMapWide();
-}
-
-void
-Terrain::CheckDistrict(const vector& pos)
-{
-	int distX = pos.x() / GetDistrictSize();
-	int distZ = pos.z() / GetDistrictSize();
-
-	if (!this->centerDist.isvalid())
-	{
-		EnterDistrict(distX, distZ);
-	}
-	else
-	{
-		int x = this->centerDist->GetX() * GetDistrictSize();
-		int z = this->centerDist->GetZ() * GetDistrictSize();
-
-		if (pos.x() < x || (pos.x() > (x + GetDistrictSize())) || 
-			pos.z() < z || (pos.z() > (z + GetDistrictSize())))
-		{
-			EnterDistrict(distX, distZ);
-		}
-	}
-}
-
-void
-Terrain::EnterDistrict(int x, int z)
-{
-	if (!CheckValidDistrict(x, z))
-		return;
-
-	this->curX = x;
-	this->curZ = z;
-	for (SizeT i = 0; i < 3; i++)
-	{
-		for (SizeT j = 0; j < 3; j++)
-		{
-			if (i == 1 && j == 1)	// 中心位置
-				this->centerDist = LoadDistrict(x-1+i, z-1+j);
-			else
-				LoadDistrict(x-1+i, z-1+j);
-		}
-	}
-}
-
 Ptr<DistrictNode>
-Terrain::LoadDistrict(int x, int z)
+Terrain::CreateNewDistrict(int x, int z)
 {
 	Ptr<DistrictNode> newNode;
-	if (!CheckValidDistrict(x, z))
-		return newNode;
-
-	Array<Ptr<ModelNode>> distNodes = this->GetNodes();
-	IndexT firstNull = DISTRICTCACHESIZE;
-	for (IndexT i = 0; i < DISTRICTCACHESIZE; i++)
-	{
-		if (distNodes.Size() > i && distNodes[i].isvalid())
-		{
-			Ptr<DistrictNode> dist = distNodes[i].downcast<DistrictNode>();
-			if (dist->GetX() == x && dist->GetZ() == z)
-				return dist;
-		}
-		else
-		{
-			if (i < firstNull)
-				firstNull = i;
-		}
-	}
-	if (firstNull == DISTRICTCACHESIZE)
-	{
-		int score, maxscore = 0, maxidx = 0; 
-		for (IndexT i = 0; i < DISTRICTCACHESIZE; i++)
-		{
-			Ptr<DistrictNode> dist = distNodes[i].downcast<DistrictNode>();
-			int X = dist->GetX();
-			int Z = dist->GetZ();
-
-			score = int(n_abs(X - this->curX) + n_abs(Z - this->curZ));
-			if (score > maxscore)
-			{
-				maxscore = score;
-				maxidx = i;
-			}
-		}
-		firstNull = maxidx;
-
-		// 释放
-		//this->nodes[maxidx] = 0;
-		this->RemoveNode(distNodes[maxidx]);
-	}
-
-	// 加载新的
 	String name;
-	name.Format("dist%d", firstNull);
+	name.Format("dist_%2d_%2d", x,z);
+
+	if (this->HasNode(name))
+	{
+		newNode = this->LookupNode(name).downcast<DistrictNode>();
+		return newNode;
+	}
+
 	newNode = DistrictNode::Create();
 	newNode->SetName(Resources::ResourceId(name));
 	newNode->SetString(Attr::Shader, "shd:terrain");
+	newNode->SetString(Attr::DiffMap0, "mapdata\\border0100.dds");
 	newNode->SetTerrainMeshGrid(this->terrMeshGrid);
 	newNode->SetPosition(x, z);
 	this->AttachNode(newNode.upcast<Models::ModelNode>());
-
-	Ptr<ModelNodeInstance> nodeInstance = newNode->CreateNodeInstance();
-	nodeInstance->OnAttachToModelInstance(this, modelNode, NULL);
-	this->nodeInstances.Append(nodeInstance);
+	newNode->LoadResources();
 
 	return newNode;
 }

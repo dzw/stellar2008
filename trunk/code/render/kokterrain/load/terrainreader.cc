@@ -99,21 +99,22 @@ TerrainReader::FillModel()
 
 	LoadToField();
 
-	//for (SizeT i = 0; i < 5; i++)
-	//{
-	//	for (SizeT j = 0; j < 5; j++)
-	//	{
-	//		Ptr<DistrictNode> node = DistrictNode::Create();
-	//		//node->Init(0, 0);
-	//		String name;
-	//		name.Format("%d%d", i,j);
-	//		node->SetName(Resources::ResourceId(name));
-	//		node->SetString(Attr::Shader, "shd:terrain");
-	//		node->SetTerrainMeshGrid(this->terrain->terrMeshGrid);
-	//		node->SetPosition(i, j);
-	//		this->terrain->AttachNode(node.upcast<Models::ModelNode>());
-	//	}
-	//}
+	for (SizeT i = 0; i < DISTRICTCACHESIZE; i++)
+	{
+		for (SizeT j = 0; j < DISTRICTCACHESIZE; j++)
+		{
+			this->terrain->CreateNewDistrict(i, j);
+			//Ptr<DistrictNode> node = DistrictNode::Create();
+			////node->Init(0, 0);
+			//String name;
+			//name.Format("dist_%2d_%2d", i,j);
+			//node->SetName(Resources::ResourceId(name));
+			//node->SetString(Attr::Shader, "shd:terrain");
+			//node->SetTerrainMeshGrid(this->terrain->terrMeshGrid);
+			//node->SetPosition(i, j);
+			//this->terrain->AttachNode(node.upcast<Models::ModelNode>());
+		}
+	}
     return true;
 }
 
@@ -784,7 +785,7 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 	int   l_iTempRightAngle = 0;
 	int   l_iTempState = 0 ;
 	vector vecTempDistance;
-	bool load_backend;
+//	bool load_backend;
 
 	for(i=0;i<l_dThingSzie;i++)
 	{

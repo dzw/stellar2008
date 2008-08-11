@@ -10,7 +10,6 @@
 #include "models/nodes/statenode.h"
 #include "models/modelnodeinstance.h"
 #include "kokterrain/terraindef.h"
-#include "coregraphics/meshpool.h"
 #include "kokterrain/terrainmeshgrid.h"
 
 //------------------------------------------------------------------------------
@@ -30,20 +29,22 @@ public:
     /// apply state shared by all my ModelNodeInstances
     virtual bool ApplySharedState();
 
-	void Update();
-	/// ‰÷»æ«∞∑÷≈‰ª∫≥Â
-	void AllocMeshPool();
-	void FreeMeshPool(IndexT frame);
-
 	void SetTerrainMeshGrid(const Ptr<TerrainMeshGrid>& grid);
+	const Ptr<TerrainMeshGrid>& GetTerrainMeshGrid()const;
+
 	void SetPosition(int x, int z);
 	int  GetX()const;
 	int	 GetZ()const;
+	int  GetTileSize()const;
+	int  GetMapWide()const;
+	float GetTilePosOffset()const;
+
+	/// called when resources should be loaded
+    virtual void LoadResources();
 protected:
     /// create a model node instance
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
-    /// called when resources should be loaded
-    virtual void LoadResources();
+    
     /// called when resources should be unloaded
     virtual void UnloadResources();
 
@@ -52,12 +53,13 @@ protected:
 	int disZ;
 
 	Ptr<TerrainMeshGrid> terrMeshGrid;
-	MeshTest vertices[DISTRICT_VERTS*DISTRICT_VERTS*4];
-
-	int curGroup;
-	IndexT frameIndex;
-	Ptr<CoreGraphics::MeshPool> meshPool;
 };
+
+inline const Ptr<TerrainMeshGrid>& 
+DistrictNode::GetTerrainMeshGrid()const
+{
+	return this->terrMeshGrid;
+}
 
 inline int  
 DistrictNode::GetX()const

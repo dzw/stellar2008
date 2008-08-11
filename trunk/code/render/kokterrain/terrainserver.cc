@@ -15,6 +15,10 @@
 #include "kokterrain/terrain.h"
 #include "kokterrain/managedterrain.h"
 #include "kokterrain/load/streamterrainloader.h"
+#include "coregraphics/vertexcomponent.h"
+#include "models/visresolver.h"
+#include "graphics/graphicsserver.h"
+#include "graphics/view.h"
 
 namespace KOK
 {
@@ -28,12 +32,14 @@ using namespace Attr;
 using namespace Resources;
 using namespace Math;
 using namespace Graphics;
+using namespace CoreGraphics;
 
 //------------------------------------------------------------------------------
 /**
 */
 TerrainServer::TerrainServer():
-	isOpen(false)
+	isOpen(false),
+	distMeshPool(0)
 {
     ConstructSingleton;
 }
@@ -66,6 +72,8 @@ TerrainServer::Open()
 	meshMapper->SetResourceLoaderClass(StreamTerrainLoader::RTTI);
 	meshMapper->SetManagedResourceClass(ManagedTerrain::RTTI);
 	ResourceManager::Instance()->AttachMapper(meshMapper.upcast<ResourceMapper>());
+
+	CreateMeshPool();
 }
 
 //------------------------------------------------------------------------------
@@ -76,6 +84,7 @@ TerrainServer::Close()
 {
     n_assert(this->IsOpen());
 
+	this->distMeshPool = 0;
 	this->isOpen = false;
 }
 
@@ -86,6 +95,39 @@ TerrainServer::LoadTerrain(const Resources::ResourceId resId)
 	this->terrain = TerrainEntity::Create();
 	this->terrain->SetResourceId(resId);
 	GraphicsServer::Instance()->GetDefaultView()->GetStage()->AttachEntity(this->terrain.upcast<GraphicsEntity>());
+}
+
+void
+TerrainServer::CreateMeshPool()
+{
+	// …Ë÷√∂•µ„ª∫≥Â
+	int vertexSize = DISTRICT_VERTS*DISTRICT_VERTS*4;
+	int indexSize = DISTRICT_VERTS*DISTRICT_VERTS*6;
+	WORD indices[DISTRICT_VERTS*DISTRICT_VERTS*6];
+
+	SizeT curIndex = 0;
+	for (SizeT i = 0; i < indexSize; i+=6)
+	{
+		indices[i + 0] = curIndex + 0;
+		indices[i + 1] = curIndex + 1;
+		indices[i + 2] = curIndex + 2;
+
+		indices[i + 3] = curIndex + 1;
+		indices[i + 4] = curIndex + 3;
+		indices[i + 5] = curIndex + 2;
+
+		curIndex += 4;
+	}
+
+	Util::Array<CoreGraphics::VertexComponent> vertexComponents;
+	vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+
+	this->distMeshPool = MeshPool::Create();
+	this->distMeshPool->Reset(ResourceId("distMeshPool"), sizeof(MeshTest), vertexSize, DISTRICTCACHESIZE*DISTRICTCACHESIZE, indexSize, vertexComponents);
+	ushort* indexPtr = this->distMeshPool->LockIndexed();
+	Memory::Copy(indices, indexPtr, indexSize*sizeof(WORD));
+	this->distMeshPool->UnlockIndexed();
 }
 
 } // namespace Models
