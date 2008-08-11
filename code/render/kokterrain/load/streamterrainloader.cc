@@ -180,7 +180,7 @@ StreamTerrainLoader::SetupFromStream(const Ptr<Stream>& stream)
         if (modelReader->FillModel())
         {   
             // load all resources of all nodes like shaderstates etc.
-            model->LoadResources();
+            //model->LoadResources();
         }
         else
         {

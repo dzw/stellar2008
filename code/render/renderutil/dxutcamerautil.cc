@@ -30,7 +30,8 @@ DXUTCameraUtil::DXUTCameraUtil() :
 	keyboardDirection(0.0f, 0.0f, 0.0f),
 	dirtyMove(false),
 	dirtyRotate(false),
-	mleftButton(false)
+	mleftButton(false),
+	dirtyVertical(false)
 {
 	framesToSmoothMouseData = 1.0f;
 	rotationScaler = 0.008f;
@@ -130,10 +131,14 @@ DXUTCameraUtil::ViewChange()
 void 
 DXUTCameraUtil::SetMovement(const vector& keyboardDirection)
 {
-	this->keyboardDirection = keyboardDirection;
+	if (keyboardDirection == vector::nullvec())
+		return;
 
-	if (this->keyboardDirection != vector::nullvec())
-		dirtyMove = true;
+	this->keyboardDirection += keyboardDirection;
+
+	// 高度在这里设置
+	this->keyboardDirection.y() = 0.0f;
+	dirtyMove = true;
 }
 
 //------------------------------------------------------------------------------
@@ -167,14 +172,14 @@ DXUTCameraUtil::Reset()
 void
 DXUTCameraUtil::Update()
 {
-	if (!dirtyMove && !dirtyRotate)
+	if (!dirtyMove && !dirtyRotate && !dirtyVertical)
 		return;
 
 	//UpdateMouseDelta();
 
 	vector posDelta = vector::nullvec();
 	//if (this->keyboardDirection != vector::nullvec())
-	if (dirtyMove)
+	if (dirtyMove || dirtyVertical)
 	{
 		posDelta = this->keyboardDirection;
 		posDelta = vector::normalize(posDelta);
@@ -200,16 +205,21 @@ DXUTCameraUtil::Update()
 	
 	vector posDeltaWorld = vector::transform(posDelta, cameraRot);
 
+	if (!dirtyVertical)
+		posDeltaWorld.y() = 0.0f;
+
 	right += posDeltaWorld;
 	lookAt = right + worldAhead;
 	up = worldUp;
 
-	if (dirtyMove || dirtyRotate)
+	if (dirtyMove || dirtyRotate || dirtyVertical)
 	{
 		ViewChange();
 
 		dirtyMove = false;
 		dirtyRotate = false;
+		dirtyVertical = false;
+		this->keyboardDirection = vector::nullvec();
 	}
 }
 

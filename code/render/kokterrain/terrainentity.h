@@ -24,9 +24,6 @@ public:
     virtual void OnActivate();
     virtual void OnDeactivate();
     virtual void OnUpdate();
-
-protected:
-	Math::vector savePos;
 };
 } // namespace Graphics
 //------------------------------------------------------------------------------

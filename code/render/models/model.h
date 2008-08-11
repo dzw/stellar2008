@@ -26,7 +26,10 @@ namespace Terrain
 {
 	class TerrainTile;
 }
-
+namespace KOK
+{
+	class Terrain;
+}
 //------------------------------------------------------------------------------
 namespace Models
 {
@@ -70,7 +73,7 @@ public:
     const Util::Array<Ptr<ModelNode> >& GetNodes() const;
 
     /// create a ModelInstance of the Model
-    Ptr<ModelInstance> CreateInstance();
+    virtual Ptr<ModelInstance> CreateInstance();
     /// get all attached model instances
     const Util::Array<Ptr<ModelInstance> >& GetInstances() const;
 
@@ -125,6 +128,7 @@ private:
     friend class ModelInstance;
     friend class ModelNode;
 	friend class Terrain::TerrainTile;
+	friend class KOK::Terrain;
 
     /// attach a ModelInstance to the Model
     void AttachInstance(const Ptr<ModelInstance>& inst);
