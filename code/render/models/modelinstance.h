@@ -79,7 +79,7 @@ protected:
     /// set pointer to ModelEntity which owns this instance
     void SetModelEntity(const Ptr<Graphics::ModelEntity>& mdlEntity);
     /// notify the model instance that it is currently visible
-    void NotifyVisible(IndexT frameIndex);
+    virtual void NotifyVisible(IndexT frameIndex);
     /// called when attached to Model
     virtual void OnAttachToModel(const Ptr<Model>& model);
     /// called when removed from Model

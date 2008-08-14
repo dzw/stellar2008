@@ -135,10 +135,10 @@ View::ResolveVisibleModelNodeInstances()
     visResolver->IncreaseFrameIndex();
 
 	// 限制不要每帧都更新，隔五帧更新一次
-	static IndexT lastFrameIndex = -1;
+	/*static IndexT lastFrameIndex = -1;
 	if (visResolver->GetFrameIndex() <= lastFrameIndex+3)
 		return;
-	lastFrameIndex = visResolver->GetFrameIndex();
+	lastFrameIndex = visResolver->GetFrameIndex();*/
 
 	visResolver->BeginResolve();
     const Array<Ptr<GraphicsEntity> >& visLinks = this->camera->GetLinks(GraphicsEntity::CameraLink);

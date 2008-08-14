@@ -95,4 +95,12 @@ WorldStage::RemoveEntity(const Ptr<GraphicsEntity>& entity)
 	}
 }
 
+void 
+WorldStage::UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity)
+{
+	Stage::UpdateCameraLinks(cameraEntity);
+
+
+}
+
 } // namespace Graphics

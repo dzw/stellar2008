@@ -85,13 +85,17 @@ public:
     virtual void UpdateLinks(const Ptr<GraphicsEntity>& observerEntity, uint entityTypeMask, GraphicsEntity::LinkType linkType);
 	///
 	virtual void OnRenderDebug(/*const bbox& b*/);
+	
+	virtual Ptr<Cell> FindEntityContainmentCell(const Math::bbox& entityBox);
 private:
     friend class GraphicsEntity;
 	friend class ConvexZone;
 	friend class WMOZone;
+	friend class TerrainCell;
 
     /// starting from this cell, find smallest containment cell in cell tree
     virtual Ptr<Cell> FindEntityContainmentCell(const Ptr<GraphicsEntity>& entity);
+	
     /// create links between visible entities
     virtual void RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity, uint entityTypeMask, GraphicsEntity::LinkType linkType, Math::ClipStatus::Type clipStatus);
     /// increment/decrement the numEntitiesInHierarchy counter (including in all parent cells)

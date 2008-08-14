@@ -15,6 +15,8 @@
 
 	在用到的地方调用ApplyPrimitive设置渲染哪组缓冲（偏移位置）
 
+	按固定大小分配，DynamicMeshPool不按固定大小分配
+
 	2008 cTuo
 */    
 #include "coregraphics/dynamicmesh.h"

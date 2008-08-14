@@ -170,8 +170,8 @@ public:
 
 struct TileMesh
 {
-	Math::vector p;		// ”√vector?vector3?
-	Math::vector n;
+	Math::vector3 p;		// ”√vector?vector3?
+	Math::vector3 n;
 	Math::float2 t1;
 	Math::float2 t2;
 	Math::float2 t3;
@@ -259,6 +259,19 @@ struct TerrainMeshData
   void SetTextureData( int iTexture, int iID, int iLayer );
 };
 
+struct TileDrawTable 
+{
+	int Texture;
+	int Layer;
+
+	DWORD FaceStart;
+	DWORD FaceCount;
+	bool  bUpdate;
+
+	TileDrawTable():
+		Texture(0),Layer(0),FaceStart(0),FaceCount(0),bUpdate(false)
+	{}
+};
 
 } // namespace Models
 //------------------------------------------------------------------------------

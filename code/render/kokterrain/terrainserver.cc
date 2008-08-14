@@ -16,6 +16,7 @@
 #include "kokterrain/managedterrain.h"
 #include "kokterrain/load/streamterrainloader.h"
 #include "coregraphics/vertexcomponent.h"
+#include "coregraphics/indextype.h "
 #include "models/visresolver.h"
 #include "graphics/graphicsserver.h"
 #include "graphics/view.h"
@@ -39,7 +40,7 @@ using namespace CoreGraphics;
 */
 TerrainServer::TerrainServer():
 	isOpen(false),
-	distMeshPool(0)
+	terrMeshPool(0)
 {
     ConstructSingleton;
 }
@@ -84,7 +85,7 @@ TerrainServer::Close()
 {
     n_assert(this->IsOpen());
 
-	this->distMeshPool = 0;
+	this->terrMeshPool = 0;
 	this->isOpen = false;
 }
 
@@ -101,7 +102,7 @@ void
 TerrainServer::CreateMeshPool()
 {
 	// …Ë÷√∂•µ„ª∫≥Â
-	int vertexSize = DISTRICT_VERTS*DISTRICT_VERTS*4;
+	/*int vertexSize = DISTRICT_VERTS*DISTRICT_VERTS*4;
 	int indexSize = DISTRICT_VERTS*DISTRICT_VERTS*6;
 	WORD indices[DISTRICT_VERTS*DISTRICT_VERTS*6];
 
@@ -117,17 +118,28 @@ TerrainServer::CreateMeshPool()
 		indices[i + 5] = curIndex + 2;
 
 		curIndex += 4;
-	}
+	}*/
 
 	Util::Array<CoreGraphics::VertexComponent> vertexComponents;
 	vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+	vertexComponents.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 1, VertexComponent::Float2));
+	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 2, VertexComponent::Float2));
+	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 3, VertexComponent::Float2));
+	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 4, VertexComponent::Float2));
 
-	this->distMeshPool = MeshPool::Create();
+	/*this->distMeshPool = MeshPool::Create();
 	this->distMeshPool->Reset(ResourceId("distMeshPool"), sizeof(MeshTest), vertexSize, DISTRICTCACHESIZE*DISTRICTCACHESIZE, indexSize, vertexComponents);
 	ushort* indexPtr = this->distMeshPool->LockIndexed();
 	Memory::Copy(indices, indexPtr, indexSize*sizeof(WORD));
-	this->distMeshPool->UnlockIndexed();
+	this->distMeshPool->UnlockIndexed();*/
+
+	DWORD tileVertexSize = 256 * 420;
+	DWORD tileIndexSize = 384 * 2 * 420;
+
+	this->terrMeshPool = DynamicMeshPool::Create();
+	this->terrMeshPool->Reset(sizeof(TileMesh), tileVertexSize, vertexComponents, tileIndexSize, IndexType::Index16);
 }
 
 } // namespace Models

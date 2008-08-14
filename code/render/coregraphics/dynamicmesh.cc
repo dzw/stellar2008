@@ -17,6 +17,8 @@ namespace CoreGraphics
 {
 ImplementClass(DynamicMesh, 'DYMH', Core::RefCounted);
 
+using namespace Resources;
+
 DynamicMesh::DynamicMesh() :
     indexedRendering(true),
 		primitiveType(CoreGraphics::PrimitiveTopology::TriangleList)
@@ -29,6 +31,8 @@ DynamicMesh::DynamicMesh() :
 */
 DynamicMesh::~DynamicMesh()
 {
+	if (this->refMesh.isvalid())
+		Resources::SharedResourceServer::Instance()->UnregisterSharedResource(this->refMesh.upcast<Resource>());
 	this->refMesh = 0;
 }
 

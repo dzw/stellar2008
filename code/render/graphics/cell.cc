@@ -180,36 +180,42 @@ Cell::FindEntityContainmentCell(const Ptr<GraphicsEntity>& entity)
 {
     // get global bounding box of entity
     const bbox& entityBox = entity->GetGlobalBoundingBox();
+	
+	return this->FindEntityContainmentCell(entityBox);
+}
 
-    // find the first upward cell which completely contains the entity,
-    // stop at tree root
-    Ptr<Cell> curCell = this;
-    while ((curCell->GetParentCell().isvalid()) && (!curCell->GetBoundingBox().contains(entityBox)))
-    {
-        curCell = curCell->GetParentCell();
-    } 
+Ptr<Cell> 
+Cell::FindEntityContainmentCell(const bbox& entityBox)
+{ 
+	// find the first upward cell which completely contains the entity,
+	// stop at tree root
+	Ptr<Cell> curCell = this;
+	while ((curCell->GetParentCell().isvalid()) && (!curCell->GetBoundingBox().contains(entityBox)))
+	{
+		curCell = curCell->GetParentCell();
+	} 
 
-    // find smallest downward cell which completely contains the entity
-    IndexT cellIndex;
-    SizeT numCells;
-    do
-    {
-        const Array<Ptr<Cell> >& curChildren = curCell->GetChildCells();
-        numCells = curChildren.Size();
-        for (cellIndex = 0; cellIndex < numCells; cellIndex++)
-        {
-            const Ptr<Cell>& childCell = curChildren[cellIndex];
-            if (childCell->GetBoundingBox().contains(entityBox))
-            {
-                curCell = childCell;
-                break;
-            }
-        }
-        // check for loop fallthrough: this means that the current cell either has
-        // no children, or that none of the children completely contains the entity
-    }
-    while (cellIndex != numCells);
-    return curCell;
+	// find smallest downward cell which completely contains the entity
+	IndexT cellIndex;
+	SizeT numCells;
+	do
+	{
+		const Array<Ptr<Cell> >& curChildren = curCell->GetChildCells();
+		numCells = curChildren.Size();
+		for (cellIndex = 0; cellIndex < numCells; cellIndex++)
+		{
+			const Ptr<Cell>& childCell = curChildren[cellIndex];
+			if (childCell->GetBoundingBox().contains(entityBox))
+			{
+				curCell = childCell;
+				break;
+			}
+		}
+		// check for loop fallthrough: this means that the current cell either has
+		// no children, or that none of the children completely contains the entity
+	}
+	while (cellIndex != numCells);
+	return curCell;
 }
 
 //------------------------------------------------------------------------------

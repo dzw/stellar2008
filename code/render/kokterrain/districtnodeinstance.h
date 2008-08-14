@@ -8,7 +8,7 @@
     (C) 2008 cTuo
 */
 #include "models/nodes/statenodeinstance.h"
-#include "coregraphics/meshpool.h"
+#include "coregraphics/Dynamicmeshpool.h"
 #include "kokterrain/districtnode.h"
 
 //------------------------------------------------------------------------------
@@ -28,6 +28,8 @@ public:
 	virtual void Update();
 	/// apply per-instance state prior to rendering
 	virtual void ApplyState();
+	/// 设置每次渲染的group,返回flash：当没有面需要渲染时
+	bool SetRenderGroup(int pass);
 
 	/// 切换DISTRICT时清除已有数据
 	void Clear();
@@ -40,13 +42,16 @@ public:
 	int GetX()const;
 	int	GetZ()const;
 
-protected:
-    /// notify that we are visible
+	/// notify that we are visible
     virtual void OnNotifyVisible(IndexT frameIndex);
-
+protected:
 	int curGroup;
 	IndexT frameIndex;
-	Ptr<CoreGraphics::MeshPool> meshPool;
+	Ptr<CoreGraphics::DynamicMeshPool> meshPool;
+	CoreGraphics::PrimitiveGroup group;
+	SizeT vbStart;
+	SizeT ibStart;
+	Ptr<DistrictNode> dist;
 };
 
 inline int  

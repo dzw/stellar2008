@@ -99,9 +99,13 @@ TerrainReader::FillModel()
 
 	LoadToField();
 
-	for (SizeT i = 0; i < DISTRICTCACHESIZE; i++)
+	this->terrain->ComputeTileMesh();
+
+	TerrainInfo terrInfo = this->terrain->GetTerrainInfo();
+
+	for (SizeT i = 0; i < terrInfo.GetDistrictCountX()/*DISTRICTCACHESIZE*/; i++)
 	{
-		for (SizeT j = 0; j < DISTRICTCACHESIZE; j++)
+		for (SizeT j = 0; j < terrInfo.GetDistrictCountX(); j++)
 		{
 			this->terrain->CreateNewDistrict(i, j);
 			//Ptr<DistrictNode> node = DistrictNode::Create();
@@ -151,7 +155,7 @@ TerrainReader::LoadToField()
 				{
 					this->stream->Read(&tempInt, sizeof(int));
 					ReadString(tempStr, tempInt);
-					this->terrain->textureLayer.Append(tempStr);
+					this->terrain->AppendTexture(tempStr);
 				}
 			}
 			break;
@@ -177,7 +181,7 @@ TerrainReader::LoadToField()
 		case TERFILE_CLIFF_TABLE:		// 读入悬崖总类表
 			{
 				this->terrain->cliffTable = CliffTable::Create();
-				this->terrain->cliffTable->ImportFromMemory(this->stream, this->terrain->textureLayer.Size());
+				this->terrain->cliffTable->ImportFromMemory(this->stream, this->terrain->GetTextureCount());
 			}
 			break;
 		case TERFILE_CLIFF_LEVEL1:
@@ -206,7 +210,7 @@ TerrainReader::LoadToField()
 					shrink = true;
 				this->terrain->terrMeshGrid->ImportTransLevelData(this->stream, shrink);
 				
-				return 0;	// 测试地形直接返回
+				
 			}
 			break;
 		case TERFILE_TILE:
@@ -217,11 +221,12 @@ TerrainReader::LoadToField()
 				for (int i = 0; i < tileSize; i++)
 				{
 					this->stream->Read(&tempDWORD, sizeof(DWORD));
-					//thingTex[i]->dTile = tempDWORD;
+					this->terrain->thingTex[i]->dTile = tempDWORD;
 
 					this->stream->Read(&tempDWORD, sizeof(DWORD));
-					//thingTex[i]->stTile.dwDWORD = tempDWORD;
+					this->terrain->thingTex[i]->stTile.dwDWORD = tempDWORD;
 				}
+				return 0;	// 测试地形直接返回
 			}
 			break;
 		case TERFILE_MAP_HIGH1:
@@ -927,5 +932,7 @@ TerrainReader::LoadAudios(/*const Ptr<Stream>& stream*/)
 		//AddAudio(AUDIO_FT_3D,l_szChar,l_TempDWORD) ;
 	}
 }
+
+
 
 } // namespace Models

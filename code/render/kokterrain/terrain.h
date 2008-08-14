@@ -13,6 +13,7 @@
 #include "kokterrain/terrainmeshgrid.h"
 #include "kokterrain/clifftable.h"
 #include "kokterrain/districtnode.h"
+#include "kokterrain/terrainrender.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -46,13 +47,21 @@ public:
 	/// 返回一个district的大小
 	int GetDistrictSize()const;
 	
+	const Util::Array<Ptr<Resources::ManagedTexture>>& GetTextures()const;
+	void AppendTexture(const Util::String& resId);
+	int GetTextureCount()const;
+
+	TerrainMeshData** GetMeshData()const;
+	const TerrainInfo& GetTerrainInfo()const;
 
 	void SetMapSize(SizeT size);
 
 	///
 	const Ptr<TerrainMeshGrid>& GetTerrainMeshGrid()const;
-	///
+	/// 创建新的district
 	Ptr<DistrictNode> CreateNewDistrict(int x, int z);
+
+	virtual void Render(const Models::ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures);
 protected:
 	friend class TerrainReader;
 
@@ -62,16 +71,19 @@ protected:
     TerrainInfo					terrInfo;
 	Ptr<TerrainMeshGrid>		terrMeshGrid;
 	Ptr<CliffTable>				cliffTable;
-	Util::Array<Util::String>	textureLayer;
+	//Util::Array<Util::String>	textureLayer;
+	Util::Array<Ptr<Resources::ManagedTexture>> textures;
 
 	/// 地形放大
 	TerrainMeshData**			meshData;
-	int							tileMeshScale;		// 放大倍数
-	float						tilePosOffset;		// 计算tile位置offset
-
-	ThingTex**					thingTex;			// 地表各层贴图ID
-
+	/// 放大倍数
+	int							tileMeshScale;
+	/// 计算tile位置offset
+	float						tilePosOffset;
 	
+	/// 地表各层贴图ID
+	ThingTex**					thingTex;
+	Ptr<TerrainRender>			terrRender;
 };
 
 inline const Ptr<TerrainMeshGrid>& 
@@ -110,7 +122,29 @@ Terrain::GetMapWide()
 	return this->terrInfo.GetTileCountX();
 }
 
+inline const Util::Array<Ptr<Resources::ManagedTexture>>& 
+Terrain::GetTextures()const
+{
+	return this->textures;
+}
 
+inline int 
+Terrain::GetTextureCount()const
+{
+	return this->textures.Size();
+}
+
+inline TerrainMeshData** 
+Terrain::GetMeshData()const
+{
+	return this->meshData;
+}
+
+inline const TerrainInfo&
+Terrain::GetTerrainInfo()const
+{
+	return this->terrInfo;
+}
 
 } // namespace Models
 //------------------------------------------------------------------------------

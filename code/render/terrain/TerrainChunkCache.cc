@@ -38,13 +38,14 @@ TerrainChunkCache::~TerrainChunkCache()
 DWORD 
 TerrainChunkCache::AddChunk(void* data)
 {
-	return this->vertexBufferPool->Alloc(data);
+	return 0;
+	//return this->vertexBufferPool->Alloc(data);
 }
 
 void 
 TerrainChunkCache::FreeChunk(DWORD offset)
 {
-    this->vertexBufferPool->Free(offset);
+    //this->vertexBufferPool->Free(offset);
 }
 
 //------------------------------------------------------------------------------
@@ -53,14 +54,14 @@ TerrainChunkCache::FreeChunk(DWORD offset)
 void
 TerrainChunkCache::ApplyCache()
 {
-	if (this->vertexBufferPool.isvalid())
+	/*if (this->vertexBufferPool.isvalid())
 	{
 		RenderDevice::Instance()->SetVertexBuffer(this->vertexBufferPool->GetBuffer());   
 	}
 	if (this->indexBuffer.isvalid())
 	{
 		RenderDevice::Instance()->SetIndexBuffer(this->indexBuffer);
-	}
+	}*/
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ TerrainChunkCache::CreateIndexBuffer()
 void 
 TerrainChunkCache::CreateChunkCache(SizeT chunkNum)
 {
-	if (this->vertexComponents.Size() == 0)
+	/*if (this->vertexComponents.Size() == 0)
 	{
 		this->vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
 		this->vertexComponents.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
@@ -126,12 +127,7 @@ TerrainChunkCache::CreateChunkCache(SizeT chunkNum)
 	this->indexBuffer->SetLoader(ibLoader.upcast<ResourceLoader>());
 	this->indexBuffer->Load();
 	this->indexBuffer->SetLoader(0);
-	n_assert(this->indexBuffer->GetState() == IndexBuffer::Loaded);
-
-	/*Ptr<Mesh> mesh = SharedResourceServer::Instance()->CreateSharedResource(meshName, Mesh::RTTI, StreamMeshLoader::RTTI).downcast<Mesh>();
-	mesh->SetState(Resource::Loaded);
-	mesh->SetVertexBuffer(vertexBufferPool->GetBuffer());
-	mesh->SetIndexBuffer(indexBuffer);*/
+	n_assert(this->indexBuffer->GetState() == IndexBuffer::Loaded);*/
 }
 
 } // namespace WOW

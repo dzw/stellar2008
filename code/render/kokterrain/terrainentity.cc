@@ -79,7 +79,40 @@ TerrainEntity::OnDeactivate()
 void
 TerrainEntity::OnUpdate()
 {
+	//ValidateModelInstance();
+	//
+	//if (this->modelInstance.isvalid())
+	//{
+	//	this->modelInstance->SetTime(this->GetTime());
+	//	this->modelInstance->Update();
+	//}
+
+	//// important: call parent class!
+	//GraphicsEntity::OnUpdate();
 	ModelEntity::OnUpdate();
+}
+
+void
+TerrainEntity::ValidateModelInstance()
+{
+	//if (!this->modelInstance.isvalid())
+	//{
+	//	if (this->managedModel->GetState() == Resource::Loaded)
+	//	{
+	//		const Ptr<Model> model = this->managedModel->GetModel();
+	//		n_assert(model->IsLoaded());
+	//		this->SetLocalBoundingBox(model->GetBoundingBox());
+	//		this->modelInstance = model->CreateInstance();				
+	//		this->modelInstance->SetTransform(this->GetTransform());
+	//		this->modelInstance->SetModelEntity(this);
+	//		this->modelInstance->SetAllNodeInstancesVisible(this->setModelNodesVisible);
+	//		this->SetValid(true);
+	//	}
+	//	else
+	//	{
+	//		// @todo: check for load failed!
+	//	}
+	//}
 }
 
 } // namespace Graphics

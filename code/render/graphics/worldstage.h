@@ -24,7 +24,7 @@ public:
     virtual void AttachEntity(const Ptr<GraphicsEntity>& graphicsEntity);
     /// remove an entity from the stage
     virtual void RemoveEntity(const Ptr<GraphicsEntity>& entity);
-
+	virtual void UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity);
 protected:
 
     Util::Array<Ptr<GraphicsEntity> > staticEntities;

@@ -221,7 +221,7 @@ TerrainMeshGrid::CalcGridNormals()
 	float fSpace = (COMP) ;
 	unsigned int i,j;
 
-	vector *l_pNorm;
+	vector3 *l_pNorm;
 
 	float l_fHigh0,l_fHigh1,l_fHigh2,l_fHigh3,l_fHigh4;
 
@@ -270,11 +270,11 @@ TerrainMeshGrid::CalcGridNormals()
 					m_MeshNodes[l_iMapID].cWaterLevel ) * CLIFF_HEIGHT);
 			} else l_fHigh4 = l_fHigh0 ;
 
-			l_pNorm->x() = l_fHigh4 - l_fHigh2;
-			l_pNorm->z() = l_fHigh3 - l_fHigh1;
-			l_pNorm->y() = fSpace;
+			l_pNorm->x = l_fHigh4 - l_fHigh2;
+			l_pNorm->z = l_fHigh3 - l_fHigh1;
+			l_pNorm->y = fSpace;
 
-			*l_pNorm = vector::normalize(*l_pNorm);
+			l_pNorm->norm();
 			//D3DXVec3Normalize(l_pNorm, l_pNorm);
 		}
 	}
@@ -286,7 +286,7 @@ TerrainMeshGrid::CalcGridNormals()
 /**
 	get datas
 */
-vector& 
+vector3& 
 TerrainMeshGrid::GetGridNormal(int iMeshNodeX,int iMeshNodeZ)
 {
 	int iMeshNodeID=IX_QT(iMeshNodeX,iMeshNodeZ);
@@ -294,7 +294,7 @@ TerrainMeshGrid::GetGridNormal(int iMeshNodeX,int iMeshNodeZ)
 	return m_MeshNodes[iMeshNodeID].vNorm;
 }
 
-vector& 
+vector3& 
 TerrainMeshGrid::GetGridPosition(int iMeshNodeX,int iMeshNodeZ)
 {
 	int iMeshNodeID=IX_QT(iMeshNodeX,iMeshNodeZ);

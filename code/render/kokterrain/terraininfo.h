@@ -14,9 +14,8 @@
 namespace KOK
 {
 
-class TerrainInfo : public Core::RefCounted
+class TerrainInfo
 {
-    DeclareClass(TerrainInfo);
 public:
     /// constructor
     TerrainInfo();

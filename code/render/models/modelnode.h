@@ -137,10 +137,11 @@ protected:
     /// called when resources should be unloaded
     virtual void UnloadResources();
 
-    /// get visible model node instances
+public: 
+	/// get visible model node instances
     const Util::Array<Ptr<ModelNodeInstance> >& GetVisibleModelNodeInstances(ModelNodeType::Code t) const;
 
-public: // PRIVATE!!! may only be called by subclassed of ModelNodeInstance
+	// PRIVATE!!! may only be called by subclassed of ModelNodeInstance
     /// called by model node instance on NotifyVisible()
     void AddVisibleNodeInstance(IndexT frameIndex, const Ptr<ModelNodeInstance>& nodeInst);
 
