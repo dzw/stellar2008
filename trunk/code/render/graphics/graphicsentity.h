@@ -40,10 +40,10 @@ public:
     /// entity types
     enum Type
     {
-        ModelType = 0,
-        LightType,
+        TerrainType = 0,
+        ModelType,
+		LightType,
         CameraType,
-		TerrainType,
 		InteriorType,
 
         NumTypes,

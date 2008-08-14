@@ -9,6 +9,9 @@
 #include "models/visresolver.h"
 #include "graphics/graphicsserver.h"
 #include "graphics/view.h"
+#include "graphics/stage.h"
+#include "graphics/terraincell.h"
+#include "graphics/cell.h"
 
 namespace KOK
 {
@@ -28,7 +31,7 @@ TerrainInstance::TerrainInstance():
 	terrain(0),
 	centerDist(0)
 {
-	this->distMeshPool = TerrainServer::Instance()->GetMeshPool();
+	//this->distMeshPool = TerrainServer::Instance()->GetTerrainMeshPool();
 }
 
 //------------------------------------------------------------------------------
@@ -36,7 +39,7 @@ TerrainInstance::TerrainInstance():
 */
 TerrainInstance::~TerrainInstance()
 {
-	this->distMeshPool = 0;
+	//this->distMeshPool = 0;
 }
 
 void 
@@ -45,6 +48,14 @@ TerrainInstance::OnAttachToModel(const Ptr<Model>& model)
 	ModelInstance::OnAttachToModel(model);
 
 	this->terrain = this->model.downcast<Terrain>();
+
+	Ptr<Cell> cell = GraphicsServer::Instance()->GetDefaultView()->GetStage()->GetRootCell();
+	// 加入到四叉树
+	for (IndexT i = 0; i < this->nodeInstances.Size(); i++)
+	{
+		Ptr<Cell> c = cell->FindEntityContainmentCell(this->nodeInstances[i]->GetModelNode()->GetBoundingBox());
+		c.downcast<TerrainCell>()->SetDistrict(this->nodeInstances[i].downcast<DistrictNodeInstance>());
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -54,13 +65,52 @@ TerrainInstance::OnAttachToModel(const Ptr<Model>& model)
 void
 TerrainInstance::Update()
 {
-	vector camPos = GraphicsServer::Instance()->GetDefaultView()->GetCameraEntity()->GetTransform().getrow3();
+	this->renderList.Clear();
+
+	/*vector camPos = GraphicsServer::Instance()->GetDefaultView()->GetCameraEntity()->GetTransform().getrow3();
 	if (camPos != savePos)
 	{
 		CheckDistrict(camPos);
 		savePos = camPos;
+	}*/
+	// node太多，比较费时，所以不更新，用的时候再更新
+	//ModelInstance::Update();
+}
+
+//------------------------------------------------------------------------------
+/**
+	设置可见节点用于渲染
+*/
+void 
+TerrainInstance::NotifyVisible(IndexT frameIndex)
+{
+	IndexT i;
+	SizeT num = this->renderList.Size();
+	for (i = 0; i < num; i++)
+	{
+		this->renderList[i]->OnNotifyVisible(frameIndex);
 	}
-	ModelInstance::Update();
+}
+
+void
+TerrainInstance::AppendRenderDist(const Ptr<DistrictNodeInstance>& d)
+{
+	this->renderList.Append(d);
+
+	//int tileSize = this->terrain->GetTileSize();
+	//int /*minX, minZ, */maxX, maxZ;
+
+	////minX = b.pmin.x() / tileSize;
+	////minZ = b.pmin.z() / tileSize;
+	//maxX = b.pmax.x() / tileSize;
+	//maxZ = b.pmax.x() / tileSize;
+	//
+	//int d = maxX + maxZ * this->terrain->GetTerrainInfo().GetTileCountX();
+
+	//if (d > 0 && d < this->terrain->GetTerrainInfo().GetTileCountX())
+	//{
+	//	this->renderList.Append(this->nodeInstances[d]);
+	//}
 }
 
 //------------------------------------------------------------------------------
@@ -81,18 +131,18 @@ TerrainInstance::Update()
 /**
 	释放不用的顶点缓冲
 */
-void
-TerrainInstance::UpdateMeshPool()
-{
-	IndexT indexFrame = VisResolver::Instance()->GetFrameIndex();
-
-	if (this->distMeshPool->Full())
-	{
-		//Array<Ptr<ModelNodeInstance> > nodes =  this->nodeInstances;//->GetNodes();
-		for (IndexT i = 0; i < this->nodeInstances.Size(); i++)
-			this->nodeInstances[i].downcast<DistrictNodeInstance>()->FreeMeshPool(indexFrame);
-	}
-}
+//void
+//TerrainInstance::UpdateMeshPool()
+//{
+//	IndexT indexFrame = VisResolver::Instance()->GetFrameIndex();
+//
+//	if (this->distMeshPool->Full())
+//	{
+//		//Array<Ptr<ModelNodeInstance> > nodes =  this->nodeInstances;//->GetNodes();
+//		for (IndexT i = 0; i < this->nodeInstances.Size(); i++)
+//			this->nodeInstances[i].downcast<DistrictNodeInstance>()->FreeMeshPool(indexFrame);
+//	}
+//}
 
 // district
 bool

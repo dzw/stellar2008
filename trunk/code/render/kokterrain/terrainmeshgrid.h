@@ -10,6 +10,7 @@
 #include "core/refcounted.h"
 #include "util/array.h"
 #include "math/vector.h"
+#include "math/vector3.h"
 #include "io/stream.h"
 
 //------------------------------------------------------------------------------
@@ -36,8 +37,8 @@ public:
 
 	void CalcGridNormals();
 
-	Math::vector& GetGridNormal(int iMeshNodeX,int iMeshNodeZ);
-	Math::vector& GetGridPosition(int iMeshNodeX,int iMeshNodeZ);
+	Math::vector3& GetGridNormal(int iMeshNodeX,int iMeshNodeZ);
+	Math::vector3& GetGridPosition(int iMeshNodeX,int iMeshNodeZ);
 	BYTE GetGridWaterLevel(int iMeshNodeX,int iMeshNodeZ);
 
 	void GetTileGridData( int iX, int iY, BYTE* pCliffType,BYTE* pCliffLevel, BYTE* pWaterLevel,BYTE* pTransLevel);
@@ -64,14 +65,14 @@ private:
 		BYTE cWaterLevel;	// 水池的层级
 		BYTE cTransLevel;	// 斜坡的层级
 
-		Math::vector vNorm;	// 该点的法向量
-		Math::vector vPos;
+		Math::vector3 vNorm;	// 该点的法向量
+		Math::vector3 vPos;
 
 		MeshNode()
 		{
 			iHigh          = 10;
-			vNorm          = Math::vector(0.0f,1.0f,0.0f);
-			vPos		   = Math::vector(0.0f,0.0f,0.0f);
+			vNorm          = Math::vector3(0.0f,1.0f,0.0f);
+			vPos		   = Math::vector3(0.0f,0.0f,0.0f);
 
 			cCliffTableID  = 0x00 ;
 			cCliffLevel    = 0x00 ;

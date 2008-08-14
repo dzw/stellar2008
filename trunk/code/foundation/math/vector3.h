@@ -7,7 +7,10 @@
 
     Generic vector3 class.
 
-    (C) 2002 RadonLabs GmbH
+	所有顶点格式中都顶用这个类，而不能用vector，因为vector会16位对齐，所以会出现
+	比原数据大的情况，容易出问题。
+
+    (C) 2008
 */
 //#include "math/math.h"
 #include <float.h>

@@ -20,20 +20,35 @@ public:
     VertexBufferPool();
     ~VertexBufferPool();
 
-    void Release();
-    SizeT GetBlockCount()const;
-	void Reset(DWORD vertexSize, DWORD blockVertexCount, DWORD blockCount, const Util::Array<VertexComponent>& vertexComponents);
+	void Reset(SizeT vertexSize, SizeT vertexCount, const Util::Array<VertexComponent>& vertexComponents);
 	Ptr<VertexBuffer> GetBuffer();
-    bool Full()const;
-    DWORD Alloc(void *data);
-    void Free(DWORD offset);
-    void FreeAll();
+    void FlushAtFrameStart();
+	void FlushVB();
+	void Lock(void*& vertexPointer, SizeT lockCount, SizeT& startVertex);
+	void Unlock();
+	bool CheckSpace(SizeT lockCount);
+	void SetLodTime(DWORD lodTime);
+	void FrameMove(DWORD frameTime);
+	void EndScene();
+
+
+
+	bool discard;
+	DWORD flushCnt;
 
 protected:
-    Util::Array<DWORD> freeList;
-    DWORD blockSize;
-    DWORD poolSize;
-    Ptr<VertexBuffer> buffer;
+	SizeT vertexSize;
+	SizeT vertexCount;
+	/// 顶点数位置（不是缓冲大小位置）
+	SizeT position;		
+	
+	bool  locked;
+	bool  flush;
+
+	DWORD updateTime;
+	DWORD lodTime;
+
+	Ptr<VertexBuffer> buffer;
 };
 }
 #endif

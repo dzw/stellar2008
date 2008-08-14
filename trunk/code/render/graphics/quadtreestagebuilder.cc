@@ -6,6 +6,7 @@
 #include "graphics/quadtreestagebuilder.h"
 #include "graphics/stage.h"
 #include "graphics/cell.h"
+#include "graphics/terraincell.h"
 
 namespace Attr
 {
@@ -48,7 +49,7 @@ QuadtreeStageBuilder::BuildStage(const Ptr<Stage>& stage)
                    this->attrs.GetFloat4(Attr::QuadTreeStageBuilderExtents));
     this->quadTree.SetBoundingBox(box);
     this->quadTree.Initialize();
-    this->numCellsBuilt = 0;
+    this->numCellsBuilt = 0; 
 
     Ptr<Graphics::Cell> rootCell = this->CreateQuadTreeCell(0, 0, 0, 0);
     stage->SetRootCell(rootCell);
@@ -61,7 +62,7 @@ Graphics::Cell*
 QuadtreeStageBuilder::CreateQuadTreeCell(Graphics::Cell* parentCell, uchar curLevel, ushort curCol, ushort curRow)
 {
     // create a new cell
-	Graphics::Cell* cell = Graphics::Cell::Create();
+	Graphics::Cell* cell = (Graphics::Cell*)Graphics::TerrainCell::Create();
     int nodeIndex = this->quadTree.GetNodeIndex(curLevel, curCol, curRow);
     const QuadTree<Cell>::Node& node = this->quadTree.GetNodeByIndex(nodeIndex);
     cell->SetBoundingBox(node.GetBoundingBox());

@@ -40,9 +40,9 @@ D3D9MemoryIndexBufferLoader::OnLoadRequested()
     D3DFORMAT d3d9Format = (IndexType::Index16 == this->indexType) ? D3DFMT_INDEX16 : D3DFMT_INDEX32;
     IDirect3DIndexBuffer9* d3dIndexBuffer = 0;
     HRESULT hr = d3d9Device->CreateIndexBuffer(this->indexDataSize,     // Length,
-                                               0,                       // Usage
+		indexBufferUsage == IndexBuffer::UsageDynamic?D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC:D3DUSAGE_WRITEONLY,                       // Usage
                                                d3d9Format,              // Format
-                                               D3DPOOL_MANAGED,         // Pool
+		indexBufferUsage == IndexBuffer::UsageDynamic?D3DPOOL_DEFAULT:D3DPOOL_MANAGED,         // Pool
                                                &d3dIndexBuffer,         // ppIndexBuffer
                                                NULL);                   // pSharedHandle
     n_assert(SUCCEEDED(hr));

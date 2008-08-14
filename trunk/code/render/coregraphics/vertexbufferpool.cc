@@ -15,51 +15,44 @@ using namespace CoreGraphics;
 using namespace Resources;
 
 VertexBufferPool::VertexBufferPool():
-	blockSize(0),
-	poolSize(0),
-	buffer(0)
+	vertexCount(0),
+	position(0),
+	locked(false),
+	flush(true),
+	updateTime(0),
+	lodTime(0),
+	flushCnt(1)
 {
+	
 }
 
 VertexBufferPool::~VertexBufferPool()
 {
-	Release();
+	Unlock();
+	if (this->buffer.isvalid())
+	{
+		this->buffer->Unload();
+		this->buffer = 0;
+	}
 }
 
 void 
-VertexBufferPool::Release()
+VertexBufferPool::Reset(SizeT vertexSize, SizeT vertexNum, const Util::Array<VertexComponent>& vertexComponents)
 {
-	this->buffer = 0;
-}
-
-SizeT 
-VertexBufferPool::GetBlockCount()const
-{
-    return this->blockSize;
-}
-
-void 
-VertexBufferPool::Reset(DWORD vertexSize, DWORD blockVertexCount, DWORD blockCount, 
-						const Util::Array<VertexComponent>& vertexComponents/*DWORD fvf, DWORD uasge, DWORD pool*/)
-{
-	this->blockSize = blockVertexCount * vertexSize;
-	this->poolSize = this->blockSize * blockCount;
+	this->vertexCount = vertexNum;
+	this->vertexSize = vertexSize;
 
 	this->buffer = VertexBuffer::Create();
 	Ptr<MemoryVertexBufferLoader> vbLoader = MemoryVertexBufferLoader::Create();
 	vbLoader->Setup(vertexComponents,
-		blockVertexCount*blockCount,	// 顶点数量
-		blockSize*blockCount,						// 缓存大小
+		this->vertexCount,						// 顶点数量
+		this->vertexCount*vertexSize,						// 缓存大小
 		CoreGraphics::VertexBuffer::UsageDynamic, 
 		CoreGraphics::VertexBuffer::AccessWrite);
 	this->buffer->SetLoader(vbLoader.upcast<ResourceLoader>());
 	this->buffer->Load();
 	this->buffer->SetLoader(0);
 	n_assert(this->buffer->GetState() == VertexBuffer::Loaded);
-
-    this->freeList.Reserve(blockCount);
-    for (SizeT i = 0; i < blockCount; i++)
-        this->freeList[i] = (this->freeList.Size() - 1 - i) * blockSize;
 }
 
 Ptr<VertexBuffer> 
@@ -68,47 +61,100 @@ VertexBufferPool::GetBuffer()
     return this->buffer;
 }
 
+void 
+VertexBufferPool::FlushAtFrameStart()
+{
+	this->flush = true;
+	this->flushCnt++;
+	if (this->flushCnt > 30000)
+		this->flushCnt = 1;
+}
+
+void 
+VertexBufferPool::FlushVB()
+{
+	this->flush = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+	vertexPointer:返回缓冲地址
+	lockCount:要返回的缓冲顶点个数（不是缓冲大小）
+	startVertex:缓冲顶点的开始位置
+*/
+void 
+VertexBufferPool::Lock(void*& vertexPointer, SizeT lockCount, SizeT& startVertex)
+{
+	startVertex = 0;
+
+	if (lockCount > this->vertexCount)
+	{
+		n_assert(0);
+		return;
+	}
+
+	if (this->buffer.isvalid())
+	{
+		VertexBuffer::MapType dwFlags = VertexBuffer::MapWriteNoOverwrite;
+
+		if (this->flush || ((lockCount + this->position) >= this->vertexCount))
+		{
+			this->flush = false;
+			this->position = 0;
+			dwFlags = VertexBuffer::MapWriteDiscard;
+		}
+		vertexPointer = (void*)this->buffer->Map(dwFlags, this->position * this->vertexSize, lockCount * this->vertexSize);
+		n_assert(vertexPointer != NULL);
+		this->locked = true;
+		startVertex = this->position;
+		this->position += lockCount;
+	}
+}
+
+void 
+VertexBufferPool::Unlock()
+{
+	if (this->locked && this->buffer.isvalid())
+	{
+		this->buffer->Unmap();
+		this->locked = false;
+	}
+}
+
 bool 
-VertexBufferPool::Full()const
+VertexBufferPool::CheckSpace(SizeT lockCount)
 {
-    return this->freeList.IsEmpty();
-}
-
-DWORD 
-VertexBufferPool::Alloc(void *data)
-{
-    if (!this->freeList.IsEmpty())
-    {
-        DWORD ret = this->freeList.Back();
-		this->freeList.EraseIndex(this->freeList.Size()-1);
-        if(data)
-        {
-			void* dest = buffer->Map(CoreGraphics::VertexBuffer::MapWriteNoOverwrite, ret, blockSize);
-            if(dest)
-            {
-				Memory::Copy(data, dest, blockSize);
-                buffer->Unmap();
-            }
-        }
-        return ret;
-    }
-    return -1;
+	if ((lockCount + this->position) >= this->vertexCount)
+		return false;
+	return true;
 }
 
 void 
-VertexBufferPool::Free(DWORD offset)
+VertexBufferPool::SetLodTime(DWORD lodTime)
 {
-	this->freeList.Append(offset);
+	this->lodTime = lodTime;
 }
 
 void 
-VertexBufferPool::FreeAll()
+VertexBufferPool::FrameMove(DWORD frameTime)
 {
-	DWORD blockCount = this->poolSize / this->blockSize;
-	this->freeList.Clear();
-	this->freeList.Reserve(blockCount);
-	for (SizeT i = 0; i < blockCount; i++)
-		this->freeList[i] = (this->freeList.Size() - 1 - i) * blockSize;
+	this->updateTime = frameTime;
+	if (this->updateTime >= this->lodTime)
+	{
+		this->updateTime -= this->lodTime;
+		this->flush = true;
+		this->flushCnt++;
+		if (this->flushCnt > 30000)
+			this->flushCnt = 1;
+		this->position = 0;
+		this->discard = true;
+	}
+}
+
+void 
+VertexBufferPool::EndScene()
+{
+	this->discard = false;
 }
 
 }

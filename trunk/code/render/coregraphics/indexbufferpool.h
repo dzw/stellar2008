@@ -1,43 +1,44 @@
 #pragma once
-#ifndef COREGRAPHICS_INDEXBUFFER_H
-#define COREGRAPHICS_INDEXBUFFER_H
+#ifndef COREGRAPHICS_INDEXBUFFERPOOL_H
+#define COREGRAPHICS_INDEXBUFFERPOOL_H
 //------------------------------------------------------------------------------
 /**
-    @class CoreGraphics::IndexBuffer
+    @class CoreGraphics::IndexBufferPool
   
-    A resource which holds an array of indices into an array of vertices.  
-    
-    (C) 2007 Radon Labs GmbH
+    (C) 2008 cTuo
 */
-#if __WIN32__
-#include "coregraphics/d3d9/d3d9indexbuffer.h"
+#include "coregraphics/indexbuffer.h"
+#include "util/array.h"
+#include "core/refcounted.h"
+
 namespace CoreGraphics
 {
-class IndexBuffer : public Direct3D9::D3D9IndexBuffer
+class IndexBufferPool : public Core::RefCounted
 {
-    DeclareClass(IndexBuffer);
+	DeclareClass(IndexBufferPool);
+public:
+	IndexBufferPool();
+	~IndexBufferPool();
+
+	void Reset(SizeT indexCount, IndexType::Code type);
+	Ptr<IndexBuffer> GetBuffer();
+	void FlushAtFrameStart();
+	void Lock(void*& vertexPointer, SizeT lockCount, SizeT& startVertex);
+	void Unlock();
+	bool CheckSpace(SizeT lockCount);
+
+	DWORD flushCnt;
+
+protected:
+	SizeT indexSize;
+	SizeT indexCount;
+	SizeT position;		
+
+	bool  locked;
+	bool  flush;
+
+	Ptr<IndexBuffer> buffer;
 };
 }
-#elif __XBOX360__
-#include "coregraphics/xbox360/xbox360indexbuffer.h"
-namespace CoreGraphics
-{
-class IndexBuffer : public Xbox360::Xbox360IndexBuffer
-{
-    DeclareClass(IndexBuffer);
-};
-}
-#elif __WII__
-#include "coregraphics/wii/wiiindexbuffer.h"
-namespace CoreGraphics
-{
-class IndexBuffer : public Wii::WiiIndexBuffer
-{
-    DeclareClass(IndexBuffer);
-};
-}
-#else
-#error "IndexBuffer class not implemented on this platform!"
-#endif
 //------------------------------------------------------------------------------
 #endif

@@ -17,6 +17,7 @@
 #include "graphics/stage.h"
 #include "kokterrain/terrainentity.h"
 #include "coregraphics/meshpool.h"
+#include "coregraphics/dynamicmeshpool.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -40,23 +41,31 @@ public:
     bool IsOpen() const;
 
 	void LoadTerrain(const Resources::ResourceId resId);
-	const Ptr<CoreGraphics::MeshPool>& GetMeshPool()const;
+	//const Ptr<CoreGraphics::MeshPool>& GetMeshPool()const;
+	const Ptr<CoreGraphics::DynamicMeshPool>& GetTerrainMeshPool()const;
 private:
 	void CreateMeshPool();
 
-	Ptr<CoreGraphics::MeshPool> distMeshPool;
+	//Ptr<CoreGraphics::MeshPool> distMeshPool;
+	Ptr<CoreGraphics::DynamicMeshPool> terrMeshPool;
 
 	bool isOpen;
 	Resources::ResourceId resId;
 	Ptr<TerrainEntity> terrain;
 };
 
-inline const Ptr<CoreGraphics::MeshPool>& 
-TerrainServer::GetMeshPool()const
+inline const Ptr<CoreGraphics::DynamicMeshPool>&
+TerrainServer::GetTerrainMeshPool()const
 {
-	n_assert(this->distMeshPool.isvalid());
-	return this->distMeshPool;
+	return this->terrMeshPool;
 }
+
+//inline const Ptr<CoreGraphics::MeshPool>& 
+//TerrainServer::GetMeshPool()const
+//{
+//	n_assert(this->distMeshPool.isvalid());
+//	return this->distMeshPool;
+//}
 
 inline bool
 TerrainServer::IsOpen()const

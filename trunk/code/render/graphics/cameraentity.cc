@@ -23,7 +23,7 @@ CameraEntity::CameraEntity() :
     this->SetType(CameraType);
     float aspectRatio = DisplayDevice::Instance()->GetDisplayMode().GetAspectRatio();
     //this->SetupPerspectiveFov(n_deg2rad(60.0f), aspectRatio, 0.01f, 500.0f);
-	this->SetupPerspectiveFov(n_deg2rad(45.0f), aspectRatio, 0.01f, 2000.0f);
+	this->SetupPerspectiveFov(n_deg2rad(45.0f), aspectRatio, 0.01f, 500.0f);
     this->viewMatrix = matrix44::identity();
     this->viewProjMatrix = matrix44::identity();
 }

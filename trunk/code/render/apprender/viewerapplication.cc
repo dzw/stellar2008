@@ -62,7 +62,7 @@ ViewerApplication::Open()
         GraphicsServer* gfxServer = GraphicsServer::Instance();
 
         // setup the camera util object
-        this->mayaCameraUtil.Setup(point(10.0f, 10.0f, 10.0f), point(0.0f, 0.0f, 0.0f), vector(0.0f, 1.0f, 0.0f));
+        this->mayaCameraUtil.Setup(point(10.0f, 50.0f, 10.0f), point(0.0f, 0.0f, 0.0f), vector(0.0f, 1.0f, 0.0f));
 		this->dxutCameraUtil.Setup(vector(10.0f, 10.0f, 10.0f)/*vector(18468.0f, 177.0f, 14292.66f)*/);
 		//this->quaternionCameraUtil.Setup(point(0.0f, 0.0f, 0.0f), vector(0.0f, 0.0f, -100.0f));
 		this->freeCameraUtil.Setup(vector(10.0f, 1.0f, 10.0f));/*16000.0f, 114.0f, 27200.0f));19343.0f, 237.0f, 14136.66f));*/
@@ -70,16 +70,18 @@ ViewerApplication::Open()
 		//this->freeCameraUtil.MoveRight(12799.99992f);
 
         // setup a stage
-        this->stage = gfxServer->CreateStage(StringAtom("DefaultStage"), SimpleStageBuilder::Create());
-		/*Ptr<QuadtreeStageBuilder> quadTreeStageBuilder = QuadtreeStageBuilder::Create();    
+        //this->stage = gfxServer->CreateStage(StringAtom("DefaultStage"), SimpleStageBuilder::Create());
+		Ptr<QuadtreeStageBuilder> quadTreeStageBuilder = QuadtreeStageBuilder::Create();    
 		bbox levelBox;
 		Attr::AttributeContainer attr;
-		levelBox.set(point(17500.0f, 2000.0f, 17500.0f), point(17500.0f, 2000.0f, 17500.0f));
-		attr.SetInt(Attr::QuadTreeStageBuilderDepth, 9);
+		//levelBox.set(point(0, -1000.0f, 0), point(32*8*10, 1000.0f, 32*8*10));
+		levelBox.pmin = point(0, -1000.0f, 0);
+		levelBox.pmax = point(32*8*10, 1000.0f, 32*8*10);
+		attr.SetInt(Attr::QuadTreeStageBuilderDepth, 6);
 		attr.SetFloat4(Attr::QuadTreeStageBuilderCenter, levelBox.center());
 		attr.SetFloat4(Attr::QuadTreeStageBuilderExtents, levelBox.extents());
 		quadTreeStageBuilder->SetAttributes(attr);
-		this->stage = gfxServer->CreateStage(StringAtom("DefaultStage"), quadTreeStageBuilder.upcast<StageBuilder>());*/
+		this->stage = gfxServer->CreateStage(StringAtom("DefaultStage"), quadTreeStageBuilder.upcast<StageBuilder>());
 
         // attach a camera to the stage
         this->cameraEntity = CameraEntity::Create();

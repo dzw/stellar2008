@@ -21,6 +21,8 @@
 #include "models/modelnode.h"
 #include "attr/attributecontainer.h"
 #include "models/visresolvecontainer.h"
+#include "frame/lightingmode.h"
+#include "coregraphics/shaderfeature.h"
 
 namespace Terrain
 {
@@ -122,6 +124,8 @@ public:
     /// get blob value
     const Util::Blob& GetBlob(const Attr::BlobAttrId& attrId) const;
 
+	/// ‰÷»æ∂‘œÛ
+	virtual void Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures);
 private:
     friend class VisResolver;
     friend class ModelServer;

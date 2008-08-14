@@ -39,9 +39,14 @@ public:
 	int  GetMapWide()const;
 	float GetTilePosOffset()const;
 
+	void CreateMeshData();
+	void UpdateDrawTable(TerrainMeshData** pMeshDatas);
+
 	/// called when resources should be loaded
     virtual void LoadResources();
 protected:
+	friend class DistrictNodeInstance;
+
     /// create a model node instance
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
     
@@ -52,7 +57,19 @@ protected:
 	int disX;
 	int disZ;
 
+	int tileStartX;
+	int tileStartY;
+
 	Ptr<TerrainMeshGrid> terrMeshGrid;
+	
+	/// render
+	TileMesh*		vertices;
+	int				vertexSize;
+	WORD*			indices;
+	int				indexSize;
+	TileDrawTable*	drawTable;
+
+	int				shadowIndexSize;
 };
 
 inline const Ptr<TerrainMeshGrid>& 

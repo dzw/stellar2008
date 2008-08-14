@@ -7,7 +7,6 @@
 
 namespace KOK
 {
-ImplementClass(KOK::TerrainInfo, 'TNIO', Core::RefCounted);
 
 using namespace Util;
 using namespace Math;

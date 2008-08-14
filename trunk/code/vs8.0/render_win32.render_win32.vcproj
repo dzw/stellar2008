@@ -504,6 +504,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\coregraphics\dynamicmeshpool.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\dynamicmeshpool.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\coregraphics\font.cc"
 				>
 			</File>
@@ -537,6 +545,14 @@
 			</File>
 			<File
 				RelativePath="..\render\coregraphics\indexbuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\indexbufferpool.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\indexbufferpool.h"
 				>
 			</File>
 			<File
@@ -1376,6 +1392,14 @@
 			</File>
 			<File
 				RelativePath="..\render\graphics\stagebuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\render\graphics\terraincell.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\graphics\terraincell.h"
 				>
 			</File>
 			<File
@@ -2426,6 +2450,14 @@
 			</File>
 			<File
 				RelativePath="..\render\kokterrain\terrainmeshgrid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\render\kokterrain\terrainrender.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\kokterrain\terrainrender.h"
 				>
 			</File>
 			<File

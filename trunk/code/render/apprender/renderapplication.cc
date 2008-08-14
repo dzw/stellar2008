@@ -298,7 +298,7 @@ RenderApplication::OnConfigureDisplayDevice()
     }
     else
     {
-        this->displayDevice->SetWindowTitle("Nebula3 Viewer");
+        this->displayDevice->SetWindowTitle("Stellar Viewer");
     }
 }
 
