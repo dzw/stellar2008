@@ -32,6 +32,14 @@ DebugView::~DebugView()
 	DestructSingleton;
 }
 
+void 
+DebugView::AddDebugString(const Util::String& head, DWORD& content)
+{
+	String cc;
+	cc.Format("%d", content);
+	AddDebugString(head, cc);
+}
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -51,7 +59,7 @@ DebugView::AddDebugString(const Util::String& head, const Util::String& content)
 void 
 DebugView::Render()
 {
-	return;
+	//return;
 
 	rectangle<float> rect(0, 0, 1, 1);
 	String output;

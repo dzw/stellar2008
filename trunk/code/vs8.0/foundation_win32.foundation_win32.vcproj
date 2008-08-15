@@ -136,7 +136,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..;../foundation;../extlibs ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;"
+				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"

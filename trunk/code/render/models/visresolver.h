@@ -58,12 +58,13 @@ public:
 	IndexT GetFrameIndex()const;
 	///
 	void IncreaseFrameIndex();
+
+	/// add a visible model by node type
+    void AddVisibleModel(IndexT frameIndex, ModelNodeType::Code nodeType, const Ptr<Model>& model);
 private:
     friend class Model;
 
-    /// add a visible model by node type
-    void AddVisibleModel(IndexT frameIndex, ModelNodeType::Code nodeType, const Ptr<Model>& model);
-
+    
     VisResolveContainer<Model> visibleModels;
     IndexT frameIndex;
     bool isOpen;

@@ -89,7 +89,10 @@ protected:
     Ptr<CameraEntity> camera;
     Ptr<CoreGraphics::RenderTarget> renderTarget;
     Ptr<Frame::FrameShader> frameShader;
-    Util::Array<Ptr<View> > dependencies;    
+    Util::Array<Ptr<View> > dependencies;
+
+	Math::matrix44 camPos;
+	bool needUpdate;
 };
 
 //------------------------------------------------------------------------------

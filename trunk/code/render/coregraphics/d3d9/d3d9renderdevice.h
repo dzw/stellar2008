@@ -86,6 +86,13 @@ private:
     UINT adapter;
     D3DFORMAT displayFormat;
     DWORD deviceBehaviourFlags;
+
+#ifdef NEBULA3_DEBUG
+	/// 计算每帧渲染的几何数
+	DWORD polySize;
+	DWORD DP;
+	DWORD DIP;
+#endif
 };
 
 } // namespace Direct3D9

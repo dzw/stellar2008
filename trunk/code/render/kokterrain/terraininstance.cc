@@ -9,9 +9,10 @@
 #include "models/visresolver.h"
 #include "graphics/graphicsserver.h"
 #include "graphics/view.h"
-#include "graphics/stage.h"
+#include "graphics/worldstage.h"
 #include "graphics/terraincell.h"
 #include "graphics/cell.h"
+#include "coregraphics/debugview.h"
 
 namespace KOK
 {
@@ -49,7 +50,10 @@ TerrainInstance::OnAttachToModel(const Ptr<Model>& model)
 
 	this->terrain = this->model.downcast<Terrain>();
 
-	Ptr<Cell> cell = GraphicsServer::Instance()->GetDefaultView()->GetStage()->GetRootCell();
+	const Ptr<WorldStage>& stage = GraphicsServer::Instance()->GetDefaultView()->GetStage().downcast<WorldStage>();
+	//stage->SetTerrain(this);
+
+	Ptr<Cell> cell = stage->GetRootCell();
 	// 加入到四叉树
 	for (IndexT i = 0; i < this->nodeInstances.Size(); i++)
 	{
@@ -84,33 +88,64 @@ TerrainInstance::Update()
 void 
 TerrainInstance::NotifyVisible(IndexT frameIndex)
 {
-	IndexT i;
-	SizeT num = this->renderList.Size();
-	for (i = 0; i < num; i++)
+	DWORD num = this->renderList.Size();
+	for (IndexT i = 0; i < num; i++)
 	{
 		this->renderList[i]->OnNotifyVisible(frameIndex);
 	}
+	//VisResolver::Instance()->AddVisibleModel(frameIndex, ModelNodeType::Solid, this->model);
+	this->renderList1.Clear();
+	this->renderList1 = this->renderList;
+
+	for (IndexT i = 0; i < 4; i++)
+	{
+		renderLayer[i].Clear();
+	}
+
+	SizeT texNum = this->terrain->GetTextureCount();
+	//this->texRender.Clear();
+	//this->texRender.Reserve(texNum);
+	////for (SizeT i = 0; i < texNum; i++)
+	//	texRender[i] = false;
+
+	// 找出第j层所有drawTable
+	for (IndexT j = 0; j < 4; j++)
+	{
+		// 每个DIST的相应层取出来
+		for (IndexT i = 0; i < num; i++)
+		{
+			// 每个DIST上都有不直4张纹理，所以把所有的都取出来，这个WOW不一样
+			for (IndexT n = 0; n < texNum; n++)
+			{
+				if (renderList[i]->IsRender(j*texNum+n))
+				{
+					// 排序
+					DrawTile d;
+					d.dist = renderList[i];
+					d.tex = n;
+					d.pass = j*texNum+n;
+
+					// 根据纹理、距离排序，每层都相要这两项，和WOW又不一样，WOW中混合层只要根据纹理排序就可以
+					renderLayer[j].InsertSorted(d);
+					//////////////////////////////////////////////////////////////////////////
+
+					//texRender[n] = true;
+				}
+			}
+		}
+	}
+
+	// 渲染的时候就直接渲染排好序的DIST，根据层数设置SHADER。
+
+#ifdef NEBULA3_DEBUG
+	DebugView::Instance()->AddDebugString("dist", num);
+#endif
 }
 
 void
 TerrainInstance::AppendRenderDist(const Ptr<DistrictNodeInstance>& d)
 {
 	this->renderList.Append(d);
-
-	//int tileSize = this->terrain->GetTileSize();
-	//int /*minX, minZ, */maxX, maxZ;
-
-	////minX = b.pmin.x() / tileSize;
-	////minZ = b.pmin.z() / tileSize;
-	//maxX = b.pmax.x() / tileSize;
-	//maxZ = b.pmax.x() / tileSize;
-	//
-	//int d = maxX + maxZ * this->terrain->GetTerrainInfo().GetTileCountX();
-
-	//if (d > 0 && d < this->terrain->GetTerrainInfo().GetTileCountX())
-	//{
-	//	this->renderList.Append(this->nodeInstances[d]);
-	//}
 }
 
 //------------------------------------------------------------------------------

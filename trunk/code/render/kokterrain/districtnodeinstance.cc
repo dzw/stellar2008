@@ -12,10 +12,15 @@
 #include "math/bbox.h"
 #include "kokterrain/terrainserver.h"
 
+#include "graphics/graphicsserver.h"
+#include "graphics/view.h"
+#include "graphics/cameraentity.h"
+
 namespace KOK
 {
 ImplementClass(KOK::DistrictNodeInstance, 'DTNI', Models::StateNodeInstance);
 
+using namespace Graphics;
 using namespace CoreGraphics;
 using namespace Models;
 using namespace Math;
@@ -105,6 +110,8 @@ DistrictNodeInstance::OnNotifyVisible(IndexT frameIndex)
 	//if (!this->IsVisible())
 	//	return;
 
+	CalcSquareDistance();
+
 	// 用的时候才更新
 	StateNodeInstance::Update();
 
@@ -113,6 +120,15 @@ DistrictNodeInstance::OnNotifyVisible(IndexT frameIndex)
 	this->frameIndex = frameIndex;
     // just tell our model node that we are a visible instance
     this->modelNode->AddVisibleNodeInstance(frameIndex, this);
+}
+
+void
+DistrictNodeInstance::CalcSquareDistance()
+{
+	bbox box = this->modelNode->GetBoundingBox();
+	Ptr<CameraEntity> camera = GraphicsServer::Instance()->GetDefaultView()->GetCameraEntity();
+	box.transform(/*TransformDevice::Instance()->GetViewTransform()*/camera->GetViewTransform());
+	this->squareDistance = box.pmax.z();
 }
 
 void 
@@ -250,9 +266,11 @@ DistrictNodeInstance::Reset(const Ptr<DistrictNode>& district)
 }
 
 bool 
-DistrictNodeInstance::SetRenderGroup(int pass)
+DistrictNodeInstance::SetRenderGroup(int pass, int texId)
 {
-	if (dist->drawTable[pass].FaceCount <= 0)
+	if (dist->drawTable[pass].FaceCount <= 0 || 
+		!dist->drawTable[pass].Texture || 
+		(dist->drawTable[pass].Texture - 1) != texId)
 		return false; 
 
 	group.SetPrimitiveTopology(PrimitiveTopology::TriangleList);

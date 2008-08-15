@@ -134,7 +134,7 @@ DXUTCameraUtil::SetMovement(const vector& keyboardDirection)
 	if (keyboardDirection == vector::nullvec())
 		return;
 
-	this->keyboardDirection += keyboardDirection;
+	this->keyboardDirection = keyboardDirection;
 
 	// 高度在这里设置
 	this->keyboardDirection.y() = 0.0f;

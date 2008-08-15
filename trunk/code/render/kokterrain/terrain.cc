@@ -241,8 +241,8 @@ Terrain::SetMapSize(SizeT mapSize)
 
 	bbox box;
 	vector min, max;
-	min.set(-tilePosOffset, -500.0f, -tilePosOffset);
-	max.set(scalar(GetMapWide() * GetTileSize() - tilePosOffset), 500.0f, scalar(GetMapWide() * GetTileSize() - tilePosOffset));
+	min.set(-tilePosOffset, -5000.0f, -tilePosOffset);
+	max.set(scalar(GetMapWide() * GetTileSize() - tilePosOffset), 5000.0f, scalar(GetMapWide() * GetTileSize() - tilePosOffset));
 	box.pmin = min;
 	box.pmax = max;
 	this->SetBoundingBox(box);
@@ -285,91 +285,290 @@ Terrain::AppendTexture(const String& resId)
 
 //------------------------------------------------------------------------------
 /**
+	按每个DIST渲染，效率最低
+*/
+//void 
+//Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures)
+//{
+//	if (!this->terrRender.isvalid())
+//		return;
+//
+//	ShaderServer* shaderServer = ShaderServer::Instance();
+//	ShaderServer::Instance()->SetActiveShaderInstance(this->terrRender->GetShaderInstance());
+//	const Array<Ptr<ModelNode> >& modelNodes = this->GetVisibleModelNodes(nodeFilter);
+//
+//	int curLayer =-1;
+//
+//	// if lighting mode is Off, we can render all node instances with the same shader
+//	const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();
+//
+//			IndexT modelNodeIndex;  
+//			for (modelNodeIndex = 0; modelNodeIndex < modelNodes.Size(); modelNodeIndex++)
+//			{
+//				// render instances
+//				const Array<Ptr<ModelNodeInstance> >& nodeInstances = modelNodes[modelNodeIndex]->GetVisibleModelNodeInstances(nodeFilter);
+//				IndexT nodeInstIndex;
+//				for (nodeInstIndex = 0; nodeInstIndex < nodeInstances.Size(); nodeInstIndex++)
+//				{
+//					// 渲染每个DIST相应的层
+//					const Ptr<DistrictNodeInstance>& nodeInstance = nodeInstances[nodeInstIndex].downcast<DistrictNodeInstance>();
+//
+//					// if single-pass lighting is enabled, we need to setup the lighting 
+//					// shader states
+//					// FIXME: This may set a new shader variation for every node instance
+//					// which is expensive! Would be better to sort node instances by number
+//					// of active lights!!!
+//
+//					//if (LightingMode::SinglePass == this->lightingMode)
+//					//{
+//					//	// setup lighting render states
+//					//	// NOTE: this may change the shader feature bit mask which may select
+//					//	// a different shader variation per entity
+//					//	const Ptr<ModelEntity>& modelEntity = nodeInstance->GetModelInstance()->GetModelEntity();
+//					//	lightServer->ApplyModelEntityLights(modelEntity);
+//					//	shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
+//					//	SizeT numPasses = shaderInst->Begin();
+//					//	n_assert(1 == numPasses);
+//					//	shaderInst->BeginPass(0);
+//					//}
+//					for (SizeT j = 0; j < textures.Size(); j++)
+//					{
+//						for (SizeT layer = 0; layer < 4; layer++)
+//						{
+//							int renderPass = textures.Size() * layer + j;
+//
+//							// render the node instance
+//							if (nodeInstance->SetRenderGroup(renderPass))
+//							{
+//								int texId = nodeInstance->GetTextureId(renderPass);
+//								if (texId <= 0)
+//									continue;
+//
+//								// 设置纹理到GPU
+//								if (!terrRender->ApplySharedState(textures[texId]))
+//									continue;
+//
+//								if (curLayer != layer)
+//								{
+//									String mask;
+//									mask.Format("Solid|KOK%d", layer+1);
+//									shaderServer->ResetFeatureBits();
+//									shaderServer->SetFeatureBits(shaderServer->FeatureStringToMask(mask));
+//
+//									
+//									
+//									curLayer = layer;
+//								}
+//								//if (LightingMode::None == this->lightingMode)
+//								{
+//									shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
+//									SizeT numPasses = shaderInst->Begin();
+//									n_assert(1 == numPasses);
+//									shaderInst->BeginPass(0);
+//								}
+//
+//								nodeInstance->ApplyState();
+//								shaderInst->Commit();
+//								nodeInstance->Render();
+//
+//								//if (LightingMode::None == this->lightingMode)
+//								{
+//									shaderInst->EndPass();
+//									shaderInst->End();
+//								}
+//							}
+//						}
+//					}
+//					/*if (LightingMode::SinglePass == this->lightingMode)
+//					{
+//					shaderInst->EndPass();
+//					shaderInst->End();
+//					}*/
+//				}
+//			}
+//}
+
+//------------------------------------------------------------------------------
+/**
 根据纹理不同渲染
 */
 void 
 Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures)
 {
+	String mask;
+	//const Array<Ptr<ModelNode> >& modelNodes = this->GetVisibleModelNodes(nodeFilter);
+	
+	//if (!terrRender->ApplySharedState(textures[0]))
+	//	return;
+
+	/*const Util::Array<Ptr<ModelInstance> >& instances = this->GetInstances();
+	const Array<Ptr<DistrictNodeInstance> >& nodeInstances = instances[0].downcast<TerrainInstance>()->GetRenderList();
+	*/
+
 	ShaderServer* shaderServer = ShaderServer::Instance();
-	const Array<Ptr<ModelNode> >& modelNodes = this->GetVisibleModelNodes(nodeFilter);
+	ShaderServer::Instance()->SetActiveShaderInstance(this->terrRender->GetShaderInstance());
+	const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();
 
-	for (SizeT layer = 0; layer < 4; layer++)
+	const Ptr<TerrainInstance>& terrInstance = this->instances[0].downcast<TerrainInstance>();
+	//////////////////////////////////////////////////////////////////////////
+	//  排序渲染@1  shader-texture-distance 方式
+	//
+	for (SizeT i = 0; i < 4; i++)
 	{
-		String mask;
-		mask.Format("Solid|KOK%d", layer+1);
-		shaderServer->ResetFeatureBits();
-		shaderServer->SetFeatureBits(shaderServer->FeatureStringToMask(mask));
-		ShaderServer::Instance()->SetActiveShaderInstance(this->terrRender->GetShaderInstance());
-
-		for (SizeT j = 0; j < textures.Size(); j++)
+		mask.Format("Solid|KOK%d", i+1);
+		shaderInst->SelectActiveVariation(shaderServer->FeatureStringToMask(mask));
+		//if (LightingMode::None == this->lightingMode)
 		{
-			// 设置纹理到GPU
-			if (!terrRender->ApplySharedState(textures[j]))
+			SizeT numPasses = shaderInst->Begin();
+			n_assert(1 == numPasses);
+			shaderInst->BeginPass(0);
+		}
+
+		const Array<DrawTile>& drawList = terrInstance->GetDrawList(i);
+		for (SizeT j = 0; j < drawList.Size(); j++)
+		{
+			if (!terrRender->ApplySharedState(textures[drawList[j].tex]))
 				continue;
 
-			int renderPass = textures.Size() * layer + j;
-
-			// if lighting mode is Off, we can render all node instances with the same shader
-			const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();
-			//if (LightingMode::None == this->lightingMode)
+			if (drawList[j].dist->SetRenderGroup(drawList[j].pass, drawList[j].tex))
 			{
-				shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
-				SizeT numPasses = shaderInst->Begin();
-				n_assert(1 == numPasses);
-				shaderInst->BeginPass(0);
-			}
-
-			IndexT modelNodeIndex;  
-			for (modelNodeIndex = 0; modelNodeIndex < modelNodes.Size(); modelNodeIndex++)
-			{
-				// render instances
-				const Array<Ptr<ModelNodeInstance> >& nodeInstances = modelNodes[modelNodeIndex]->GetVisibleModelNodeInstances(nodeFilter);
-				IndexT nodeInstIndex;
-				for (nodeInstIndex = 0; nodeInstIndex < nodeInstances.Size(); nodeInstIndex++)
-				{
-					// 渲染每个DIST相应的层
-					const Ptr<DistrictNodeInstance>& nodeInstance = nodeInstances[nodeInstIndex].downcast<DistrictNodeInstance>();
-
-					// if single-pass lighting is enabled, we need to setup the lighting 
-					// shader states
-					// FIXME: This may set a new shader variation for every node instance
-					// which is expensive! Would be better to sort node instances by number
-					// of active lights!!!
-
-					//if (LightingMode::SinglePass == this->lightingMode)
-					//{
-					//	// setup lighting render states
-					//	// NOTE: this may change the shader feature bit mask which may select
-					//	// a different shader variation per entity
-					//	const Ptr<ModelEntity>& modelEntity = nodeInstance->GetModelInstance()->GetModelEntity();
-					//	lightServer->ApplyModelEntityLights(modelEntity);
-					//	shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
-					//	SizeT numPasses = shaderInst->Begin();
-					//	n_assert(1 == numPasses);
-					//	shaderInst->BeginPass(0);
-					//}
-
-					// render the node instance
-					if (nodeInstance->SetRenderGroup(renderPass))
-					{
-						nodeInstance->ApplyState();
-						shaderInst->Commit();
-						nodeInstance->Render();
-					}
-					/*if (LightingMode::SinglePass == this->lightingMode)
-					{
-					shaderInst->EndPass();
-					shaderInst->End();
-					}*/
-				}
-			}
-			//if (LightingMode::None == this->lightingMode)
-			{
-				shaderInst->EndPass();
-				shaderInst->End();
+				
+				drawList[j].dist->ApplyState();
+				shaderInst->Commit();
+				drawList[j].dist->Render();
+				
 			}
 		}
+		
+		{
+			shaderInst->EndPass();
+			shaderInst->End();
+		}
 	}
+	//////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////
+	// 按纹理排序渲染
+	//const Util::Array<Ptr<DistrictNodeInstance>>& distInstances = terrInstance->GetRenderList();
+	//const Util::Array<bool>& checks = terrInstance->GetTextureRenderCheck();
+	//int texNum = textures.Size();
+	//for (SizeT i = 0; i < texNum; i++)
+	//{
+	//	// 设置纹理到GPU
+	//	if (!checks[i] || !terrRender->ApplySharedState(textures[i]))
+	//		continue;
+
+	//	for (SizeT j = 0; j < distInstances.Size(); j++)
+	//	{
+	//		for (int layer = 0; layer < 4; layer++)
+	//		{
+	//			int renderPass = texNum * layer + i;
+
+	//			// render the node instance
+	//			if (distInstances[j]->SetRenderGroup(renderPass, i))
+	//			{
+	//				mask.Format("Solid|KOK%d", layer+1);
+	//				shaderInst->SelectActiveVariation(shaderServer->FeatureStringToMask(mask));
+	//				//if (LightingMode::None == this->lightingMode)
+	//				{
+	//					SizeT numPasses = shaderInst->Begin();
+	//					shaderInst->BeginPass(0);
+	//				}
+
+	//				distInstances[j]->ApplyState();
+	//				shaderInst->Commit();
+	//				distInstances[j]->Render();
+
+	//				{
+	//					shaderInst->EndPass();
+	//					shaderInst->End();
+	//				}
+	//			}
+
+	//		}
+	//	}
+	//}
+	//////////////////////////////////////////////////////////////////////////
+
+	////for (SizeT layer = 0; layer < 4; layer++)
+	//{
+	//	for (SizeT j = 0; j < textures.Size(); j++)
+	//	{
+	//		// 设置纹理到GPU
+	//		if (!terrRender->ApplySharedState(textures[j]))
+	//			continue;
+
+	//		// if lighting mode is Off, we can render all node instances with the same shader
+
+	//		IndexT modelNodeIndex;  
+	//		for (modelNodeIndex = 0; modelNodeIndex < modelNodes.Size(); modelNodeIndex++)
+	//		{
+	//			// render instances
+	//			const Array<Ptr<ModelNodeInstance> >& nodeInstances = modelNodes[modelNodeIndex]->GetVisibleModelNodeInstances(nodeFilter);
+	//			IndexT nodeInstIndex;
+	//			for (nodeInstIndex = 0; nodeInstIndex < nodeInstances.Size(); nodeInstIndex++)
+	//			{
+	//				// 渲染每个DIST相应的层
+	//				const Ptr<DistrictNodeInstance>& nodeInstance = nodeInstances[nodeInstIndex].downcast<DistrictNodeInstance>();
+
+	//				// if single-pass lighting is enabled, we need to setup the lighting 
+	//				// shader states
+	//				// FIXME: This may set a new shader variation for every node instance
+	//				// which is expensive! Would be better to sort node instances by number
+	//				// of active lights!!!
+
+	//				//if (LightingMode::SinglePass == this->lightingMode)
+	//				//{
+	//				//	// setup lighting render states
+	//				//	// NOTE: this may change the shader feature bit mask which may select
+	//				//	// a different shader variation per entity
+	//				//	const Ptr<ModelEntity>& modelEntity = nodeInstance->GetModelInstance()->GetModelEntity();
+	//				//	lightServer->ApplyModelEntityLights(modelEntity);
+	//				//	shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
+	//				//	SizeT numPasses = shaderInst->Begin();
+	//				//	n_assert(1 == numPasses);
+	//				//	shaderInst->BeginPass(0);
+	//				//}
+
+	//				for (int layer = 0; layer < 4; layer++)
+	//				{
+	//					int renderPass = textures.Size() * layer + j;
+
+	//					// render the node instance
+	//					if (nodeInstance->SetRenderGroup(renderPass, j))
+	//					{
+	//						mask.Format("Solid|KOK%d", layer+1);
+	//						shaderInst->SelectActiveVariation(shaderServer->FeatureStringToMask(mask));
+	//						//if (LightingMode::None == this->lightingMode)
+	//						{
+	//							SizeT numPasses = shaderInst->Begin();
+	//							n_assert(1 == numPasses);
+	//							shaderInst->BeginPass(0);
+	//						}
+
+	//						nodeInstance->ApplyState();
+	//						shaderInst->Commit();
+	//						nodeInstance->Render();
+	//						
+	//						{
+	//							shaderInst->EndPass();
+	//							shaderInst->End();
+	//						}
+	//					}
+
+	//				}
+	//				/*if (LightingMode::SinglePass == this->lightingMode)
+	//				{
+	//				shaderInst->EndPass();
+	//				shaderInst->End();
+	//				}*/
+	//			}
+	//		}
+	//	}
+
+	//	//if (LightingMode::None == this->lightingMode)
+	//						
+	//}
 }
 
 } // namespace Models
