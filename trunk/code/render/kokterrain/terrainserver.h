@@ -16,7 +16,7 @@
 #include "graphics/cameraentity.h"
 #include "graphics/stage.h"
 #include "kokterrain/terrainentity.h"
-#include "coregraphics/meshpool.h"
+#include "coregraphics/vertexchunkpool.h"
 #include "coregraphics/dynamicmeshpool.h"
 
 //------------------------------------------------------------------------------
@@ -43,16 +43,25 @@ public:
 	void LoadTerrain(const Resources::ResourceId resId);
 	//const Ptr<CoreGraphics::MeshPool>& GetMeshPool()const;
 	const Ptr<CoreGraphics::DynamicMeshPool>& GetTerrainMeshPool()const;
+	const Ptr<CoreGraphics::VertexChunkPool>& GetVertexChunkPool()const;
 private:
 	void CreateMeshPool();
 
-	//Ptr<CoreGraphics::MeshPool> distMeshPool;
+	/// vertex buffer,顶点缓冲大小固定
+	Ptr<CoreGraphics::VertexChunkPool> terrVertexPool;
+	/// index buffer
 	Ptr<CoreGraphics::DynamicMeshPool> terrMeshPool;
 
 	bool isOpen;
 	Resources::ResourceId resId;
 	Ptr<TerrainEntity> terrain;
 };
+
+inline const Ptr<CoreGraphics::VertexChunkPool>& 
+TerrainServer::GetVertexChunkPool()const
+{
+	return this->terrVertexPool;
+}
 
 inline const Ptr<CoreGraphics::DynamicMeshPool>&
 TerrainServer::GetTerrainMeshPool()const

@@ -290,42 +290,6 @@ DistrictNodeInstance::Clear()
 	
 }
 
-void
-DistrictNodeInstance::AllocMeshPool()
-{
-	/*if (this->curGroup == -1)
-	{
-		if (this->meshPool.isvalid() && this->meshPool->Full())
-			this->modelInstance.downcast<TerrainInstance>()->UpdateMeshPool();
 
-		this->meshPool = this->modelInstance.downcast<TerrainInstance>()->GetMeshPool();
-		this->curGroup = this->meshPool->Alloc(NULL);
-		n_assert(this->curGroup != -1);
-
-		Reset();
-	}*/
-
-	if (!this->meshPool.isvalid())
-	{
-		this->meshPool = TerrainServer::Instance()->GetTerrainMeshPool();
-		Reset();
-	}
-}
-
-void 
-DistrictNodeInstance::FreeMeshPool(IndexT frame)
-{
-	/*if (!this->meshPool.isvalid())
-		return;
-
-	if (this->curGroup != -1)
-	{
-		if (frame != this->frameIndex)
-		{
-			this->meshPool->Free(this->curGroup);
-			this->curGroup = -1;
-		}
-	}*/
-}
 
 } // namespace Models

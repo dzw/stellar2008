@@ -135,7 +135,8 @@ TerrainInstance::NotifyVisible(IndexT frameIndex)
 		}
 	}
 
-	// 渲染的时候就直接渲染排好序的DIST，根据层数设置SHADER。
+	// 更新缓冲
+
 
 #ifdef NEBULA3_DEBUG
 	DebugView::Instance()->AddDebugString("dist", num);
@@ -166,18 +167,28 @@ TerrainInstance::AppendRenderDist(const Ptr<DistrictNodeInstance>& d)
 /**
 	释放不用的顶点缓冲
 */
-//void
-//TerrainInstance::UpdateMeshPool()
-//{
-//	IndexT indexFrame = VisResolver::Instance()->GetFrameIndex();
-//
-//	if (this->distMeshPool->Full())
-//	{
-//		//Array<Ptr<ModelNodeInstance> > nodes =  this->nodeInstances;//->GetNodes();
-//		for (IndexT i = 0; i < this->nodeInstances.Size(); i++)
-//			this->nodeInstances[i].downcast<DistrictNodeInstance>()->FreeMeshPool(indexFrame);
-//	}
-//}
+void
+TerrainInstance::AllocVertexPool(const Ptr<DistrictNodeInstance>& d)
+{
+	if (this->vertexStart == -1)
+	{
+		if (this->meshPool.isvalid() && this->meshPool->Full())
+		{
+			for (IndexT i = 0; i < this->nodeInstances.Size(); i++)
+			{
+				const Ptr<DistrictNodeInstance>& dist = this->nodeInstances[i].downcast<DistrictNodeInstance>();
+				if (dist->GetVertexStart() != -1 && !dist->IsVisiable())
+				{
+					dist->SetVertexStart(-1);
+				}
+			}
+		}
+
+		DWORD vertexStart = TerrainServer::Instance()->GetVertexChunkPool()->Alloc(NULL);
+		n_assert(vertexStart != -1);
+		d->SetVertexStart(vertexStart);
+	}
+}
 
 // district
 bool

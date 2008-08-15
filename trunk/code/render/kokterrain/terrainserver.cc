@@ -102,8 +102,8 @@ void
 TerrainServer::CreateMeshPool()
 {
 	// ÉèÖÃ¶¥µã»º³å
-	/*int vertexSize = DISTRICT_VERTS*DISTRICT_VERTS*4;
-	int indexSize = DISTRICT_VERTS*DISTRICT_VERTS*6;
+	int vertexSize = DISTRICT_VERTS*DISTRICT_VERTS*4;
+	/*int indexSize = DISTRICT_VERTS*DISTRICT_VERTS*6;
 	WORD indices[DISTRICT_VERTS*DISTRICT_VERTS*6];
 
 	SizeT curIndex = 0;
@@ -129,14 +129,14 @@ TerrainServer::CreateMeshPool()
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 3, VertexComponent::Float2));
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 4, VertexComponent::Float2));
 
-	/*this->distMeshPool = MeshPool::Create();
-	this->distMeshPool->Reset(ResourceId("distMeshPool"), sizeof(MeshTest), vertexSize, DISTRICTCACHESIZE*DISTRICTCACHESIZE, indexSize, vertexComponents);
-	ushort* indexPtr = this->distMeshPool->LockIndexed();
+	this->terrVertexPool = VertexChunkPool::Create();
+	this->terrVertexPool->Reset(sizeof(TileMesh), vertexSize, 100, vertexComponents);
+	/*ushort* indexPtr = this->distMeshPool->LockIndexed();
 	Memory::Copy(indices, indexPtr, indexSize*sizeof(WORD));
 	this->distMeshPool->UnlockIndexed();*/
 
-	DWORD tileVertexSize = 256 * 420;
-	DWORD tileIndexSize = 384 * 2 * 420;
+	DWORD tileVertexSize = 256 * 100;
+	DWORD tileIndexSize = 384 * 2 * 100;
 
 	this->terrMeshPool = DynamicMeshPool::Create();
 	this->terrMeshPool->Reset(sizeof(TileMesh), tileVertexSize, vertexComponents, tileIndexSize, IndexType::Index16);
