@@ -50,7 +50,8 @@ public:
 	/// notify that we are visible
     virtual void OnNotifyVisible(IndexT frameIndex);
 protected:
-	int curGroup;
+	/// ¶¥µã»º³å¿éÎ»ÖÃ
+	DWORD vertexStart;
 	IndexT frameIndex;
 	Ptr<CoreGraphics::DynamicMeshPool> meshPool;
 	CoreGraphics::PrimitiveGroup group;
@@ -60,6 +61,12 @@ protected:
 	/// °üÎ§ºÐµ½ÉãÏñ»úµÄ¾àÀë
 	float squareDistance;
 };
+
+inline DWORD
+DistrictNodeInstance::GetVertexStart()
+{
+	return this->vertexStart;
+}
 
 inline float 
 DistrictNodeInstance::GetSquareDistance()const

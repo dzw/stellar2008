@@ -87,7 +87,7 @@ public:
 	/// 顶点缓冲
 	//const Ptr<CoreGraphics::MeshPool>& GetMeshPool()const;
 	/// 更新缓冲区
-	//void UpdateMeshPool();
+	void UpdateMeshPool();
 
 	bool CheckValidDistrict(int x, int z);
 	void CheckDistrict(const Math::vector& pos);
