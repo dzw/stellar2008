@@ -9,6 +9,9 @@
 #include "coregraphics/vertexbuffer.h"
 #include "coregraphics/indexbuffer.h"
 #include "coregraphics/d3d9/d3d9types.h"
+#ifdef NEBULA3_DEBUG
+#include "coregraphics/debugview.h"
+#endif
 
 #include <dxerr9.h>
 
@@ -458,6 +461,12 @@ D3D9RenderDevice::TestResetDevice()
 bool
 D3D9RenderDevice::BeginFrame()
 {
+#ifdef NEBULA3_DEBUG
+	this->polySize = 0;
+	this->DP	   = 0;
+	this->DIP	   = 0;
+#endif
+
     n_assert(this->d3d9Device);
     if (RenderDeviceBase::BeginFrame())
     {
@@ -609,6 +618,17 @@ D3D9RenderDevice::Draw()
                 this->primitiveGroup.GetNumPrimitives());           // PrimitiveCount
         n_assert(SUCCEEDED(hr));
     }
+
+#ifdef NEBULA3_DEBUG
+	this->polySize += this->primitiveGroup.GetNumPrimitives();
+	if (this->primitiveGroup.GetNumIndices() > 0)
+		this->DIP++;
+	else
+		this->DP++;
+	DebugView::Instance()->AddDebugString("Polygons", this->polySize);
+	DebugView::Instance()->AddDebugString("DP", this->DP);
+	DebugView::Instance()->AddDebugString("DIP", this->DIP);
+#endif
 }
 
 //------------------------------------------------------------------------------

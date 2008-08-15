@@ -19,8 +19,8 @@ technique t0
         AlphaBlendEnable  = False;
         AlphaTestEnable   = False;
         ScissorTestEnable = False;
-        CullMode          = None;//CW;
-        FillMode		  		= solid;
+        CullMode          = CCW;
+        FillMode		  = solid;
     }
 }
        

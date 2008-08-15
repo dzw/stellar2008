@@ -22,14 +22,17 @@ public:
     DistrictNodeInstance();
     /// destructor
     virtual ~DistrictNodeInstance();
-    
+
     /// perform rendering
     virtual void Render();
 	virtual void Update();
 	/// apply per-instance state prior to rendering
 	virtual void ApplyState();
 	/// 设置每次渲染的group,返回flash：当没有面需要渲染时
-	bool SetRenderGroup(int pass);
+	bool SetRenderGroup(int pass, int texId);
+	int GetTextureId(int pass);
+	/// 判断传入的pass是否需要渲染
+	bool IsRender(int pass);
 
 	/// 切换DISTRICT时清除已有数据
 	void Clear();
@@ -38,6 +41,8 @@ public:
 	/// 渲染前分配缓冲
 	void AllocMeshPool();
 	void FreeMeshPool(IndexT frame);
+	float GetSquareDistance()const;
+	void CalcSquareDistance();
 
 	int GetX()const;
 	int	GetZ()const;
@@ -52,7 +57,27 @@ protected:
 	SizeT vbStart;
 	SizeT ibStart;
 	Ptr<DistrictNode> dist;
+	/// 包围盒到摄像机的距离
+	float squareDistance;
 };
+
+inline float 
+DistrictNodeInstance::GetSquareDistance()const
+{
+	return this->squareDistance;
+}
+
+inline bool 
+DistrictNodeInstance::IsRender(int pass)
+{
+	return dist->drawTable[pass].Texture && dist->drawTable[pass].FaceCount > 0;
+}
+
+inline int 
+DistrictNodeInstance::GetTextureId(int pass)
+{
+	return dist->drawTable[pass].Texture-1;
+}
 
 inline int  
 DistrictNodeInstance::GetX()const

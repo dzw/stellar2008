@@ -294,10 +294,10 @@ GraphicsServer::OnFrame(Timing::Time curTime)
     ResourceManager::Instance()->Update();
 
     // if we're running in windowed mode, give up time-slice
-    if (!displayDevice->IsFullscreen())
-    {
+    //if (!displayDevice->IsFullscreen())
+    //{
       //  Timing::Sleep(0.0);
-    }
+    //}
 
     // update the frame count
     this->frameCount++;
@@ -311,8 +311,7 @@ GraphicsServer::OnFrame(Timing::Time curTime)
 		curFrame = this->frameCount;
 
 		String sfps;
-		sfps.AppendFloat(fps.GetFPS());
-		sfps.Append("\n");
+		sfps.Format("%f\n", fps.GetFPS());
 		DebugView::Instance()->AddDebugString("FPS", sfps);
 		Core::SysFunc::DebugOut(sfps.AsCharPtr());
 	}

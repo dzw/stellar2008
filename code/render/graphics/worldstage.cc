@@ -12,6 +12,7 @@ ImplementClass(Graphics::WorldStage, 'GWSG', Graphics::Stage);
 
 using namespace Util;
 using namespace Graphics;
+using namespace KOK;
 
 //------------------------------------------------------------------------------
 /**
@@ -98,9 +99,16 @@ WorldStage::RemoveEntity(const Ptr<GraphicsEntity>& entity)
 void 
 WorldStage::UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity)
 {
+	if (this->terrInstance.isvalid())
+		this->terrInstance->ClearRenderList();
+	
 	Stage::UpdateCameraLinks(cameraEntity);
+}
 
-
+void 
+WorldStage::AppendDist(const Ptr<KOK::DistrictNodeInstance>& dist)
+{
+	this->terrInstance->AppendRenderDist(dist);
 }
 
 } // namespace Graphics

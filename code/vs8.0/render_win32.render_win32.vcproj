@@ -136,7 +136,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..;../foundation;../extlibs;../render;../addons;../addons/nebula2;../addons/nebula2/character;../addons/nebula2/anim; ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;"
+				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"

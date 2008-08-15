@@ -27,7 +27,8 @@ using namespace Math;
 /**
 */
 View::View() :
-    isAttachedToServer(false)
+    isAttachedToServer(false),
+	needUpdate(false)
 {
     // empty
 }
@@ -84,7 +85,15 @@ void
 View::UpdateVisibilityLinks()
 {
     n_assert(this->camera.isvalid());
-    this->stage->UpdateCameraLinks(this->camera);
+	matrix44 pos = this->camera->GetTransform();
+	if (this->camPos != pos)
+	{
+		this->needUpdate = true;
+		this->camPos = pos;
+		this->stage->UpdateCameraLinks(this->camera);
+	}
+	else
+		this->needUpdate = false;
 }
 
 //------------------------------------------------------------------------------
@@ -168,19 +177,22 @@ View::Render()
     n_assert(this->frameShader.isvalid());      
     n_assert(this->camera.isvalid());
 
-    //LightServer* lightServer = LightServer::Instance();
-    //ShadowServer* shadowServer = ShadowServer::Instance();
-    //lightServer->BeginFrame(this->camera);
-    //shadowServer->BeginFrame(this->camera);
+	if (needUpdate)
+	{
+		//LightServer* lightServer = LightServer::Instance();
+		//ShadowServer* shadowServer = ShadowServer::Instance();
+		//lightServer->BeginFrame(this->camera);
+		//shadowServer->BeginFrame(this->camera);
 
-    // resolve visible light source
-    //this->ResolveVisibleLights();
+		// resolve visible light source
+		//this->ResolveVisibleLights();
 
-    // draw the shadow pass
-    //ShadowServer::Instance()->UpdateShadowBuffers();
+		// draw the shadow pass
+		//ShadowServer::Instance()->UpdateShadowBuffers();
 
-    // resolve visible ModelNodeInstances
-    this->ResolveVisibleModelNodeInstances();
+		// resolve visible ModelNodeInstances
+		this->ResolveVisibleModelNodeInstances();
+	}
 
     // render the world...
     TransformDevice* transformDevice = TransformDevice::Instance();
@@ -189,10 +201,12 @@ View::Render()
     transformDevice->ApplyViewSettings();
     this->frameShader->Render();
 
-    // tell light and shadow servers that rendering is finished
-    //shadowServer->EndFrame();
-    //lightServer->EndFrame();
-
+	if (needUpdate)
+	{
+		// tell light and shadow servers that rendering is finished
+		//shadowServer->EndFrame();
+		//lightServer->EndFrame();
+	}
 
 	//RenderDebug();
 	this->RenderDebugString();

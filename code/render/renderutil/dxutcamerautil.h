@@ -109,7 +109,7 @@ DXUTCameraUtil::MoveUp(bool b)
 {
 	if (b)
 	{
-		this->keyboardDirection += Math::vector(0.0f, 0.1f, 0.0f);
+		this->keyboardDirection = Math::vector(0.0f, 0.1f, 0.0f);
 		dirtyVertical = true;
 	}
 }
@@ -119,7 +119,7 @@ DXUTCameraUtil::MoveDown(bool b)
 {
 	if (b)
 	{
-		this->keyboardDirection += Math::vector(0.0f, -0.1f, 0.0f);
+		this->keyboardDirection = Math::vector(0.0f, -0.1f, 0.0f);
 		dirtyVertical = true;
 	}
 }

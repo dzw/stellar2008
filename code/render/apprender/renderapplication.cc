@@ -426,10 +426,10 @@ RenderApplication::Run()
 
         // if we're running in windowed mode, give up time slice, 
         // for better responsives of other apps
-        if (!this->displayDevice->IsFullscreen())
-        {
+        //if (!this->displayDevice->IsFullscreen())
+        //{
             //Timing::Sleep(0.0f);
-        }
+        //}
     }
 }
 
@@ -469,6 +469,9 @@ RenderApplication::UpdateTime()
     Time curTime = this->timer.GetTime();
     this->frameTime = curTime - this->time;
     this->time = curTime;
+#ifdef NEBULA3_DEBUG
+	//IO::Console::Instance()->Print("FPS: %.0f \n", 1/this->frameTime);
+#endif
 }
 
 #ifdef __MPQ__

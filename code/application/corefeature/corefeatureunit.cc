@@ -94,6 +94,7 @@ CoreFeatureUnit::OnActivate()
     this->ioInterface = IOInterface::Create();
     this->ioInterface->Open();
 
+#ifdef __ZIP__
     // mount asset zip archives
     if (IoServer::Instance()->FileExists("home:export.zip"))
     {
@@ -105,6 +106,7 @@ CoreFeatureUnit::OnActivate()
         mountZipArchiveMsg->SetURI("home:export.zip");
         this->ioInterface->Send(mountZipArchiveMsg.upcast<Messaging::Message>());
     }
+#endif
 
 #if __USE_HTTP__
     // setup debug http server
