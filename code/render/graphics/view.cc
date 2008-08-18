@@ -12,6 +12,7 @@
 #include "lighting/lightserver.h"
 #include "lighting/shadowserver.h"
 #include "coregraphics/debugview.h"
+//#include "kokterrain/terrainentity.h"
 
 namespace Graphics
 {
@@ -157,7 +158,7 @@ View::ResolveVisibleModelNodeInstances()
     {
         const Ptr<GraphicsEntity>& curEntity = visLinks[i];
         if (GraphicsEntity::ModelType == curEntity->GetType() ||
-            GraphicsEntity::TerrainType == curEntity->GetType())
+			GraphicsEntity::TerrainType == curEntity->GetType())
         {
 			const Ptr<ModelEntity>& modelEntity = curEntity.downcast<ModelEntity>();
             visResolver->AttachVisibleModelInstance(modelEntity->GetModelInstance());

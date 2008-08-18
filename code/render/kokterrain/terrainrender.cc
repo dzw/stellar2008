@@ -8,7 +8,8 @@
 #include "coregraphics/shadervariable.h"
 #include "coregraphics/renderdevice.h"
 #include "resources/resourcemanager.h"
-
+#include "math/matrix44.h"
+#include "coregraphics/transformdevice.h"
 
 namespace KOK
 {
@@ -17,6 +18,7 @@ ImplementClass(KOK::TerrainRender, 'TNRR', Core::RefCounted);
 using namespace Util;
 using namespace CoreGraphics;
 using namespace Resources;
+using namespace Math;
 
 //------------------------------------------------------------------------------
 /**
@@ -68,6 +70,9 @@ TerrainRender::ApplySharedState(const Ptr<ManagedTexture>& tex)
 	this->shaderVariable->SetTexture(tex->GetTexture());
     // set our shader instance as current
     ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
+
+	matrix44 mat = matrix44::identity();
+	TransformDevice::Instance()->SetModelTransform(mat);
 
 	return true;
 }

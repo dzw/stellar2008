@@ -4,8 +4,8 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "graphics/terraincell.h"
-#include "kokterrain/terraininstance.h"
 #include "graphics/graphicsentity.h"
+#include "graphics/worldstage.h"
 
 namespace Graphics
 {
@@ -13,12 +13,12 @@ ImplementClass(Graphics::TerrainCell, 'TNCL', Graphics::Cell);
 
 using namespace Math;
 using namespace Util;
-using namespace KOK;
 
 //------------------------------------------------------------------------------
 /**
 */
-TerrainCell::TerrainCell()
+TerrainCell::TerrainCell():
+	distId(-1)
 {
     
 }
@@ -132,9 +132,9 @@ TerrainCell::RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity,
 
 	if (linkType == GraphicsEntity::CameraLink)
 	{
-		if (this->dist.isvalid())
+		if (this->distId != -1)
 		{
-			this->dist->GetModelInstance().downcast<TerrainInstance>()->AppendRenderDist(this->dist);
+			this->stage.downcast<WorldStage>()->AppendDistrict(this->id);
 		}
 	}
 

@@ -3,20 +3,21 @@
 #define GRAPHICS_TERRAINCELL_H
 //------------------------------------------------------------------------------
 /**
-    @class Graphics::TerrainCell
+    @class Graphics::StaticCell
+
+	静态cell，地形和静态物件裁剪
 
     (C) 2008 cTuo
 */
 #include "graphics/cell.h"
 #include "graphics/graphicsentity.h"
-#include "kokterrain/districtnodeinstance.h"
 #include "models/modelnode.h"
 
 //------------------------------------------------------------------------------
 namespace Graphics
 {
 
-class TerrainCell : public Cell
+class StaticCell : public Cell
 {
     DeclareClass(TerrainCell);
 public:
@@ -28,22 +29,18 @@ public:
 	///
 	virtual void OnRenderDebug(/*const bbox& b*/);
 
-	void SetDistrict(const Ptr<KOK::DistrictNodeInstance>& d);
+	void SetId(int id);
 private:
     /// create links between visible entities
     virtual void RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity, uint entityTypeMask, GraphicsEntity::LinkType linkType, Math::ClipStatus::Type clipStatus);
 
-	Ptr<KOK::DistrictNodeInstance> dist;
+	int id;
 };
 
 inline void 
-TerrainCell::SetDistrict(const Ptr<KOK::DistrictNodeInstance>& d)
+TerrainCell::SetId(int id)
 {
-	this->dist = d;
-
-	Math::bbox b = d->GetModelNode()->GetBoundingBox();
-	this->boundingBox.pmin.y() = b.pmin.y();
-	this->boundingBox.pmax.y() = b.pmax.y();
+	this->id = id;
 }
 
 } // namespace Graphics

@@ -5,26 +5,34 @@
 #include "stdneb.h"
 #include "kokterrain/terrainentity.h"
 #include "kokterrain/districtnode.h"
-#include "kokterrain/districtnodeinstance.h"
-#include "kokterrain/terraininstance.h"
 #include "resources/resourcemanager.h"
 #include "coregraphics/vertexcomponent.h"
 #include "coregraphics/indextype.h "
+#include "models/modelnodetype.h"
+#include "models/visresolver.h"
+#include "coregraphics/vertexcomponent.h"
+#include "coregraphics/indexbufferpool.h"
+#include "coregraphics/indextype.h"
+#include "graphics/stage.h"
 
 namespace KOK
 {
-ImplementClass(KOK::TerrainEntity, 'TNET', Graphics::ModelEntity);
+ImplementClass(KOK::TerrainEntity, 'TNET', Graphics::GraphicsEntity);
 ImplementSingleton(KOK::TerrainEntity);
 
 using namespace Models;
 using namespace Resources;
 using namespace Math;
 using namespace Graphics;
+using namespace CoreGraphics;
 
 //------------------------------------------------------------------------------
 /**
 */
-TerrainEntity::TerrainEntity()
+TerrainEntity::TerrainEntity():
+	terrain(0),
+	terrVertexPool(0),
+	indexPool(0)
 {
 	ConstructSingleton;
 
@@ -39,7 +47,7 @@ TerrainEntity::~TerrainEntity()
 	DestructSingleton;
 
 	this->terrVertexPool = 0;
-	this->terrMeshPool   = 0;
+	this->indexPool   = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -54,7 +62,7 @@ TerrainEntity::OnActivate()
     
     // note: we will remain invalid until at least our model has loaded
     this->SetValid(false);
-    this->managedTerrain = ResourceManager::Instance()->CreateManagedResource(Terrain::RTTI, this->resId).downcast<ManagedTerrain>();
+    this->managedModel = ResourceManager::Instance()->CreateManagedResource(Terrain::RTTI, this->resId).downcast<ManagedModel>();
 
 	CreateMeshPool();
 }
@@ -66,11 +74,11 @@ void
 TerrainEntity::OnDeactivate()
 {
     n_assert(this->IsActive());
-    n_assert(this->managedTerrain.isvalid());
+    n_assert(this->managedModel.isvalid());
 
     // discard our managed model
-    ResourceManager::Instance()->DiscardManagedResource(this->managedTerrain.upcast<ManagedResource>());
-    this->managedTerrain = 0;
+    ResourceManager::Instance()->DiscardManagedResource(this->managedModel.upcast<ManagedResource>());
+    this->managedModel = 0;
 
     // up to parent class
     GraphicsEntity::OnDeactivate();
@@ -79,16 +87,12 @@ TerrainEntity::OnDeactivate()
 void
 TerrainEntity::OnUpdate()
 {
-	//ValidateModelInstance();
-	//
-	//if (this->modelInstance.isvalid())
-	//{
-	//	this->modelInstance->SetTime(this->GetTime());
-	//	this->modelInstance->Update();
-	//}
-
-	//// important: call parent class!
-	GraphicsEntity::OnUpdate();
+	ModelEntity::OnUpdate();
+	if (!this->terrain.isvalid() && this->modelInstance.isvalid())
+	{
+		this->terrain = this->managedModel.downcast<ManagedTerrain>()->GetTerrain();
+		this->terrain->CreateQuadTree(this->stage->GetRootCell());
+	}
 }
 
 void
@@ -121,15 +125,15 @@ TerrainEntity::CreateMeshPool()
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 2, VertexComponent::Float2));
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 3, VertexComponent::Float2));
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 4, VertexComponent::Float2));
-
-	this->terrVertexPool = VertexChunkPool::Create();
-	this->terrVertexPool->Reset(sizeof(TileMesh), vertexSize, 100, vertexComponents);
-	/*ushort* indexPtr = this->distMeshPool->LockIndexed();
-	Memory::Copy(indices, indexPtr, indexSize*sizeof(WORD));
-	this->distMeshPool->UnlockIndexed();*/
-
+	
 	DWORD tileVertexSize = 256 * 100;
 	DWORD tileIndexSize = 384 * 2 * 100;
+
+	/*this->terrVertexPool = VertexChunkPool::Create();
+	this->terrVertexPool->Reset(sizeof(TileMesh), vertexSize, 100, vertexComponents);
+
+	this->indexPool = IndexBufferPool::Create();
+	this->indexPool->Reset(tileIndexSize, IndexType::Index16);*/
 
 	this->terrMeshPool = DynamicMeshPool::Create();
 	this->terrMeshPool->Reset(sizeof(TileMesh), tileVertexSize, vertexComponents, tileIndexSize, IndexType::Index16);

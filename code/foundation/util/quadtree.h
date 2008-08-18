@@ -47,6 +47,10 @@ public:
     int GetNodeIndex(uchar level, ushort col, ushort row) const;
     /// get pointer to node by index
     const Node& GetNodeByIndex(int i) const;
+	/// 如果需要修改BOUNDINGBOX，更新所有NODE
+	void UpdateBoundingBox();
+	/// 重新设置叶节点BOUNDINGBOX，需调用UpdateBoundingBox，更新整个层次
+	void SetLeafNodeBoundingBox(int col, int row, const Math::bbox& b);
 
     /// node in quad tree
     class Node
@@ -72,6 +76,8 @@ public:
         void ClearDataPtr();
         /// set element ptr
         void SetDataPtr(TYPE* elem);
+		/// 如果需要修改BOUNDINGBOX，更新所有NODE
+		void UpdateBoundingBox(QuadTree* tree, Math::bbox& b);
 
     private:
         friend class QuadTree;
@@ -316,6 +322,27 @@ QuadTree<TYPE>::Insert(TYPE* elm, const Math::bbox& box)
     }
 }
 
+template<class TYPE> void
+QuadTree<TYPE>::SetLeafNodeBoundingBox(int col, int row, const Math::bbox& b)
+{
+	int index = GetNodeIndex(this->treeDepth-1, col, row);
+	this->nodeArray[index].box = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+更新所有NODE的boundingbox
+*/
+template<class TYPE> void
+QuadTree<TYPE>::UpdateBoundingBox()
+{
+	bbox b;
+	b.pmin = point(FLT_MAX, FLT_MAX, FLT_MAX);
+	b.pmax = point(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	this->nodeArray[0].UpdateBoundingBox(this, b);
+	this->nodeArray[0].box = b;
+}
+
 //------------------------------------------------------------------------------
 /**
     Removes an element from the quad tree.
@@ -325,6 +352,26 @@ QuadTree<TYPE>::Remove(TYPE* elm)
 {
     n_assert(elm);
     elm->ClearDataPtr();
+}
+
+//------------------------------------------------------------------------------
+/**
+	更新所有NODE的boundingbox
+*/
+template<class TYPE> void
+QuadTree<TYPE>::Node::UpdateBoundingBox(QuadTree* tree, Math::bbox& b)
+{
+	if (this->level < tree->treeDepth-1)
+	{
+		bbox childBox;
+		ushort i;
+		for (i = 0; i < 4; i++)
+		{
+			this->children[i]->UpdateBoundingBox(tree, childBox);
+			this->box.extend(childBox);
+		}
+	}
+	b = this->box;
 }
 
 //------------------------------------------------------------------------------

@@ -6,7 +6,6 @@
 #include "kokterrain/terrain.h"
 #include "kokterrain/districtnode.h"
 #include "models/attributes.h"
-#include "kokterrain/terraininstance.h"
 
 #include "models/modelnodetype.h"
 #include "coregraphics/shaderserver.h"
@@ -14,6 +13,14 @@
 #include "lighting/lightserver.h"
 #include "graphics/modelentity.h"
 #include "resources/resourcemanager.h"
+
+#include "coregraphics/vertexchunkpool.h"
+#include "kokterrain/terrainentity.h"
+#include "kokterrain/terraininstance.h"
+
+#include "graphics/staticquadtreestagebuilder.h"
+
+#include "coregraphics/renderdevice.h"
 
 namespace KOK
 {
@@ -23,6 +30,7 @@ using namespace Util;
 using namespace Resources;
 using namespace Models;
 using namespace CoreGraphics;
+using namespace Graphics;
 using namespace Math;
 
 //------------------------------------------------------------------------------
@@ -34,31 +42,6 @@ Terrain::Terrain():
 	meshData(0),
 	thingTex(0)
 {
-	
-	
-	// 设置district缓冲
-	//for (SizeT i = 0; i < DISTRICTCACHESIZE; i++)
-	//{
-	//	Ptr<DistrictNode> node = DistrictNode::Create();
-	//	//node->Init(0, 0);
-	//	String name;
-	//	name.Format("DIST%d", i);
-	//	node->SetName(Resources::ResourceId(name));
-	//	node->SetString(Attr::Shader, "shd:terrain");
-	//	//node->SetTerrainMeshGrid(this->terrain->terrMeshGrid);
-	//	//node->SetPosition(-1, -1);
-	//	this->AttachNode(node.upcast<Models::ModelNode>());
-	//}
-
-	/*@test code
-	bbox b;
-	vector min, max;
-	min.set(-1000., -500.0f, -1000.);
-	max.set(1000., 500.0f, 1000.);
-	b.pmin = min;
-	b.pmax = max;
-	this->SetBoundingBox(b);*/
-
 	this->terrRender = TerrainRender::Create();
 	this->terrRender->Init();
 }
@@ -265,13 +248,49 @@ Terrain::CreateNewDistrict(int x, int z)
 	newNode->SetName(Resources::ResourceId(name));
 	//newNode->SetString(Attr::Shader, "shd:kokterrain");
 	//newNode->SetString(Attr::DiffMap0, "mapdata\\border0100.dds");
-	newNode->SetTerrainMeshGrid(this->terrMeshGrid);
 	newNode->SetPosition(x, z);
 	this->AttachNode(newNode.upcast<Models::ModelNode>());
 	//newNode->LoadResources();
 	newNode->CreateMeshData();
 
 	return newNode;
+}
+
+//------------------------------------------------------------------------------
+/**
+	创建四叉树
+*/
+void
+Terrain::CreateQuadTree(const Ptr<Cell>& root)
+{
+	root->SetCellId(0);
+
+	//int num = this->terrInfo.GetDistrictCountX();
+
+	//Ptr<StaticQuadtreeStageBuilder> quadTreeStageBuilder = StaticQuadtreeStageBuilder::Create();    
+	//bbox levelBox;
+	//levelBox.pmin = point(0, 0, 0);
+	//levelBox.pmax = point(1/*32*8*10*/, 1.0f, 1/*32*8*10*/);
+	//quadTreeStageBuilder->InitQuadtree(levelBox, 6);
+
+	//for (SizeT i = 0; i < this->nodes.Size(); i++)
+	//{
+	//	int col = i / num;
+	//	int row = i % num;
+	//	const bbox& b = this->nodes[i]->GetBoundingBox();
+	//	quadTreeStageBuilder->SetLeafNodeBoundingBox(row, col, b);
+	//}
+
+	//quadTreeStageBuilder->UpdateBoundingBox();
+	//quadTreeStageBuilder->AttachToCell(root);
+
+	//// 设置cellId
+	//for (SizeT i = 0; i < this->nodes.Size(); i++)
+	//{
+	//	Ptr<Cell> c = root->FindEntityContainmentCell(this->nodes[i]->GetBoundingBox());
+	//	if (c.isvalid())
+	//		c->SetCellId(i);
+	//}
 }
 
 void 
@@ -283,110 +302,79 @@ Terrain::AppendTexture(const String& resId)
 	this->textures.Append(managedTexture);
 }
 
+void 
+Terrain::AddVisibleDistrict(IndexT id)
+{
+	if(id < 0 && id >= this->nodes.Size())
+		return;
+	
+	this->renderList.Append(this->nodes[id].downcast<DistrictNode>());
+}
+
+void 
+Terrain::UpdateRenderList(IndexT frameIndex)
+{
+	this->frameIndex = frameIndex;
+
+	// 排序
+	IndexT num = this->renderList.Size();
+	SizeT texNum = this->textures.Size();
+
+	
+	// 找出第j层所有drawTable
+	for (IndexT j = 0; j < 4; j++)
+	{
+		this->renderLayer[j].Clear();
+		// 每个DIST的相应层取出来
+		for (IndexT i = 0; i < num; i++)
+		{
+			// 每个DIST上都有不直4张纹理，所以把所有的都取出来，这个WOW不一样
+			for (IndexT n = 0; n < texNum; n++)
+			{
+				if (renderList[i]->IsRender(j*texNum+n))
+				{
+					DrawTile d;
+					d.dist = renderList[i];
+					d.tex = n;
+					d.pass = j*texNum+n;
+
+					// 根据纹理、距离排序，每层都相要这两项，和WOW又不一样，WOW中混合层只要根据纹理排序就可以
+					renderLayer[j].InsertSorted(d);
+				}
+			}
+		}
+	}
+
+	for (IndexT i = 0; i < num; i++)
+	{
+		renderList[i]->NotifyVisible(frameIndex);
+	}
+
+	renderList.Clear();
+}
+
 //------------------------------------------------------------------------------
 /**
-	按每个DIST渲染，效率最低
+	释放不用的顶点缓冲块
 */
-//void 
-//Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures)
-//{
-//	if (!this->terrRender.isvalid())
-//		return;
-//
-//	ShaderServer* shaderServer = ShaderServer::Instance();
-//	ShaderServer::Instance()->SetActiveShaderInstance(this->terrRender->GetShaderInstance());
-//	const Array<Ptr<ModelNode> >& modelNodes = this->GetVisibleModelNodes(nodeFilter);
-//
-//	int curLayer =-1;
-//
-//	// if lighting mode is Off, we can render all node instances with the same shader
-//	const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();
-//
-//			IndexT modelNodeIndex;  
-//			for (modelNodeIndex = 0; modelNodeIndex < modelNodes.Size(); modelNodeIndex++)
-//			{
-//				// render instances
-//				const Array<Ptr<ModelNodeInstance> >& nodeInstances = modelNodes[modelNodeIndex]->GetVisibleModelNodeInstances(nodeFilter);
-//				IndexT nodeInstIndex;
-//				for (nodeInstIndex = 0; nodeInstIndex < nodeInstances.Size(); nodeInstIndex++)
-//				{
-//					// 渲染每个DIST相应的层
-//					const Ptr<DistrictNodeInstance>& nodeInstance = nodeInstances[nodeInstIndex].downcast<DistrictNodeInstance>();
-//
-//					// if single-pass lighting is enabled, we need to setup the lighting 
-//					// shader states
-//					// FIXME: This may set a new shader variation for every node instance
-//					// which is expensive! Would be better to sort node instances by number
-//					// of active lights!!!
-//
-//					//if (LightingMode::SinglePass == this->lightingMode)
-//					//{
-//					//	// setup lighting render states
-//					//	// NOTE: this may change the shader feature bit mask which may select
-//					//	// a different shader variation per entity
-//					//	const Ptr<ModelEntity>& modelEntity = nodeInstance->GetModelInstance()->GetModelEntity();
-//					//	lightServer->ApplyModelEntityLights(modelEntity);
-//					//	shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
-//					//	SizeT numPasses = shaderInst->Begin();
-//					//	n_assert(1 == numPasses);
-//					//	shaderInst->BeginPass(0);
-//					//}
-//					for (SizeT j = 0; j < textures.Size(); j++)
-//					{
-//						for (SizeT layer = 0; layer < 4; layer++)
-//						{
-//							int renderPass = textures.Size() * layer + j;
-//
-//							// render the node instance
-//							if (nodeInstance->SetRenderGroup(renderPass))
-//							{
-//								int texId = nodeInstance->GetTextureId(renderPass);
-//								if (texId <= 0)
-//									continue;
-//
-//								// 设置纹理到GPU
-//								if (!terrRender->ApplySharedState(textures[texId]))
-//									continue;
-//
-//								if (curLayer != layer)
-//								{
-//									String mask;
-//									mask.Format("Solid|KOK%d", layer+1);
-//									shaderServer->ResetFeatureBits();
-//									shaderServer->SetFeatureBits(shaderServer->FeatureStringToMask(mask));
-//
-//									
-//									
-//									curLayer = layer;
-//								}
-//								//if (LightingMode::None == this->lightingMode)
-//								{
-//									shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());
-//									SizeT numPasses = shaderInst->Begin();
-//									n_assert(1 == numPasses);
-//									shaderInst->BeginPass(0);
-//								}
-//
-//								nodeInstance->ApplyState();
-//								shaderInst->Commit();
-//								nodeInstance->Render();
-//
-//								//if (LightingMode::None == this->lightingMode)
-//								{
-//									shaderInst->EndPass();
-//									shaderInst->End();
-//								}
-//							}
-//						}
-//					}
-//					/*if (LightingMode::SinglePass == this->lightingMode)
-//					{
-//					shaderInst->EndPass();
-//					shaderInst->End();
-//					}*/
-//				}
-//			}
-//}
+void
+Terrain::UpdateVertexPool()
+{
+	// vertex buffer
+	const Ptr<VertexChunkPool>& pool = TerrainEntity::Instance()->GetVertexChunkPool();
+
+	for (IndexT i = 0; i < this->nodes.Size(); i++)
+	{
+		const Ptr<DistrictNode>& dist = this->nodes[i].downcast<DistrictNode>();
+		if (dist->GetVertexStart() != -1 && dist->GetFrameIndex() != this->frameIndex)
+		{
+			pool->Free(dist->GetVertexStart());
+			dist->SetVertexStart(-1);
+		}
+	}
+	
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -401,18 +389,19 @@ Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode
 	//if (!terrRender->ApplySharedState(textures[0]))
 	//	return;
 
-	/*const Util::Array<Ptr<ModelInstance> >& instances = this->GetInstances();
-	const Array<Ptr<DistrictNodeInstance> >& nodeInstances = instances[0].downcast<TerrainInstance>()->GetRenderList();
-	*/
-
 	ShaderServer* shaderServer = ShaderServer::Instance();
 	ShaderServer::Instance()->SetActiveShaderInstance(this->terrRender->GetShaderInstance());
 	const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();
 
-	const Ptr<TerrainInstance>& terrInstance = this->instances[0].downcast<TerrainInstance>();
+	//const Ptr<TerrainInstance>& terrInstance = this->instances[0].downcast<TerrainInstance>();
 	//////////////////////////////////////////////////////////////////////////
 	//  排序渲染@1  shader-texture-distance 方式
 	//
+	/*Ptr<VertexChunkPool> chunkPool = TerrainEntity::Instance()->GetVertexChunkPool();
+	Ptr<IndexBufferPool> indexPool = TerrainEntity::Instance()->GetIndexBufferPool();
+	RenderDevice::Instance()->SetVertexBuffer(chunkPool->GetBuffer());
+	RenderDevice::Instance()->SetIndexBuffer(indexPool->GetBuffer());*/
+
 	for (SizeT i = 0; i < 4; i++)
 	{
 		mask.Format("Solid|KOK%d", i+1);
@@ -424,16 +413,15 @@ Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode
 			shaderInst->BeginPass(0);
 		}
 
-		const Array<DrawTile>& drawList = terrInstance->GetDrawList(i);
+		const Array<DrawTile>& drawList = renderLayer[i];//terrInstance->GetDrawList(i);
 		for (SizeT j = 0; j < drawList.Size(); j++)
 		{
 			if (!terrRender->ApplySharedState(textures[drawList[j].tex]))
 				continue;
-
+			
 			if (drawList[j].dist->SetRenderGroup(drawList[j].pass, drawList[j].tex))
 			{
-				
-				drawList[j].dist->ApplyState();
+				//drawList[j].dist->ApplyState();
 				shaderInst->Commit();
 				drawList[j].dist->Render();
 				

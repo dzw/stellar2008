@@ -7,7 +7,6 @@
 */
 #include "graphics/stage.h"
 #include "graphics/graphicsentity.h"
-#include "kokterrain/terraininstance.h"
 
 //------------------------------------------------------------------------------
 namespace Graphics
@@ -26,20 +25,11 @@ public:
     /// remove an entity from the stage
     virtual void RemoveEntity(const Ptr<GraphicsEntity>& entity);
 	virtual void UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity);
-	void AppendDist(const Ptr<KOK::DistrictNodeInstance>& dist);
-
-	void SetTerrain(const Ptr<KOK::TerrainInstance>& t);
+	void AddVisibleCell(int id);
 protected:
 
     Util::Array<Ptr<GraphicsEntity> > staticEntities;
-	Ptr<KOK::TerrainInstance> terrInstance;
 };
-
-inline void 
-WorldStage::SetTerrain(const Ptr<KOK::TerrainInstance>& t)
-{
-	this->terrInstance = t;
-}
 
 } // namespace Graphics
 //------------------------------------------------------------------------------

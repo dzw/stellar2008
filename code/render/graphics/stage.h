@@ -73,6 +73,10 @@ public:
     void SetRootCell(const Ptr<Cell>& rootCell);
     /// get the root cell of the stage
     const Ptr<Cell>& GetRootCell() const;
+	/// 增加可见cell
+	void AddVisibleCell(const Ptr<Cell>& cell);
+	/// 获得可见列表
+	const Util::Array<Ptr<Cell>>& GetVisibleCell()const;
     
     /// attach an entity to the stage
     virtual void AttachEntity(const Ptr<GraphicsEntity>& graphicsEntity);
@@ -107,6 +111,7 @@ protected:
     Util::StringAtom name;
     Ptr<Cell> rootCell;
     Ptr<StageBuilder> stageBuilder;
+	Util::Array<Ptr<Cell>>			  visibleCells;		///注意！！！在这个类头文件中Cell一定要在GraphicsEntity前面，否则会因为GraphicsEntity中的重定义引起错误!!!而且不能在这里实现inline相关函数！！
     Util::Array<Ptr<GraphicsEntity> > entities;
     Util::Array<Ptr<GraphicsEntity> > entitiesByType[GraphicsEntity::NumTypes];
 };
