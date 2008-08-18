@@ -4,9 +4,16 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "kokterrain/districtnode.h"
-#include "kokterrain/districtnodeinstance.h"
 #include "kokterrain/terrain.h"
 #include "memory/memory.h"
+
+#include "coregraphics/vertexchunkpool.h"
+#include "coregraphics/indexbufferpool.h"
+#include "coregraphics/renderdevice.h"
+#include "graphics/graphicsserver.h"
+#include "graphics/view.h"
+#include "graphics/cameraentity.h"
+#include "kokterrain/terrainentity.h"
 
 namespace KOK
 {
@@ -15,6 +22,7 @@ ImplementClass(KOK::DistrictNode, 'DTND', Models::StateNode);
 using namespace Util;
 using namespace Attr;
 using namespace Resources;
+using namespace Graphics;
 using namespace CoreGraphics;
 using namespace Models;
 using namespace Math;
@@ -31,7 +39,9 @@ DistrictNode::DistrictNode():
 	indices(0),
 	indexSize(0),
 	drawTable(0),
-	shadowIndexSize(0)
+	shadowIndexSize(0),
+	vertexStart(-1),
+	indexStart(-1)
 {
 	//int disOffsetZ = this->disZ * DISTRICT_VERTS;	// 计算格子的开始位置(即开始格子在地图上的偏移位置)
 	//int disOffsetX = this->disX * DISTRICT_VERTS;	
@@ -59,12 +69,12 @@ DistrictNode::~DistrictNode()
 //------------------------------------------------------------------------------
 /**
 */
-Ptr<ModelNodeInstance>
-DistrictNode::CreateNodeInstance() const
-{
-    Ptr<ModelNodeInstance> newInst = (ModelNodeInstance*) DistrictNodeInstance::Create();
-    return newInst;
-}
+//Ptr<ModelNodeInstance>
+//DistrictNode::CreateNodeInstance() const
+//{
+//    Ptr<ModelNodeInstance> newInst = (ModelNodeInstance*) DistrictNodeInstance::Create();
+//    return newInst;
+//}
 
 //------------------------------------------------------------------------------
 /**
@@ -102,24 +112,6 @@ DistrictNode::ApplySharedState()
 {
     // first call parent class
     return StateNode::ApplySharedState();
-}
-
-int  
-DistrictNode::GetTileSize()const
-{
-	return this->model.downcast<Terrain>()->GetTileSize();
-}
-
-int  
-DistrictNode::GetMapWide()const
-{
-	return this->model.downcast<Terrain>()->GetMapWide();
-}
-
-float 
-DistrictNode::GetTilePosOffset()const
-{
-	return this->model.downcast<Terrain>()->GetTilePosOffset();
 }
 
 void
@@ -311,6 +303,94 @@ DistrictNode::UpdateDrawTable(TerrainMeshData** pMeshDatas)
 			this->drawTable[iDrawTableID].bUpdate = false;
 		}
 	}
+}
+
+void
+DistrictNode::Render()
+{
+	//RenderDevice::Instance()->SetPrimitiveGroup(group);
+	TerrainEntity::Instance()->terrMeshPool->ApplyPrimitive(group);
+	RenderDevice::Instance()->Draw();
+}  
+
+void
+DistrictNode::CalcSquareDistance()
+{
+	bbox box = this->boundingBox;
+	Ptr<CameraEntity> camera = GraphicsServer::Instance()->GetDefaultView()->GetCameraEntity();
+	box.transform(camera->GetViewTransform());
+	this->squareDistance = box.pmax.z();
+}
+
+void
+DistrictNode::NotifyVisible(IndexT frameIndex)
+{
+	this->frameIndex = frameIndex;
+
+	Reset();
+}
+
+void 
+DistrictNode::Reset()
+{
+	if (vertexStart != -1)
+		return;
+
+	/*const Ptr<VertexChunkPool>& pool = TerrainEntity::Instance()->GetVertexChunkPool();
+	if (pool->Full())
+		this->model.downcast<Terrain>()->UpdateVertexPool();
+	
+	vertexStart = pool->Alloc((void*)vertices);
+	n_assert(vertexStart != -1);*/
+	
+
+	
+
+	// 填充顶点
+	const Ptr<VertexBufferPool>& vbPool = TerrainEntity::Instance()->terrMeshPool->GetVertexPool();
+	if (!vbPool->CheckSpace((SizeT)vertexSize))
+		vbPool->FlushAtFrameStart();
+
+	void* ptr = NULL;
+	vbPool->Lock(ptr, vertexSize, vertexStart);
+	if (ptr != NULL)
+	{
+		Memory::Copy(vertices, ptr, sizeof(TileMesh)*vertexSize);
+		vbPool->Unlock();
+	}
+
+	// index buffer
+	//const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->GetIndexBufferPool();
+	const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->terrMeshPool->GetIndexPool();
+	if (!ibPool->CheckSpace((SizeT)indexSize))
+		ibPool->FlushAtFrameStart();
+
+	//void* ptr;
+	ibPool->Lock(ptr, indexSize, indexStart);
+	if (ptr != NULL)
+	{
+		Memory::Copy(indices, ptr, sizeof(WORD)*indexSize);
+		ibPool->Unlock();
+	}
+}
+
+bool 
+DistrictNode::SetRenderGroup(int pass, int texId)
+{
+	if (drawTable[pass].FaceCount <= 0 || 
+		!drawTable[pass].Texture || 
+		(drawTable[pass].Texture - 1) != texId)
+		return false; 
+
+	group.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
+	group.SetBaseVertex(vertexStart);
+	group.SetNumVertices(vertexSize);
+	group.SetBaseIndex(drawTable[pass].FaceStart + indexStart);
+	group.SetNumIndices(drawTable[pass].FaceCount);
+	/*group.SetBaseIndex(ibStart);
+	group.SetNumIndices(indexSize);*/
+
+	return true;
 }
 
 }

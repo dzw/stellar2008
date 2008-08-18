@@ -14,10 +14,56 @@
 #include "kokterrain/clifftable.h"
 #include "kokterrain/districtnode.h"
 #include "kokterrain/terrainrender.h"
+#include "graphics/cell.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
 {
+	// 渲染对像排序
+struct DrawTile 
+{
+	Ptr<DistrictNode> dist;
+	int tex;
+	int pass;
+
+	friend bool operator <(const DrawTile& l, const DrawTile& r);
+	friend bool operator >(const DrawTile& l, const DrawTile& r);
+	friend bool operator <=(const DrawTile& l, const DrawTile& r);
+};
+
+inline bool 
+	operator <(const DrawTile& l, const DrawTile& r)
+{
+	if (l.tex <= r.tex)
+		return l.dist->GetSquareDistance() <= r.dist->GetSquareDistance();
+
+	return false;//l.dist->GetZ() <= r.dist->GetZ();
+}
+
+inline bool 
+	operator >(const DrawTile& l, const DrawTile& r)
+{
+	if (l.tex > r.tex)
+		return true;
+
+	if (l.tex == r.tex)
+		return l.dist->GetSquareDistance() >= r.dist->GetSquareDistance();
+
+	return false;//l.dist->GetZ() <= r.dist->GetZ();
+}
+
+inline bool 
+	operator <=(const DrawTile& l, const DrawTile& r)
+{
+	if (r.tex < l.tex)
+		return false;
+	else if (r.tex > l.tex)
+		return true;
+	else if (r.tex == l.tex)
+		return l.dist->GetSquareDistance() <= r.dist->GetSquareDistance();	// 距离
+
+	return false;
+}
 
 class Terrain : public Models::Model
 {
@@ -32,7 +78,10 @@ public:
     /// unload the resource, or cancel the pending load
     virtual void Unload();
 
-	void ComputeTileMesh();
+	/// 创建新的district
+	Ptr<DistrictNode> CreateNewDistrict(int x, int z);
+	/// 调整四叉树高度
+	void CreateQuadTree(const Ptr<Graphics::Cell>& root);
 
 	/// district坐标变换到格子坐标
 	SizeT DistrictPos2TilePos(SizeT x, SizeT z);
@@ -47,43 +96,49 @@ public:
 	/// 返回一个district的大小
 	int GetDistrictSize()const;
 	
-	const Util::Array<Ptr<Resources::ManagedTexture>>& GetTextures()const;
 	void AppendTexture(const Util::String& resId);
+	const Util::Array<Ptr<Resources::ManagedTexture>>& GetTextures()const;
 	int GetTextureCount()const;
-
 	TerrainMeshData** GetMeshData()const;
 	const TerrainInfo& GetTerrainInfo()const;
-
-	void SetMapSize(SizeT size);
-
-	///
 	const Ptr<TerrainMeshGrid>& GetTerrainMeshGrid()const;
-	/// 创建新的district
-	Ptr<DistrictNode> CreateNewDistrict(int x, int z);
-
+	
+	void UpdateVertexPool();
 	virtual void Render(const Models::ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures);
+
+	void AddVisibleDistrict(IndexT id);
+	void UpdateRenderList(IndexT frameIndex);
 protected:
 	friend class TerrainReader;
 
+	void SetMapSize(SizeT size);
+	void ComputeTileMesh();
 	void UpdateTileTex(int iX, int iY);
+
 
 	/// 基础信息
     TerrainInfo					terrInfo;
+	/// 格子信息
 	Ptr<TerrainMeshGrid>		terrMeshGrid;
+	/// 悬崖表
 	Ptr<CliffTable>				cliffTable;
-	//Util::Array<Util::String>	textureLayer;
+	/// 地表各层贴图ID
+	ThingTex**					thingTex;
+	/// 总纹理
 	Util::Array<Ptr<Resources::ManagedTexture>> textures;
-
-	/// 地形放大
+	/// 地形格子数据
 	TerrainMeshData**			meshData;
 	/// 放大倍数
 	int							tileMeshScale;
 	/// 计算tile位置offset
 	float						tilePosOffset;
 	
-	/// 地表各层贴图ID
-	ThingTex**					thingTex;
+
 	Ptr<TerrainRender>			terrRender;
+	Util::Array<Ptr<DistrictNode>> renderList;
+	/// 渲染排序队列
+	Util::Array<DrawTile>		renderLayer[4];
+	DWORD						frameIndex;
 };
 
 inline const Ptr<TerrainMeshGrid>& 

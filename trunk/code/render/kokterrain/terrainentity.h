@@ -6,7 +6,7 @@
     cTuo
 */
 #include "core/singleton.h"
-#include "graphics/graphicsentity.h"
+#include "graphics/modelentity.h"
 #include "kokterrain/terraindef.h"
 #include "kokterrain/managedterrain.h"
 #include "coregraphics/vertexchunkpool.h"
@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 namespace KOK
 {
-class TerrainEntity : public Graphics::GraphicsEntity
+class TerrainEntity : public Graphics::ModelEntity
 {
 public:
     DeclareClass(TerrainEntity);
@@ -36,16 +36,21 @@ public:
     virtual void OnUpdate();
 
 	const Ptr<CoreGraphics::VertexChunkPool>& GetVertexChunkPool()const;
-	const Ptr<CoreGraphics::DynamicMeshPool>& GetTerrainMeshPool()const;
+	const Ptr<CoreGraphics::IndexBufferPool>& GetIndexBufferPool()const;
+	
+	Ptr<CoreGraphics::DynamicMeshPool>	terrMeshPool;
 protected:
 	void CreateMeshPool();
 
-	Resources::ResourceId resId;
-	Ptr<ManagedTerrain> managedTerrain;
+	Resources::ResourceId				resId;
+	Ptr<Terrain>						terrain;
+
 	/// vertex buffer,顶点缓冲大小固定
-	Ptr<CoreGraphics::VertexChunkPool> terrVertexPool;
+	Ptr<CoreGraphics::VertexChunkPool>	terrVertexPool;
 	/// index buffer
-	Ptr<CoreGraphics::DynamicMeshPool> terrMeshPool;
+	Ptr<CoreGraphics::IndexBufferPool>	indexPool;
+
+	
 };
 
 //------------------------------------------------------------------------------
@@ -73,10 +78,10 @@ TerrainEntity::GetVertexChunkPool()const
 	return this->terrVertexPool;
 }
 
-inline const Ptr<CoreGraphics::DynamicMeshPool>&
-TerrainEntity::GetTerrainMeshPool()const
+inline const Ptr<CoreGraphics::IndexBufferPool>&
+TerrainEntity::GetIndexBufferPool()const
 {
-	return this->terrMeshPool;
+	return this->indexPool;
 }
 
 

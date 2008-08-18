@@ -18,7 +18,8 @@ using namespace Util;
 /**
 */
 Cell::Cell() :
-    numEntitiesInHierarchyAllTypes(0)
+    numEntitiesInHierarchyAllTypes(0),
+	cellId(-1)
 {
     Memory::Clear(this->numEntitiesInHierarchyByType, sizeof(this->numEntitiesInHierarchyByType));
 }
@@ -105,7 +106,7 @@ Cell::OnRemoveFromStage()
 void
 Cell::AttachChildCell(const Ptr<Cell>& cell)
 {
-    n_assert(!this->stage.isvalid());
+    //n_assert(!this->stage.isvalid());
     n_assert(cell.isvalid())
     n_assert(!cell->GetParentCell().isvalid()); 
 
@@ -251,10 +252,10 @@ Cell::RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity,
     n_assert(observerEntity.isvalid());
 
     // break immediately if no entity of wanted type in this cell or below
-    if (this->GetNumEntitiesInHierarchyByTypeMask(observedEntityTypeMask) == 0)
+    /*if (this->GetNumEntitiesInHierarchyByTypeMask(observedEntityTypeMask) == 0)
     {
         return;
-    }
+    }*/
 
     // if clip status unknown or clipped, get clip status of this cell against observer entity
     if ((ClipStatus::Invalid == clipStatus) || (ClipStatus::Clipped == clipStatus))
@@ -338,6 +339,9 @@ Cell::RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity,
         }
     }
 
+	if (this->cellId != -1 && linkType == GraphicsEntity::CameraLink)
+		this->stage->AddVisibleCell(this);
+	
     // recurse into child cells (if this cell is fully or partially visible)
     IndexT childIndex;
     SizeT numChildren = this->childCells.Size();

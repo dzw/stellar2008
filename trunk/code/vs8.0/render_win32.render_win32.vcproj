@@ -584,14 +584,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\render\coregraphics\meshpool.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\coregraphics\meshpool.h"
-				>
-			</File>
-			<File
 				RelativePath="..\render\coregraphics\pixelformat.cc"
 				>
 			</File>
@@ -797,6 +789,14 @@
 			</File>
 			<File
 				RelativePath="..\render\coregraphics\vertexbufferpool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\vertexchunkpool.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\vertexchunkpool.h"
 				>
 			</File>
 			<File
@@ -1395,11 +1395,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\render\graphics\terraincell.cc"
+				RelativePath="..\render\graphics\staticquadtreestagebuilder.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\render\graphics\terraincell.h"
+				RelativePath="..\render\graphics\staticquadtreestagebuilder.h"
 				>
 			</File>
 			<File
@@ -1408,14 +1408,6 @@
 			</File>
 			<File
 				RelativePath="..\render\graphics\view.h"
-				>
-			</File>
-			<File
-				RelativePath="..\render\graphics\worldstage.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\graphics\worldstage.h"
 				>
 			</File>
 			<Filter
@@ -2362,14 +2354,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\render\kokterrain\districtnodeinstance.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\kokterrain\districtnodeinstance.h"
-				>
-			</File>
-			<File
 				RelativePath="..\render\kokterrain\managedterrain.cc"
 				>
 			</File>
@@ -2458,14 +2442,6 @@
 			</File>
 			<File
 				RelativePath="..\render\kokterrain\terrainrender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\render\kokterrain\terrainserver.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\render\kokterrain\terrainserver.h"
 				>
 			</File>
 			<Filter

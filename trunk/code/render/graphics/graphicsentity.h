@@ -123,7 +123,7 @@ public:
 protected:
     friend class Cell;
     friend class Stage;
-	friend class WorldStage;
+	//friend class WorldStage;
     friend class View;
     friend class GraphicsServer;
 

@@ -11,6 +11,7 @@
 #include "models/modelnodeinstance.h"
 #include "kokterrain/terraindef.h"
 #include "kokterrain/terrainmeshgrid.h"
+#include "coregraphics/primitivegroup.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -29,26 +30,34 @@ public:
     /// apply state shared by all my ModelNodeInstances
     virtual bool ApplySharedState();
 
-	void SetTerrainMeshGrid(const Ptr<TerrainMeshGrid>& grid);
-	const Ptr<TerrainMeshGrid>& GetTerrainMeshGrid()const;
+	/// called when resources should be loaded
+    virtual void LoadResources();
 
 	void SetPosition(int x, int z);
-	int  GetX()const;
-	int	 GetZ()const;
-	int  GetTileSize()const;
-	int  GetMapWide()const;
-	float GetTilePosOffset()const;
 
 	void CreateMeshData();
 	void UpdateDrawTable(TerrainMeshData** pMeshDatas);
+	void CalcSquareDistance();
+	float GetSquareDistance()const;
+	TileMesh* GetVertexData()const;
 
-	/// called when resources should be loaded
-    virtual void LoadResources();
+	void NotifyVisible(IndexT frameIndex);
+	DWORD GetFrameIndex()const;
+	void Reset();
+
+	/// 判断传入的pass是否需要渲染
+	bool IsRender(int pass);
+	void SetVertexStart(DWORD vb);
+	DWORD GetVertexStart()const;
+	bool SetRenderGroup(int pass, int texId);
+	void Render();
+
+	
 protected:
-	friend class DistrictNodeInstance;
+	//friend class DistrictNodeInstance;
 
     /// create a model node instance
-	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
+	//virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
     
     /// called when resources should be unloaded
     virtual void UnloadResources();
@@ -60,8 +69,6 @@ protected:
 	int tileStartX;
 	int tileStartY;
 
-	Ptr<TerrainMeshGrid> terrMeshGrid;
-	
 	/// render
 	TileMesh*		vertices;
 	int				vertexSize;
@@ -70,30 +77,52 @@ protected:
 	TileDrawTable*	drawTable;
 
 	int				shadowIndexSize;
+
+	/// 包围盒到摄像机的距离
+	float squareDistance;
+	DWORD frameIndex;
+
+	/// 顶点缓冲块位置
+	SizeT vertexStart;
+	SizeT indexStart;
+	CoreGraphics::PrimitiveGroup group;
 };
 
-inline const Ptr<TerrainMeshGrid>& 
-DistrictNode::GetTerrainMeshGrid()const
+inline DWORD
+DistrictNode::GetFrameIndex()const
 {
-	return this->terrMeshGrid;
+	return this->frameIndex;
 }
 
-inline int  
-DistrictNode::GetX()const
+inline DWORD
+DistrictNode::GetVertexStart()const
 {
-	return this->disX;
+	return this->vertexStart;
 }
 
-inline int	 
-DistrictNode::GetZ()const
+inline void
+DistrictNode::SetVertexStart(DWORD vb)
 {
-	return this->disZ;
+	this->vertexStart = vb;
 }
 
-inline void 
-DistrictNode::SetTerrainMeshGrid(const Ptr<TerrainMeshGrid>& grid)
+inline TileMesh*
+DistrictNode::GetVertexData()const
 {
-	this->terrMeshGrid = grid;
+	n_assert(this->vertices != NULL);
+	return this->vertices;
+}
+
+inline float 
+DistrictNode::GetSquareDistance()const
+{
+	return this->squareDistance;
+}
+
+inline bool 
+DistrictNode::IsRender(int pass)
+{
+	return this->drawTable[pass].Texture && this->drawTable[pass].FaceCount > 0;
 }
 
 inline void 

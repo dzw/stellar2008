@@ -151,11 +151,9 @@ Stage::AttachEntity(const Ptr<GraphicsEntity>& entity)
     n_assert(!entity->IsAttachedToStage());
     n_assert(entity->GetType() < GraphicsEntity::NumTypes);
 
-	//if (!entity->IsA(TerrainChunkEntity::RTTI))
-	{
-	    this->entities.Append(entity);
-		this->entitiesByType[entity->GetType()].Append(entity);
-	}
+    this->entities.Append(entity);
+	this->entitiesByType[entity->GetType()].Append(entity);
+	
     entity->OnActivate();
     entity->OnAttachToStage(this);
     this->rootCell->InsertEntity(entity);
@@ -254,6 +252,8 @@ Stage::UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity)
 
     n_assert(cameraEntity.isvalid());
 
+	this->visibleCells.Clear();
+
     // clear camera links in all entities
     IndexT entityIndex;
     SizeT numEntities = this->entities.Size();
@@ -306,6 +306,18 @@ Stage::UpdateLightLinks()
             this->rootCell->UpdateLinks(lightEntity, (1<<GraphicsEntity::ModelType), GraphicsEntity::LightLink);
         }
     }
+}
+
+void 
+Stage::AddVisibleCell(const Ptr<Cell>& cell)
+{
+	this->visibleCells.Append(cell);
+}
+
+const Util::Array<Ptr<Cell>>& 
+Stage::GetVisibleCell()const
+{
+	return this->visibleCells;
 }
 
 } // namespace Graphics

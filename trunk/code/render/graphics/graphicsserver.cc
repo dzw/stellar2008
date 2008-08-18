@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "graphics/graphicsserver.h"
-#include "graphics/worldstage.h"
+#include "graphics/stage.h"
 #include "graphics/view.h"
 #include "graphics/stagebuilder.h"
 #include "resources/resourcemanager.h"
@@ -77,7 +77,7 @@ GraphicsServer::CreateStage(const StringAtom& stageName, const Ptr<StageBuilder>
     n_assert(this->isOpen);
     n_assert(!this->stageIndexMap.Contains(stageName));
 
-    Ptr<Stage> newStage = WorldStage::Create();
+    Ptr<Stage> newStage = Stage::Create();
     newStage->SetName(stageName);
     newStage->SetStageBuilder(stageBuilder);
     newStage->OnAttachToServer();

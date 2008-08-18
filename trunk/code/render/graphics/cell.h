@@ -87,11 +87,13 @@ public:
 	virtual void OnRenderDebug(/*const bbox& b*/);
 	
 	virtual Ptr<Cell> FindEntityContainmentCell(const Math::bbox& entityBox);
+
+	void SetCellId(int id);
+	int  GetCellId()const;
 private:
     friend class GraphicsEntity;
 	friend class ConvexZone;
 	friend class WMOZone;
-	friend class TerrainCell;
 
     /// starting from this cell, find smallest containment cell in cell tree
     virtual Ptr<Cell> FindEntityContainmentCell(const Ptr<GraphicsEntity>& entity);
@@ -101,6 +103,7 @@ private:
     /// increment/decrement the numEntitiesInHierarchy counter (including in all parent cells)
     void UpdateNumEntitiesInHierarchy(GraphicsEntity::Type type, int num);
 
+	int cellId;
     Ptr<Stage> stage;
     Ptr<Cell> parentCell;
     SizeT numEntitiesInHierarchyAllTypes;
@@ -110,6 +113,18 @@ private:
     Util::Array<Ptr<GraphicsEntity> > entities;
     Util::Array<Ptr<GraphicsEntity> > entitiesByType[GraphicsEntity::NumTypes];
 };
+
+inline void 
+Cell::SetCellId(int id)
+{
+	this->cellId = id;
+}
+
+inline int  
+Cell::GetCellId()const
+{
+	return this->cellId;
+}
 
 //------------------------------------------------------------------------------
 /**

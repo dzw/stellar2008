@@ -5,6 +5,7 @@
 #include "stdneb.h"
 #include "graphics/worldstage.h"
 #include "graphics/cell.h"
+#include "kokterrain/terrainentity.h"
 
 namespace Graphics
 {
@@ -99,16 +100,13 @@ WorldStage::RemoveEntity(const Ptr<GraphicsEntity>& entity)
 void 
 WorldStage::UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity)
 {
-	if (this->terrInstance.isvalid())
-		this->terrInstance->ClearRenderList();
-	
 	Stage::UpdateCameraLinks(cameraEntity);
 }
 
 void 
-WorldStage::AppendDist(const Ptr<KOK::DistrictNodeInstance>& dist)
+WorldStage::AddVisibleCell(int id)
 {
-	this->terrInstance->AppendRenderDist(dist);
+	TerrainEntity::Instance()->AddVisibleDistrict(id);
 }
 
 } // namespace Graphics
