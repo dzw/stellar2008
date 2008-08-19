@@ -94,6 +94,7 @@ private:
     friend class GraphicsEntity;
 	friend class ConvexZone;
 	friend class WMOZone;
+	friend class TerrainCell;
 
     /// starting from this cell, find smallest containment cell in cell tree
     virtual Ptr<Cell> FindEntityContainmentCell(const Ptr<GraphicsEntity>& entity);

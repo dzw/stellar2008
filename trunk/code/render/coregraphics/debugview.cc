@@ -33,7 +33,7 @@ DebugView::~DebugView()
 }
 
 void 
-DebugView::AddDebugString(const Util::String& head, DWORD& content)
+DebugView::AddDebugString(const Util::String& head, DWORD content)
 {
 	String cc;
 	cc.Format("%d", content);

@@ -49,6 +49,8 @@ public:
 
 	/// notify that we are visible
     virtual void OnNotifyVisible(IndexT frameIndex);
+
+	DWORD GetVertexStart();
 protected:
 	/// ¶¥µã»º³å¿éÎ»ÖÃ
 	DWORD vertexStart;

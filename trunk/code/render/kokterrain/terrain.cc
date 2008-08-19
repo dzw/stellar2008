@@ -14,6 +14,7 @@
 #include "graphics/modelentity.h"
 #include "resources/resourcemanager.h"
 
+
 #include "coregraphics/vertexchunkpool.h"
 #include "kokterrain/terrainentity.h"
 #include "kokterrain/terraininstance.h"
@@ -21,6 +22,7 @@
 #include "graphics/staticquadtreestagebuilder.h"
 
 #include "coregraphics/renderdevice.h"
+#include "coregraphics/debugview.h"
 
 namespace KOK
 {
@@ -263,34 +265,32 @@ Terrain::CreateNewDistrict(int x, int z)
 void
 Terrain::CreateQuadTree(const Ptr<Cell>& root)
 {
-	root->SetCellId(0);
+	int num = this->terrInfo.GetDistrictCountX();
 
-	//int num = this->terrInfo.GetDistrictCountX();
+	Ptr<StaticQuadtreeStageBuilder> quadTreeStageBuilder = StaticQuadtreeStageBuilder::Create();    
+	bbox levelBox;
+	levelBox.pmin = point(0, 0, 0);
+	levelBox.pmax = point(1/*32*8*10*/, 1.0f, 1/*32*8*10*/);
+	quadTreeStageBuilder->InitQuadtree(levelBox, 6);
 
-	//Ptr<StaticQuadtreeStageBuilder> quadTreeStageBuilder = StaticQuadtreeStageBuilder::Create();    
-	//bbox levelBox;
-	//levelBox.pmin = point(0, 0, 0);
-	//levelBox.pmax = point(1/*32*8*10*/, 1.0f, 1/*32*8*10*/);
-	//quadTreeStageBuilder->InitQuadtree(levelBox, 6);
+	for (SizeT i = 0; i < this->nodes.Size(); i++)
+	{
+		int col = i / num;
+		int row = i % num;
+		const bbox& b = this->nodes[i]->GetBoundingBox();
+		quadTreeStageBuilder->SetLeafNodeBoundingBox(row, col, b);
+	}
 
-	//for (SizeT i = 0; i < this->nodes.Size(); i++)
-	//{
-	//	int col = i / num;
-	//	int row = i % num;
-	//	const bbox& b = this->nodes[i]->GetBoundingBox();
-	//	quadTreeStageBuilder->SetLeafNodeBoundingBox(row, col, b);
-	//}
+	quadTreeStageBuilder->UpdateBoundingBox();
+	quadTreeStageBuilder->AttachToCell(root);
 
-	//quadTreeStageBuilder->UpdateBoundingBox();
-	//quadTreeStageBuilder->AttachToCell(root);
-
-	//// 设置cellId
-	//for (SizeT i = 0; i < this->nodes.Size(); i++)
-	//{
-	//	Ptr<Cell> c = root->FindEntityContainmentCell(this->nodes[i]->GetBoundingBox());
-	//	if (c.isvalid())
-	//		c->SetCellId(i);
-	//}
+	// 设置cellId
+	for (SizeT i = 0; i < this->nodes.Size(); i++)
+	{
+		Ptr<Cell> c = root->FindEntityContainmentCell(this->nodes[i]->GetBoundingBox());
+		if (c.isvalid())
+			c->SetCellId(i);
+	}
 }
 
 void 
@@ -351,6 +351,8 @@ Terrain::UpdateRenderList(IndexT frameIndex)
 	}
 
 	renderList.Clear();
+
+	DebugView::Instance()->AddDebugString("dist", num);
 }
 
 //------------------------------------------------------------------------------
@@ -397,10 +399,10 @@ Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode
 	//////////////////////////////////////////////////////////////////////////
 	//  排序渲染@1  shader-texture-distance 方式
 	//
-	/*Ptr<VertexChunkPool> chunkPool = TerrainEntity::Instance()->GetVertexChunkPool();
+	Ptr<VertexChunkPool> chunkPool = TerrainEntity::Instance()->GetVertexChunkPool();
 	Ptr<IndexBufferPool> indexPool = TerrainEntity::Instance()->GetIndexBufferPool();
 	RenderDevice::Instance()->SetVertexBuffer(chunkPool->GetBuffer());
-	RenderDevice::Instance()->SetIndexBuffer(indexPool->GetBuffer());*/
+	RenderDevice::Instance()->SetIndexBuffer(indexPool->GetBuffer());
 
 	for (SizeT i = 0; i < 4; i++)
 	{

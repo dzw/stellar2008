@@ -71,8 +71,12 @@ TerrainRender::ApplySharedState(const Ptr<ManagedTexture>& tex)
     // set our shader instance as current
     ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
 
+	
 	matrix44 mat = matrix44::identity();
-	TransformDevice::Instance()->SetModelTransform(mat);
+	TransformDevice* transformDevice = TransformDevice::Instance();
+	
+	transformDevice->SetModelTransform(mat);
+	transformDevice->ApplyModelTransforms();    
 
 	return true;
 }

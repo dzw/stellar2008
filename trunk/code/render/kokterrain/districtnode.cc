@@ -92,7 +92,7 @@ void
 DistrictNode::LoadResources()
 {
     // call parent class
-    StateNode::LoadResources();
+    ModelNode::LoadResources();
 }
 
 //------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ DistrictNode::LoadResources()
 void
 DistrictNode::UnloadResources()
 {    
-    StateNode::UnloadResources();
+    ModelNode::UnloadResources();
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ bool
 DistrictNode::ApplySharedState()
 {
     // first call parent class
-    return StateNode::ApplySharedState();
+    return ModelNode::ApplySharedState();
 }
 
 void
@@ -308,8 +308,8 @@ DistrictNode::UpdateDrawTable(TerrainMeshData** pMeshDatas)
 void
 DistrictNode::Render()
 {
-	//RenderDevice::Instance()->SetPrimitiveGroup(group);
-	TerrainEntity::Instance()->terrMeshPool->ApplyPrimitive(group);
+	RenderDevice::Instance()->SetPrimitiveGroup(group);
+	//TerrainEntity::Instance()->terrMeshPool->ApplyPrimitive(group);
 	RenderDevice::Instance()->Draw();
 }  
 
@@ -336,18 +336,15 @@ DistrictNode::Reset()
 	if (vertexStart != -1)
 		return;
 
-	/*const Ptr<VertexChunkPool>& pool = TerrainEntity::Instance()->GetVertexChunkPool();
+	const Ptr<VertexChunkPool>& pool = TerrainEntity::Instance()->GetVertexChunkPool();
 	if (pool->Full())
 		this->model.downcast<Terrain>()->UpdateVertexPool();
 	
 	vertexStart = pool->Alloc((void*)vertices);
-	n_assert(vertexStart != -1);*/
-	
-
-	
+	n_assert(vertexStart != -1);
 
 	// Ìî³ä¶¥µã
-	const Ptr<VertexBufferPool>& vbPool = TerrainEntity::Instance()->terrMeshPool->GetVertexPool();
+	/*const Ptr<VertexBufferPool>& vbPool = TerrainEntity::Instance()->terrMeshPool->GetVertexPool();
 	if (!vbPool->CheckSpace((SizeT)vertexSize))
 		vbPool->FlushAtFrameStart();
 
@@ -357,15 +354,15 @@ DistrictNode::Reset()
 	{
 		Memory::Copy(vertices, ptr, sizeof(TileMesh)*vertexSize);
 		vbPool->Unlock();
-	}
+	}*/
 
 	// index buffer
-	//const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->GetIndexBufferPool();
-	const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->terrMeshPool->GetIndexPool();
+	const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->GetIndexBufferPool();
+	//const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->terrMeshPool->GetIndexPool();
 	if (!ibPool->CheckSpace((SizeT)indexSize))
 		ibPool->FlushAtFrameStart();
 
-	//void* ptr;
+	void* ptr;
 	ibPool->Lock(ptr, indexSize, indexStart);
 	if (ptr != NULL)
 	{
@@ -383,7 +380,7 @@ DistrictNode::SetRenderGroup(int pass, int texId)
 		return false; 
 
 	group.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
-	group.SetBaseVertex(vertexStart);
+	group.SetBaseVertex(vertexStart/64);
 	group.SetNumVertices(vertexSize);
 	group.SetBaseIndex(drawTable[pass].FaceStart + indexStart);
 	group.SetNumIndices(drawTable[pass].FaceCount);

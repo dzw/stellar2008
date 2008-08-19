@@ -76,6 +76,13 @@ TerrainEntity::OnDeactivate()
     n_assert(this->IsActive());
     n_assert(this->managedModel.isvalid());
 
+	// discard our model instance (if exists)
+	if (this->modelInstance.isvalid())
+	{
+		this->modelInstance->Discard();
+		this->modelInstance = 0;
+	}
+
     // discard our managed model
     ResourceManager::Instance()->DiscardManagedResource(this->managedModel.upcast<ManagedResource>());
     this->managedModel = 0;
@@ -126,17 +133,17 @@ TerrainEntity::CreateMeshPool()
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 3, VertexComponent::Float2));
 	vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 4, VertexComponent::Float2));
 	
-	DWORD tileVertexSize = 256 * 100;
-	DWORD tileIndexSize = 384 * 2 * 100;
+	DWORD tileVertexSize = 256 * 64;
+	DWORD tileIndexSize = 384 * 2 * 64;
 
-	/*this->terrVertexPool = VertexChunkPool::Create();
-	this->terrVertexPool->Reset(sizeof(TileMesh), vertexSize, 100, vertexComponents);
+	this->terrVertexPool = VertexChunkPool::Create();
+	this->terrVertexPool->Reset(sizeof(TileMesh), vertexSize, 64, vertexComponents);
 
 	this->indexPool = IndexBufferPool::Create();
-	this->indexPool->Reset(tileIndexSize, IndexType::Index16);*/
+	this->indexPool->Reset(tileIndexSize, IndexType::Index16);
 
-	this->terrMeshPool = DynamicMeshPool::Create();
-	this->terrMeshPool->Reset(sizeof(TileMesh), tileVertexSize, vertexComponents, tileIndexSize, IndexType::Index16);
+	//this->terrMeshPool = DynamicMeshPool::Create();
+	//this->terrMeshPool->Reset(sizeof(TileMesh), tileVertexSize, vertexComponents, tileIndexSize, IndexType::Index16);
 }
 
 } // namespace Graphics

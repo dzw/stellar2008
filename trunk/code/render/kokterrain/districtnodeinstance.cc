@@ -29,7 +29,7 @@ using namespace Math;
 /**
 */
 DistrictNodeInstance::DistrictNodeInstance():
-	curGroup(-1),
+	vertexStart(-1),
 	meshPool(0),
 	frameIndex(0)
 {

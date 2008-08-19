@@ -104,7 +104,7 @@ WorldStage::UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity)
 }
 
 void 
-WorldStage::AddVisibleCell(int id)
+WorldStage::AddVisibleDist(const Ptr<DistrictNodeInstance>& dist)
 {
 	TerrainEntity::Instance()->AddVisibleDistrict(id);
 }

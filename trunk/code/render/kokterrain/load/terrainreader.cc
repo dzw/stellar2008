@@ -834,6 +834,7 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 
 		/*if( TempModelData )
 		{
+			// 解析加载模型
 			TempData = AddThing(l_dwThingID,TempModelData->iClass ,
 				TempModelData->iType,TempModelData->szModelName,load_backend);
 		}*/
