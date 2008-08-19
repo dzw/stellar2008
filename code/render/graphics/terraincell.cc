@@ -18,7 +18,7 @@ using namespace Util;
 /**
 */
 TerrainCell::TerrainCell():
-	distId(-1)
+	id(-1)
 {
     
 }
@@ -132,9 +132,9 @@ TerrainCell::RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity,
 
 	if (linkType == GraphicsEntity::CameraLink)
 	{
-		if (this->distId != -1)
+		if (this->dist.isvalid())
 		{
-			this->stage.downcast<WorldStage>()->AppendDistrict(this->id);
+			this->stage.downcast<WorldStage>()->AddVisibleDist(this->id);
 		}
 	}
 

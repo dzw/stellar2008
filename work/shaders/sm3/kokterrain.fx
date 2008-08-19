@@ -1,8 +1,4 @@
 float4x4 mvp : ModelViewProjection;
-float4x4 world : Model;
-float4x4 view : View;
-float4x4 worldView : ModelView;
-
 texture tex : DiffMap0;
 
 sampler s1 = 

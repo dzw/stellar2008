@@ -25,7 +25,7 @@ public:
     /// remove an entity from the stage
     virtual void RemoveEntity(const Ptr<GraphicsEntity>& entity);
 	virtual void UpdateCameraLinks(const Ptr<CameraEntity>& cameraEntity);
-	void AddVisibleCell(int id);
+	void AddVisibleDist(const Ptr<DistrictNodeInstance>& dist);
 protected:
 
     Util::Array<Ptr<GraphicsEntity> > staticEntities;

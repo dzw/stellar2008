@@ -17,7 +17,7 @@
 namespace Graphics
 {
 
-class StaticCell : public Cell
+class TerrainCell : public Cell
 {
     DeclareClass(TerrainCell);
 public:
@@ -29,18 +29,18 @@ public:
 	///
 	virtual void OnRenderDebug(/*const bbox& b*/);
 
-	void SetId(int id);
+	void SetDistrict(const Ptr<DistrictNodeInstance>& dist);
 private:
     /// create links between visible entities
     virtual void RecurseUpdateLinks(const Ptr<GraphicsEntity>& observerEntity, uint entityTypeMask, GraphicsEntity::LinkType linkType, Math::ClipStatus::Type clipStatus);
 
-	int id;
+	Ptr<DistrictNodeInstance> dist;
 };
 
 inline void 
-TerrainCell::SetId(int id)
+TerrainCell::SetDistrict(const Ptr<DistrictNodeInstance>& dist)
 {
-	this->id = id;
+	this->dist = dist;
 }
 
 } // namespace Graphics

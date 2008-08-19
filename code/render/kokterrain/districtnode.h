@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 namespace KOK
 {
-class DistrictNode : public Models::StateNode
+class DistrictNode : public Models::ModelNode
 {
     DeclareClass(DistrictNode);
 public:

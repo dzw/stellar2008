@@ -27,7 +27,7 @@ public:
 	~DebugView();
 	///
 	void AddDebugString(const Util::String& head, const Util::String& content);
-	void AddDebugString(const Util::String& head, DWORD& content);
+	void AddDebugString(const Util::String& head, DWORD content);
 	void Render();
 
 	/// ¼ÆÊ±
