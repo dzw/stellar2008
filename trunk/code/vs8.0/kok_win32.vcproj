@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Win32\Debug"
-			IntermediateDirectory=".\Win32\Debug\testviewer"
+			IntermediateDirectory=".\Win32\Debug\kok"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
