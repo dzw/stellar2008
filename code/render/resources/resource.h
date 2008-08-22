@@ -18,6 +18,7 @@
 */
 #include "core/refcounted.h"
 #include "resources/resourceid.h"
+#include "io/stream.h"
 
 //------------------------------------------------------------------------------
 namespace Resources
@@ -80,6 +81,8 @@ public:
 
 	/// set current state wow资源直接加载，所以需要手动设置加载状态
     void SetState(State s);
+	/// 解析/设置数据,不用XXreader类解析，因为类成员变量访问很不方便
+	virtual bool SetupFromStream(const Ptr<IO::Stream>& stream);
 protected:
     friend class SharedResourceServer;
 
@@ -204,6 +207,12 @@ inline bool
 Resource::LoadFailed() const
 {
     return (Failed == this->state);
+}
+
+inline bool 
+Resource::SetupFromStream(const Ptr<IO::Stream>& stream)
+{
+	return true;
 }
 
 } // namespace Resources

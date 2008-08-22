@@ -297,6 +297,20 @@ String::FindCharIndex(char c, IndexT startIndex) const
 
 //------------------------------------------------------------------------------
 /**
+*/
+bool 
+String::CheckStringExist(const String&s)
+{
+	if (!heapBuffer)
+		return false;
+
+	if (strstr(this->heapBuffer, s.AsCharPtr()) != NULL)
+		return true;
+	return false;
+}
+
+//------------------------------------------------------------------------------
+/**
     Removes all characters in charSet from the left side of the string.
 */
 void

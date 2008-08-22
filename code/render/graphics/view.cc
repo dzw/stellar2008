@@ -12,7 +12,6 @@
 #include "lighting/lightserver.h"
 #include "lighting/shadowserver.h"
 #include "coregraphics/debugview.h"
-//#include "kokterrain/terrainentity.h"
 
 namespace Graphics
 {

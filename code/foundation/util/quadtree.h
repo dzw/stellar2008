@@ -337,8 +337,8 @@ template<class TYPE> void
 QuadTree<TYPE>::UpdateBoundingBox()
 {
 	bbox b;
-	b.pmin = point(FLT_MAX, FLT_MAX, FLT_MAX);
-	b.pmax = point(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	b.pmin = point(N_MAXREAL, N_MAXREAL, N_MAXREAL);
+	b.pmax = point(N_MINREAL, N_MINREAL, N_MINREAL);
 	this->nodeArray[0].UpdateBoundingBox(this, b);
 	this->nodeArray[0].box = b;
 }

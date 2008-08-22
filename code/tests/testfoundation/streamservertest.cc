@@ -36,6 +36,8 @@ StreamServerTest::Run()
     URI absFileURI("file:///c:/temp");
     URI relFileURI("temp/bla.txt");
     URI memURI("memory:///test");
+	//const URI& sss = absFileURI;
+
     Ptr<Stream> absFileStream = ioServer->CreateStream(absFileURI);
     Ptr<Stream> relFileStream = ioServer->CreateStream(relFileURI);
     Ptr<Stream> memStream = ioServer->CreateStream(memURI);

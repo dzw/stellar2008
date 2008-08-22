@@ -208,13 +208,14 @@ StringTest::Run()
 
 	//n_printf("==========================================start string================\n");
 	Timing::Timer t;
+	Timing::Time tt;
 	//t.Start();
 	//for (int i = 0; i < 10000000; i++ )
 	//{
 	//	int *sss = new int;
 	//}
 	//t.Stop();
-	Timing::Time tt = t.GetTime();
+	//tt = t.GetTime();
 	//n_printf("%f\n", tt);
 	//n_printf("==========================================end string================\n");
 	//
