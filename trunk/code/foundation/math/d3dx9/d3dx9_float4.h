@@ -135,10 +135,24 @@ public:
 protected:
     friend class matrix44;
 
-    scalar X;
-    scalar Y;
-    scalar Z;
-    scalar W;
+	union
+	{
+		struct  
+		{
+			scalar X;
+			scalar Y;
+			scalar Z;
+			scalar W;
+		};
+		struct  
+		{
+			scalar R;
+			scalar G;
+			scalar B;
+			scalar A;
+		};
+	};
+
 };
 
 //------------------------------------------------------------------------------

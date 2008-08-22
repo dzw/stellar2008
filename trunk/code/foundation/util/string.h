@@ -120,6 +120,8 @@ public:
     IndexT FindStringIndex(const String& s, IndexT startIndex = 0) const;
     /// return index of character in string, or InvalidIndex if not found
     IndexT FindCharIndex(char c, IndexT startIndex = 0) const;
+	/// ÅĞ¶ÏÊÇ×Ö·û´®·ñ´æÔÚ
+	bool CheckStringExist(const String& s);
     /// terminate string at given index
     void TerminateAtIndex(IndexT index);
     /// returns true if string contains any character from set
@@ -817,7 +819,7 @@ inline IndexT
 String::HashCode() const
 {
 	if (!this->isDirty)
-		this->hash;
+		return this->hash;
 
 	this->isDirty = false;
     this->hash = 0;

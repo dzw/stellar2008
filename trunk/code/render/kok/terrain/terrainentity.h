@@ -38,7 +38,7 @@ public:
 	const Ptr<CoreGraphics::VertexChunkPool>& GetVertexChunkPool()const;
 	const Ptr<CoreGraphics::IndexBufferPool>& GetIndexBufferPool()const;
 	
-	Ptr<CoreGraphics::DynamicMeshPool>	terrMeshPool;
+	//Ptr<CoreGraphics::DynamicMeshPool>	terrMeshPool;
 protected:
 	void CreateMeshPool();
 

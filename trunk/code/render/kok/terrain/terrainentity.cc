@@ -17,7 +17,7 @@
 
 namespace KOK
 {
-ImplementClass(KOK::TerrainEntity, 'TNET', Graphics::GraphicsEntity);
+ImplementClass(KOK::TerrainEntity, 'TNET', Graphics::ModelEntity);
 ImplementSingleton(KOK::TerrainEntity);
 
 using namespace Models;

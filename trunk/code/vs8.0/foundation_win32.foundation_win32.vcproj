@@ -1082,6 +1082,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\foundation\math\ncolor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\foundation\math\noise.h"
 				>
 			</File>

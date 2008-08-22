@@ -164,6 +164,10 @@ StreamTerrainLoader::SetupFromStream(const Ptr<Stream>& stream)
         modelReader = (ModelReader*) TerrainReader::Create();
         modelReader->SetModelResId(this->resource->GetResourceId());
     }
+	else if (fileExt == "obj")
+	{
+		return this->resource->SetupFromStream(stream);
+	}
     else
     {
         n_error("StreamTerrainLoader: unrecognized file extension '%s' in '%s'!",
