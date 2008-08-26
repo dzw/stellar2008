@@ -560,6 +560,41 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\coregraphics\material.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Realse|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\material.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\coregraphics\memoryindexbufferloader.cc"
 				>
 			</File>
@@ -1857,6 +1892,22 @@
 				</File>
 				<File
 					RelativePath="..\render\models/nodes\characternodeinstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\models\nodes\materialnode.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\models\nodes\materialnode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\models\nodes\materialnodeinstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\models\nodes\materialnodeinstance.h"
 					>
 				</File>
 				<File

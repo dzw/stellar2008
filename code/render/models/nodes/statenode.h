@@ -8,6 +8,13 @@
     A model node which holds shader state information and applies shared shader
     state for its set of StateNodeInstances.
     
+	设置渲染状态，每个NODE都会创建一份shaderInstance实例，然后保存每个变量的值，
+	用的时候直接应用shaderInstance，而不需要再设置，缺点非常明显，创建的时候太
+	慢，每次都要遍历所有effect中的变量。而且也没必要每个NODE都创建一份shaderinstance.
+
+	（猜测）或许每次创建一个shaderinstance在创建的时候把SHADER的参数传到了GPU,渲染的时候不
+	需要再提交，可以提高渲染速度，不过创建却实很慢！！！
+
     (C) 2007 Radon Labs GmbH
 */
 #include "models/nodes/transformnode.h"

@@ -50,9 +50,11 @@ D3D9ShaderInstance::Setup(const Ptr<Shader>& origShader)
     // call parent class
     ShaderInstanceBase::Setup(origShader);
 
+	// 不用克隆了，直接使用
     // create a clone of the original d3d9 effect object
-    hr = d3d9Shader->GetD3D9Effect()->CloneEffect(d3d9Device, &this->d3d9Effect);
-    n_assert(SUCCEEDED(hr));
+    //hr = d3d9Shader->GetD3D9Effect()->CloneEffect(d3d9Device, &this->d3d9Effect);
+    //n_assert(SUCCEEDED(hr));
+	this->d3d9Effect = d3d9Shader->GetD3D9Effect();
     n_assert(0 != this->d3d9Effect);
     D3DXEFFECT_DESC desc = { 0 };    
     hr = this->d3d9Effect->GetDesc(&desc);
@@ -218,8 +220,9 @@ D3D9ShaderInstance::Update(const Ptr<Shader>& origShader)
 	this->originalShader = origShader;
 
 	// create a clone of the original d3d9 effect object
-	hr = d3d9Shader->GetD3D9Effect()->CloneEffect(d3d9Device, &this->d3d9Effect);
-	n_assert(SUCCEEDED(hr));
+	//hr = d3d9Shader->GetD3D9Effect()->CloneEffect(d3d9Device, &this->d3d9Effect);
+	//n_assert(SUCCEEDED(hr));
+	this->d3d9Effect = d3d9Shader->GetD3D9Effect();
 	n_assert(0 != this->d3d9Effect);
 	D3DXEFFECT_DESC desc = { 0 };    
 	hr = this->d3d9Effect->GetDesc(&desc);

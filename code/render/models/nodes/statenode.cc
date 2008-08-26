@@ -84,6 +84,8 @@ StateNode::LoadResources()
     this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(resId);
 
     // iterate through shader variables and set their attribute values on the shader
+	// 保存shader相关的变量,如果node中没有相关属性(attr)就不会设置。
+	// 原来设置一次变量就可以（因为每个node都有一个独立的shaderinstance克隆），现在不行，每次画前要提交所有更新的变量。
     IndexT i;
     for (i = 0; i < this->shaderInstance->GetNumVariables(); i++)
     {
