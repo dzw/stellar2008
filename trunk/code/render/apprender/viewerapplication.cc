@@ -62,8 +62,8 @@ ViewerApplication::Open()
         GraphicsServer* gfxServer = GraphicsServer::Instance();
 
         // setup the camera util object
-        //this->mayaCameraUtil.Setup(point(10.0f, 50.0f, 10.0f), point(0.0f, 0.0f, 0.0f), vector(0.0f, 1.0f, 0.0f));
-		this->dxutCameraUtil.Setup(vector(0, 0, 0/*581, 324, 1026*/)/*vector(18468.0f, 177.0f, 14292.66f)*/);
+        this->mayaCameraUtil.Setup(point(0.0f, 0.0f, 0.0f), point(0.0, 0.0, 29.38), vector(0.0f, 1.0f, 0.0f));
+		//this->dxutCameraUtil.Setup(vector(0, 0, 0/*581, 324, 1026*/)/*vector(18468.0f, 177.0f, 14292.66f)*/);
 		//this->quaternionCameraUtil.Setup(point(0.0f, 0.0f, 0.0f), vector(0.0f, 0.0f, -100.0f));
 		//this->freeCameraUtil.Setup(vector(10.0f, 1.0f, 10.0f));/*16000.0f, 114.0f, 27200.0f));19343.0f, 237.0f, 14136.66f));*/
 		//this->freeCameraUtil.MoveForward(28266.66649f);
@@ -88,7 +88,7 @@ ViewerApplication::Open()
         //cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 		//cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
 		//cameraEntity->SetTransform(this->quaternionCameraUtil.GetCameraTransform());
-		cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
+		cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
         this->stage->AttachEntity(cameraEntity.upcast<GraphicsEntity>());
 
         // setup a default view
@@ -152,18 +152,18 @@ ViewerApplication::OnProcessInput()
     InputServer* inputServer = InputServer::Instance();
     const Ptr<Keyboard>& keyboard = inputServer->GetDefaultKeyboard();
     const Ptr<Mouse>& mouse = inputServer->GetDefaultMouse();
-    const Ptr<GamePad>& gamePad = inputServer->GetDefaultGamePad(0);
+    //const Ptr<GamePad>& gamePad = inputServer->GetDefaultGamePad(0);
 
-    if (gamePad->IsConnected() && gamePad->ButtonPressed(GamePad::LeftShoulderButton))
-    {
-        // rotate model if right shoulder button is pressed
-        float yaw = gamePad->GetAxisValue(GamePad::LeftThumbXAxis) * 0.1f;
-        float pitch = gamePad->GetAxisValue(GamePad::LeftThumbYAxis) * 0.1f;
-        matrix44 rotMatrix = matrix44::rotationyawpitchroll(yaw, pitch, 0.0f);
-        matrix44 m = matrix44::multiply(this->modelEntity->GetTransform(), rotMatrix);
-        this->modelEntity->SetTransform(m);
-    }
-    else
+    //if (gamePad->IsConnected() && gamePad->ButtonPressed(GamePad::LeftShoulderButton))
+    //{
+    //    // rotate model if right shoulder button is pressed
+    //    float yaw = gamePad->GetAxisValue(GamePad::LeftThumbXAxis) * 0.1f;
+    //    float pitch = gamePad->GetAxisValue(GamePad::LeftThumbYAxis) * 0.1f;
+    //    matrix44 rotMatrix = matrix44::rotationyawpitchroll(yaw, pitch, 0.0f);
+    //    matrix44 m = matrix44::multiply(this->modelEntity->GetTransform(), rotMatrix);
+    //    this->modelEntity->SetTransform(m);
+    //}
+    //else
     {
         // standard input handling: manipulate camera
         this->mayaCameraUtil.SetOrbitButton(mouse->ButtonPressed(MouseButton::LeftButton));
@@ -173,15 +173,6 @@ ViewerApplication::OnProcessInput()
         this->mayaCameraUtil.SetZoomOutButton(mouse->WheelBackward());
         this->mayaCameraUtil.SetMouseMovement(mouse->GetMovement());
         
-        this->dxutCameraUtil.SetMouseMovement(mouse->GetMovement());
-		this->dxutCameraUtil.MoveUp(mouse->WheelBackward());
-		this->dxutCameraUtil.MoveDown(mouse->WheelForward());
-		this->dxutCameraUtil.SetLeftButton(mouse->ButtonPressed(MouseButton::LeftButton));
-		/*this->quaternionCameraUtil.SetMouseMovement(mouse->GetMovement());
-		this->quaternionCameraUtil.SetLeftButton(mouse->ButtonPressed(MouseButton::LeftButton));*/
-
-		this->freeCameraUtil.SetLeftButton(mouse->ButtonPressed(MouseButton::LeftButton));
-		this->freeCameraUtil.SetMouseMovement(mouse->GetMovement());
         // process gamepad input
         float zoomIn = 0.0f;
         float zoomOut = 0.0f;
@@ -190,7 +181,7 @@ ViewerApplication::OnProcessInput()
 		vector kbDir = vector::nullvec();
 		float moveScaler = 5.0f;
 		float speedUp = 1.0f;
-        if (gamePad->IsConnected())
+        /*if (gamePad->IsConnected())
         {
             if (gamePad->ButtonDown(GamePad::AButton))
             {
@@ -209,7 +200,7 @@ ViewerApplication::OnProcessInput()
             panning.y()  += gamePad->GetAxisValue(GamePad::RightThumbYAxis) * frameTime;
             orbiting.x() += gamePad->GetAxisValue(GamePad::LeftThumbXAxis) * frameTime;
             orbiting.y() += gamePad->GetAxisValue(GamePad::LeftThumbYAxis) * frameTime;
-        }
+        }*/
 
         // process keyboard input
         if (keyboard->KeyDown(Key::Escape))
@@ -237,80 +228,12 @@ ViewerApplication::OnProcessInput()
             panning.y() += 0.1f;
         }
 
-		if (keyboard->KeyPressed(Key::W))
-		{
-			kbDir.z() += 0.1f;
-
-			this->freeCameraUtil.MoveForward(-moveScaler);
-		}
-		if (keyboard->KeyPressed(Key::S))
-		{
-			kbDir.z() -= 0.1f;
-
-			this->freeCameraUtil.MoveForward(moveScaler);
-		}
-		if (keyboard->KeyPressed(Key::D))
-		{
-			// right hand
-			//kbDir.x() -= 0.1f;
-
-			// left hand
-			kbDir.x() += 0.1f;
-
-			this->freeCameraUtil.MoveRight(moveScaler);
-		}
-		if (keyboard->KeyPressed(Key::A))
-		{
-			// right hand
-			//kbDir.x() += 0.1f;
-
-			// left hand
-			kbDir.x() -= 0.1f;
-
-			this->freeCameraUtil.MoveRight(-moveScaler);
-		}
-		if (keyboard->KeyPressed(Key::Q))
-		{
-			this->freeCameraUtil.Yaw(0.01);
-		}
-		if (keyboard->KeyPressed(Key::E))
-		{
-			this->freeCameraUtil.Yaw(-0.01);
-		}
-		/*if (keyboard->KeyPressed(Key::Up))
-		{
-			this->freeCameraUtil.MoveUp(moveScaler);
-		}
-		if (keyboard->KeyPressed(Key::Down))
-		{
-			this->freeCameraUtil.MoveUp(-moveScaler);
-		}*/
-		if (keyboard->KeyPressed(Key::P))
-		{
-			speedUp += 1.0f;
-			this->freeCameraUtil.SetSpeedUp(speedUp);
-			this->dxutCameraUtil.SetSpeedUp(speedUp);
-		}
-		if (keyboard->KeyPressed(Key::O))
-		{
-			speedUp -= 1.0f;
-			this->freeCameraUtil.SetSpeedUp(speedUp);
-			this->dxutCameraUtil.SetSpeedUp(speedUp);
-		}
-
-		this->freeCameraUtil.Update();
-
-		this->dxutCameraUtil.SetMovement(kbDir);
-		this->dxutCameraUtil.Update();
-
-		/*this->quaternionCameraUtil.SetMovement(kbDir);
-		this->quaternionCameraUtil.Update();*/
         this->mayaCameraUtil.SetPanning(panning);
         this->mayaCameraUtil.SetOrbiting(orbiting);
         this->mayaCameraUtil.SetZoomIn(zoomIn);
         this->mayaCameraUtil.SetZoomOut(zoomOut);
         this->mayaCameraUtil.Update();
-        this->cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
+        this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F5))

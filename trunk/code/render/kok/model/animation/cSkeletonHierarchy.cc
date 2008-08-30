@@ -13,7 +13,7 @@ using namespace IO;
 using namespace Math;
 
 //extern ID3DXMatrixStack *g_pStack;
-ID3DXMatrixStack *g_pStack = NULL;
+extern ID3DXMatrixStack *g_pStack;
 
 // cSkeletonHierarchy count
 unsigned int cSkeletonHierarchy::m_uiSkeletonHierarchyCount = 0;
@@ -24,8 +24,6 @@ static string SkeletonHierarchyLinkerTypeKeyName[] = { "k_weapon", "k_magic" ,  
 
 cSkeletonHierarchy::cSkeletonHierarchy()
 {
-	D3DXCreateMatrixStack(0, &g_pStack);
-
 	m_pSibling = 0;
 	m_pChild = 0;
 	m_pParent = 0;
@@ -187,9 +185,9 @@ void
 	const sComputeAnimParam& param,
 	SkeletonHierarchyUsabilityMap* pSkeletonHierarchyUnUsedMap )
 #else
-void cSkeletonHierarchy::computeSkeletonHierarchyMatrix( cAnimationActionInfoGroup *pAnimationActionInfoGroup, 
-	const sComputeAnimParam& param,
-	float fLerpValue )
+void cSkeletonHierarchy::computeSkeletonHierarchyMatrix( cAnimationActionInfoGroup *pAnimationActionInfoGroup,
+														const sComputeAnimParam& param/*,
+														float fLerpValue*/ )
 #endif
 {
 
@@ -221,20 +219,12 @@ void cSkeletonHierarchy::computeSkeletonHierarchyMatrix( cAnimationActionInfoGro
 	{
 		n_assert( m_pAnimation );
 		m_pAnimation->getAnimationMatrix(&matTemp, pAnimationActionInfoGroup, param);
-	} // end of if (m_pAnimation)
+	} 
 
 	g_pStack->Push();
 	g_pStack->MultMatrixLocal(&matTemp);
 
-	//pCurnMatrix = g_pStack->GetTop();
-	//m_matTransform = (*pCurnMatrix);
 	m_matTransform = *g_pStack->GetTop();
-
-
-	/*if (m_pAnimation)
-	{
-	m_pAnimation->m_mxMatrix = (*pCurnMatrix);
-	}*/
 
 	// child's mtx
 	if (m_pChild)
@@ -246,17 +236,13 @@ void cSkeletonHierarchy::computeSkeletonHierarchyMatrix( cAnimationActionInfoGro
 						 param,
 						 pSkeletonHierarchyUnUsedMap );
 #else
-		((cSkeletonHierarchy*)m_pChild)->computeSkeletonHierarchyMatrix( pAnimationActionInfoGroup,
-							param );
+		((cSkeletonHierarchy*)m_pChild)->computeSkeletonHierarchyMatrix( pAnimationActionInfoGroup, param );
 #endif
 
 		g_pStack->Pop();
-	} // end of if (m_pChild)
+	} 
 
-	//  if (m_pAnimation)
-	//  {
 	g_pStack->Pop();
-	//  }
 
 	// next's mtx
 	if (m_pSibling)
@@ -266,8 +252,7 @@ void cSkeletonHierarchy::computeSkeletonHierarchyMatrix( cAnimationActionInfoGro
 							param,
 							pSkeletonHierarchyUnUsedMap );
 #else
-		((cSkeletonHierarchy*)m_pSibling)->computeSkeletonHierarchyMatrix( pAnimationActionInfoGroup,
-							param );
+		((cSkeletonHierarchy*)m_pSibling)->computeSkeletonHierarchyMatrix( pAnimationActionInfoGroup, param );
 #endif
 	}
 }

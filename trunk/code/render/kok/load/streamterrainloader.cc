@@ -168,6 +168,10 @@ StreamTerrainLoader::SetupFromStream(const Ptr<Stream>& stream)
 	{
 		return this->resource->SetupFromStream(stream);
 	}
+	else if (fileExt == "atm")
+	{
+		return this->resource->SetupFromStream(stream);
+	}
     else
     {
         n_error("StreamTerrainLoader: unrecognized file extension '%s' in '%s'!",

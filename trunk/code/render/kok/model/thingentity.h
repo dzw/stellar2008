@@ -3,6 +3,7 @@
 #define KOK_THINGENTITY_H
 //------------------------------------------------------------------------------
 /**
+	静态物（地上物）实例，we的cThing相似
     cTuo
 */
 #include "core/singleton.h"
@@ -15,7 +16,6 @@ class ThingEntity : public Graphics::ModelEntity
 {
 public:
     DeclareClass(ThingEntity);
-	DeclareSingleton(ThingEntity);
 
 public:
     /// constructor
@@ -32,7 +32,8 @@ public:
     virtual void OnUpdate();
 
 protected:
-	
+	/// 类别
+	int category;
 };
 
 //------------------------------------------------------------------------------

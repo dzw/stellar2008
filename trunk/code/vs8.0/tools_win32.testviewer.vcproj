@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="testviewer"
-	ProjectGUID="{E4F14AF3-DD3B-4A4D-B076-EA584927A17C}"
+	ProjectGUID="{90902147-DB19-4BE6-84FB-0016EAE6B31C}"
 	>
 	<Platforms>
 		<Platform
@@ -47,7 +47,7 @@
 				AdditionalOptions=""
 				Optimization="0"
 				AdditionalIncludeDirectories="..;../foundation;../render;../extlibs;../tools;../addons ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;"
+				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -61,7 +61,7 @@
 				PrecompiledHeaderThrough="stdneb.h"
 				PrecompiledHeaderFile="$(OutDir)\$(ProjectName).pch"
 				WarningLevel="3"
-				WarnAsError="true"
+				WarnAsError="false"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -157,7 +157,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..;../foundation;../render;../extlibs;../tools;../addons ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;"
+				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -169,7 +169,7 @@
 				PrecompiledHeaderThrough="stdneb.h"
 				PrecompiledHeaderFile="$(OutDir)\$(ProjectName).pch"
 				WarningLevel="3"
-				WarnAsError="true"
+				WarnAsError="false"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -190,7 +190,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib foundation_win32.lib render_win32.lib lua_win32.lib tinyxml_win32.lib zlib_win32.lib nebula2_win32.lib db_win32.lib sqlite_win32.lib ddslib_win32.lib mpq_win32.lib"
+				AdditionalDependencies="dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib foundation_win32.lib render_win32.lib lua_win32.lib tinyxml_win32.lib zlib_win32.lib nebula2_win32.lib db_win32.lib sqlite_win32.lib ddslib_win32.lib mpq_win32.lib LagerPacket.lib"
 				OutputFile="..\..\bin\win32\testviewer.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"

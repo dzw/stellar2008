@@ -6,6 +6,8 @@
     @class KOK::KokShapeNode
 
 	子模型，Thing和Being都需要
+	统一解析数据的地方，产生基本的顶点格式，根据具体使用情况，继承的子类做一些特别
+	处理，如顶点改变（如摇动、骨骼动画等）
 
 	设置材质、纹理
 	VB、IB
@@ -42,17 +44,30 @@ public:
 	/// called when resources should be loaded
     virtual void LoadResources();
 
-	void LoadFromStream(const Ptr<IO::Stream>& stream, 
+	virtual void LoadFromStream(const Ptr<IO::Stream>& stream, 
 		int iVersion, bool bMirrorZ, bool bCompuiteDuplicateVertexCollection=false, bool bBlend=false);
 	EThingSubMeshSpecialType GetThingType(Util::String name);
 
 	void Render();
 	void RenderBatch(IndexT index);
-	void CreateMesh();
+	void CreateMesh(const Util::Array<CoreGraphics::VertexComponent>& vertexComponents, int vertexSize);
 	void CreateMaterial();
+	/// 单独加载，纹理没有存放在一起，而是和模型放一起，导致很难确定路径，每次要根据不同情况传不同的值。
+	/// fuck!being纹理放在一起，而建筑纹理又分开，太垃圾了！！！
+	virtual void LoadTextures(const Util::String& path, int texId = -1);
+	/// 创建顶点，格式可能不同，所以用了继承
+	virtual void CreateVertexBuffer(const Ptr<IO::Stream>& stream, bool bMirrorZ);
+
+	cSkinWeights* GetSkinWeights()const;
+	DWORD GetSkinWeightNum()const;
+
+	const Ptr<CoreGraphics::ShaderInstance>& GetShaderInstance()const;
+	
 protected:
 	friend class Thing;
-	
+	friend class BeingNode;
+	friend class ThingNode;
+
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance()const;
 	virtual void UnloadResources();
 	
@@ -98,6 +113,24 @@ protected:
 	/// 子模型类型
 	EThingSubMeshSpecialType modelType;
 };
+
+inline cSkinWeights* 
+KokShapeNode::GetSkinWeights()const
+{
+	return this->skinWeights;
+}
+
+inline DWORD 
+KokShapeNode::GetSkinWeightNum()const
+{
+	return this->skinWeightNum;
+}
+
+inline const Ptr<CoreGraphics::ShaderInstance>& 
+KokShapeNode::GetShaderInstance()const
+{
+	return this->shaderInstance;
+}
 
 } // namespace Models
 //------------------------------------------------------------------------------

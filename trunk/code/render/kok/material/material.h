@@ -64,7 +64,7 @@ public:
   void GetAnimatorAddress( DWORD& dwAddressU, DWORD& dwAddressV );
 
   const Ptr<CoreGraphics::Texture>& GetTexture()const;
-  void LoadTexture();
+  void LoadTexture(const Util::String& filePath);
 };
 
 inline const Ptr<CoreGraphics::Texture>& 

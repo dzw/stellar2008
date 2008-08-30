@@ -278,7 +278,7 @@ public:
 	//  import aniamtion action from file
   int importAnimationActionFromFile(char *LoadFileName);
 	//  import aniamtion action from file or lpq 
-  int importAnimationAction(const char *LoadFileName, const char* pPathID, bool bFrameNameOnly = false);
+  int importAnimationAction(const char *LoadFileName, bool bFrameNameOnly = false);
 
 	int importAnimationActionFromMemory(char* buff,unsigned int buff_size);
 };

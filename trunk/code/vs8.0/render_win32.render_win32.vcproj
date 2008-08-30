@@ -47,7 +47,7 @@
 				AdditionalOptions=""
 				Optimization="0"
 				AdditionalIncludeDirectories="..;../foundation;../extlibs;../render;../addons;../addons/nebula2;../addons/nebula2/character;../addons/nebula2/anim; ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;_CHECK_NOUSE_ANIMATION"
+				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -136,7 +136,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..;../foundation;../extlibs;../render;../addons;../addons/nebula2;../addons/nebula2/character;../addons/nebula2/anim; ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__;_CHECK_NOUSE_ANIMATION"
+				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -2746,6 +2746,38 @@
 				Name="model"
 				>
 				<File
+					RelativePath="..\render\kok\model\being.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\being.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\beingentity.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\beingentity.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\beingnode.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\beingnode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\beingnodeinstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\beingnodeinstance.h"
+					>
+				</File>
+				<File
 					RelativePath="..\render\kok\model\kokshapenode.cc"
 					>
 				</File>
@@ -2759,6 +2791,14 @@
 				</File>
 				<File
 					RelativePath="..\render\kok\model\kokshapenodeinstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\managedbeing.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\managedbeing.h"
 					>
 				</File>
 				<File
@@ -2789,6 +2829,22 @@
 					RelativePath="..\render\kok\model\thingentity.h"
 					>
 				</File>
+				<File
+					RelativePath="..\render\kok\model\thingnode.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\thingnode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\thingnodeinstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\thingnodeinstance.h"
+					>
+				</File>
 				<Filter
 					Name="animation"
 					>
@@ -2814,6 +2870,22 @@
 					</File>
 					<File
 						RelativePath="..\render\kok\model\animation\cSkeletonHierarchy.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\animation\cSkeletonSerializer.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\animation\cSkeletonSerializer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\animation\cSkeletonSerializerFactory.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\animation\cSkeletonSerializerFactory.h"
 						>
 					</File>
 					<File
@@ -2935,6 +3007,22 @@
 			<Filter
 				Name="util"
 				>
+				<File
+					RelativePath="..\render\kok\util\cBaseReader.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\util\cBaseReader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\util\cECReader.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\util\cECReader.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

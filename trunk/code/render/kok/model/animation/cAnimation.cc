@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------
-//  terrainentity.cc
+//  cAnimation.cc
 //  (C) 2008 cTuo
 //----------------------------------------------------------------------------
 
@@ -45,12 +45,8 @@ cAnimation::~cAnimation()
 // Desc:  compute cAnimation matrix for computing matrix of skeleton hierarchy
 //-----------------------------------------------------------------------------
 void cAnimation::getAnimationMatrix(D3DXMATRIXA16* pMatrix,
-
-
 	cAnimationActionInfoGroup *pAnimationActionInfoGroup, 
-
-	const 
-	sComputeAnimParam& param)
+	const sComputeAnimParam& param)
 {
 	//PROFILE_SCOPE(cAnimation_GetAnimationMatrix);
 	if (pMatrix == NULL || pAnimationActionInfoGroup == 0) return;
@@ -243,176 +239,51 @@ void cAnimation::quaternionScale(D3DXVECTOR3* pVec, cAnimationActionInfoGroup *p
 	if (pVec == 0 || pAnimationActionInfoGroup == 0) return;
 
 	UINT iKey     = 0 ;
-	////////    UINT dwp2     = 0 ;
-	////////    UINT dwp3     = 0 ;
 	UINT StartKey = 0 ;
 	UINT EndKey   = 0 ;
-
-	////////  DWORD t_dwStartTime  = 0 ;
-	////////  DWORD t_dwEndTime    = 0 ;
-	////////  DWORD t_dwStartFrame = 0 ;
-	////////  DWORD t_dwEndFrame   = 0 ;
-
 	cAnimationKeys *pAnimData = NULL;
 
-	////////  t_dwStartTime   = pAniTab[dwBaseIndex].dwStartTime ;
-	////////  t_dwEndTime     = pAniTab[dwBaseIndex].dwEndTime ;
-	////////  t_dwStartFrame  = pAniTab[dwBaseIndex].dwStartFrame ;
-	////////  t_dwEndFrame    = pAniTab[dwBaseIndex].dwEndFrame ;
-	//jingjie test 2006.07.08
-	//int iActionIndex = pActionTable->GetActTable(dwBaseIndex)->m_iActionIndex;
-	//jingjie test 2006.07.09
-	//unsigned int iActionIndex = pActionTable->GetActTable(dwBaseIndex)->getAnimationActionIndex();
 	unsigned int iACTIndex = pAnimationActionInfoGroup->getAnimationActionInfo( dwBaseIndex )->getAnimationACTIndex();
-	//jingjie test 2006.07.06
-	//pAnimData = m_aAnimDataTable[iActionIndex].m_pAnimData ;
 	pAnimData = m_AnimationKeysMap[iACTIndex] ;
 
 	if (pAnimData == NULL) return;
 
-	/*if (m_bForceQScale)
-	{
-	// 强制设定时
-	m_bForceQScale = false; 
-	*pVec = m_ForceQScale;
-	return;
-	}*/
-	//jingjie modified 2006.07.06
 	if (pAnimData->getNumScaleKey())
 	{
-	//----------------------------------------------------------
-	DWORD dwKeyBefore, dwKeyAfter;
-	dwKeyBefore = 0;
-	dwKeyAfter  = 0;
-
-	//循序搜寻...		//jingjie modified 2006.07.06
-	//循序搜寻...    for (iKey = 0 ;iKey < pAnimData->getNumScaleKey() ; iKey++)
-	//循序搜寻...    {
-	//循序搜寻...			//jingjie modified 2006.07.06
-	//循序搜寻...      //if (dwTime < pAnimData->m_aScaleKey[iKey].dwTime)
-	//循序搜寻...			if ( pAnimData->getScaleKey( iKey ) &&  dwTime < pAnimData->getScaleKey( iKey )->dwTime)
-		//循序搜寻...      {
-		//循序搜寻...        dwKeyAfter = iKey;
-		//循序搜寻...
-		//循序搜寻...        // 已经超过第一个Key了.
-		//循序搜寻...        if (iKey > 0)
-		//循序搜寻...        {
-		//循序搜寻...          dwKeyBefore= iKey - 1;
-		//循序搜寻...        }
-		//循序搜寻...        break;
-		//循序搜寻...      } // end of if (dwTime < pAnimData->m_aScaleKey	[iKey].dwTime)
-		//循序搜寻...    } // end of for (iKey = 0; i Key < ...
+		DWORD dwKeyBefore, dwKeyAfter;
+		dwKeyBefore = 0;
+		dwKeyAfter  = 0;
 
 		n_assert(FindScaleKey(pAnimData, dwTime, &dwKeyBefore, &dwKeyAfter));
-
-	//----------------------------------------------------------
-	if (m_bInterpolateKeyFrame)
-	{
-		// 需要算内插
-		DWORD dwTime1;
-		DWORD dwTime2;
-		//jingjie modified 2006.07.06
-		/*dwTime1 = pAnimData->m_aScaleKey[dwKeyBefore].dwTime 
-		;
-		dwTime2 = pAnimData->m_aScaleKey[dwKeyAfter].dwTime;
-		*/
-		if( pAnimData->getScaleKey( dwKeyBefore ) && pAnimData
-			->getScaleKey( dwKeyAfter ) )
+		if (m_bInterpolateKeyFrame)
 		{
-			dwTime1 = pAnimData->getScaleKey( dwKeyBefore 
-				)->dwTime ;
-			dwTime2 = pAnimData->getScaleKey( dwKeyAfter )
-				->dwTime;
-			if ((dwTime2 - dwTime1) ==0)
+			// 需要算内插
+			DWORD dwTime1;
+			DWORD dwTime2;
+
+			if( pAnimData->getScaleKey(dwKeyBefore) && pAnimData->getScaleKey(dwKeyAfter) )
 			{
-				// 不需要算内插 
-				*pVec = pAnimData->getScaleKey( 
-					dwKeyBefore )->vScale;
+				dwTime1 = pAnimData->getScaleKey(dwKeyBefore)->dwTime ;
+				dwTime2 = pAnimData->getScaleKey(dwKeyAfter)->dwTime;
+				if ((dwTime2 - dwTime1) == 0)
+				{
+					// 不需要算内插 
+					*pVec = pAnimData->getScaleKey(dwKeyBefore)->vScale;
+				}
+				else 
+				{
+					D3DXVec3Lerp(pVec,&pAnimData->getScaleKey( dwKeyBefore )->vScale,
+						&pAnimData->getScaleKey( dwKeyAfter )->vScale,
+						(float)(dwTime - dwTime1)  / (dwTime2 - dwTime1));
+				}
 			}
-			else 
-			{
-				D3DXVec3Lerp(pVec,
-
-					&pAnimData->getScaleKey( dwKeyBefore )->vScale,
-
-					& pAnimData->getScaleKey( dwKeyAfter )->vScale,
-
-					(float)(dwTime - dwTime1)  / (dwTime2 - dwTime1));
-			}
+		} 
+		else 
+		{
+			// 不需要算内插
+			*pVec =pAnimData->getScaleKey( dwKeyBefore )->vScale;
 		}
-	} 
-	else 
-	{
-		// 不需要算内插 
-		//*pVec = pAnimData->m_aScaleKey[dwKeyBefore].vScale;
-		*pVec =pAnimData->getScaleKey( dwKeyBefore )->vScale;
 	}
-	// D3DXMatrixScaling(&matTemp, vScale.x, vScale.y, vScale.z);
-	}
-
-
-	////////////if (pAnimData->m_dwNumScaleKey)
-	////////////{
-	////////////  //----------------------------------------------------------
-	////////////  dwp2 = dwp3 = 0;//  t_dwStartFrame ;
-
-	////////////  for (iKey = 0 ;iKey < pAnimData->m_dwNumScaleKey ; iKey++)
-	////////////  {
-	////////////    // DWORD &l_dKeyTime = m_pKeyFrame[iKey].dwTime;
-	////////////    DWORD dwKeyTime = pAnimData->m_aScaleKey[iKey].dwTime;
-
-	////////////    if (dwKeyTime >= t_dwStartTime) StartKey = iKey;
-	////////////    if (dwKeyTime >= t_dwEndTime)   EndKey = iKey;
-
-	////////////    if (dwKeyTime >= dwTime)
-	////////////    {
-	////////////      dwp3 = iKey;
-
-	////////////      if (dwKeyTime > t_dwStartTime)
-	////////////      {
-	////////////        dwp2= iKey - 1;
-	////////////      }
-	////////////      else  // when iKey == 0, then dwp2 == 0
-	////////////      {
-	////////////        dwp2 = iKey;
-	////////////      }
-
-	////////////      break;
-	////////////    }
-	////////////  }
-
-	////////////  if (dwp3 < StartKey || dwp3 > EndKey)
-	////////////  {
-	////////////    dwp3 = EndKey;
-	////////////    dwp2 = StartKey;
-	////////////  }
-
-	////////////  //----------------------------------------------------------
-	////////////  
-	////////////  if (m_bLocalLerp)
-	////////////  {
-	////////////    // 需要算内插
-	////////////    DWORD dwTime1;
-	////////////    DWORD dwTime2;
-	////////////    float fLerpValue;
-	////////////
-	////////////    dwTime1 = pAnimData->m_aScaleKey[dwp2].dwTime ;
-	////////////    dwTime2 = pAnimData->m_aScaleKey[dwp3].dwTime;
-
-	////////////    if ((dwTime2 - dwTime1) ==0) fLerpValue = 0;
-	////////////    else fLerpValue =  (float)((dwTime1 - dwTime)  / (dwTime2 - dwTime1));  
-	////////////   
-	////////////    D3DXVec3Lerp(pVec,
-	////////////                 &pAnimData->m_aScaleKey[dwp2].vScale,
-	////////////                 &pAnimData->m_aScaleKey[dwp3].vScale,
-	////////////                 fLerpValue);
-
-	////////////  } else {
-	////////////    // 不需要算内插 
-	////////////    *pVec = pAnimData->m_aScaleKey[dwp2].vScale;
-	////////////  }
-	//////////// // D3DXMatrixScaling(&matTemp, vScale.x, vScale.y, vScale.z);
-	////////////}
 
 	return;
 }
@@ -428,72 +299,28 @@ void cAnimation::quaternionRotate(D3DXQUATERNION* pQuat,cAnimationActionInfoGrou
 
 	UINT iKey     = 0 ;
 	cAnimationKeys *pAnimData = NULL;
-	//jingjie test 2006.07.08
-	//int iActionIndex = pActTable->GetActTable(dwBaseIndex)->m_iActionIndex;
-	//jingjie test 2006.07.09
-	//unsigned int iActionIndex = pActTable->GetActTable(dwBaseIndex)->getAnimationActionIndex();
 	unsigned int iACTIndex = pAnimationActionInfoGroup->getAnimationActionInfo(dwBaseIndex)->getAnimationACTIndex();
-	//jingjie test 2006.07.06
-	//pAnimData = m_aAnimDataTable[iActionIndex].m_pAnimData ;
+
 	pAnimData = m_AnimationKeysMap[iACTIndex];
 	if (pAnimData == NULL) return;
 
-	/*if (m_bForceQRotate)
-	{
-	// 强制设定时
-	m_bForceQRotate   = false; 
-	*pQuat = m_ForceQRotate;
-	return;
-	} // end of if (m_bForceQRotate)
-	*/
-	// SAKU动作修改
-	// dwKeyBefore, dwKeyAfter, 用来记录 dwTime 的前一个Key和后一个Key...
-	//jingjie modified 2006.07.06
 	if (pAnimData->getNumRotateKey())
 	{
 		//----------------------------------------------------------
 		DWORD dwKeyBefore, dwKeyAfter;
 		dwKeyBefore = 0;
 		dwKeyAfter  = 0;
+		n_assert(FindRotateKey(pAnimData, dwTime, &dwKeyBefore, &dwKeyAfter));
 
-		//循序搜寻...    for ( iKey = 0 ; iKey < pAnimData->getNumRotateKey() ; iKey++ 	)
-			//循序搜寻...    {
-			//循序搜寻...      // 找到了需要的KeyFrame, 离开这个回圈吧...
-			//循序搜寻...			//jingjie modified 2006.07.06
-			//循序搜寻...			//if (dwTime < pAnimData->m_aRotateKey		[iKey].dwTime)
-			//循序搜寻...			if ( pAnimData->getRotateKey(iKey) && dwTime < 		pAnimData->getRotateKey(iKey)->dwTime )
-			//循序搜寻...      {
-			//循序搜寻...        dwKeyAfter = iKey;
-			//循序搜寻...        // (dwKeyTime > t_dwStartTime) 表示这个画面已经不是第一张		Frame了,
-			//循序搜寻...        // iKey 可以安心的减 1. 
-			//循序搜寻...        if (iKey > 0)
-			//循序搜寻...        {
-			//循序搜寻...          dwKeyBefore = iKey - 1;
-			//循序搜寻...        }
-			//循序搜寻...        // 找到了需要的时间点, 离开这个回圈吧...
-			//循序搜寻...        break;
-			//循序搜寻...      } // end of if (dwKeyTime >= dwTime)
-			//循序搜寻...    } // end of for (iKey = 0; iKey < l_pAnimData->m_dwRotateKeys; 		iKey++)
-
-			n_assert(FindRotateKey(pAnimData, dwTime, &dwKeyBefore, &dwKeyAfter));
-
-		//----------------------------------------------------------
 		if (m_bInterpolateKeyFrame)
 		{
 			// 需要算内插
 			DWORD dwTime1, dwTime2;
-			if( pAnimData->getRotateKey( dwKeyBefore )  &&  
-				pAnimData->getRotateKey( dwKeyAfter ) )
+			if( pAnimData->getRotateKey(dwKeyBefore) && pAnimData->getRotateKey(dwKeyAfter) )
 			{
-				dwTime1 = pAnimData->getRotateKey( dwKeyBefore 
-					)->dwTime ;
-				dwTime2 = pAnimData->getRotateKey( dwKeyAfter 
-					)->dwTime ;
-				/*dwTime1 = pAnimData->m_aRotateKey
-				[dwKeyBefore].dwTime ;
-				dwTime2 = pAnimData->m_aRotateKey
-				[dwKeyAfter].dwTime ;
-				*/
+				dwTime1 = pAnimData->getRotateKey(dwKeyBefore)->dwTime;
+				dwTime2 = pAnimData->getRotateKey(dwKeyAfter)->dwTime;
+				
 				// 刚好在KeyFrame上, 不需进行内插
 				if ((dwTime2 - dwTime1) == 0)
 				{
@@ -505,21 +332,18 @@ void cAnimation::quaternionRotate(D3DXQUATERNION* pQuat,cAnimationActionInfoGrou
 					D3DXQuaternionSlerp(pQuat, &pAnimData->getRotateKey( dwKeyBefore )->quatRotate,
 						&pAnimData->getRotateKey( dwKeyAfter )->quatRotate, 
 						float (dwTime - dwTime1)  / (dwTime2 - dwTime1));
-
 				}
 			}
 
 		} 
 		else 
 		{
-			// 不需要算内插 
-			//*pQuat = pAnimData->m_aRotateKey[dwKeyBefore].quatRotate;  
+			// 不需要算内插
 			*pQuat = pAnimData->getRotateKey( dwKeyBefore )->quatRotate;
 		}
 
 		pQuat->w = -pQuat->w;
-	} // end of if (l_pAnimData->m_dwNumRotateKey)
-	// end of SAKU动作修改
+	} 
 	return;
 }
 
@@ -531,97 +355,57 @@ void cAnimation::quaternionPosition(D3DXVECTOR3* pVec,cAnimationActionInfoGroup 
 {
 	if (pVec == NULL || pAnimationActionInfoGroup == 0) return;
 
-	UINT iKey     = 0 ;
+	UINT iKey = 0 ;
 
 	cAnimationKeys *pAnimData = NULL;
-	//jingjie test 2006.07.08
-	//int iActionIndex = pActionTable->GetActTable(dwBaseIndex)->m_iActionIndex;
-	//jingjie test 2006.07.09
-	//unsigned int iActionIndex = pActionTable->GetActTable(dwBaseIndex)->getAnimationActionIndex();
 	unsigned int iACTIndex = pAnimationActionInfoGroup->getAnimationActionInfo(dwBaseIndex)->getAnimationACTIndex();
 
-	//jingjie test 2006.07.06
-	//pAnimData = m_aAnimDataTable[iActionIndex].m_pAnimData ;
 	pAnimData = m_AnimationKeysMap[iACTIndex];
 
 	if (pAnimData == NULL) return;
 
-	/*if (m_bForceQPosition)
-	{
-	// 强制设定时
-	m_bForceQPosition = false; 
-	*pVec = m_ForceQPosition;
-	return;
-	}*/
-
 	if (pAnimData->getNumPositionKey())
 	{
-	//----------------------------------------------------------
-	DWORD dwKeyBefore, dwKeyAfter;
-	dwKeyBefore = 0;
-	dwKeyAfter  = 0;
+		DWORD dwKeyBefore, dwKeyAfter;
+		dwKeyBefore = 0;
+		dwKeyAfter  = 0;
 
-	//循序搜寻...    for (iKey = 0 ;iKey < pAnimData->getNumPositionKey(); iKey++)
-	//循序搜寻...    {
-	//循序搜寻...			//jingjie modified 2006.07.06
-	//循序搜寻...      //if (dwTime < pAnimData->m_aPositionKey[iKey].dwTime)
-	//循序搜寻...			if (pAnimData->getPositionKey(iKey) && dwTime < pAnimData->getPositionKey(iKey)->dwTime)
-		//循序搜寻...      {
-		//循序搜寻...        dwKeyAfter = iKey;
-		//循序搜寻...
-		//循序搜寻...        if (iKey > 0)
-		//循序搜寻...        {
-		//循序搜寻...          dwKeyBefore = iKey - 1;
-		//循序搜寻...        }
-		//循序搜寻...        break;
-		//循序搜寻...      } // end of if (dwKeyTime >= dwTime)
-		//循序搜寻...    } // end of for (iKey = 0; iKey < l_pAnimData->m_dwNumPositionKey; iKey++)
-	n_assert(FindPositionKey(pAnimData, dwTime, &dwKeyBefore, &dwKeyAfter));
+		n_assert(FindPositionKey(pAnimData, dwTime, &dwKeyBefore, &dwKeyAfter));
 
-	//----------------------------------------------------------
 
-	if (m_bInterpolateKeyFrame)
-	{
-		// 需要算内插
-		DWORD dwTime1, dwTime2;
-		//jingjie modified 2006.07.06
-		/*dwTime1 = pAnimData->m_aPositionKey[dwKeyBefore].dwTime ;
-		dwTime2 = pAnimData->m_aPositionKey[dwKeyAfter].dwTime;
-		*/
-		if( pAnimData->getPositionKey( dwKeyBefore ) && 
-			pAnimData->getPositionKey( dwKeyAfter ) )
+		if (m_bInterpolateKeyFrame)
 		{
+			// 需要算内插
+			DWORD dwTime1, dwTime2;
 
-			dwTime1 = pAnimData->getPositionKey
-				(dwKeyBefore)->dwTime ;
-			dwTime2 = pAnimData->getPositionKey
-				(dwKeyAfter)->dwTime;
-			if ((dwTime2 - dwTime1) ==0) 
+			if( pAnimData->getPositionKey( dwKeyBefore ) &&	pAnimData->getPositionKey( dwKeyAfter ) )
 			{
-				// 不需要算内插 
-				*pVec = pAnimData->getPositionKey
-					(dwKeyBefore)->vPos;
+
+				dwTime1 = pAnimData->getPositionKey(dwKeyBefore)->dwTime ;
+				dwTime2 = pAnimData->getPositionKey(dwKeyAfter)->dwTime;
+				if ((dwTime2 - dwTime1) ==0) 
+				{
+					// 不需要算内插 
+					*pVec = pAnimData->getPositionKey(dwKeyBefore)->vPos;
+				}
+				else 
+				{
+					D3DXVec3Lerp(pVec,
+						&pAnimData->getPositionKey(dwKeyBefore)->vPos,
+						&pAnimData->getPositionKey(dwKeyAfter)->vPos,
+						(float)(dwTime - dwTime1) / (dwTime2 - dwTime1));
+				}
 			}
-			else 
-			{
-				D3DXVec3Lerp(pVec,
 
-					&pAnimData->getPositionKey(dwKeyBefore)->vPos,
+		} 
+		else 
+		{
+			// 不需要算内插 
+			if( pAnimData->getPositionKey(dwKeyBefore) )
+				*pVec = pAnimData->getPositionKey(dwKeyBefore)->vPos;
+		} 
+	}
 
-					&pAnimData->getPositionKey(dwKeyAfter)->vPos,
-
-					(float)(dwTime - dwTime1) / (dwTime2 - dwTime1));
-			}
-		}
-
-	} 
-	else 
-	{
-		// 不需要算内插 
-		if( pAnimData->getPositionKey(dwKeyBefore) )
-			*pVec = pAnimData->getPositionKey(dwKeyBefore)->vPos;
-	} 
-	} // end of if (l_pAnimData->m_dwNumPositionKey)
 	return;
 }
 
@@ -630,8 +414,7 @@ void cAnimation::quaternionPosition(D3DXVECTOR3* pVec,cAnimationActionInfoGroup 
 // Desc:  get animation matrix by quaternion on current time by action
 //-----------------------------------------------------------------------------
 void cAnimation::getQuaternionToMatrix(D3DXMATRIXA16* pMatrix,
-	cAnimationActionInfoGroup 
-	*pAnimationActionInfoGroup,
+	cAnimationActionInfoGroup *pAnimationActionInfoGroup,
 	DWORD dwActionIndex,
 	float curtime )
 {
@@ -645,62 +428,39 @@ void cAnimation::getQuaternionToMatrix(D3DXMATRIXA16* pMatrix,
 
 	BOOL bAnimate = false;
 
-
-	//jingjie test 2006.07.06
-	//if (!m_aAnimDataTable) return;
-
-	// 取得这个动作的开始时间
-	//jingjie test 2006.07.08
-	//DWORD t_dwStartTime  = pActionTable->GetActTable(dwActionIndex)->dwStartTime ;
-	//jingjie test 2006.07.09
-	//DWORD t_dwStartTime  = pActionTable->GetActTable(dwActionIndex)->getAnimationActionStartTime() ;
-
 	DWORD t_dwStartTime  = pAnimationActionInfoGroup->getAnimationActionInfo( dwActionIndex )->getAnimationActionStartTime() ;
-	// 取得这个动作的结束时间
-	//jingjie test 2006.07.08
-	//DWORD t_dwEndTime    = pActionTable->GetActTable(dwActionIndex)->dwEndTime 
-	;
-	//jingjie test 2006.07.09
-	//DWORD t_dwEndTime    = pActionTable->GetActTable(dwActionIndex)->getAnimationActionEndTime() ;
 	DWORD t_dwEndTime    = pAnimationActionInfoGroup->getAnimationActionInfo( dwActionIndex )->getAnimationActionEndTime() ;
-	//jingjie test 2006.07.08
-	//int iActionIndex = pActionTable->GetActTable(dwActionIndex)->m_iActionIndex;
-	//jingjie test 2006.07.09
-	//unsigned int iActionIndex = pActionTable->GetActTable(dwActionIndex)->getAnimationActionIndex();
 	unsigned int iACTIndex = pAnimationActionInfoGroup->getAnimationActionInfo( dwActionIndex )->getAnimationACTIndex();
-	//jingjie test 2006.07.06
-	//pAnimData = m_aAnimDataTable[iActionIndex].m_pAnimData ;
-	//pAnimData = m_AnimationKeysMap[iACTIndex];
 
 	DWORD t_dwCnt = t_dwEndTime - t_dwStartTime ;
 
-	// // 如果FrameTime过大造成 curtime 超出 t_dwEndTime 的话.
-	  // 就用 fmod 把时间切在范围内. 但若 curtime 刚好等于 t_dwEndTime 时, 
-	  // 原先要播放最后一张 Frame 的 curtime 经过 fmod 之后就会变成 0,
-	  // 这会造成动画播放错误, 为了避免这个问题, 只好写成以下的模式, 
+	// 如果FrameTime过大造成 curtime 超出 t_dwEndTime 的话.
+	// 就用 fmod 把时间切在范围内. 但若 curtime 刚好等于 t_dwEndTime 时, 
+	// 原先要播放最后一张 Frame 的 curtime 经过 fmod 之后就会变成 0,
+	// 这会造成动画播放错误, 为了避免这个问题, 只好写成以下的模式, 
 	// 然后祈祷 (curtime / float(t_dwCnt)) 永远都不要大于 1.0f. 
-	// 070621 cyhsieh 宝箱动画
+	// 宝箱动画
 	if( t_dwCnt == 0 )
 	{
-	// 宝箱会有这种情形，直接把时间设为0
-	fTime = 0.0f;
+		// 宝箱会有这种情形，直接把时间设为0
+		fTime = 0.0f;
 	}
 	else
-
-	if ( (curtime / float(t_dwCnt)) > 1.0f )
 	{
-	float fMOD;
-	fMOD = fmod(curtime, (float)t_dwEndTime);
-	if (fMOD == 0.0f) 
-		fTime = (float)t_dwEndTime;
-	else              
-		fTime = ((float)t_dwStartTime) + fMOD;
-	} // end of if ((curtime / float(t_dwCnt) > 1.0f)
-	else 
-	{
-	fTime = curtime;
+		if ( (curtime / float(t_dwCnt)) > 1.0f )
+		{
+			float fMOD;
+			fMOD = fmod(curtime, (float)t_dwEndTime);
+			if (fMOD == 0.0f) 
+				fTime = (float)t_dwEndTime;
+			else              
+				fTime = ((float)t_dwStartTime) + fMOD;
+		} 
+		else 
+		{
+			fTime = curtime;
+		}
 	}
-
 	dwTime = (DWORD)fTime + t_dwStartTime;
 
 	// 为四元数

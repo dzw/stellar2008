@@ -68,6 +68,9 @@ public:
     /// render node specific debug shape
     virtual void RenderDebug();
 
+	/// set pointer to ModelEntity which owns this instance
+    void SetModelEntity(const Ptr<Graphics::ModelEntity>& mdlEntity);
+
     /// set all modelnode instances visible
     void SetAllNodeInstancesVisible(bool b);
 
@@ -76,8 +79,6 @@ protected:
     friend class VisResolver;
     friend class Graphics::ModelEntity;
 
-    /// set pointer to ModelEntity which owns this instance
-    void SetModelEntity(const Ptr<Graphics::ModelEntity>& mdlEntity);
     /// notify the model instance that it is currently visible
     virtual void NotifyVisible(IndexT frameIndex);
     /// called when attached to Model

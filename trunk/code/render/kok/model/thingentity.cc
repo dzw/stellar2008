@@ -10,7 +10,6 @@
 namespace KOK
 {
 ImplementClass(KOK::ThingEntity, 'TGET', Graphics::ModelEntity);
-ImplementSingleton(KOK::ThingEntity);
 
 using namespace Models;
 using namespace Resources;
@@ -23,7 +22,6 @@ using namespace CoreGraphics;
 */
 ThingEntity::ThingEntity()	
 {
-	ConstructSingleton;
 
 	this->SetType(ModelType);
 }
@@ -33,7 +31,6 @@ ThingEntity::ThingEntity()
 */
 ThingEntity::~ThingEntity()
 {
-	DestructSingleton;
 }
 
 //------------------------------------------------------------------------------
@@ -79,6 +76,29 @@ void
 ThingEntity::OnUpdate()
 {
 	ModelEntity::OnUpdate();
+
+	//if (this->managedModel.isvalid() && this->managedModel->GetThing().isvalid())
+	//{
+	//	String path;
+	//	switch(category)
+	//	{
+	//	case 0: 
+	//		path = "Mesh\\Building\\";		// 建筑物
+	//		break;
+	//	case 1:
+	//		path = "Mesh\\Article\\";		// 地上物
+	//		break;
+	//	case 2:
+	//		path = "Mesh\\Nature\\";		// 自然物
+	//		break;
+	//	case 3:
+	//		path = "Mesh\\Interior\\";		// 室内物
+	//		break;
+	//	case 4:
+	//		path = "Mesh\\Cliff\\";			// 悬崖
+	//	}
+	//	this->managedModel->GetThing()->LoadTexture(path);
+	//}
 }
 
 } // namespace Graphics

@@ -105,8 +105,8 @@ public :
                                        SkeletonHierarchyUsabilityMap* pSkeletonHierarchyUnUsedMap = NULL );
 #else
 	void computeSkeletonHierarchyMatrix( cAnimationActionInfoGroup *pAnimationActionInfoGroup, 
-                                       const sComputeAnimParam& param,
-                                       float fLerpValue );
+                                       const sComputeAnimParam& param/*,
+                                       float fLerpValue*/ );
 #endif
 	// ´Ófile½¨Á¢Skeleton Hierarchy
 	virtual void importFromFile(FILE *fp);

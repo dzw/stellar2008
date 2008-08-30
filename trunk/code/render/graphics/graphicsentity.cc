@@ -325,4 +325,9 @@ GraphicsEntity::ComputeClipStatus(const bbox& box)
     return ClipStatus::Outside;
 }
 
+void 
+GraphicsEntity::AttachVisibleInstance()
+{
+}
+
 } // namespace Graphics

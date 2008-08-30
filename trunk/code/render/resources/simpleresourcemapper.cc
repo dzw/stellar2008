@@ -121,8 +121,8 @@ SimpleResourceMapper::OnCreateManagedResource(const Rtti& resType, const Resourc
     n_assert(0 != this->managedResourceClass);
 
 	//this->managedResources.Find(resId);
-	Ptr<ManagedResource> res = this->managedResources.Find(resId.Value());
-	if (res.isvalid())
+	Ptr<ManagedResource> res;
+	if (this->managedResources.Find(resId.Value(), res))
 	{
 		res->IncrClientCount();
 		return res;
@@ -281,6 +281,8 @@ SimpleResourceMapper::HasManagedResource(const ResourceId& resId) const
 const Ptr<ManagedResource>& 
 SimpleResourceMapper::LookupManagedResource(const ResourceId& resId) const
 {
+	if (!managedResources.Contains(resId.Value()))
+		n_assert(0);
 	return managedResources[resId.Value()];
 }
 

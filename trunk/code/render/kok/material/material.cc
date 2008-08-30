@@ -187,13 +187,16 @@ void cMaterial::GetAnimatorAddress( DWORD& dwAddressU, DWORD& dwAddressV )
 }
 
 void 
-cMaterial::LoadTexture()
+cMaterial::LoadTexture(const String& filePath)
 {
-	if (m_pszTextName.Length() > 0 && !m_pTexture.isvalid())
+	if (m_pTexture.isvalid())
 	{
-		String resId;
-		resId.Format("Mesh\\Building\\%s.dds", m_pszTextName.AsCharPtr());
-		m_pTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, resId).downcast<ManagedTexture>();
+		ResourceManager::Instance()->DiscardManagedResource(this->m_pTexture.upcast<ManagedResource>());
+		m_pTexture = 0;
+	}
+	if (filePath.Length() > 0)
+	{
+		m_pTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, filePath).downcast<ManagedTexture>();
 	}
 }
 

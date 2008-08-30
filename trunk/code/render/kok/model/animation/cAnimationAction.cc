@@ -4,7 +4,9 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "cAnimationAction.h"
-
+#include "kok/util/cECReader.h"
+#include "io/ioserver.h"
+#include "io/stream.h"
 
 namespace KOK
 {
@@ -242,7 +244,7 @@ void cAnimationKeys::importAnimationKeysFromMemory(const Ptr<Stream>& stream, bo
 		stream->Read(&m_dwNumScaleKey, sizeof(DWORD));
 		if (m_dwNumScaleKey > 0)
 		{
-			stream->Seek(m_dwNumScaleKey*sizeof(stROTATEKEY), Stream::Current);
+			stream->Seek(m_dwNumScaleKey*sizeof(stSCALEKEY), Stream::Current);
 		}
 	} 
 }
@@ -490,7 +492,6 @@ cAnimationActionInfo::~cAnimationActionInfo()
 	// 080109 cyhsieh 击中事件
 	if( m_pHurtEventList.Size() > 0 )
 	{
-		sHurtEvent* pHurtEvent;
 		int iCount = m_pHurtEventList.Size() ;
 		for( int i = 0; i < iCount; i++ )
 		{
@@ -513,7 +514,7 @@ void cAnimationActionInfo::setSoundName( char* name , int len )
 		len = strlen( name );
 	}
 	n_delete_array( m_szSoundName );
-	m_szSoundName = n_new(char, len + 5);
+	m_szSoundName = n_new_array(char, len + 5);
 	memcpy(m_szSoundName, name, len);
 	memcpy(m_szSoundName + len, ".wav", 4);
 	m_szSoundName[len + 4] = '\0';
@@ -854,67 +855,51 @@ int cAnimationActionInfoGroup::exportAnimationActionInfoGroup(char *szAnimationA
 //-----------------------------------------------------------------------------
 int cAnimationActionInfoGroup::importAnimationActionInfoGroupFromMemory(char *szAnimationActionInfoGroupFileName)
 {
-	// cTuo
+	int i=0;
+	int iFileNameLen = 0;
 
-	//int i=0;
-	//int iFileNameLen = 0;
+	removeAllAnimationActionInfo();
 
-	//VFile *pVFile;
-	////jingjie test 2006.07.09
-	//removeAllAnimationActionInfo();
+	cECReader reader;
+	// 读取档案内容  
+	if (!reader.LoadFromFile(szAnimationActionInfoGroupFileName))
+		return -1;
+	// 重置
+	reader.Reset();
+	// 
+	bool bLoop = true;
+	int iActionIndex; // 动作索引
+	int iAnimationACTIndex; // 动作档索引
+	////MOB不用做	cAnimationActionInfo animationActionInfo;
 
-	//pVFile = _NEW VFile(szAnimationActionInfoGroupFileName);
-
-	//if (NULL == pVFile->mem)   
-	//{   
-	//	SAFE_DELETE(pVFile);		
-	//	return -1;
-	//} // end of if (pVFile->mem == NULL) 
-
-	//cECReader reader;
-	//// 读取档案内容  
-	//reader.LoadFromMemory((char*)pVFile->mem, pVFile->m_size);
-	//// VFile 已经没用了.
-	//SAFE_DELETE(pVFile);
-
-	////已经备妥了吗?
-	//if (reader.IsAlready() == false) return -1;
-	//// 重置
-	//reader.Reset();
-	//// 
-	//bool bLoop = true;
-	//int iActionIndex; // 动作索引
-	//int iAnimationACTIndex; // 动作档索引
-	//////MOB不用做	cAnimationActionInfo animationActionInfo;
-
-	//for (;bLoop;)
-	//{
-	//	switch (reader.GetToken())
-	//	{
-	//	case cECReader::ttINT: // 取得动作编号
-	//		iActionIndex = reader.GetTokenInt();
-	//		// 取得 ACT 档名称, 动作编号与 ACT 档名称中间不能有任何东西, 包括注解.
-	//		if (reader.GetToken() == cECReader::ttSTRING)
-	//		{
-	//			String strName(reader.GetTokenStr());
-	//			IndexT i = m_AnimationACTFileDB.FindIndex();
-	//			if (i == InvalidIndex)
-	//			{
-	//				m_AnimationACTFileDB.Append(strName);
-	//				i = m_AnimationACTFileDB.Size()-1;
-	//			}
-	//			iAnimationACTIndex = i;
-	//			//iAnimationACTIndex = m_AnimationACTFileDB.QueryIndexByName(reader.GetTokenStr());
-	//			////MOB不用做          animationActionInfo.setAnimationACTIndex( iACTFileIndex ); 
-	//			////MOB不用做          // 因为是 map, 所以只要新增有效编号即可.
-	//			////MOB不用做          addAnimationActionInfo( iActionIndex, &animationActionInfo );
-	//		} // end of if (Token == ttSTRING)
-	//		break;
-	//	case cECReader::ttCOMMENT: // 注解不处理.. .
-	//		break;
-	//	default: bLoop = false; break;
-	//	} // end of if (type == ttIDNETIFIER)
-	//} // end of for (;;
+	for (;bLoop;)
+	{
+		switch (reader.GetToken())
+		{
+		case cECReader::ttINT: // 取得动作编号
+			iActionIndex = reader.GetTokenInt();
+			// 取得 ACT 档名称, 动作编号与 ACT 档名称中间不能有任何东西, 包括注解.
+			if (reader.GetToken() == cECReader::ttSTRING)
+			{
+				String strName(reader.GetTokenStr());
+				IndexT i = m_AnimationACTFileDB.FindIndex(strName);
+				if (i == InvalidIndex)
+				{
+					m_AnimationACTFileDB.Append(strName);
+					i = m_AnimationACTFileDB.Size()-1;
+				}
+				iAnimationACTIndex = i;
+				//iAnimationACTIndex = m_AnimationACTFileDB.QueryIndexByName(reader.GetTokenStr());
+				////MOB不用做          animationActionInfo.setAnimationACTIndex( iACTFileIndex ); 
+				////MOB不用做          // 因为是 map, 所以只要新增有效编号即可.
+				////MOB不用做          addAnimationActionInfo( iActionIndex, &animationActionInfo );
+			} // end of if (Token == ttSTRING)
+			break;
+		case cECReader::ttCOMMENT: // 注解不处理.. .
+			break;
+		default: bLoop = false; break;
+		} // end of if (type == ttIDNETIFIER)
+	} // end of for (;;
 
 	return 0;
 }
@@ -925,67 +910,52 @@ int cAnimationActionInfoGroup::importAnimationActionInfoGroupFromMemory(char *sz
 //-----------------------------------------------------------------------------
 int cAnimationActionInfoGroup::importAnimationActionInfoGroupFromMemoryEX(char *szAnimationActionInfoGroupFileName)
 {
-	// cTuo
+	int i=0;
+	int iFileNameLen = 0;
 
-	//int i=0;
-	//int iFileNameLen = 0;
+	removeAllAnimationActionInfo();
 
-	//VFile *pVFile;
-	////jingjie test 2006.07.09
-	//removeAllAnimationActionInfo();
+	
+	cECReader reader;
+	// 读取档案内容  
+	if (!reader.LoadFromFile(szAnimationActionInfoGroupFileName))
+		return -1;
+	// 重置
+	reader.Reset();
+	// 
+	bool bLoop = true;
+	int iActionIndex; // 动作索引
+	int iAnimationACTIndex; // 动作档索引
+	cAnimationActionInfo animationActionInfo;
 
-	//pVFile = _NEW VFile(szAnimationActionInfoGroupFileName);
-
-	//if (NULL == pVFile->mem)   
-	//{   
-	//	SAFE_DELETE(pVFile);		
-	//	return -1;
-	//} // end of if (pVFile->mem == NULL) 
-
-	//cECReader reader;
-	//// 读取档案内容  
-	//reader.LoadFromMemory((char*)pVFile->mem, pVFile->m_size);
-	//// VFile 已经没用了.
-	//SAFE_DELETE(pVFile);
-
-	////已经备妥了吗?
-	//if (reader.IsAlready() == false) return -1;
-	//// 重置
-	//reader.Reset();
-	//// 
-	//bool bLoop = true;
-	//int iActionIndex; // 动作索引
-	//int iAnimationACTIndex; // 动作档索引
-	//cAnimationActionInfo animationActionInfo;
-
-	//for (;bLoop;)
-	//{
-	//	switch (reader.GetToken())
-	//	{
-	//	case cECReader::ttINT: // 取得动作编号
-	//		iActionIndex = reader.GetTokenInt();
-	//		// 取得 ACT 档名称, 动作编号与 ACT 档名称中间不能有任何东西, 包括注解.
-	//		if (reader.GetToken() == cECReader::ttSTRING)
-	//		{
-	//			String strName(reader.GetTokenStr());
-	//			IndexT i = m_AnimationACTFileDB.FindIndex();
-	//			if (i == InvalidIndex)
-	//			{
-	//				m_AnimationACTFileDB.Append(strName);
-	//				i = m_AnimationACTFileDB.Size()-1;
-	//			}
-	//			iAnimationACTIndex = i;
-	//			//iAnimationACTIndex = m_AnimationACTFileDB.QueryIndexByName(reader.GetTokenStr());
-	//			animationActionInfo.setAnimationACTIndex( iAnimationACTIndex ); 
-	//			// 因为是 map, 所以只要新增有效编号即可.
-	//			addAnimationActionInfo( iActionIndex, &animationActionInfo );
-	//		} // end of if (Token == ttSTRING)
-	//		break;
-	//	case cECReader::ttCOMMENT: // 注解不处理.. .
-	//		break;
-	//	default: bLoop = false; break;
-	//	} // end of if (type == ttIDNETIFIER)
-	//} // end of for (;;
+	for (;bLoop;)
+	{
+		switch (reader.GetToken())
+		{
+		case cECReader::ttINT: // 取得动作编号
+			iActionIndex = reader.GetTokenInt();
+			// 取得 ACT 档名称, 动作编号与 ACT 档名称中间不能有任何东西, 包括注解.
+			if (reader.GetToken() == cECReader::ttSTRING)
+			{
+				String strName(reader.GetTokenStr());
+				IndexT i = m_AnimationACTFileDB.FindIndex(strName);
+				if (i == InvalidIndex)
+				{
+					m_AnimationACTFileDB.Append(strName);
+					i = m_AnimationACTFileDB.Size()-1;
+				}
+				iAnimationACTIndex = i;
+				//iAnimationACTIndex = m_AnimationACTFileDB.QueryIndexByName(reader.GetTokenStr());
+				animationActionInfo.setAnimationACTIndex( iAnimationACTIndex ); 
+				// 因为是 map, 所以只要新增有效编号即可.
+				addAnimationActionInfo( iActionIndex, &animationActionInfo );
+			} // end of if (Token == ttSTRING)
+			break;
+		case cECReader::ttCOMMENT: // 注解不处理.. .
+			break;
+		default: bLoop = false; break;
+		} // end of if (type == ttIDNETIFIER)
+	} // end of for (;;
 
 	return 0;
 }
@@ -996,7 +966,6 @@ int cAnimationActionInfoGroup::importAnimationActionInfoGroupFromMemoryEX(char *
 //-----------------------------------------------------------------------------
 int cAnimationActionInfoGroup::importAnimationActionInfoGroup(char *szAnimationActionInfoGroupFileName, const char *szPath )
 {
-	char szMessage[256];
 	String strFileName;
 	String strFilePath = szPath;
 	strFileName = strFilePath + szAnimationActionInfoGroupFileName;
@@ -1022,7 +991,7 @@ int cAnimationActionInfoGroup::importAnimationActionInfoGroup(char *szAnimationA
 //-----------------------------------------------------------------------------
 int cAnimationActionInfoGroup::importAnimationActionInfoGroupPLAYER(char *szAnimationActionInfoGroupFileName, const char *szPath )
 {
-	char szMessage[256];
+	//char szMessage[256];
 
 	String strFileName;
 	String strFilePath = szPath;
@@ -1091,156 +1060,91 @@ cAnimationAction::~cAnimationAction()
 // Name: importAnimationAction()
 // Desc: jingjie modified 2006.07.07 import aniamtion action from file or lpq 
 //-----------------------------------------------------------------------------
-int cAnimationAction::importAnimationAction(const char *szLoadFileName, const char* pPathID, bool bFrameNameOnly)
+int cAnimationAction::importAnimationAction(const char *szLoadFileName, bool bFrameNameOnly)
 {
-	// cTuo
+	DWORD dwTmp;
+	int i=0,j=0,k=0;
+	int iVersion= 0;
 
-	//int i=0,j=0,k=0;
-	//int iVersion= 0;
+	Ptr<Stream> stream = IO::IoServer::Instance()->CreateStream(szLoadFileName);
+	if (!stream->Open())
+	{
+		stream = 0;
+		return -1;
+	}
 
-	//int Offset;
+	// 检查ACT识别码
+	char szCode[4];
+	String tmp;
+	stream->Read(szCode, 3);
+	szCode[3] = 0;
+	tmp = szCode;
+	if (tmp != "ACT")
+	{
+		stream->Close();
+		stream = 0;
+		// ACT识别码不符
+		return -3;
+	} 
 
-	////SAFE_DELETE_ARRAY(m_aAnimData);
-	////VFile *pVFile;
+	// 读取动作档版本
+	stream->Read(&iVersion, sizeof(int));
 
-	//// 没看到在用  TimeMax	   = 0;
-	//// m_wNumAnimData = 0;
-	////ActTableList->Clear();
+	// 读取一格Frame的时间单位
+	stream->Read(&m_dwTimeEachKeyframe, sizeof(DWORD));
 
-	//char *Buffer=NULL,*Mem=NULL;
-	//IFile* iFile=CFileSystem::Instance()->OpenFile(szLoadFileName,"r",pPathID,false);
-	//if ((!iFile)||(iFile->Size()<=0)) return -2;
-	//iFile->InnerMemoryRead();
-	//Mem=_NEW char[iFile->Size()];
-	//iFile->Read(Mem,iFile->Size());
-	//CFileSystem::Instance()->CloseFile(iFile);
+	// 读取 有animation action 骨头数
+	WORD wNumAnimData;
+	stream->Read(&wNumAnimData, sizeof(WORD));
+	removeAllAnimationKeys();
 
-	//Buffer=Mem;
+	// 读取每个骨头的动作
+	for (i = 0; i < wNumAnimData; i++)
+	{
+		cAnimationKeys animationKeys;
+		animationKeys.importAnimationKeysFromMemory(stream, bFrameNameOnly);
+		addAnimationKeys( i , &animationKeys);
+	} 
 
-	///*pVFile = _NEW VFile( szLoadFileName );
+	// 写入动作表的数量
+	int iNumActTable;
+	stream->Read(&iNumActTable, sizeof(int));
 
-	//if (NULL == pVFile->mem)   
-	//{  
-	//SAFE_DELETE(pVFile);		
-	//return -2;
-	//} // end of if (NULL == pVFile->mem)
+	if (iNumActTable > 0)
+	{
+		removeAllAnimationActionInfo();
+		cAnimationActionInfo* pAnimationActionInfo = NULL;
+		int iSoundNameLen;
+		// 预设 List 大小
+		//ActTableList->SetCapacity(iNumActTable);
+		for (i = 0; i < iNumActTable;i++)
+		{
+			pAnimationActionInfo = n_new(cAnimationActionInfo);
 
-	//Buffer = Mem = (char*)pVFile->mem; //*/
+			stream->Read(&iSoundNameLen, sizeof(int));
+			stream->Seek(iSoundNameLen, Stream::Current);
 
-	//// 检查ACT识别码
-	//if (memcmp(Buffer, "ACT", 3))
-	//{
-	//	// ACT识别码不符
-	//	//fclose( fp );
-	//	return -3;
-	//} // end of if (memcmp(Buffer, "ACT", 3))
-	//Buffer += 3;
-
-	//// 读取动作档版本
-	//iVersion = *((int*)Buffer);
-	//Buffer += sizeof(int);
-
-	//// 读取一格Frame的时间单位
-	//m_dwTimeEachKeyframe = *((DWORD*)Buffer);
-	//Buffer += sizeof(DWORD);
-
-	//// 读取 有animation action 骨头数
-	////jingjie test 2006.07.07
-	//WORD wNumAnimData = *((WORD*)Buffer);
-	//Buffer += sizeof(WORD);
-	//removeAllAnimationKeys();
-	////jingjie test 2006.07.07
-	////SAFE_DELETE_ARRAY(m_aAnimData);
-	////if (m_wNumAnimData > 0)
-	////{
-
-	////m_aAnimData = _NEW cAnimationKeys[m_wNumAnimData];
-
-	//// 读取每个骨头的动作
-	////jingjie test 2006.07.07
-	//for (i = 0; i < wNumAnimData; i++)
-	//{
-	//	//jingjie test 2006.07.07
-	//	//Offset = m_aAnimData[i].importAnimationKeysFromMemory((BYTE*)Buffer, bFrameNameOnly);
-	//	//jingjie test 2006.07.07
-	//	cAnimationKeys animationKeys;
-	//	Offset = animationKeys.importAnimationKeysFromMemory((BYTE*)Buffer, bFrameNameOnly);
-	//	addAnimationKeys( i , &animationKeys);
-	//	Buffer += Offset;
-	//} // end of for (i = 0; i < m_wNumAnimData; i++)
-	////} // end of if (m_wNumAnimData > 0)
-
-	//// 写入动作表的数量
-	////fread((int *)&iActionTableSize,sizeof(int),1,fp) ;
-	//int iNumActTable = *((int*)Buffer);
-	//Buffer += sizeof(int);
-
-	//if (iNumActTable > 0)
-	//{
-	//	removeAllAnimationActionInfo();
-	//	cAnimationActionInfo* pAnimationActionInfo = NULL;
-	//	int iSoundNameLen;
-	//	// 预设 List 大小
-	//	//ActTableList->SetCapacity(iNumActTable);
-	//	for (i = 0; i < iNumActTable;i++)
-	//	{
-	//		pAnimationActionInfo = _NEW cAnimationActionInfo;
-
-	//		iSoundNameLen = *((int*)Buffer);
-	//		Buffer += sizeof(int);
-	//		if (iSoundNameLen > 0)
-	//		{
-	//			// 写入对应的声音档名
-	//			/*char* szSoundName = _NEW char[iSoundNameLen + 
-	//			4 ];
-	//			memcpy(szSoundName, Buffer, iSoundNameLen);
-	//			memcpy(szSoundName + iSoundNameLen, ".wav", 4);
-	//			szSoundName[iSoundNameLen + 4] = '\0';
-	//			*/
-	//			//pAnimationActionInfo->setSoundName( Buffer , 
-	//			iSoundNameLen );
-	//			//SAFE_DELETE_ARRAY( szSoundName );
-
-	//			//jingjie test 2006.07.08
-	//			/*memcpy(pActTable->m_szSoundName, Buffer, iSoundNameLen);
-	//			memcpy(pActTable->m_szSoundName + iSoundNameLen, ".wav", 4);
-	//			pActTable->m_szSoundName[iSoundNameLen + 4] = '\0';
-	//			*/			
-
-	//			Buffer += iSoundNameLen;
-	//		} // end of if (l_iSoundNameSize > 0)
-
-	//		// 写入动作起始时间
-	//		//jingjie test 2006.07.08
-	//		//pActTable->dwStartTime = *((DWORD*)Buffer);
-	//		pAnimationActionInfo->setAnimationActionStartTime( *
-	//			((DWORD*)Buffer) );
-	//		Buffer += sizeof(DWORD);
-	//		// 写入动作结束时间
-	//		//jingjie test 2006.07.08
-	//		//pActTable->dwEndTime = *((DWORD*)Buffer);
-	//		pAnimationActionInfo->setAnimationActionEndTime( *
-	//			((DWORD*)Buffer) );
-	//		Buffer += sizeof(DWORD);
-	//		// 写入动作起始Frame
-	//		//jingjie test 2006.07.08
-	//		//pActTable->dwStartFrame = *((DWORD*)Buffer);
-	//		pAnimationActionInfo->setAnimationActionStartKeyframe( 
-	//			*((DWORD*)Buffer) );
-	//		Buffer += sizeof(DWORD);
-	//		// 写入动作结束Frame
-	//		//jingjie test 2006.07.08
-	//		//pActTable->dwEndFrame = *((DWORD*)Buffer);
-	//		pAnimationActionInfo->setAnimationActionEndKeyframe( *
-	//			((DWORD*)Buffer) );
-	//		Buffer += sizeof(DWORD);
-	//		addAnimationActionInfo( i , pAnimationActionInfo );
-	//		//ActTableList->Add(pAnimationActionInfo);
-	//	}
-	//}
-	//SAFE_DELETE_ARRAY(Mem);
-
-	//SAFE_DELETE(pVFile);
+			// 写入动作起始时间
+			stream->Read(&dwTmp, sizeof(DWORD));
+			pAnimationActionInfo->setAnimationActionStartTime(dwTmp);
+			
+			// 写入动作结束时间
+			stream->Read(&dwTmp, sizeof(DWORD));
+			pAnimationActionInfo->setAnimationActionEndTime(dwTmp);
+			
+			// 写入动作起始Frame
+			stream->Read(&dwTmp, sizeof(DWORD));
+			pAnimationActionInfo->setAnimationActionStartKeyframe(dwTmp);
+			
+			// 写入动作结束Frame
+			stream->Read(&dwTmp, sizeof(DWORD));
+			pAnimationActionInfo->setAnimationActionEndKeyframe(dwTmp);
+			
+			addAnimationActionInfo( i , pAnimationActionInfo );
+		}
+	}
+	stream->Close();
+	stream = 0;
 	return 0;
 }
 

@@ -5,7 +5,7 @@
 #include "stdneb.h"
 #include "kok/model/thing.h"
 #include "kok/model/modeldef.h"
-#include "kok/model/kokshapenode.h"
+#include "kok/model/thingnode.h"
 #include "util/string.h"
 
 namespace KOK
@@ -78,16 +78,22 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 
 	if (subMeshNum > 0)
 	{
+		String path = this->GetResourceId().Value().ExtractDirName();
+
 		bbox b;
 		b.pmin = Math::vector(N_MAXREAL, N_MAXREAL, N_MAXREAL);
 		b.pmax = Math::vector(N_MINREAL, N_MINREAL, N_MINREAL);
 		for (SizeT i = 0; i < subMeshNum; i++)
 		{
-			Ptr<KokShapeNode> node = KokShapeNode::Create();
+			Ptr<ThingNode> node = ThingNode::Create();
 			node->LoadFromStream(stream, this->meshVersion, false);
 
 			this->AttachNode(node.upcast<ModelNode>());
+			node->LoadTextures(path);
 			b.extend(node->GetBoundingBox());
+
+			// 加载纹理，暂时放这
+			//node->LoadTextures(filePath);
 
 			//if (m_iType == Thing::WAVER_FLOWER_THING || m_iType == Thing::WAVER_TREE_THING)
 			//{
@@ -310,5 +316,20 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 
 	return true;
 }
+
+////------------------------------------------------------------------------------
+///**
+//	fuck!!!!!!!!!!!!!!!!!11
+//	纹理居然这样加载！！！！！
+//*/
+//void 
+//Thing::LoadTexture(const String& path)
+//{
+//	const Array<ModelNode>& nodes = this->GetNodes();
+//	for (SizeT i = 0; i < nodes.Size(); i++ )
+//	{
+//		nodes[i].downcast<KokShapeNode>()->LoadTexture(path);
+//	}
+//}
 
 } // namespace Models
