@@ -120,6 +120,8 @@ public:
     /// get graphics time
     Timing::Time GetTime() const;
 
+	/// 可见性判断，加入到渲染队列
+	virtual void AttachVisibleInstance();
 protected:
     friend class Cell;
     friend class Stage;

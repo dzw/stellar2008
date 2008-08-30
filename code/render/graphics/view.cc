@@ -159,8 +159,9 @@ View::ResolveVisibleModelNodeInstances()
         if (GraphicsEntity::ModelType == curEntity->GetType() ||
 			GraphicsEntity::TerrainType == curEntity->GetType())
         {
-			const Ptr<ModelEntity>& modelEntity = curEntity.downcast<ModelEntity>();
-            visResolver->AttachVisibleModelInstance(modelEntity->GetModelInstance());
+			curEntity->AttachVisibleInstance();
+			/*const Ptr<ModelEntity>& modelEntity = curEntity.downcast<ModelEntity>();
+            visResolver->AttachVisibleModelInstance(modelEntity->GetModelInstance());*/
         }
     }
     visResolver->EndResolve();

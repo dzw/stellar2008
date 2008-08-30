@@ -94,7 +94,7 @@ void
 D3D9ShaderInstance::Cleanup()
 {
     n_assert(0 != this->d3d9Effect);
-    this->d3d9Effect->Release();
+    //this->d3d9Effect->Release();
     this->d3d9Effect = 0;
     ShaderInstanceBase::Cleanup();
 }
@@ -209,7 +209,7 @@ D3D9ShaderInstance::Update(const Ptr<Shader>& origShader)
 	n_assert(origShader.isvalid());
 	if (0 != this->d3d9Effect)
 	{
-		this->d3d9Effect->Release();
+		//this->d3d9Effect->Release();
 		this->d3d9Effect = 0;
 	}
 	

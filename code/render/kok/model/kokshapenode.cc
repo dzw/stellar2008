@@ -16,6 +16,8 @@
 #include "coregraphics/shaderserver.h"
 #include "resources/SharedResourceServer.h"
 
+#include "models/model.h"
+#include "kok/model/beingnode.h"
 
 namespace KOK
 {
@@ -81,10 +83,31 @@ KokShapeNode::LoadResources()
 void
 KokShapeNode::UnloadResources()
 {    
-	Resources::SharedResourceServer::Instance()->UnregisterSharedResource(this->mesh.upcast<Resource>());
+	if (this->mesh.isvalid())
+		Resources::SharedResourceServer::Instance()->UnregisterSharedResource(this->mesh.upcast<Resource>());
 	this->mesh = 0;
+	if (this->shaderInstance.isvalid())
+		this->shaderInstance->Discard();
 	this->shaderInstance = 0;
 
+	this->diffuseColor  = 0;
+	this->ambientColor  = 0;
+	this->specularColor = 0;
+	this->emissiveColor = 0;
+	this->diffMap		= 0;
+
+	if (m_pMaterial != NULL)
+		n_delete_array(m_pMaterial);
+	if (m_pMaterialAnimator != NULL)
+		n_delete_array(m_pMaterialAnimator);
+	if (attributeTable != NULL)
+		n_delete_array(attributeTable);
+	if (skinWeights != NULL)
+		n_delete_array(skinWeights);
+	if (indicesBuffer != NULL)
+		n_delete_array(indicesBuffer);
+	if (verticesBuffer != NULL)
+		n_delete_array(verticesBuffer);
     TransformNode::UnloadResources();
 }
 
@@ -104,8 +127,8 @@ KokShapeNode::CreateNodeInstance()const
 bool
 KokShapeNode::ApplySharedState()
 {
-	if (!this->mesh.isvalid())
-		return false;
+	//if (!this->mesh.isvalid())
+	//	return false;
 
 	TransformNode::ApplySharedState();
 
@@ -138,33 +161,9 @@ KokShapeNode::LoadFromStream(const Ptr<Stream>& stream,
 	stream->Seek(sizeof(float)*16, Stream::Current);
 
 	// 读取顶点数据
-	bbox boundingbox;
-	boundingbox.pmin = Math::vector(N_MAXREAL, N_MAXREAL, N_MAXREAL);
-	boundingbox.pmax = Math::vector(N_MINREAL, N_MINREAL, N_MINREAL);
 	stream->Read(&this->verticesBufferSize, sizeof(DWORD));
 	if (this->verticesBufferSize > 0)
-	{
-		this->verticesBuffer = new VertexFVF[this->verticesBufferSize];
-
-		for (SizeT i = 0; i < this->verticesBufferSize; i++)
-		{
-			stream->Read(&(this->verticesBuffer[i].p), sizeof(Math::vector3));
-			//this->addSubMeshDuplicateVertexCollections(i, bComputieDuplicateVertexCollection);
-			stream->Read(&(this->verticesBuffer[i].n), sizeof(Math::vector3));
-
-			if (bMirrorZ)
-			{
-				this->verticesBuffer[i].p.z = -this->verticesBuffer[i].p.z;
-				this->verticesBuffer[i].n.z = -this->verticesBuffer[i].n.z;
-			}
-			stream->Read(&(this->verticesBuffer[i].tex), sizeof(float)*2);
-
-			boundingbox.extend(point(this->verticesBuffer[i].p.x,
-				this->verticesBuffer[i].p.y,
-				this->verticesBuffer[i].p.z));
-		}
-	}
-	this->SetBoundingBox(boundingbox);
+		CreateVertexBuffer(stream, bMirrorZ);
 
 	// 读取索引数据
 	stream->Read(&this->indexBufferSize, sizeof(DWORD));
@@ -191,7 +190,7 @@ KokShapeNode::LoadFromStream(const Ptr<Stream>& stream,
 	stream->Read(&this->skinWeightNum, sizeof(DWORD));
 	if (this->skinWeightNum > 0)
 	{
-		this->skinWeights[this->skinWeightNum];
+		this->skinWeights = n_new_array(cSkinWeights, this->skinWeightNum);
 
 		for (SizeT i = 0; i < this->skinWeightNum; i++)
 		{
@@ -226,11 +225,50 @@ KokShapeNode::LoadFromStream(const Ptr<Stream>& stream,
 		}
 	}
 
+	// 设置已加载标志
+	ModelNode::LoadResources();
 
-	// 创建mesh
-	CreateMesh();
+	//// 创建mesh
+	//Util::Array<CoreGraphics::VertexComponent> components;
+	//components.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+	//components.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
+	////components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
+	//components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+	//CreateMesh(components, sizeof(VertexFVF));
 
 	CreateMaterial();
+}
+
+//------------------------------------------------------------------------------
+/**
+	顶点格式不同,所以给继承的子类自行加载
+*/
+void
+KokShapeNode::CreateVertexBuffer(const Ptr<Stream>& stream, bool bMirrorZ)
+{
+	bbox boundingbox;
+	boundingbox.pmin = Math::vector(N_MAXREAL, N_MAXREAL, N_MAXREAL);
+	boundingbox.pmax = Math::vector(N_MINREAL, N_MINREAL, N_MINREAL);
+	
+	this->verticesBuffer = n_new_array(VertexFVF, this->verticesBufferSize);
+	for (SizeT i = 0; i < this->verticesBufferSize; i++)
+	{
+		stream->Read(&(this->verticesBuffer[i].p), sizeof(Math::vector3));
+		//this->addSubMeshDuplicateVertexCollections(i, bComputieDuplicateVertexCollection);
+		stream->Read(&(this->verticesBuffer[i].n), sizeof(Math::vector3));
+
+		if (bMirrorZ)
+		{
+			this->verticesBuffer[i].p.z = -this->verticesBuffer[i].p.z;
+			this->verticesBuffer[i].n.z = -this->verticesBuffer[i].n.z;
+		}
+		stream->Read(&(this->verticesBuffer[i].tex), sizeof(float)*2);
+
+		boundingbox.extend(point(this->verticesBuffer[i].p.x,
+			this->verticesBuffer[i].p.y,
+			this->verticesBuffer[i].p.z));
+	}
+	this->SetBoundingBox(boundingbox);
 }
 
 EThingSubMeshSpecialType 
@@ -270,11 +308,13 @@ KokShapeNode::ImportMaterialFromMemory( const Ptr<Stream>& stream, int iIndex, i
 	// 读取贴图名称
 	if( iTextureNameLength > 0 )
 	{
-		String tmp;
-		ReadString(stream, tmp, iTextureNameLength);
+		ReadString(stream, m_pMaterial[iIndex].m_pszTextName, iTextureNameLength);
+		m_pMaterial[iIndex].iNo = iIndex;
+
+		//String tmp;
+		//ReadString(stream, tmp, iTextureNameLength);
 		// 加上纹理编号才能读到图
-		m_pMaterial[iIndex].m_pszTextName.Format("%s%02d", tmp.AsCharPtr(), iIndex);
-		m_pMaterial[iIndex].LoadTexture(); 
+		//m_pMaterial[iIndex].m_pszTextName.Format("%s%02d", tmp.AsCharPtr(), iIndex);
 	}
 
 	// 读取材质
@@ -422,6 +462,9 @@ KokShapeNode::Render()
 	//	}
 	//}
 
+	if (!this->mesh.isvalid())
+		return;
+
 	for (SizeT i = 0; i < attributeTableSize; i++)
 	{
 		RenderBatch(i);
@@ -522,24 +565,15 @@ KokShapeNode::RenderBatch(IndexT index)
 
 
 void
-KokShapeNode::CreateMesh()
+KokShapeNode::CreateMesh(const Util::Array<CoreGraphics::VertexComponent>& vertexComponents, int vertexSize)
 {
 	if (this->mesh.isvalid())
 		return;
 
-	Util::Array<CoreGraphics::VertexComponent> vertexComponents;
-	if (vertexComponents.Size() == 0)
-	{
-		vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
-		vertexComponents.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
-		//vertexComponents.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
-		vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
-	}
-
 	// setup new vertex buffer
 	Ptr<VertexBuffer> vertexBuffer = VertexBuffer::Create();
 	Ptr<MemoryVertexBufferLoader> vbLoader = MemoryVertexBufferLoader::Create();
-	vbLoader->Setup(vertexComponents, verticesBufferSize, verticesBuffer, verticesBufferSize * sizeof(VertexFVF));
+	vbLoader->Setup(vertexComponents, verticesBufferSize, verticesBuffer, verticesBufferSize * vertexSize);
 	vertexBuffer->SetLoader(vbLoader.upcast<ResourceLoader>());
 	vertexBuffer->Load();
 	vertexBuffer->SetLoader(0);
@@ -590,4 +624,28 @@ KokShapeNode::CreateMaterial()
 	this->emissiveColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("EmissiveColor"));
 	this->diffMap = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
 }
+
+//------------------------------------------------------------------------------
+/**
+	换装的时候也需要设置或重新加载纹理
+	注意，两种情况：
+	being: 每个子模型的纹理编号都是相同的，换装的时候需要改变编号(iNo)
+	thing: 纹理是固定的，所以加载的时候设置好了，这里texId==-1，不需要改变纹理编号
+*/
+void 
+KokShapeNode::LoadTextures(const String& path, int texId)
+{
+	if (path.Length() == 0)
+		return;
+
+	String fileName;
+	for (int i = 0; i < m_dwNumMaterial; i++)
+	{
+		if (texId != -1)
+			m_pMaterial[i].iNo = texId;
+		fileName.Format("%s\%s%02d.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), m_pMaterial[i].iNo);
+		m_pMaterial[i].LoadTexture(fileName);
+	}
+}
+
 }

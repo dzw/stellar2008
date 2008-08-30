@@ -1,11 +1,18 @@
-#include "stdafx.h"
-/*----------------------------------------------------------------------*/
-// 档名: cBaseReader.cpp
-// 说明:
-/*----------------------------------------------------------------------*/
-//#include "cBaseReader.h"
-#include "NHelper.h"
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//  cBaseReader.cc
+//  (C) 2008 cTuo
+//------------------------------------------------------------------------------
+#include "stdneb.h"
+#include "kok/util/cBaseReader.h"
+//#include "NHelper.h"
+#include "io/ioserver.h"
+#include "io/stream.h"
+#include "util/string.h"
+
+namespace KOK
+{
+using namespace IO;
+using namespace Util;
 
 char cBaseReader::m_pchDelimiter[] = { "{}()[]=,.!+-_*/%:;^<>?@&|#\\\'\"\r\n\t\a\b\v " };
 
@@ -97,7 +104,7 @@ bool cBaseReader::LoadFromMemory(char* data, int size)
 	// 清除旧指标
 	if (m_pFileData)
 	{
-		delete [] m_pFileData;
+		n_delete_array(m_pFileData);
 		m_pFileData = NULL;
 	} // end of if (m_pFileData)
 	// 判断回圈
@@ -112,7 +119,7 @@ bool cBaseReader::LoadFromMemory(char* data, int size)
 		// 取得资料大小
 		m_iFileSize = size;
 		// 配置存放空间(多配置一个位元存放'\0'结尾字元)
-		m_pFileData = _NEW char[m_iFileSize + 1];
+		m_pFileData = n_new_array(char, m_iFileSize + 1);
 		// 记忆体配置错误
 		if (m_pFileData == NULL)
 		{
@@ -148,7 +155,7 @@ bool cBaseReader::LoadFromMemoryX(char* szStringL, char* szContext, char*
 	// 清除旧指标
 	if (m_pFileData)
 	{
-		delete [] m_pFileData;
+		n_delete_array(m_pFileData);
 		m_pFileData = NULL;
 	} // end of if (m_pFileData)
 	// 判断回圈
@@ -166,7 +173,7 @@ bool cBaseReader::LoadFromMemoryX(char* szStringL, char* szContext, char*
 		// 取得资料大小
 		m_iFileSize = iLenL + iLenContext + iLenR;
 		// 配置存放空间(多配置一个位元存放'\0'结尾字元)
-		m_pFileData = _NEW char[m_iFileSize + 1];
+		m_pFileData = n_new_array(char, m_iFileSize + 1);
 		// 记忆体配置错误
 		if (m_pFileData == NULL)
 		{
@@ -226,40 +233,28 @@ bool cBaseReader::LoadFromFile(char* fileName)
 	{
 		HANDLE hFile;
 		// 开启档案
-		hFile = NFile32::fileOpen(fileName, NFile32::fmOpenRead);
-
-		if (hFile == INVALID_HANDLE_VALUE) 
+		Ptr<Stream> stream = IO::IoServer::Instance()->CreateStream(fileName);
+		if (!stream->Open())
 		{
-			CallErrorMsg(errFileOpen);
-			break;
-		} // end of if (hFile == INVALID_HANDLE_VALUE)
-		//    cFileOperator fop;
+			stream = 0;
+			return false;
+		}
 
-		//    if (fop.QueryFile(fileName) == false)
-		//    {
-		//      CallErrorMsg(errFileOpen);
-		//      break;
-		//    } // end of if (hFile == INVALID_HANDLE_VALUE)
-		// 取得档案大小
-		//    m_iFileSize = fop.GetFileSize();
-		m_iFileSize = NFile32::fileGetSize(hFile);
+		m_iFileSize = stream->GetSize();
 		// 配置存放空间(多配置一个位元存放'\0'结尾字元)
-		m_pFileData = _NEW char[m_iFileSize + 1];
-		if (m_pFileData == NULL)
-		{
-			CallErrorMsg(errAlloc);
-			NFile32::fileClose(hFile);
-			break;
-		} // end of if (m_pFileData == NULL)
+		m_pFileData = n_new_array(char, m_iFileSize + 1);
+		n_assert(m_pFileData != NULL);
+
 		// 读取档案资料
-		NFile32::fileRead(hFile, m_pFileData, m_iFileSize);
-		//    memcpy(m_pFileData, fop.GetFileData(), m_iFileSize);
+		stream->Read(m_pFileData, m_iFileSize);
+		
 		// 资料的尾端补零
 		m_pFileData[m_iFileSize] = '\0';
 		// 设置旗标
 		m_bAlready = true;
 		// 记得要关闭档案
-		NFile32::fileClose(hFile);
+		stream->Close();
+		stream = 0;
 		// 档案开启成功
 		return true;
 	} // end of for (; hFile != INVALID_HANDLE_VALUE;)
@@ -317,8 +312,7 @@ int  cBaseReader::PickChar(char* &pNextChar, bool bPick)
 	// 所取得的是一个识别字, 或是一个keyword
 	// "头文字"只允许为ascii标准的英文
 	// isalpha 只接受标准字元的比对, 字元数值不能超过 128
-	if (strchr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 
-		*curnChar)) // var or command 文字. 可能是变数或命令
+	if (strchr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", *curnChar)) // var or command 文字. 可能是变数或命令
 	{
 		pickedType = ttALPHA;
 		goto PICKCHAR_QUIT;
@@ -433,5 +427,5 @@ bool cBaseReader::IsWhiteSpace(int tokenType)
 
 	return false;
 }
-
+}
 //---------------------------------------------------------------------------

@@ -39,10 +39,12 @@ public:
     virtual void Unload();
 
 	virtual bool SetupFromStream(const Ptr<IO::Stream>& stream);
+	//void LoadTexture(const String& path);
 protected:
 	friend class ThingReader;
 
 	int meshVersion;
+
 	/// 占用大小
 	DWORD m_dwHeight;
 	DWORD m_dwWidth;

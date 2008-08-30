@@ -6,11 +6,14 @@
     
 */    
 #include <hash_map>
+#include <xhash>
 #include "util/string.h"
 
 //------------------------------------------------------------------------------
 namespace Util
 {
+
+typedef stdext::hash_compare<DWORD> DwordCompare;
 
 template<class KEYTYPE, class VALUETYPE, class COMPARE> class HashMap
 {
@@ -25,8 +28,9 @@ public:
 	bool IsEmpty()const;
 	bool Add(const KEYTYPE& key, const VALUETYPE& val);
 	void Erase(const KEYTYPE& key);
-	const VALUETYPE& Find(const KEYTYPE& key)const;
+	bool Find(const KEYTYPE& key, VALUETYPE& val)const;
 	bool Contains(const KEYTYPE& key)const;
+	SizeT Size();
 
 	/// 遍历元素
 	VALUETYPE& GetFirstValue();
@@ -127,15 +131,19 @@ HashMap<KEYTYPE, VALUETYPE, COMPARE>::Add(const KEYTYPE& key, const VALUETYPE& v
 
 //------------------------------------------------------------------------------
 /**
+	找到返回true，并且val有找到的值，否则返回false
 */
-template<class KEYTYPE, class VALUETYPE, class COMPARE> inline const VALUETYPE& 
-HashMap<KEYTYPE, VALUETYPE, COMPARE>::Find(const KEYTYPE& key)const
+template<class KEYTYPE, class VALUETYPE, class COMPARE> inline  bool
+HashMap<KEYTYPE, VALUETYPE, COMPARE>::Find(const KEYTYPE& key, VALUETYPE& val)const
 {
 	ConstTypeIter it = this->pairs.find(key);
 	if (it != this->pairs.end())
-		return it->second;
+	{
+		val = it->second;
+		return true;
+	}
 
-	return (VALUETYPE)0;
+	return false;
 }
 
 //------------------------------------------------------------------------------
@@ -192,6 +200,12 @@ HashMap<KEYTYPE, VALUETYPE, COMPARE>::GetContents()
 		ret.Append(it->second);
 	}
 	return ret;
+}
+
+template<class KEYTYPE, class VALUETYPE, class COMPARE> inline SizeT 
+HashMap<KEYTYPE, VALUETYPE, COMPARE>::Size()
+{
+	return (SizeT)this->pairs.size();
 }
 
 } // namespace Util

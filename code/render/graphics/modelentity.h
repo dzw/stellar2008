@@ -34,7 +34,8 @@ public:
     Resources::Resource::State GetModelResourceState() const;
     /// get pointer to model instance (only valid if already loaded)
     const Ptr<Models::ModelInstance>& GetModelInstance() const;
-
+	/// 加入可见队列的方式
+	virtual void AttachVisibleInstance();
 protected:
     /// called when entity is created
     virtual void OnActivate();

@@ -29,7 +29,7 @@ private:
 	D3DXMATRIXA16 m_SkeletonMatrix;
 	//  该影响骨架的影响顶点总数
 	unsigned int	m_uiNumSkeletonInfluencedMeshVertices; 
-	//  该影响骨架的影响顶点index
+	//  该影响骨架的影响顶点列表（不是索引!!）
 	DWORD* m_pdwSkeletonInfluencedMeshVerticesIndex;
 	//  该影响骨架影响顶点的影响比重 (0 ~ 1 之间)
 	float* m_pfSkeletonInfluencedMeshVerticesWeight; 

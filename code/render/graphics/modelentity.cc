@@ -6,6 +6,7 @@
 #include "graphics/modelentity.h"
 #include "models/modelserver.h"
 #include "coregraphics/shaperenderer.h"
+#include "models/visresolver.h"
 
 namespace Graphics
 {
@@ -157,5 +158,12 @@ ModelEntity::OnRenderDebug()
 
     this->GetModelInstance()->RenderDebug();
 }
+
+void 
+ModelEntity::AttachVisibleInstance()
+{
+	VisResolver::Instance()->AttachVisibleModelInstance(this->modelInstance);
+}
+
 
 } // namespace Graphics
