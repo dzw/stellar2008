@@ -14,6 +14,9 @@
 #include "kok/model/beingentity.h"
 #include "kok/model/kokshapenode.h"
 
+#include "resources/resourcemanager.h"
+#include "coregraphics/renderdevice.h"
+
 namespace KOK
 {
 ImplementClass(KOK::BeingNodeInstance, 'BEIN', KOK::KokShapeNodeInstance);
@@ -21,12 +24,15 @@ ImplementClass(KOK::BeingNodeInstance, 'BEIN', KOK::KokShapeNodeInstance);
 using namespace Models;
 using namespace CoreGraphics;
 using namespace Math;
+using namespace Resources;
 
 //------------------------------------------------------------------------------
 /**
 */
 BeingNodeInstance::BeingNodeInstance():
-	jointPaletteVar(0)
+	jointPaletteVar(0),
+	fakeReflectMap(0),
+	fakeReflectLightMap(0)
 {
     // empty
 }
@@ -37,6 +43,8 @@ BeingNodeInstance::BeingNodeInstance():
 BeingNodeInstance::~BeingNodeInstance()
 {
 	this->jointPaletteVar = 0;
+	this->fakeReflectMap = 0;
+	this->fakeReflectLightMap = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -49,25 +57,7 @@ BeingNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const
 
 	KokShapeNodeInstance::OnAttachToModelInstance(inst, node, parentNodeInst);
 
-	// create palette shader variable instance
-	ShaderVariable::Semantic paletteSemantic = ShaderVariable::Semantic("JointPalette");
-	this->jointPaletteVar = CreateShaderVariableInstance(paletteSemantic);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-Ptr<ShaderVariableInstance>
-BeingNodeInstance::CreateShaderVariableInstance(const ShaderVariable::Semantic& sem)
-{
-	const Ptr<ShaderInstance>& shaderInstance = this->modelNode.downcast<KokShapeNode>()->GetShaderInstance();
-	n_assert(shaderInstance.isvalid());
-
-	// create new shader variable instance
-	n_assert(shaderInstance->HasVariableBySemantic(sem));
-	const Ptr<ShaderVariable>& var = shaderInstance->GetVariableBySemantic(sem);
-	Ptr<ShaderVariableInstance> varInst = var->CreateInstance();
-	return varInst;
+	CreateMaterial();
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +78,7 @@ BeingNodeInstance::Render()
 	
 
 	cSkeletonSerializer* skeletonSerializer = beingEntity->GetSkeleton();
-	const Ptr<KokShapeNode>& node = this->modelNode.downcast<KokShapeNode>();
+	const Ptr<BeingNode>& node = this->modelNode.downcast<BeingNode>();
 	cSkinWeights* skins = node->GetSkinWeights();
 	DWORD skinNum = node->GetSkinWeightNum();
 	D3DXMATRIXA16 tmpMat;
@@ -121,18 +111,115 @@ BeingNodeInstance::Render()
 		jointArray[i] = matrix44::identity();
 	}*/
 
-	// transfer the joint palette to the current shader        
+	// transfer the joint palette to the current shader
 	n_assert(jointPaletteVar.isvalid());
 	jointPaletteVar->SetMatrixArray(jointArray, skinNum);    
-	jointPaletteVar->Apply();
-
-	// commit shader variable changes
-	CoreGraphics::ShaderServer* shdServer = CoreGraphics::ShaderServer::Instance();
-	shdServer->GetActiveShaderInstance()->Commit();
 
 
-	this->modelNode.downcast<BeingNode>()->Render();
+
+	ShaderServer* shaderServer = ShaderServer::Instance();
+	shaderServer->SetFeatureBits(shaderServer->FeatureStringToMask("Skin"));
+	shaderInstance->SelectActiveVariation(shaderServer->GetFeatureBits());
+	SizeT numPasses = shaderInstance->Begin();
+	n_assert(1 == numPasses);
+	shaderInstance->BeginPass(0);
+
+	// 先渲染没有假反光的batch
+	for (IndexT batchIndex = 0; batchIndex < node->GetAttribuateTableSize(); batchIndex++)
+	{
+		RenderBatch(batchIndex, false);
+	}
+
+	shaderInstance->EndPass();
+	shaderInstance->End();
+	
+
+
+	// 渲染带假反光的batch
+	// 假反光光照贴图
+	//const Ptr<ManagedTexture>& fakeReflect = ResourceManager::Instance()->LookupManagedResource(ResourceId("FakeReflectTexture")).downcast<ManagedTexture>();
+	const Ptr<ManagedTexture>& fakeReflect = beingEntity->GetFakeReflectTexture();
+	if (fakeReflect.isvalid() && fakeReflect->GetState() == Resource::Loaded)
+		this->fakeReflectLightMap->SetTexture(fakeReflect->GetTexture());
+	else
+		return;
+
+	// 假反光效果
+	shaderServer->SetFeatureBits(shaderServer->FeatureStringToMask("Reflect"));
+	shaderInstance->SelectActiveVariation(shaderServer->GetFeatureBits());
+	numPasses = shaderInstance->Begin();
+	n_assert(1 == numPasses);
+	shaderInstance->BeginPass(0);
+
+	for (IndexT batchIndex = 0; batchIndex < node->GetAttribuateTableSize(); batchIndex++)
+	{
+		RenderBatch(batchIndex, true);
+	}
+
+	shaderInstance->EndPass();
+	shaderInstance->End();
+
+	//this->modelNode.downcast<BeingNode>()->Render();
 }    
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+BeingNodeInstance::RenderBatch(IndexT index, bool reflectRender)
+{
+	const Ptr<BeingNode>& node = this->modelNode.downcast<BeingNode>();
+	const AttributeRange& batch = node->GetAttributeTable()[index];
+	const cMaterial& material = node->GetMaterial()[index];
+
+	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !material.GetTexture().isvalid())
+		return;
+
+	const Ptr<Texture>& fakeReflect = material.GetFakeReflectTexture();
+	if (reflectRender) 
+	{
+		// 渲染假反光batch
+		if (fakeReflect.isvalid())
+			this->fakeReflectMap->SetTexture(fakeReflect);
+		else
+			return;
+	}
+	else
+	{
+		if (fakeReflect.isvalid())
+			return;
+	}
+	
+
+	this->diffuseColor->SetVector(float4(
+		material.m_D3DMaterial.Diffuse.r,
+		material.m_D3DMaterial.Diffuse.g,
+		material.m_D3DMaterial.Diffuse.b,
+		material.m_D3DMaterial.Diffuse.a));
+	this->ambientColor->SetVector(float4(
+		material.m_D3DMaterial.Ambient.r,
+		material.m_D3DMaterial.Ambient.g,
+		material.m_D3DMaterial.Ambient.b,
+		material.m_D3DMaterial.Ambient.a));
+	this->specularColor->SetVector(float4(
+		material.m_D3DMaterial.Specular.r,
+		material.m_D3DMaterial.Specular.g,
+		material.m_D3DMaterial.Specular.b,
+		material.m_D3DMaterial.Specular.a));
+	this->emissiveColor->SetVector(float4(
+		material.m_D3DMaterial.Emissive.r,
+		material.m_D3DMaterial.Emissive.g,
+		material.m_D3DMaterial.Emissive.b,
+		material.m_D3DMaterial.Emissive.a));
+	this->diffMap->SetTexture(material.GetTexture());
+
+	
+	
+	this->shaderInstance->Commit();
+
+	node->GetMesh()->ApplyPrimitives(index);
+	RenderDevice::Instance()->Draw();
+}
 
 void
 BeingNodeInstance::ApplyState()
@@ -156,6 +243,14 @@ void
 BeingNodeInstance::Update()
 {
 	KokShapeNodeInstance::Update();
+}
+
+void
+BeingNodeInstance::CreateMaterial()
+{
+	this->fakeReflectMap = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("FakeReflect"));
+	this->fakeReflectLightMap = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("FakeReflectLight"));
+	this->jointPaletteVar = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("JointPalette"));
 }
 
 }
