@@ -90,11 +90,11 @@ KokShapeNode::UnloadResources()
 		this->shaderInstance->Discard();
 	this->shaderInstance = 0;
 
-	this->diffuseColor  = 0;
+	/*this->diffuseColor  = 0;
 	this->ambientColor  = 0;
 	this->specularColor = 0;
 	this->emissiveColor = 0;
-	this->diffMap		= 0;
+	this->diffMap		= 0;*/
 
 	if (m_pMaterial != NULL)
 		n_delete_array(m_pMaterial);
@@ -127,8 +127,8 @@ KokShapeNode::CreateNodeInstance()const
 bool
 KokShapeNode::ApplySharedState()
 {
-	//if (!this->mesh.isvalid())
-	//	return false;
+	if (!this->mesh.isvalid())
+		return false;
 
 	TransformNode::ApplySharedState();
 
@@ -431,137 +431,137 @@ KokShapeNode::ImportMaterialAnimationFromMemory( const Ptr<Stream>& stream, int 
 	} while( dwType != 0 );
 }
 
-void 
-KokShapeNode::Render()
-{
-	// 设置灯光
-	//if(g_mLights)
-	//{
-	//	g_mLights->bLightSystem = bLightSystem;
-
-	//	SetLightData();
-
-	//	g_mLights->bForceAmbientColor = m_bForceAmbientColor ; 
-	//	g_mLights->ForceAmbientColor  = m_colForceAmbientColor ;
-	//	g_mLights->ShowLight();
-	//	if(m_pEffect)
-	//	{
-	//		//jingjie add 2005.08.14 给予vertex shader local space平行光方向,Ia,Id参数 
-	//		//目前不用到specular所以Is不给 以后或许可以考虑加入
-	//		D3DXMATRIXA16 mInverseWorlMatrix;
-	//		D3DXVECTOR4 vLocallightDir;
-	//		D3DXVECTOR4 vlight_pos = D3DXVECTOR4(g_mLights->GetSunDir()->x,g_mLights
-	//		->GetSunDir()->y, g_mLights->GetSunDir()->z,0);
-	//		D3DXMatrixInverse( &mInverseWorlMatrix, NULL, &m_matMatrix);
-	//		D3DXVec4Transform( &vLocallightDir,&vlight_pos , &mInverseWorlMatrix );
-	//		D3DXVec3Normalize( (D3DXVECTOR3 *)&vLocallightDir, (D3DXVECTOR3 *)
-	//		&vLocallightDir );
-	//		m_pEffect->SetVector( "g_LocallightDir", &vLocallightDir );
-	//		m_pEffect->SetVector( "g_I_Ambient", &g_mLights->GetSunAmibentColor());
-	//		m_pEffect->SetVector( "g_I_Diffuse", &g_mLights->GetSunDiffuseColor());
-	//	}
-	//}
-
-	if (!this->mesh.isvalid())
-		return;
-
-	for (SizeT i = 0; i < attributeTableSize; i++)
-	{
-		RenderBatch(i);
-	}
-}
-
-void 
-KokShapeNode::RenderBatch(IndexT index)
-{
-	const AttributeRange& batch = attributeTable[index];
-	const cMaterial& material = m_pMaterial[index];
-
-	if (!batch.FaceCount || !batch.VertexCount || !material.GetTexture().isvalid())
-		return;
-
-	//if(bWaterTexture)
-	//{
-	//	DXTEST(pd3dDevice->SetMaterial(&(g_mWater->m_pMaterial[0].m_D3DMaterial) ));
-	//}
-	//else
-	//{
-	//	if( bUseTexMaterial )
-	//	{
-	//		DXTEST(pd3dDevice->SetMaterial(&(m_pMaterial[i].m_D3DMaterial)));
-
-	//		// 070205 cyhsieh extended material animation
-	//		const D3DXMATRIXA16* pMat = m_pMaterial[i].GetTextureTransformMatrix();
-	//		if( pMat )
-	//		{
-	//		bUseTextureTransform = true;
-	//		pd3dDevice->SetTransform( D3DTS_TEXTURE0, pMat );
-	//		pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
-	//		}
-	//	}
-	//	else
-	//	{
-	//		DXTEST(pd3dDevice->SetMaterial(&Mat));
-	//	}
-	//}
-	//if(bWaterTexture)
-	//{
-	//	if(g_mWater->m_pTexture)
-	//	{
-	//		DXTEST(pd3dDevice->SetTexture( 0,g_mWater->m_pTexture->GetTexture(pd3dDevice)));
-	//	}
-	//	else
-	//	{
-	//		DXTEST(pd3dDevice->SetTexture( 0, NULL));
-	//	}
-	//} 
-	//else if(m_pMaterial)
-	//{
-	//	cMaterial *l_pMate = &m_pMaterial[i];
-	//	if(l_pMate->m_pTexture)
-	//	{
-	//		DXTEST(pd3dDevice->SetTexture( 0, l_pMate->m_pTexture->GetTexture(pd3dDevice)));
-	//	}
-	//	else
-	//	{
-	//		DXTEST(pd3dDevice->SetTexture( 0, NULL));
-	//	}
-	//} 
-	//else 
-	//{
-	//	DXTEST(pd3dDevice->SetTexture( 0, NULL));
-	//}
-
-	// 缺少水面贴图和纹理动画的支持
-	if(batch.VertexCount && batch.FaceCount)
-	{
-		this->diffuseColor->SetVector(float4(
-			material.m_D3DMaterial.Diffuse.r,
-			material.m_D3DMaterial.Diffuse.g,
-			material.m_D3DMaterial.Diffuse.b,
-			material.m_D3DMaterial.Diffuse.a));
-		this->ambientColor->SetVector(float4(
-			material.m_D3DMaterial.Ambient.r,
-			material.m_D3DMaterial.Ambient.g,
-			material.m_D3DMaterial.Ambient.b,
-			material.m_D3DMaterial.Ambient.a));
-		this->specularColor->SetVector(float4(
-			material.m_D3DMaterial.Specular.r,
-			material.m_D3DMaterial.Specular.g,
-			material.m_D3DMaterial.Specular.b,
-			material.m_D3DMaterial.Specular.a));
-		this->emissiveColor->SetVector(float4(
-			material.m_D3DMaterial.Emissive.r,
-			material.m_D3DMaterial.Emissive.g,
-			material.m_D3DMaterial.Emissive.b,
-			material.m_D3DMaterial.Emissive.a));
-		this->diffMap->SetTexture(material.GetTexture());
-		this->shaderInstance->Commit();
-
-		this->mesh->ApplyPrimitives(index);
-		RenderDevice::Instance()->Draw();
-	}
-}
+//void 
+//KokShapeNode::Render()
+//{
+//	// 设置灯光
+//	//if(g_mLights)
+//	//{
+//	//	g_mLights->bLightSystem = bLightSystem;
+//
+//	//	SetLightData();
+//
+//	//	g_mLights->bForceAmbientColor = m_bForceAmbientColor ; 
+//	//	g_mLights->ForceAmbientColor  = m_colForceAmbientColor ;
+//	//	g_mLights->ShowLight();
+//	//	if(m_pEffect)
+//	//	{
+//	//		//jingjie add 2005.08.14 给予vertex shader local space平行光方向,Ia,Id参数 
+//	//		//目前不用到specular所以Is不给 以后或许可以考虑加入
+//	//		D3DXMATRIXA16 mInverseWorlMatrix;
+//	//		D3DXVECTOR4 vLocallightDir;
+//	//		D3DXVECTOR4 vlight_pos = D3DXVECTOR4(g_mLights->GetSunDir()->x,g_mLights
+//	//		->GetSunDir()->y, g_mLights->GetSunDir()->z,0);
+//	//		D3DXMatrixInverse( &mInverseWorlMatrix, NULL, &m_matMatrix);
+//	//		D3DXVec4Transform( &vLocallightDir,&vlight_pos , &mInverseWorlMatrix );
+//	//		D3DXVec3Normalize( (D3DXVECTOR3 *)&vLocallightDir, (D3DXVECTOR3 *)
+//	//		&vLocallightDir );
+//	//		m_pEffect->SetVector( "g_LocallightDir", &vLocallightDir );
+//	//		m_pEffect->SetVector( "g_I_Ambient", &g_mLights->GetSunAmibentColor());
+//	//		m_pEffect->SetVector( "g_I_Diffuse", &g_mLights->GetSunDiffuseColor());
+//	//	}
+//	//}
+//
+//	if (!this->mesh.isvalid())
+//		return;
+//
+//	for (SizeT i = 0; i < attributeTableSize; i++)
+//	{
+//		RenderBatch(i);
+//	}
+//}
+//
+//void 
+//KokShapeNode::RenderBatch(IndexT index)
+//{
+//	const AttributeRange& batch = attributeTable[index];
+//	const cMaterial& material = m_pMaterial[index];
+//
+//	if (!batch.FaceCount || !batch.VertexCount || !material.GetTexture().isvalid())
+//		return;
+//
+//	//if(bWaterTexture)
+//	//{
+//	//	DXTEST(pd3dDevice->SetMaterial(&(g_mWater->m_pMaterial[0].m_D3DMaterial) ));
+//	//}
+//	//else
+//	//{
+//	//	if( bUseTexMaterial )
+//	//	{
+//	//		DXTEST(pd3dDevice->SetMaterial(&(m_pMaterial[i].m_D3DMaterial)));
+//
+//	//		// 070205 cyhsieh extended material animation
+//	//		const D3DXMATRIXA16* pMat = m_pMaterial[i].GetTextureTransformMatrix();
+//	//		if( pMat )
+//	//		{
+//	//		bUseTextureTransform = true;
+//	//		pd3dDevice->SetTransform( D3DTS_TEXTURE0, pMat );
+//	//		pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
+//	//		}
+//	//	}
+//	//	else
+//	//	{
+//	//		DXTEST(pd3dDevice->SetMaterial(&Mat));
+//	//	}
+//	//}
+//	//if(bWaterTexture)
+//	//{
+//	//	if(g_mWater->m_pTexture)
+//	//	{
+//	//		DXTEST(pd3dDevice->SetTexture( 0,g_mWater->m_pTexture->GetTexture(pd3dDevice)));
+//	//	}
+//	//	else
+//	//	{
+//	//		DXTEST(pd3dDevice->SetTexture( 0, NULL));
+//	//	}
+//	//} 
+//	//else if(m_pMaterial)
+//	//{
+//	//	cMaterial *l_pMate = &m_pMaterial[i];
+//	//	if(l_pMate->m_pTexture)
+//	//	{
+//	//		DXTEST(pd3dDevice->SetTexture( 0, l_pMate->m_pTexture->GetTexture(pd3dDevice)));
+//	//	}
+//	//	else
+//	//	{
+//	//		DXTEST(pd3dDevice->SetTexture( 0, NULL));
+//	//	}
+//	//} 
+//	//else 
+//	//{
+//	//	DXTEST(pd3dDevice->SetTexture( 0, NULL));
+//	//}
+//
+//	// 缺少水面贴图和纹理动画的支持
+//	if(batch.VertexCount && batch.FaceCount)
+//	{
+//		this->diffuseColor->SetVector(float4(
+//			material.m_D3DMaterial.Diffuse.r,
+//			material.m_D3DMaterial.Diffuse.g,
+//			material.m_D3DMaterial.Diffuse.b,
+//			material.m_D3DMaterial.Diffuse.a));
+//		this->ambientColor->SetVector(float4(
+//			material.m_D3DMaterial.Ambient.r,
+//			material.m_D3DMaterial.Ambient.g,
+//			material.m_D3DMaterial.Ambient.b,
+//			material.m_D3DMaterial.Ambient.a));
+//		this->specularColor->SetVector(float4(
+//			material.m_D3DMaterial.Specular.r,
+//			material.m_D3DMaterial.Specular.g,
+//			material.m_D3DMaterial.Specular.b,
+//			material.m_D3DMaterial.Specular.a));
+//		this->emissiveColor->SetVector(float4(
+//			material.m_D3DMaterial.Emissive.r,
+//			material.m_D3DMaterial.Emissive.g,
+//			material.m_D3DMaterial.Emissive.b,
+//			material.m_D3DMaterial.Emissive.a));
+//		this->diffMap->SetTexture(material.GetTexture());
+//		this->shaderInstance->Commit();
+//
+//		this->mesh->ApplyPrimitives(index);
+//		RenderDevice::Instance()->Draw();
+//	}
+//}
 
 
 void
@@ -618,11 +618,11 @@ KokShapeNode::CreateMaterial()
 {
 	this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(Resources::ResourceId("shd:kokmodel"));
 
-	this->diffuseColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffuseColor"));
+	/*this->diffuseColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffuseColor"));
 	this->ambientColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("AmbientColor"));
 	this->specularColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("SpecularColor"));
 	this->emissiveColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("EmissiveColor"));
-	this->diffMap = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
+	this->diffMap = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));*/
 }
 
 //------------------------------------------------------------------------------
@@ -643,7 +643,7 @@ KokShapeNode::LoadTextures(const String& path, int texId)
 	{
 		if (texId != -1)
 			m_pMaterial[i].iNo = texId;
-		fileName.Format("%s\%s%02d.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), m_pMaterial[i].iNo);
+		fileName.Format("%s%s%02d.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), m_pMaterial[i].iNo);
 		m_pMaterial[i].LoadTexture(fileName);
 	}
 }

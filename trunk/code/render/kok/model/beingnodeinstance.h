@@ -35,8 +35,12 @@ public:
 	void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
 protected:
 	Ptr<CoreGraphics::ShaderVariableInstance> CreateShaderVariableInstance(const CoreGraphics::ShaderVariable::Semantic& sem);
+	void RenderBatch(IndexT index, bool reflectRender);
+	void CreateMaterial();
 
-	Ptr<CoreGraphics::ShaderVariableInstance> jointPaletteVar;
+	Ptr<CoreGraphics::ShaderVariable> fakeReflectMap;		// 假反光贴图
+	Ptr<CoreGraphics::ShaderVariable> fakeReflectLightMap;	// 假反光光照贴图
+	Ptr<CoreGraphics::ShaderVariable> jointPaletteVar;
 };
 
 } // namespace Models

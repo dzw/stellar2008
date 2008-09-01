@@ -17,7 +17,13 @@ using namespace CoreGraphics;
 //------------------------------------------------------------------------------
 /**
 */
-KokShapeNodeInstance::KokShapeNodeInstance()	
+KokShapeNodeInstance::KokShapeNodeInstance():
+	shaderInstance(0),
+	diffuseColor(0),
+	ambientColor(0),
+	specularColor(0),
+	emissiveColor(0),
+	diffMap(0)
 {
     // empty
 }
@@ -27,6 +33,12 @@ KokShapeNodeInstance::KokShapeNodeInstance()
 */
 KokShapeNodeInstance::~KokShapeNodeInstance()
 {
+	this->shaderInstance = 0;
+	this->diffuseColor   = 0;
+	this->ambientColor   = 0;
+	this->specularColor  = 0;
+	this->emissiveColor  = 0;
+	this->diffMap	     = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -35,7 +47,7 @@ KokShapeNodeInstance::~KokShapeNodeInstance()
 void
 KokShapeNodeInstance::Render()
 {
-	this->modelNode.downcast<KokShapeNode>()->Render();
+	//this->modelNode.downcast<KokShapeNode>()->Render();
 }    
 
 void
@@ -60,6 +72,30 @@ void
 KokShapeNodeInstance::Update()
 {
 	TransformNodeInstance::Update();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void 
+KokShapeNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst)
+{
+	n_assert(node->IsA(KokShapeNode::RTTI));
+	TransformNodeInstance::OnAttachToModelInstance(inst, node, parentNodeInst);
+
+	CreateMaterial();
+}
+
+void
+KokShapeNodeInstance::CreateMaterial()
+{
+	this->shaderInstance = this->modelNode.downcast<KokShapeNode>()->GetShaderInstance();
+
+	this->diffuseColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffuseColor"));
+	this->ambientColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("AmbientColor"));
+	this->specularColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("SpecularColor"));
+	this->emissiveColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("EmissiveColor"));
+	this->diffMap = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffMap0"));
 }
 
 }

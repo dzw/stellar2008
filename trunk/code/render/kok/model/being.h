@@ -33,6 +33,8 @@ public:
 	void SetComputeMeshRepeat(bool b);
 	/// 换状的时候需要换纹理，所有子模型用的相同编号的纹理
 	void LoadTexture(int texId);
+
+	void Render(const Models::ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures);
 private:
 
 	/// 版本

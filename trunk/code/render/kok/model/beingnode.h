@@ -36,8 +36,7 @@ public:
 		int iVersion, bool bMirrorZ, bool bCompuiteDuplicateVertexCollection=false, bool bBlend=false);
 	void CreateVertexBuffer(const Ptr<IO::Stream>& stream, bool bMirrorZ);
 
-	void Render();
-	
+	virtual void LoadTextures(const Util::String& path, int texId);
 protected:
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance()const;
 	virtual void UnloadResources();

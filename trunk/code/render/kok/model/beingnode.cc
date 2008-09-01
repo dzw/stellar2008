@@ -78,9 +78,9 @@ BeingNode::CreateNodeInstance()const
 bool
 BeingNode::ApplySharedState()
 {
-	ShaderServer* shdServer = ShaderServer::Instance();
-	shdServer->SetFeatureBits(shdServer->FeatureStringToMask("Skin"));
-
+	//ShaderServer* shdServer = ShaderServer::Instance();
+	//shdServer->SetFeatureBits(shdServer->FeatureStringToMask("Skin"));
+	
 	return KokShapeNode::ApplySharedState();
 }
 
@@ -162,15 +162,6 @@ BeingNode::CreateVertexBuffer(const Ptr<Stream>& stream, bool bMirrorZ)
 	this->verticesBuffer = (VertexFVF*)vb;
 }
 
-void 
-BeingNode::Render()
-{
-	/*if (!this->mesh.isvalid())
-		CreateMesh();*/
-
-	KokShapeNode::Render();
-}
-
 void
 BeingNode::CreateMesh()
 {
@@ -186,6 +177,33 @@ BeingNode::CreateMesh()
 	}
 
 	KokShapeNode::CreateMesh(vertexComponents, sizeof(VertexSkinnedFVF));
+}
+
+//------------------------------------------------------------------------------
+/**
+	换装的时候也需要设置或重新加载纹理
+	注意，两种情况：
+	being: 每个子模型的纹理编号都是相同的，换装的时候需要改变编号(iNo)
+	thing: 纹理是固定的，所以加载的时候设置好了，这里texId==-1，不需要改变纹理编号
+*/
+void 
+BeingNode::LoadTextures(const String& path, int texId)
+{
+	if (path.Length() == 0)
+		return;
+
+	String fileName;
+	for (int i = 0; i < m_dwNumMaterial; i++)
+	{
+		if (texId != -1)
+			m_pMaterial[i].iNo = texId;
+		fileName.Format("%s%s%02d.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), m_pMaterial[i].iNo);
+		m_pMaterial[i].LoadTexture(fileName);
+
+		// 假反光贴图
+		fileName.Format("%s%s%02d_s.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), m_pMaterial[i].iNo);
+		m_pMaterial[i].LoadFakeReflectTexture(fileName);
+	}
 }
 
 }

@@ -38,7 +38,8 @@ using namespace Util;
 /**
 */
 BeingEntity::BeingEntity():
-	skeletonSerializer(0)
+	skeletonSerializer(0),
+	fakeReflectTexture(0)
 {
 	this->SetType(ModelType);
 	partList.Clear();
@@ -63,6 +64,9 @@ BeingEntity::OnActivate()
     // note: we will remain invalid until at least our model has loaded
     this->SetValid(false);
     //this->managedModel = ResourceManager::Instance()->CreateManagedResource(Thing::RTTI, this->resId).downcast<ManagedThing>();
+
+	String fakeTex = "mbtex:FakeReflect.dds";
+	this->fakeReflectTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, fakeTex).downcast<ManagedTexture>();
 }
 
 //------------------------------------------------------------------------------

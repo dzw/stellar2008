@@ -30,7 +30,7 @@ public:
 	virtual void OnNotifyVisible(IndexT frameIndex);
 
 protected:
-	
+	void RenderBatch(IndexT index);
 };
 
 } // namespace Models

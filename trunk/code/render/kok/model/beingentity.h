@@ -14,6 +14,7 @@
 #include "kok/model/modeldef.h"
 #include "kok/model/managedbeing.h"
 #include "kok/model/animation/cSkeletonSerializer.h"
+#include "resources/managedtexture.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -47,6 +48,11 @@ public:
 	int CreateAnimationAction( int iActionIndex, float fPlaySpeed, 
 		AnimationActionOperation animationActionOperation, float fFadeoutTime );
 	int CreateAnimationActionIntoBlending( int iActionIndex, float fPlaySpeed, float fFadeoutTime );
+
+	// 反光贴图操作
+	void SetFakeReflectTexture(const Ptr<Resources::ManagedTexture>& tex);
+	const Ptr<Resources::ManagedTexture>& GetFakeReflectTexture()const;
+
 protected:
 	void UpdateAnimation(float fElapsedTime);
 	/// 更新需要更新的部件
@@ -57,6 +63,8 @@ protected:
 	//void getSubMeshUsedSkeletonHierarchy( SkeletonHierarchyUsabilityMap& SkeletonHierarchyUsedMap, cSubMeshSerializer* pSubMeshSerial );
 	//void getUnusedSkeletonHierarchy( cSkeletonHierarchy* pSkeletonHierarchy, SkeletonHierarchyUsabilityMap& SkeletonHierarchyUsedMap, bool& bParentUse );
 #endif
+
+
 	/// 身体部件,如果是坐骑，只需前两个部件,其它都是空着
 	Ptr<ManagedBeing> bodyPart[mptCOUNT];
 	/// 部件列表，加载后不释放，退出时才释放
@@ -73,7 +81,10 @@ protected:
 	/// 骨骼
 	Util::String skeletonName;
 	cSkeletonSerializer* skeletonSerializer;
-	
+	/// 骨骼层级更新标志，只有可见时才更新，且一帧里面只更新一次
+	bool		  skeletonUpdate;
+
+
 	//stActionState record index , animation time length , play speed , 
 	//and animation played time of animation action 
 	typedef struct 
@@ -100,9 +111,10 @@ protected:
 	float         m_fFadeoutTimeRemain;
 	// 总淡出时间
 	float         m_fFadeoutTime;
-	/// 骨骼层级更新标志，只有可见时才更新，且一帧里面只更新一次
-	bool		  skeletonUpdate;
+	
 
+	// 假反光贴图
+	Ptr<Resources::ManagedTexture> fakeReflectTexture;
 };
 
 inline void 
@@ -115,6 +127,18 @@ inline cSkeletonSerializer*
 BeingEntity::GetSkeleton()const
 {
 	return this->skeletonSerializer;
+}
+
+inline const Ptr<Resources::ManagedTexture>& 
+BeingEntity::GetFakeReflectTexture()const
+{
+	return this->fakeReflectTexture;
+}
+
+inline void 
+BeingEntity::SetFakeReflectTexture(const Ptr<Resources::ManagedTexture>& tex)
+{
+	return this->fakeReflectTexture = tex;
 }
 
 } // namespace Graphics

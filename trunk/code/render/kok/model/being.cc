@@ -7,6 +7,8 @@
 #include "kok/model/modeldef.h"
 #include "kok/model/beingnode.h"
 #include "util/string.h"
+#include "coregraphics/shaderserver.h"
+#include "lighting/lightserver.h"
 
 namespace KOK
 {
@@ -18,6 +20,7 @@ using namespace Resources;
 using namespace Models;
 using namespace CoreGraphics;
 using namespace Math;
+using namespace Lighting;
 
 //------------------------------------------------------------------------------
 /**
@@ -104,7 +107,40 @@ Being::LoadTexture(int texId)
 
 	for (SizeT i = 0; i < nodes.Size(); i++)
 	{
-		nodes[i].downcast<KokShapeNode>()->LoadTextures(path, texId);
+		nodes[i].downcast<BeingNode>()->LoadTextures(path, texId);
+	}
+}
+
+void
+Being::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures)
+{
+	ShaderServer* shaderServer = ShaderServer::Instance();
+	LightServer* lightServer = LightServer::Instance();
+
+	// for each visible model node of the model...
+	const Array<Ptr<ModelNode> >& modelNodes = this->GetVisibleModelNodes(nodeFilter);//visResolver->GetVisibleModelNodes(this->nodeFilter, models[modelIndex]);
+	IndexT modelNodeIndex;  
+	for (modelNodeIndex = 0; modelNodeIndex < modelNodes.Size(); modelNodeIndex++)
+	{
+		// apply render state which is shared by all instances
+		shaderServer->ResetFeatureBits();
+		shaderServer->SetFeatureBits(shaderFeatures);
+		const Ptr<ModelNode>& modelNode = modelNodes[modelNodeIndex];            
+		// 资源没准备好，不渲染
+		if (!modelNode->ApplySharedState())
+			continue;
+
+		// render instances
+		const Array<Ptr<ModelNodeInstance> >& nodeInstances = modelNode->GetVisibleModelNodeInstances(nodeFilter);//visResolver->GetVisibleModelNodeInstances(this->nodeFilter, modelNode);
+		IndexT nodeInstIndex;
+		for (nodeInstIndex = 0; nodeInstIndex < nodeInstances.Size(); nodeInstIndex++)
+		{
+			const Ptr<ModelNodeInstance>& nodeInstance = nodeInstances[nodeInstIndex];
+
+			// render the node instance
+			nodeInstance->ApplyState();
+			nodeInstance->Render();
+		}
 	}
 }
 

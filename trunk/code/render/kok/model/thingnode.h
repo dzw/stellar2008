@@ -32,8 +32,6 @@ public:
 
 	void LoadFromStream(const Ptr<IO::Stream>& stream, 
 		int iVersion, bool bMirrorZ, bool bCompuiteDuplicateVertexCollection=false, bool bBlend=false);
-
-	void Render();
 	
 protected:
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance()const;

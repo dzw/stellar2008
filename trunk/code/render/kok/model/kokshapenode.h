@@ -48,8 +48,8 @@ public:
 		int iVersion, bool bMirrorZ, bool bCompuiteDuplicateVertexCollection=false, bool bBlend=false);
 	EThingSubMeshSpecialType GetThingType(Util::String name);
 
-	void Render();
-	void RenderBatch(IndexT index);
+	//void Render();
+	//void RenderBatch(IndexT index);
 	void CreateMesh(const Util::Array<CoreGraphics::VertexComponent>& vertexComponents, int vertexSize);
 	void CreateMaterial();
 	/// 单独加载，纹理没有存放在一起，而是和模型放一起，导致很难确定路径，每次要根据不同情况传不同的值。
@@ -58,11 +58,18 @@ public:
 	/// 创建顶点，格式可能不同，所以用了继承
 	virtual void CreateVertexBuffer(const Ptr<IO::Stream>& stream, bool bMirrorZ);
 
-	cSkinWeights* GetSkinWeights()const;
 	DWORD GetSkinWeightNum()const;
+	cSkinWeights* GetSkinWeights()const;
+	
+	DWORD GetAttribuateTableSize()const;
+	const AttributeRange* GetAttributeTable()const;
+
+	DWORD GetMaterialSize()const;
+	const cMaterial* GetMaterial()const;
 
 	const Ptr<CoreGraphics::ShaderInstance>& GetShaderInstance()const;
-	
+	const Ptr<CoreGraphics::Mesh>& GetMesh()const;
+
 protected:
 	friend class Thing;
 	friend class BeingNode;
@@ -130,6 +137,36 @@ inline const Ptr<CoreGraphics::ShaderInstance>&
 KokShapeNode::GetShaderInstance()const
 {
 	return this->shaderInstance;
+}
+
+inline DWORD 
+KokShapeNode::GetAttribuateTableSize()const
+{
+	return this->attributeTableSize;
+}
+
+inline const AttributeRange* 
+KokShapeNode::GetAttributeTable()const
+{
+	return this->attributeTable;
+}
+
+inline DWORD 
+KokShapeNode::GetMaterialSize()const
+{
+	return this->m_dwNumMaterial;
+}
+
+inline const cMaterial* 
+KokShapeNode::GetMaterial()const
+{
+	return this->m_pMaterial;
+}
+
+inline const Ptr<CoreGraphics::Mesh>& 
+KokShapeNode::GetMesh()const
+{
+	return this->mesh;
 }
 
 } // namespace Models
