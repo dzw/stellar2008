@@ -54,7 +54,10 @@ public:
     virtual void SetVisible(bool b);
     /// is visible
     bool IsVisible() const;
-    
+
+    /// called when attached to ModelInstance
+    virtual void OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst);
+
 protected:
     friend class ModelInstance;
 
@@ -62,8 +65,6 @@ protected:
     void SetParent(const Ptr<ModelNodeInstance>& p);
     /// add a child node
     void AddChild(const Ptr<ModelNodeInstance>& c);
-    /// called when attached to ModelInstance
-    virtual void OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst);
     /// called when removed from ModelInstance
     virtual void OnRemoveFromModelInstance();
     /// notify that we are visible

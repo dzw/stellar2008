@@ -112,11 +112,11 @@ protected:
 
 	/// shader & material
 	Ptr<CoreGraphics::ShaderInstance> shaderInstance;
-	/*Ptr<CoreGraphics::ShaderVariable> diffuseColor;
+	Ptr<CoreGraphics::ShaderVariable> diffuseColor;
 	Ptr<CoreGraphics::ShaderVariable> ambientColor;
 	Ptr<CoreGraphics::ShaderVariable> specularColor;
 	Ptr<CoreGraphics::ShaderVariable> emissiveColor;
-	Ptr<CoreGraphics::ShaderVariable> diffMap*/;
+	Ptr<CoreGraphics::ShaderVariable> diffMap;
 
 	/// 子模型类型
 	EThingSubMeshSpecialType modelType;

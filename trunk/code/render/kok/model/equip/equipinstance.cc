@@ -9,6 +9,7 @@
 #include "util/array.h"
 #include "util/string.h"
 #include "kok/model/equip/equipnode.h"
+#include "kok/model/equip/equip.h"
 
 namespace KOK
 {
@@ -153,8 +154,8 @@ EquipInstance::SetWorldTransform( const matrix44&  matTransform )
 		D3DXMATRIXA16* m = m_pSkeletonHierarchy->getSkeletonHierarchyMatrix();
 		matrix44 matSkeleton;
 		matSkeleton.set(float4(m->_11, m->_12, m->_13, m->_14),
-						float4(m->_21, m->_22, m->_23, m->_24)
-						float4(m->_31, m->_32, m->_33, m->_34)
+						float4(m->_21, m->_22, m->_23, m->_24),
+						float4(m->_31, m->_32, m->_33, m->_34),
 						float4(m->_41, m->_42, m->_43, m->_44));
 		this->transform = matrix44::multiply(matSkeleton, matTransform);
 	}

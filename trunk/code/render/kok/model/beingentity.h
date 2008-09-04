@@ -59,7 +59,7 @@ public:
 	const Ptr<Resources::ManagedTexture>& GetFakeReflectTexture()const;
 
 	/// ×°±¸
-	void SetEquipPart(EquipLinkerType equipPartType, int mainClassId, int subClassId, int modelId, int texId, int effectId);
+	void SetEquipPart(const Util::String& modelName, EquipLinkerType equipPartType, int texId);
 	void RemoveEquipPart(EquipLinkerType equipPartType);
 	void SetEquipActionIndex(int actionIndex);
 

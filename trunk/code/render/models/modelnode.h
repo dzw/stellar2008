@@ -124,8 +124,6 @@ protected:
 
     /// set bounding box
     void SetBoundingBox(const Math::bbox& b);
-    /// create a model node instance
-    virtual Ptr<ModelNodeInstance> CreateNodeInstance() const;
     /// called when attached to model node
     virtual void OnAttachToModel(const Ptr<Model>& model);
     /// called when removed from model node
@@ -138,6 +136,8 @@ protected:
     virtual void UnloadResources();
 
 public: 
+	/// create a model node instance
+    virtual Ptr<ModelNodeInstance> CreateNodeInstance() const;
 	/// get visible model node instances
     const Util::Array<Ptr<ModelNodeInstance> >& GetVisibleModelNodeInstances(ModelNodeType::Code t) const;
 
