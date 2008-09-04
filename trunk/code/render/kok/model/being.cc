@@ -90,7 +90,7 @@ Being::SetupFromStream(const Ptr<IO::Stream>& stream)
 			node->LoadFromStream(stream, this->meshVersion, false, computeMeshRepeat);
 			
 			this->AttachNode(node.upcast<ModelNode>());
-			//node->LoadTextures("mbtex:");
+			//node->LoadTextures("mtext:");
 			b.extend(node->GetBoundingBox());
 		}
 		this->SetBoundingBox(b);
@@ -102,7 +102,7 @@ Being::SetupFromStream(const Ptr<IO::Stream>& stream)
 void 
 Being::LoadTexture(int texId)
 {
-	String path = "mbtex:";
+	String path = "mtext:";
 	const Array<Ptr<ModelNode>>& nodes = this->GetNodes();
 
 	for (SizeT i = 0; i < nodes.Size(); i++)

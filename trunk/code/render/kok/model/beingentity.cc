@@ -9,6 +9,8 @@
 #include "models/visresolver.h"
 #include "models/modelinstance.h"
 #include "kok/model/animation/cSkeletonSerializerFactory.h"
+#include "math/quaternion.h"
+#include "math/vector.h"
 
 namespace KOK
 {
@@ -42,7 +44,21 @@ BeingEntity::BeingEntity():
 	fakeReflectTexture(0)
 {
 	this->SetType(ModelType);
-	partList.Clear();
+
+	for (SizeT i = 0; i < mptCOUNT; i++)
+	{
+		this->bodyPart[i] = 0;
+		this->bodyInstance[i] = 0;
+	}
+	this->changeList.Clear();
+
+	for (SizeT i = 0; i < eptCOUNT; i++)
+	{
+		this->equipPart[i] = 0;
+		this->equipInstance[i] = 0;
+	}
+	this->changeEquipList.Clear();
+	
 }
 
 //------------------------------------------------------------------------------
@@ -62,10 +78,10 @@ BeingEntity::OnActivate()
     GraphicsEntity::OnActivate();
 
     // note: we will remain invalid until at least our model has loaded
-    this->SetValid(false);
+    this->SetValid(true);
     //this->managedModel = ResourceManager::Instance()->CreateManagedResource(Thing::RTTI, this->resId).downcast<ManagedThing>();
 
-	String fakeTex = "mbtex:FakeReflect.dds";
+	String fakeTex = "mtext:FakeReflect.dds";
 	this->fakeReflectTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, fakeTex).downcast<ManagedTexture>();
 }
 
@@ -84,12 +100,6 @@ BeingEntity::OnDeactivate()
 			this->bodyInstance[i]->Discard();
 			this->bodyInstance[i] = 0;
 		}
-	}
-
-	for (SizeT i = 0; i < this->partList.Size(); i++)
-	{
-		ResourceManager::Instance()->DiscardManagedResource(this->partList[i].upcast<ManagedResource>());
-		this->partList[i] = 0;
 	}
 
     // up to parent class
@@ -112,10 +122,13 @@ BeingEntity::OnUpdate()
 	}
 
 	UpdatePart();
+	UpdateEquipPart();
 
 	UpdateAnimation(this->GetTime() / 1000.0f);
 	this->skeletonUpdate = true;
 	//UpdateSkeleton();
+
+	UpdateTransform();
 
 	//ModelEntity::OnUpdate();
 	GraphicsEntity::OnUpdate();
@@ -128,14 +141,79 @@ BeingEntity::OnUpdate()
 void
 BeingEntity::UpdatePart()
 {
-	for (SizeT i = 0; i < this->changeList.Size(); i++)
+	for (SizeT i = 0; i < this->changeList.Size(); )
 	{
 		if (this->changeList[i].isvalid() && this->changeList[i]->GetState() == Resource::Loaded)
 		{
 			this->changeList[i]->Update();
-			ValidateBodyInstance(this->changeList[i], this->changeList[i]->GetPartType());
+			ValidateBodyInstance(this->changeList[i]);
 			
 			this->changeList.EraseIndex(i);
+		}
+		else
+			i++;
+	}
+}
+
+void
+BeingEntity::UpdateEquipPart()
+{
+	for (SizeT i = 0; i < this->changeEquipList.Size(); )
+	{
+		if (this->changeEquipList[i].isvalid() && this->changeEquipList[i]->GetState() == Resource::Loaded)
+		{
+			ValidateEquipInstance(this->changeEquipList[i]);
+			this->changeEquipList.EraseIndex(i);
+		}
+		else
+			i++;
+	}
+}
+
+void
+BeingEntity::ValidateEquipInstance(const Ptr<ManagedEquip>& managed)
+{
+	EquipLinkerType partType = managed->GetPartType();
+	// 释放正在使用的
+	if (this->equipPart[partType].isvalid())
+	{
+		ResourceManager::Instance()->DiscardManagedResource(this->equipPart[partType].upcast<ManagedResource>());
+		this->equipPart[partType] = 0;
+	}
+	if (this->equipInstance[partType].isvalid())
+	{
+		this->equipInstance[partType]->Discard();
+		this->equipInstance[partType] = 0;
+	}
+
+	this->equipPart[partType] = managed;
+
+	const Ptr<Equip> model = managed->GetEquip();
+	n_assert(model->IsLoaded());
+
+	bbox b = this->GetLocalBoundingBox();
+	b.extend(model->GetBoundingBox());
+	this->SetLocalBoundingBox(b);
+
+	this->equipInstance[partType] = model->CreateInstance();
+	this->equipInstance[partType]->SetTransform(this->GetTransform());
+	this->equipInstance[partType]->SetModelEntity(this);
+
+	this->equipInstance[partType]->SetEquip();
+	if (this->skeletonSerializer != NULL)
+	{
+		cSkeletonHierarchy* skeleton = this->skeletonSerializer->getWeaponSkeletonHierarchy((unsigned int)partType);
+		if (skeleton != NULL)
+		{
+			this->equipInstance[partType]->setEquipSkeletonHierarchy(skeleton);
+
+//#ifdef _CHECK_NOUSE_ANIMATION
+//			SkeletonHierarchyUsabilityMap::iterator iter = m_SkeletonHierarchyUnUsedMap.find( pSkeletonHierarchy );
+//			if( iter != m_SkeletonHierarchyUnUsedMap.end() )
+//			{
+//				m_SkeletonHierarchyUnUsedMap.erase( iter );
+//			}
+//#endif
 		}
 	}
 }
@@ -230,8 +308,15 @@ BeingEntity::UpdateAnimation(float fElapsedTime)
 	创建实例，一种类型的部件只存在一个实例，换装的时候会删除原来的实例。
 */
 void
-BeingEntity::ValidateBodyInstance(const Ptr<ManagedBeing>& managed, int partType)
+BeingEntity::ValidateBodyInstance(const Ptr<ManagedBeing>& managed)
 {
+	int partType = managed->GetPartType();
+
+	if (this->bodyPart[partType].isvalid())
+	{
+		ResourceManager::Instance()->DiscardManagedResource(this->bodyPart[partType].upcast<ManagedResource>());
+		this->bodyPart[partType] = 0;
+	}
 	if (this->bodyInstance[partType].isvalid())
 	{
 		this->bodyInstance[partType]->Discard();
@@ -251,7 +336,6 @@ BeingEntity::ValidateBodyInstance(const Ptr<ManagedBeing>& managed, int partType
 
 	// 替换部件显示
 	this->bodyPart[managed->GetPartType()] = managed;
-	this->SetValid(true);
 }
 
 //------------------------------------------------------------------------------
@@ -282,7 +366,6 @@ BeingEntity::SetPart(int partType, /*
 	Ptr<ManagedBeing> partModel = ResourceManager::Instance()->CreateManagedResource(Being::RTTI, modelName).downcast<ManagedBeing>();
 	partModel->SetTextureId(textureId);
 	partModel->SetPartType(partType);
-	this->partList.Append(partModel);
 	this->changeList.Append(partModel);
 	//this->bodyPart[partType] = partModel;	// 加载完后显示
 }
@@ -309,7 +392,6 @@ BeingEntity::ChangePart(int partType, const String& modelName, int textureId)
 		ResourceManager::Instance()->CreateManagedResource(Being::RTTI, modelName).downcast<ManagedBeing>();
 		partModel->SetTextureId(textureId);
 		partModel->SetPartType(partType);
-		this->partList.Append(partModel);
 		this->changeList.Append(partModel);
 	}
 	else
@@ -555,10 +637,10 @@ BeingEntity::CreateAnimationAction( int iActionIndex, float fPlaySpeed,
 }
 
 
-//-----------------------------------------------------------------------------
-// Name: createAnimationActionIntoBlending
-// Desc: create a new animation action by index into blending current animation action and set it's playing speed , fading out time. 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+	create a new animation action by index into blending current animation action and set it's playing speed , fading out time. 
+*/
 int 
 BeingEntity::CreateAnimationActionIntoBlending( int iActionIndex, float fPlaySpeed, float fFadeoutTime )
 {
@@ -587,5 +669,99 @@ BeingEntity::CreateAnimationActionIntoBlending( int iActionIndex, float fPlaySpe
 	return 0;
 }
 
+//------------------------------------------------------------------------------
+/**
+	设置装备
+*/
+void 
+BeingEntity::SetEquipPart(const String& modelName,
+						  EquipLinkerType equipPartType, 
+						  int texId)
+{
+	if (name.Length() <= 0)
+		return;
+
+	if (equipPartType >= eptCOUNT)
+		return;
+
+	EquipLinkerType linkId;
+	if (equipPartType == eptFishingRod)
+		linkId = eptWeaponR;
+	else
+		linkId = equipPartType;
+
+	
+	Ptr<ManagedEquip> partModel = ResourceManager::Instance()->CreateManagedResource(Equip::RTTI, modelName).downcast<ManagedEquip>();
+	partModel->SetPartType(linkId);
+	partModel->SetTextureId(texId);
+	this->changeEquipList.Append(partModel);
+}
+
+void 
+BeingEntity::RemoveEquipPart(EquipLinkerType equipPartType)
+{
+	if (equipPartType >= eptCOUNT)
+		return;
+
+	if (this->equipPart[equipPartType].isvalid())
+	{
+		ResourceManager::Instance()->DiscardManagedResource(this->equipPart[equipPartType].upcast<ManagedResource>());
+		this->equipPart[equipPartType] = 0;
+	}
+	if (this->equipInstance[equipPartType].isvalid())
+	{
+		this->equipInstance[equipPartType]->Discard();
+		this->equipInstance[equipPartType] = 0;
+	}
+}
+
+void 
+BeingEntity::SetEquipActionIndex(int actionIndex)
+{
+	
+}
+
+
+void 
+BeingEntity::SetDirection(float dir)
+{
+	Math::quaternion rotate;
+	rotate.set(0.0f, 1.0f, 0.0f, (dir + 360) % 360) * (N_PI / 180.0f));
+	this->tform.setrotate(rotate);
+}
+
+void 
+BeingEntity::SetPosition(float posX, float posY, float posZ)
+{
+	this->tform.setposition(Math::vector(posX, posY, posZ));
+}
+
+void 
+BeingEntity::SetScale(float scaleX, float scaleY, float scaleZ)
+{
+	this->tform.setscale(Math::vector(scaleX, scaleY, scaleZ));
+}
+
+void
+BeingEntity::UpdateTransform()
+{
+	if (this->tform.isdirty())
+	{
+		this->transform = this->tform.getmatrix();
+		for (SizeT i = 0; i < mptCOUNT; i++)
+		{
+			if (this->bodyPart[i].isvalid())
+				this->bodyPart[i]->SetTransform(this->transform);
+		}
+
+		for (SizeT i = 0; i < eptCOUNT; i++)
+		{
+			if (this->equipPart[i].isvalid())
+			{
+				this->equipPart[i]->SetWorldTransform(this->transform);
+			}
+		}
+	}
+}
 
 } // namespace Graphics
