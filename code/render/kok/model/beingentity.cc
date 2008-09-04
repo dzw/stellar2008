@@ -195,11 +195,11 @@ BeingEntity::ValidateEquipInstance(const Ptr<ManagedEquip>& managed)
 	b.extend(model->GetBoundingBox());
 	this->SetLocalBoundingBox(b);
 
-	this->equipInstance[partType] = model->CreateInstance();
+	this->equipInstance[partType] = model->CreateInstance().downcast<EquipInstance>();
 	this->equipInstance[partType]->SetTransform(this->GetTransform());
 	this->equipInstance[partType]->SetModelEntity(this);
 
-	this->equipInstance[partType]->SetEquip();
+	//this->equipInstance[partType]->SetEquip();
 	if (this->skeletonSerializer != NULL)
 	{
 		cSkeletonHierarchy* skeleton = this->skeletonSerializer->getWeaponSkeletonHierarchy((unsigned int)partType);
@@ -678,7 +678,7 @@ BeingEntity::SetEquipPart(const String& modelName,
 						  EquipLinkerType equipPartType, 
 						  int texId)
 {
-	if (name.Length() <= 0)
+	if (modelName.Length() <= 0)
 		return;
 
 	if (equipPartType >= eptCOUNT)
@@ -726,7 +726,7 @@ void
 BeingEntity::SetDirection(float dir)
 {
 	Math::quaternion rotate;
-	rotate.set(0.0f, 1.0f, 0.0f, (dir + 360) % 360) * (N_PI / 180.0f));
+	rotate.set(0.0f, 1.0f, 0.0f, (((int)dir + 360) % 360) * (N_PI / 180.0f));
 	this->tform.setrotate(rotate);
 }
 
@@ -750,15 +750,15 @@ BeingEntity::UpdateTransform()
 		this->transform = this->tform.getmatrix();
 		for (SizeT i = 0; i < mptCOUNT; i++)
 		{
-			if (this->bodyPart[i].isvalid())
-				this->bodyPart[i]->SetTransform(this->transform);
+			if (this->bodyInstance[i].isvalid())
+				this->bodyInstance[i]->SetTransform(this->transform);
 		}
 
 		for (SizeT i = 0; i < eptCOUNT; i++)
 		{
-			if (this->equipPart[i].isvalid())
+			if (this->equipInstance[i].isvalid())
 			{
-				this->equipPart[i]->SetWorldTransform(this->transform);
+				this->equipInstance[i]->SetWorldTransform(this->transform);
 			}
 		}
 	}

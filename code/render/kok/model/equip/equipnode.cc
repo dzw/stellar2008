@@ -6,6 +6,7 @@
 #include "kok/model/equip/equipnode.h"
 #include "kok/model/equip/equipnodeinstance.h"
 #include "coregraphics/shaderserver.h"
+#include "kok/model/equip/equip.h"
 
 namespace KOK
 {
@@ -72,7 +73,7 @@ EquipNode::CreateNodeInstance()const
 	if (skeleton == NULL)
 	{
 		const Ptr<Equip> equip = this->model.downcast<Equip>();
-		skeleton = equip->GetSkeletonHierarchyRoot()->findSkeletonHierarchy((char*)this->GetName().AsCharPtr());
+		skeleton = equip->GetSkeletonHierarchyRoot()->findSkeletonHierarchy((char*)(char*)this->GetName().Value().AsCharPtr());
 	}
 
 	Ptr<ModelNodeInstance> instance = (ModelNodeInstance*)BeingNodeInstance::Create();
