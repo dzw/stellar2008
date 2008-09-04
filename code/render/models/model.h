@@ -126,6 +126,8 @@ public:
 
 	/// ‰÷»æ∂‘œÛ
 	virtual void Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures);
+	/// get visible model nodes
+	const Util::Array<Ptr<ModelNode> >& GetVisibleModelNodes(ModelNodeType::Code t) const;
 private:
     friend class VisResolver;
     friend class ModelServer;
@@ -138,8 +140,6 @@ private:
     void AttachInstance(const Ptr<ModelInstance>& inst);
     /// remove a ModelInstance from the Model
     void RemoveInstance(const Ptr<ModelInstance>& inst);
-    /// get visible model nodes
-    const Util::Array<Ptr<ModelNode> >& GetVisibleModelNodes(ModelNodeType::Code t) const;
     /// lookup node index by name
     IndexT GetNodeIndexByName(const Util::Atom<Util::String>& name) const;
     /// called by ModelNode as a result of NotifyVisible()

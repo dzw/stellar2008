@@ -197,7 +197,7 @@ TestViewerApplication::Open()
 		IoServer::Instance()->SetAssign(Assign("mitr", "Mesh\\Interior"));	// 空内物
 		IoServer::Instance()->SetAssign(Assign("mclf", "Mesh\\Cliff"));		// 悬崖
 
-		// 生物路径
+		// 生物路径  不需要写这么多路径，一个就够了。(Mesh\\Being\\Player)
 		IoServer::Instance()->SetAssign(Assign("mbfrm", "Mesh\\Being\\Player\\Frame"));		// 框架（包含骨骼、动作等文件）
 		IoServer::Instance()->SetAssign(Assign("mbbdy", "Mesh\\Being\\Player\\Body"));		// 生体或上衣
 		IoServer::Instance()->SetAssign(Assign("mbhar", "Mesh\\Being\\Player\\Hair"));		// 头发
@@ -215,7 +215,9 @@ TestViewerApplication::Open()
 		IoServer::Instance()->SetAssign(Assign("mbmbd", "Mesh\\Being\\Mount\\Body"));		// 坐骑体身
 		IoServer::Instance()->SetAssign(Assign("mbmar", "Mesh\\Being\\Mount\\Armor"));		// 坐骑状备
 
-		IoServer::Instance()->SetAssign(Assign("mbtex", "Mesh\\Being\\Tex"));				// 物生纹理
+		IoServer::Instance()->SetAssign(Assign("mequp", "Mesh\\Equipment"));				// 装备
+
+		IoServer::Instance()->SetAssign(Assign("mtext", "Mesh\\Being\\Tex"));				// 物生纹理
 
 		LoadLPQFile();
 
@@ -238,10 +240,10 @@ TestViewerApplication::Open()
 			{
 			case mptHair:
 			case mptHead:
-				modelName.Format("%s\%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 1);
+				modelName.Format("%s%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 1);
 				break;
 			default:
-				modelName.Format("%s\%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 0);
+				modelName.Format("%s%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 0);
 			}
 			this->beingEntity->SetPart(i, modelName, 1);
 		}

@@ -7,6 +7,9 @@
 #include "resources/managedresource.h"
 #include "resources/resourcemanager.h"
 
+#include "io/lpqfs/lpqarchive.h"
+#include "io/lpqfs/lpqfilesystem.h"
+
 namespace KOK
 {
 
@@ -15,7 +18,8 @@ using namespace CoreGraphics;
 using namespace Util;
 
 cMaterial::cMaterial():
-	m_pTexture(0)
+	m_pTexture(0),
+	fakeReflectTexture(0)
 {
   ZeroMemory( &m_D3DMaterial, sizeof(D3DMATERIAL9));
   //m_pszTextName  = NULL;
@@ -55,6 +59,8 @@ cMaterial::~cMaterial()
 
   if (m_pTexture.isvalid())
     ResourceManager::Instance()->DiscardManagedResource(this->m_pTexture.upcast<ManagedResource>());
+  if (this->fakeReflectTexture.isvalid())
+	ResourceManager::Instance()->DiscardManagedResource(this->fakeReflectTexture.upcast<ManagedResource>());
 }
 
 // 070205 cyhsieh extended material animation
@@ -197,6 +203,23 @@ cMaterial::LoadTexture(const String& filePath)
 	if (filePath.Length() > 0)
 	{
 		m_pTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, filePath).downcast<ManagedTexture>();
+	}
+}
+
+void 
+cMaterial::LoadFakeReflectTexture(const Util::String& filePath)
+{
+	if (this->fakeReflectTexture.isvalid())
+	{
+		ResourceManager::Instance()->DiscardManagedResource(this->fakeReflectTexture.upcast<ManagedResource>());
+		this->fakeReflectTexture = 0;
+	}
+	if (filePath.Length() > 0)
+	{
+		// 先判断反光贴图是否存在，只有存在的时候才加载，这地方有严重效率问题！！
+		const Ptr<IO::LPQArchive>& pack =  IO::LPQFileSystem::Instance()->FindLPQArchiveByName(filePath);
+		if (pack.isvalid())
+			this->fakeReflectTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, filePath).downcast<ManagedTexture>();
 	}
 }
 

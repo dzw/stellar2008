@@ -22,7 +22,9 @@ float4 lightAmibColor[8] : LightAmibColor;
 float4 lightSpecColor[8] : LightSpecColor;
 float4 lightEmisColor[8] : LightEmisColor;
 
-texture tex : DiffMap0;
+texture tex 			 : DiffMap0;
+texture fakeReflect 	 : FakeReflect;
+texture fakeReflectLight : FakeReflectLight;
 
 sampler s1 = 
 sampler_state
@@ -37,10 +39,40 @@ sampler_state
 	AddressV  = Wrap;
 };
 
+sampler fr = 
+sampler_state
+{
+	Texture = <fakeReflect>;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+	MipFilter = LINEAR;
+	AddressU  = Wrap;
+	AddressV  = Wrap;
+};
+
+sampler frl = 
+sampler_state
+{
+	Texture = <fakeReflectLight>;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+	MipFilter = LINEAR;
+	AddressU  = Wrap;
+	AddressV  = Wrap;
+};
+
 struct vsOut
 {
 	float4 pos 		: POSITION;
 	float2 tex		: TEXCOORD0;
+};
+
+// 带假反光
+struct vsOutReflect
+{
+	float4 pos 		: POSITION;
+	float2 tex		: TEXCOORD0;
+	float2 texReflect : TEXCOORD1;
 };
 
 //------------------------------------------------------------------------------
@@ -152,12 +184,81 @@ VSSkinAni(float4 pos 	: POSITION,
 
 //------------------------------------------------------------------------------
 /**
+  骨骼动画+假反光
+*/
+vsOutReflect
+VSSkinAniReflect(float4 pos 	: POSITION,
+				 float3 nor 	: NORMAL,
+				 float2 tex 	: TEXCOORD0,
+				 float4 weights	: BLENDWEIGHT,
+				 float4 indices	: BLENDINDICES
+				 )
+{
+	vsOutReflect vout;
+	
+	float4 skinPos = skinnedPosition(pos, weights, indices, jPalette);
+	float3 skinNormal = skinnedNormal(nor, weights, indices, jPalette);
+	
+	vout.pos = mul(skinPos, mvp);
+	vout.tex = tex;
+	
+	// 计算假反光 贴图球面映射坐标
+	float u = asin(skinNormal.x) / 3.1415 + 0.5;
+	float v = asin(skinNormal.y) / 3.1415 + 0.5;
+	vout.texReflect = float2(u, v);
+	
+    return vout;
+}
+
+//------------------------------------------------------------------------------
+/**
+  武器+假反光
+*/
+vsOutReflect
+VSWeaponReflect(float4 pos 	: POSITION,
+				 float3 nor 	: NORMAL,
+				 float2 tex 	: TEXCOORD0
+				 )
+{
+	vsOutReflect vout;
+	
+	flost4 oNor = mul(nor, world);
+	
+	vout.pos = mul(pos, mvp);
+	vout.tex = tex;
+	
+	// 计算假反光贴图球面映射坐标
+	float u = asin(oNor.x) / 3.1415 + 0.5;
+	float v = asin(oNor.y) / 3.1415 + 0.5;
+	vout.texReflect = float2(u, v);
+	
+    return vout;
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 float4
 PSSample(vsOut vs) : COLOR
 {
     return tex2D(s1, vs.tex);
 }
+
+//------------------------------------------------------------------------------
+/**
+  假反光
+*/
+float4
+PSReflect(vsOutReflect vs) : COLOR
+{
+	float4 c1 = tex2D(frl, vs.texReflect);
+	float4 c2 = tex2D(fr, vs.tex);
+	float4 c3 = tex2D(s1, vs.tex);
+	return (c1 * c2 + c3); //* vs.color; 最后还要乘上顶点颜色(打光)
+	
+	//return tex2D(s1, vs.tex);
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -182,6 +283,7 @@ technique t0<string Mask = "Solid|Tex";>
     }
 }
 
+// 骨骼动画
 technique t0<string Mask = "Solid|Skin";>
 {
     pass p0
@@ -189,5 +291,27 @@ technique t0<string Mask = "Solid|Skin";>
         CullMode     = CCW;        
         VertexShader = compile vs_2_0 VSSkinAni();
         PixelShader  = compile ps_2_0 PSSample();
+    }
+}
+
+// 骨骼动画+假反光
+technique t0<string Mask = "Solid|Skin|Reflect";>
+{
+    pass p0
+    {
+        CullMode     = CCW;        
+        VertexShader = compile vs_2_0 VSSkinAniReflect();
+        PixelShader  = compile ps_2_0 PSReflect();
+    }
+}
+
+// 武器假反光
+technique t0<string Mask = "Solid|Weapon|Reflect";>
+{
+    pass p0
+    {
+        CullMode     = CCW;        
+        VertexShader = compile vs_2_0 VSSkinWeaponReflect();
+        PixelShader  = compile ps_2_0 PSReflect();
     }
 }

@@ -15,6 +15,10 @@
 #include "kok/model/managedbeing.h"
 #include "kok/model/animation/cSkeletonSerializer.h"
 #include "resources/managedtexture.h"
+#include "math/transform44.h"
+
+#include "kok/model/equip/managedequip.h"
+#include "kok/model/equip/equipinstance.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -33,18 +37,19 @@ public:
     virtual void OnActivate();
     virtual void OnDeactivate();
     virtual void OnUpdate();
+	virtual void AttachVisibleInstance();
 
 	void SetSkelectonType(SkeleteonType type);
 
+	/// 骨骼层级
 	void SetPart(int part, const Ptr<ManagedBeing>& model);
 	void SetPart(int partType, const Util::String& modelName, int textureId);
 	void ChangePart(int partType, const Util::String& modelName, int textureId);
 	void CreateSkeleton(BeingType1& beType, const Util::String& skeletonName, const Util::String& path);
-
-	virtual void AttachVisibleInstance();
+	cSkeletonSerializer* GetSkeleton()const;
 	void UpdateSkeleton();
 
-	cSkeletonSerializer* GetSkeleton()const;
+	/// 动画
 	int CreateAnimationAction( int iActionIndex, float fPlaySpeed, 
 		AnimationActionOperation animationActionOperation, float fFadeoutTime );
 	int CreateAnimationActionIntoBlending( int iActionIndex, float fPlaySpeed, float fFadeoutTime );
@@ -53,11 +58,25 @@ public:
 	void SetFakeReflectTexture(const Ptr<Resources::ManagedTexture>& tex);
 	const Ptr<Resources::ManagedTexture>& GetFakeReflectTexture()const;
 
+	/// 装备
+	void SetEquipPart(EquipLinkerType equipPartType, int mainClassId, int subClassId, int modelId, int texId, int effectId);
+	void RemoveEquipPart(EquipLinkerType equipPartType);
+	void SetEquipActionIndex(int actionIndex);
+
+	/// 透明,和camera碰撞时要半透时显示
+	//void SetFadeTypeEasy(float color_dest);
+
+	/// 更新变换矩阵
+	void SetDirection(float dir);
+	void SetPosition(float posX, float posY, float posZ);
+	void SetScale(float scaleX, float scaleY, float scaleZ);
 protected:
 	void UpdateAnimation(float fElapsedTime);
-	/// 更新需要更新的部件
 	void UpdatePart();
-	void ValidateBodyInstance(const Ptr<ManagedBeing>& managed, int partType);
+	void UpdateEquipPart();
+	void UpdateTransform();
+	void ValidateBodyInstance(const Ptr<ManagedBeing>& managed);
+	void ValidateEquipInstance(const Ptr<ManagedEquip>& managed);
 #ifdef _CHECK_NOUSE_ANIMATION
 	//SkeletonHierarchyUsabilityMap    m_SkeletonHierarchyUnUsedMap;	// 用来存没有用到的frame
 	//void getSubMeshUsedSkeletonHierarchy( SkeletonHierarchyUsabilityMap& SkeletonHierarchyUsedMap, cSubMeshSerializer* pSubMeshSerial );
@@ -67,8 +86,6 @@ protected:
 
 	/// 身体部件,如果是坐骑，只需前两个部件,其它都是空着
 	Ptr<ManagedBeing> bodyPart[mptCOUNT];
-	/// 部件列表，加载后不释放，退出时才释放
-	Util::Array<Ptr<ManagedBeing>> partList;
 	/// 需要改变的部件，改变完后从该队列删除，避免不必要的检测
 	Util::Array<Ptr<ManagedBeing>> changeList;
 	/// 实例对象
@@ -115,6 +132,15 @@ protected:
 
 	// 假反光贴图
 	Ptr<Resources::ManagedTexture> fakeReflectTexture;
+
+	/// 装备
+	Ptr<ManagedEquip> equipPart[eptCOUNT];
+	Ptr<EquipInstance> equipInstance[eptCOUNT];
+	/// 换装列表，装备更换时不保存原来的
+	Util::Array<Ptr<ManagedEquip>> changeEquipList;
+
+	/// 变换矩阵
+	Math::transform44 tform;
 };
 
 inline void 

@@ -147,7 +147,7 @@ KOKApplication::Open()
 		IoServer::Instance()->SetAssign(Assign("mbmbd", "Mesh\\Being\\Mount\\Body"));		// 坐骑体身
 		IoServer::Instance()->SetAssign(Assign("mbmar", "Mesh\\Being\\Mount\\Armor"));		// 坐骑状备
 
-		IoServer::Instance()->SetAssign(Assign("mbtex", "Mesh\\Being\\Tex"));				// 物生纹理
+		IoServer::Instance()->SetAssign(Assign("mtext", "Mesh\\Being\\Tex"));				// 物生纹理
 
 		LoadLPQFile();
 

@@ -2897,6 +2897,50 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="equip"
+					>
+					<File
+						RelativePath="..\render\kok\model\equip\equip.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equip.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equipinstance.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equipinstance.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equipnode.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equipnode.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equipnodeinstance.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\equipnodeinstance.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\managedequip.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\equip\managedequip.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="load"
