@@ -53,6 +53,16 @@ StaticQuadtreeStageBuilder::UpdateBoundingBox()
 
 //------------------------------------------------------------------------------
 /**
+	Çå³ýËÄ²æÊ÷
+*/
+void 
+StaticQuadtreeStageBuilder::ClearBoundingBox()
+{
+	this->quadTree.ClearAllBoundingBox();
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 void
 StaticQuadtreeStageBuilder::BuildStage(const Ptr<Stage>& stage)
@@ -64,9 +74,9 @@ StaticQuadtreeStageBuilder::BuildStage(const Ptr<Stage>& stage)
 void
 StaticQuadtreeStageBuilder::AttachToCell(const Ptr<Cell>& cell)
 {
-	Ptr<Graphics::Cell> rootCell = this->CreateQuadTreeCell(0, 0, 0, 0);
-	rootCell->OnAttachToStage(cell->GetStage());
-	cell->AttachChildCell(rootCell);
+	this->rootCell = this->CreateQuadTreeCell(0, 0, 0, 0);
+	this->rootCell->OnAttachToStage(cell->GetStage());
+	cell->AttachChildCell(this->rootCell);
 }
 
 //------------------------------------------------------------------------------

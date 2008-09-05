@@ -86,6 +86,8 @@ protected:
 	SizeT vertexStart;
 	SizeT indexStart;
 	CoreGraphics::PrimitiveGroup group;
+	/// 每帧更新一次索引缓冲
+	bool updateIndexBuffer;
 };
 
 inline DWORD

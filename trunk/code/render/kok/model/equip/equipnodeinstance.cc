@@ -17,7 +17,7 @@
 
 namespace KOK
 {
-ImplementClass(KOK::EquipNodeInstance, 'BEIN', KOK::KokShapeNodeInstance);
+ImplementClass(KOK::EquipNodeInstance, 'EQIN', KOK::KokShapeNodeInstance);
 
 using namespace Models;
 using namespace CoreGraphics;

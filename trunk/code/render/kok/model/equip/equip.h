@@ -32,7 +32,7 @@ public:
 	virtual bool SetupFromStream(const Ptr<IO::Stream>& stream);
 	int LoadAnimation( const char* pLoadFileName );
 
-	cSkeletonHierarchy* GetSkeletonHierarchyRoot()const;
+	cSkeletonHierarchy* GetSkeletonHierarchyRoot();
 	cAnimation* GetAnimRoot()const;
 	cAnimationActionInfoGroup* GetActionInfoGroup();
 private:
@@ -50,19 +50,19 @@ private:
 	cAnimation*   m_pAnimRoot;
 };
 
-cSkeletonHierarchy* 
-Equip::GetSkeletonHierarchyRoot()const
+inline cSkeletonHierarchy* 
+Equip::GetSkeletonHierarchyRoot()
 {
 	return this->m_pSkeletonHierarchyRoot;
 }
 
-cAnimation* 
+inline cAnimation* 
 Equip::GetAnimRoot()const
 {
 	return this->m_pAnimRoot;
 }
 
-cAnimationActionInfoGroup* 
+inline cAnimationActionInfoGroup* 
 Equip::GetActionInfoGroup()
 {
 	return &this->m_AnimationActionInfoGroup;

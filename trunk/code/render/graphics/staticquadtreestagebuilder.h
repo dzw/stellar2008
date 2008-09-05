@@ -43,14 +43,23 @@ public:
     /// set quad tree depth and boudning box
     void SetQuadTreeSettings(uchar depth, const Math::bbox& worldBBox);
 	void UpdateBoundingBox();
+	void ClearBoundingBox();
 
+	const Math::bbox& GetRootBoundingBox()const;
 private:
     /// create a quad tree and its children, recursively
     Graphics::Cell* CreateQuadTreeCell(Graphics::Cell* parentCell, uchar curLevel, ushort curCol, ushort curRow);
 
     int numCellsBuilt;
     Util::QuadTree<Cell> quadTree;
+	Ptr<Graphics::Cell> rootCell;
 };
+
+inline const Math::bbox& 
+StaticQuadtreeStageBuilder::GetRootBoundingBox()const
+{
+	return this->rootCell->GetBoundingBox();
+}
 
 } // namespace Graphics
 //------------------------------------------------------------------------------

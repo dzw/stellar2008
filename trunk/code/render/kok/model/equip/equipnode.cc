@@ -10,7 +10,7 @@
 
 namespace KOK
 {
-ImplementClass(KOK::EquipNode, 'BENE', KOK::KokShapeNode);
+ImplementClass(KOK::EquipNode, 'EQNE', KOK::KokShapeNode);
 
 using namespace IO;
 using namespace Util;
@@ -70,13 +70,13 @@ EquipNode::UnloadResources()
 Ptr<ModelNodeInstance> 
 EquipNode::CreateNodeInstance()const
 {
-	if (skeleton == NULL)
+	/*if (skeleton == NULL)
 	{
 		const Ptr<Equip> equip = this->model.downcast<Equip>();
-		skeleton = equip->GetSkeletonHierarchyRoot()->findSkeletonHierarchy((char*)(char*)this->GetName().Value().AsCharPtr());
-	}
+		skeleton = equip->GetSkeletonHierarchyRoot()->findSkeletonHierarchy((char*)this->GetName().Value().AsCharPtr());
+	}*/
 
-	Ptr<ModelNodeInstance> instance = (ModelNodeInstance*)BeingNodeInstance::Create();
+	Ptr<ModelNodeInstance> instance = (ModelNodeInstance*)EquipNodeInstance::Create();
 	return instance;
 }
 

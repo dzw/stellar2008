@@ -99,6 +99,7 @@ TerrainEntity::OnUpdate()
 	{
 		this->terrain = this->managedModel.downcast<ManagedTerrain>()->GetTerrain();
 		this->terrain->CreateQuadTree(this->stage->GetRootCell());
+		this->SetLocalBoundingBox(this->terrain->GetBoundingBox());
 	}
 }
 

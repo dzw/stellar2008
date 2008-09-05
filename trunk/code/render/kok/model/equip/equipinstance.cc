@@ -53,7 +53,7 @@ EquipInstance::OnAttachToModel(const Ptr<Model>& model)
 		if (name.CheckStringExist("m_shadow") ||		// 刀光用顶点数据
 			name.CheckStringExist("e_flame") ||			// 
 			name.CheckStringExist("b_00") ||			// 立方体，控制特效范围
-			modelNode.downcast<EquipNode>()->GetMeshType() > 0)
+			modelNode.downcast<EquipNode>()->GetEffectType() > 0)
 			continue;
 
 		Ptr<ModelNodeInstance> nodeInstance = modelNode->CreateNodeInstance();

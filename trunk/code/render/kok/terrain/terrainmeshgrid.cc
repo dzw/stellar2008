@@ -53,7 +53,7 @@ TerrainMeshGrid::CalcHeightWithCliffWater(int iMeshNodeX,int iMeshNodeZ,float fD
 			( m_MeshNodes[iMeshNodeID].cCliffLevel - m_MeshNodes[iMeshNodeID].cWaterLevel ) * CLIFF_HEIGHT;
 		if( m_MeshNodes[iMeshNodeID].cTransLevel == 2 )
 		{
-			// 弊℡いみ翴
+			// 在斜坡中心点
 			fHigh0 += fTransHigh;
 		}
 
@@ -62,7 +62,7 @@ TerrainMeshGrid::CalcHeightWithCliffWater(int iMeshNodeX,int iMeshNodeZ,float fD
 			( m_MeshNodes[iMeshNodeID].cCliffLevel - m_MeshNodes[iMeshNodeID].cWaterLevel ) * CLIFF_HEIGHT;
 		if( m_MeshNodes[iMeshNodeID].cTransLevel == 2 )
 		{
-			// 弊℡いみ翴
+			// 在斜坡中心点
 			fHigh1 += fTransHigh ;
 		}
 
@@ -71,7 +71,7 @@ TerrainMeshGrid::CalcHeightWithCliffWater(int iMeshNodeX,int iMeshNodeZ,float fD
 			( m_MeshNodes[iMeshNodeID].cCliffLevel - m_MeshNodes[iMeshNodeID].cWaterLevel ) * CLIFF_HEIGHT;
 		if( m_MeshNodes[iMeshNodeID].cTransLevel == 2 )
 		{
-			// 弊℡いみ翴
+			// 在斜坡中心点
 			fHigh2 += fTransHigh ;
 		}
 
@@ -84,7 +84,7 @@ TerrainMeshGrid::CalcHeightWithCliffWater(int iMeshNodeX,int iMeshNodeZ,float fD
 			( m_MeshNodes[iMeshNodeID].cCliffLevel - m_MeshNodes[iMeshNodeID].cWaterLevel ) * CLIFF_HEIGHT;
 		if( m_MeshNodes[iMeshNodeID].cTransLevel == 2 )
 		{
-			// 弊℡いみ翴
+			// 在斜坡中心点
 			fHigh1 += fTransHigh ;
 		}
 
@@ -93,7 +93,7 @@ TerrainMeshGrid::CalcHeightWithCliffWater(int iMeshNodeX,int iMeshNodeZ,float fD
 			( m_MeshNodes[iMeshNodeID].cCliffLevel - m_MeshNodes[iMeshNodeID].cWaterLevel ) * CLIFF_HEIGHT;
 		if( m_MeshNodes[iMeshNodeID].cTransLevel == 2 )
 		{
-			// 弊℡いみ翴
+			// 在斜坡中心点
 			fHigh2 += fTransHigh ;
 		}
 
@@ -102,7 +102,7 @@ TerrainMeshGrid::CalcHeightWithCliffWater(int iMeshNodeX,int iMeshNodeZ,float fD
 			( m_MeshNodes[iMeshNodeID].cCliffLevel - m_MeshNodes[iMeshNodeID].cWaterLevel ) * CLIFF_HEIGHT;
 		if( m_MeshNodes[iMeshNodeID].cTransLevel == 2 )
 		{
-			// 弊℡いみ翴
+			// 在斜坡中心点
 			fHigh3 += fTransHigh ;
 		}
 

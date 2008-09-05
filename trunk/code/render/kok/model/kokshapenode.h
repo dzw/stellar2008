@@ -70,7 +70,7 @@ public:
 	const Ptr<CoreGraphics::ShaderInstance>& GetShaderInstance()const;
 	const Ptr<CoreGraphics::Mesh>& GetMesh()const;
 
-	int GetMeshType()const;
+	int GetEffectType()const;
 protected:
 	friend class Thing;
 	friend class BeingNode;
@@ -121,6 +121,12 @@ protected:
 	/// 子模型类型
 	EThingSubMeshSpecialType modelType;
 };
+
+inline int 
+KokShapeNode::GetEffectType()const
+{
+	return this->effectType;
+}
 
 inline cSkinWeights* 
 KokShapeNode::GetSkinWeights()const

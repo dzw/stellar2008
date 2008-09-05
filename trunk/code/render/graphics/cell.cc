@@ -7,6 +7,10 @@
 #include "graphics/stage.h"
 #include "graphics/stagebuilder.h"
 
+#if NEBULA3_DEBUG
+#include "coregraphics/shaperenderer.h"
+#endif
+
 namespace Graphics
 {
 ImplementClass(Graphics::Cell, 'GRCL', Core::RefCounted);
@@ -392,11 +396,21 @@ Cell::UpdateNumEntitiesInHierarchy(GraphicsEntity::Type type, int num)
 void 
 Cell::OnRenderDebug(/*const bbox& b*/)
 {
+#if NEBULA3_DEBUG
 	IndexT childIndex;
 	SizeT numChildren = this->childCells.Size();
 	for (childIndex = 0; childIndex < numChildren; childIndex++)
 	{
 		this->childCells[childIndex]->OnRenderDebug();
 	}
+
+	if (numChildren > 0)
+		return;
+
+	float4 color(0.0f, 0.0f, 1.0f, 0.3f);
+	matrix44 shapeTransform = this->boundingBox.to_matrix44();
+	CoreGraphics::ShapeRenderer::Instance()->DrawShape(shapeTransform, CoreGraphics::ShapeRenderer::Box, color);
+#endif
 }
+
 } // namespace Graphics

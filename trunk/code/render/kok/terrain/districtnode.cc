@@ -41,7 +41,8 @@ DistrictNode::DistrictNode():
 	drawTable(0),
 	shadowIndexSize(0),
 	vertexStart(-1),
-	indexStart(-1)
+	indexStart(-1),
+	updateIndexBuffer(false)
 {
 	//int disOffsetZ = this->disZ * DISTRICT_VERTS;	// 计算格子的开始位置(即开始格子在地图上的偏移位置)
 	//int disOffsetX = this->disX * DISTRICT_VERTS;	
@@ -220,8 +221,8 @@ DistrictNode::UpdateDrawTable(TerrainMeshData** pMeshDatas)
 
 	iDrawVertexSize = 0 ;
 
-	this->boundingBox.pmin = vector(9999.0f, 9999.0f, 9999.0f);
-	this->boundingBox.pmax = vector(-9999.0f, -9999.0f, -9999.0f);
+	this->boundingBox.pmin = point(N_MAXREAL, N_MAXREAL, N_MAXREAL);
+	this->boundingBox.pmax = point(N_MINREAL, N_MINREAL, N_MINREAL);
 
 	for( i = 0; i < iSize; i++ ) // 縥计
 	{
@@ -326,22 +327,22 @@ void
 DistrictNode::NotifyVisible(IndexT frameIndex)
 {
 	this->frameIndex = frameIndex;
-
-	Reset();
+	this->updateIndexBuffer = true;
+	//Reset();
 }
 
 void 
 DistrictNode::Reset()
 {
-	if (vertexStart != -1)
-		return;
-
-	const Ptr<VertexChunkPool>& pool = TerrainEntity::Instance()->GetVertexChunkPool();
-	if (pool->Full())
-		this->model.downcast<Terrain>()->UpdateVertexPool();
-	
-	vertexStart = pool->Alloc((void*)vertices);
-	n_assert(vertexStart != -1);
+	if (vertexStart == -1)
+	{
+		const Ptr<VertexChunkPool>& pool = TerrainEntity::Instance()->GetVertexChunkPool();
+		if (pool->Full())
+			this->model.downcast<Terrain>()->UpdateVertexPool();
+		
+		vertexStart = pool->Alloc((void*)vertices);
+		n_assert(vertexStart != -1);
+	}
 
 	// 填充顶点
 	/*const Ptr<VertexBufferPool>& vbPool = TerrainEntity::Instance()->terrMeshPool->GetVertexPool();
@@ -355,6 +356,11 @@ DistrictNode::Reset()
 		Memory::Copy(vertices, ptr, sizeof(TileMesh)*vertexSize);
 		vbPool->Unlock();
 	}*/
+
+	/// 每帧只需更新一次,因为索引数据每个district都不相同，所以只能每帧都更新一次，不过效率基本上没影响
+	if (!updateIndexBuffer)
+		return;
+	this->updateIndexBuffer = false;
 
 	// index buffer
 	const Ptr<IndexBufferPool>& ibPool = TerrainEntity::Instance()->GetIndexBufferPool();
@@ -378,6 +384,8 @@ DistrictNode::SetRenderGroup(int pass, int texId)
 		!drawTable[pass].Texture || 
 		(drawTable[pass].Texture - 1) != texId)
 		return false; 
+
+	Reset();
 
 	group.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
 	group.SetBaseVertex(vertexStart/64);
