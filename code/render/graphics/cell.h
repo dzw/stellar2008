@@ -83,9 +83,10 @@ public:
 
     /// recursively create visibility links between observers and observed entities
     virtual void UpdateLinks(const Ptr<GraphicsEntity>& observerEntity, uint entityTypeMask, GraphicsEntity::LinkType linkType);
+	
 	///
 	virtual void OnRenderDebug(/*const bbox& b*/);
-	
+
 	virtual Ptr<Cell> FindEntityContainmentCell(const Math::bbox& entityBox);
 
 	void SetCellId(int id);

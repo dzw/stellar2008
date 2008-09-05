@@ -51,6 +51,8 @@ public:
 	void UpdateBoundingBox();
 	/// 重新设置叶节点BOUNDINGBOX，需调用UpdateBoundingBox，更新整个层次
 	void SetLeafNodeBoundingBox(int col, int row, const Math::bbox& b);
+	/// 清除所有node的boundingbox
+	void ClearAllBoundingBox();
 
     /// node in quad tree
     class Node
@@ -78,6 +80,8 @@ public:
         void SetDataPtr(TYPE* elem);
 		/// 如果需要修改BOUNDINGBOX，更新所有NODE
 		void UpdateBoundingBox(QuadTree* tree, Math::bbox& b);
+		/// 清空boundingbox
+		void ClearBoundingBox();
 
     private:
         friend class QuadTree;
@@ -322,6 +326,19 @@ QuadTree<TYPE>::Insert(TYPE* elm, const Math::bbox& box)
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+	手动设置每个node的boundingbox时需要先清空所有node的box,
+	不然更新上一级boundingbox时会出问题
+*/
+template<class TYPE> void
+QuadTree<TYPE>::ClearAllBoundingBox()
+{
+	int num = GetNumNodes(treeDepth);
+	for (int i = 0; i < num; i++)
+		this->nodeArray[i].ClearBoundingBox();
+}
+
 template<class TYPE> void
 QuadTree<TYPE>::SetLeafNodeBoundingBox(int col, int row, const Math::bbox& b)
 {
@@ -372,6 +389,13 @@ QuadTree<TYPE>::Node::UpdateBoundingBox(QuadTree* tree, Math::bbox& b)
 		}
 	}
 	b = this->box;
+}
+
+template<class TYPE> void
+QuadTree<TYPE>::Node::ClearBoundingBox()
+{
+	this->box.pmin = point(N_MAXREAL, N_MAXREAL, N_MAXREAL);
+	this->box.pmax = point(N_MINREAL, N_MINREAL, N_MINREAL);
 }
 
 //------------------------------------------------------------------------------

@@ -79,7 +79,7 @@ KOKApplication::Open()
 		GraphicsServer* gfxServer = GraphicsServer::Instance();
 
 		this->stage = gfxServer->CreateStage(StringAtom("DefaultStage"), SimpleStageBuilder::Create());
-		this->dxutCameraUtil.Setup(Math::vector(0, 0, 0/*581, 324, 1026*/)/*vector(18468.0f, 177.0f, 14292.66f)*/);
+		this->dxutCameraUtil.Setup(Math::vector(0, 0, 0/*-600, 180, 76*/)/*vector(18468.0f, 177.0f, 14292.66f)*/);
 		this->cameraEntity = CameraEntity::Create();
 		cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
 		this->stage->AttachEntity(cameraEntity.upcast<GraphicsEntity>());
@@ -100,9 +100,9 @@ KOKApplication::Open()
 
 		meshMapper = SimpleResourceMapper::Create();
 		//meshMapper->SetPlaceholderResourceId(ResourceId("msh:system/placeholder_s_0.nvx2"));
-		meshMapper->SetResourceClass(KokModel::RTTI);
+		meshMapper->SetResourceClass(Being::RTTI);
 		meshMapper->SetResourceLoaderClass(StreamTerrainLoader::RTTI);
-		meshMapper->SetManagedResourceClass(ManagedKokModel::RTTI);
+		meshMapper->SetManagedResourceClass(ManagedBeing::RTTI);
 		ResourceManager::Instance()->AttachMapper(meshMapper.upcast<ResourceMapper>());
 
 		meshMapper = SimpleResourceMapper::Create();
@@ -149,6 +149,8 @@ KOKApplication::Open()
 
 		IoServer::Instance()->SetAssign(Assign("mtext", "Mesh\\Being\\Tex"));				// 物生纹理
 
+		IoServer::Instance()->SetAssign(Assign("mequp", "Mesh\\Equipment"));				// 装备
+
 		LoadLPQFile();
 
 		this->view->SetFrameShader(Frame::FrameServer::Instance()->GetFrameShaderByName(ResourceId("DX9Sample")));
@@ -158,14 +160,14 @@ KOKApplication::Open()
 		this->terrainServer->LoadTerrain(ResourceId("map\\10300.sce"));*/
 
 		// 地形
-		/*this->terrainEntity = TerrainEntity::Create();
+		this->terrainEntity = TerrainEntity::Create();
 		this->terrainEntity->SetResourceId(ResourceId("map\\10300.sce"));
-		this->stage->AttachEntity(this->terrainEntity.upcast<GraphicsEntity>());*/
+		this->stage->AttachEntity(this->terrainEntity.upcast<GraphicsEntity>());
 
 		// 地物模型
-		this->thingEntity = ThingEntity::Create();
+		/*this->thingEntity = ThingEntity::Create();
 		this->thingEntity->SetResourceId(ResourceId("mbld:m_hbs000.obj"));
-		this->stage->AttachEntity(this->thingEntity.upcast<GraphicsEntity>());
+		this->stage->AttachEntity(this->thingEntity.upcast<GraphicsEntity>());*/
 
 		// 动态模型
 		/*this->beingEntity = BeingEntity::Create();

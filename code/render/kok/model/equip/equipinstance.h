@@ -108,31 +108,37 @@ protected:
 	float                 m_fAnimElapsedTime;                         // 动画经过时间
 };
 
-void 
+inline void 
+EquipInstance::setEquipSkeletonHierarchy( cSkeletonHierarchy* pSkeletonHierarchy )
+{
+	m_pSkeletonHierarchy = pSkeletonHierarchy;
+}
+
+inline void 
 EquipInstance::SetShowWeaponRibbon( bool bShow )
 {
 	m_bShowWeaponRibbon = bShow; 
 }
 
-void 
+inline void 
 EquipInstance::SetForceHide( bool bHide ) 
 {
 	m_bForseHide = bHide; 
 }         
 
-void 
+inline void 
 EquipInstance::SetActionIndex( int iActionIndex )
 {
 	m_iActionIndex = iActionIndex;
 }
 
-BYTE 
+inline BYTE 
 EquipInstance::GetPartID()
 {
 	return m_byPartID; 
 }
 
-BYTE 
+inline BYTE 
 EquipInstance::GetLinkID()
 { 
 	return m_byLinkID; 

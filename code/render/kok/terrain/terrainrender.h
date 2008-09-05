@@ -25,6 +25,7 @@ public:
 
     /// 
     virtual bool ApplySharedState(const Ptr<Resources::ManagedTexture>& tex);
+	void ApplyTransform();
     /// 
     const Ptr<CoreGraphics::ShaderInstance>& GetShaderInstance() const;
 	void Init();

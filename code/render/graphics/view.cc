@@ -13,6 +13,10 @@
 #include "lighting/shadowserver.h"
 #include "coregraphics/debugview.h"
 
+#if NEBULA3_DEBUG
+#include "graphics/cell.h"
+#endif
+
 namespace Graphics
 {
 ImplementClass(Graphics::View, 'GRVW', Core::RefCounted);
@@ -220,6 +224,7 @@ View::Render()
 void
 View::RenderDebug()
 {
+#if NEBULA3_DEBUG
     n_assert(this->frameShader.isvalid());
 
     // setup global transforms...
@@ -237,7 +242,12 @@ View::RenderDebug()
         const Ptr<GraphicsEntity>& curEntity = visLinks[i];
         curEntity->OnRenderDebug();
     }
+
+	// cell debug
+	this->stage->GetRootCell()->OnRenderDebug();
+
     ShapeRenderer::Instance()->End();
+#endif
 }
 
 //------------------------------------------------------------------------------

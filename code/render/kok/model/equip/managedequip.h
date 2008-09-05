@@ -45,37 +45,37 @@ ManagedEquip::GetEquip() const
     return this->GetResource().downcast<Equip>();
 }
 
-void 
+inline void 
 ManagedEquip::SetPartType(EquipLinkerType& link)
 {
 	this->linkId = link;
 }
 
-EquipLinkerType 
+inline EquipLinkerType 
 ManagedEquip::GetPartType()const
 {
 	return this->linkId;
 }
 
-void 
+inline void 
 ManagedEquip::SetTextureId(int texId)
 {
 	this->textureId = texId;
 }
 
-int 
+inline int 
 ManagedEquip::GetTextureId()const
 {
 	return this->textureId;
 }
 
-void 
+inline void 
 ManagedEquip::SetWeaponRibbonLerp(bool b)
 {
 	this->weaponribbonLerp = b;
 }
 
-bool 
+inline bool 
 ManagedEquip::GetWeaponRibbonLerp()const
 {
 	return this->weaponribbonLerp;

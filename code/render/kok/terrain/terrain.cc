@@ -56,6 +56,20 @@ Terrain::~Terrain()
 	this->terrMeshGrid = 0;
 	this->cliffTable = 0;
 	this->terrRender = 0;
+
+	if (this->thingTex)
+	{
+		for (SizeT i = 0; i < this->terrInfo.GetTotalTileCount(); i++)
+			n_delete(this->thingTex[i]);
+		n_delete_array(this->thingTex);
+	}
+
+	if (this->meshData)
+	{
+		for (SizeT i = 0; i < this->terrInfo.GetTotalTileCount(); i++)
+			n_delete(this->meshData[i]);
+		n_delete_array(this->meshData);
+	}
 }
 
 Ptr<ModelInstance> 
@@ -99,7 +113,7 @@ Terrain::ComputeTileMesh()
 	float uvScale = (512.0f - 2.0f*shadowOffset) / (shadowSize * 512.0f);
 	float uvOffsetX, uvOffsetZ;
 
-	this->tilePosOffset = 0;
+	//this->tilePosOffset = 0;
 
 	// 阴影为8X8个District使用一张贴图，贴图轴内缩shadowOffset个pixel值
 	for (SizeT j = 0; j < this->terrInfo.GetTileCountX(); j++)
@@ -203,11 +217,11 @@ Terrain::SetMapSize(SizeT mapSize)
 
 	this->tilePosOffset = ((this->tileMeshScale - 1.0f) * COMP * this->terrInfo.GetTileCountX()) * 0.5f;
 
-	this->thingTex = new ThingTex*[this->terrInfo.GetTotalTileCount()];
+	this->thingTex = n_new_array(ThingTex*, this->terrInfo.GetTotalTileCount());
 	n_assert(this->thingTex != NULL);
 	for (SizeT i = 0; i < this->terrInfo.GetTotalTileCount(); i++)
 	{
-		this->thingTex[i] = new ThingTex;
+		this->thingTex[i] = n_new(ThingTex);
 		n_assert(this->thingTex[i]);
 	}
 
@@ -215,22 +229,22 @@ Terrain::SetMapSize(SizeT mapSize)
 		this->terrMeshGrid = TerrainMeshGrid::Create();
 	this->terrMeshGrid->Init(this->terrInfo.GetGridCountX(), this->terrInfo.GetTotalGridCount());
 
-	this->meshData = new TerrainMeshData*[this->terrInfo.GetTotalTileCount()];
+	this->meshData = n_new_array(TerrainMeshData*, this->terrInfo.GetTotalTileCount());
 	if (this->meshData)
 	{
 		for (SizeT i = 0; i < this->terrInfo.GetTotalTileCount(); i++)
 		{
-			this->meshData[i] = new TerrainMeshData;
+			this->meshData[i] = n_new(TerrainMeshData);
 		}
 	}
 
-	bbox box;
-	vector min, max;
-	min.set(-tilePosOffset, -5000.0f, -tilePosOffset);
-	max.set(scalar(GetMapWide() * GetTileSize() - tilePosOffset), 5000.0f, scalar(GetMapWide() * GetTileSize() - tilePosOffset));
-	box.pmin = min;
-	box.pmax = max;
-	this->SetBoundingBox(box);
+	//bbox box;
+	//vector min, max;
+	//min.set(-tilePosOffset, -5000.0f, -tilePosOffset);
+	//max.set(scalar(GetMapWide() * GetTileSize() - tilePosOffset), 5000.0f, scalar(GetMapWide() * GetTileSize() - tilePosOffset));
+	//box.pmin = min;
+	//box.pmax = max;
+	//this->SetBoundingBox(box);
 }
 
 Ptr<DistrictNode>
@@ -269,9 +283,12 @@ Terrain::CreateQuadTree(const Ptr<Cell>& root)
 
 	Ptr<StaticQuadtreeStageBuilder> quadTreeStageBuilder = StaticQuadtreeStageBuilder::Create();    
 	bbox levelBox;
-	levelBox.pmin = point(0, 0, 0);
-	levelBox.pmax = point(1/*32*8*10*/, 1.0f, 1/*32*8*10*/);
+	/*levelBox.pmin = point(-100000, -100000, -100000);
+	levelBox.pmax = point(-10000, -10000, -10000);*/
+	levelBox.pmin = point(N_MAXREAL, N_MAXREAL, N_MAXREAL);
+	levelBox.pmax = point(N_MINREAL, N_MINREAL, N_MINREAL);
 	quadTreeStageBuilder->InitQuadtree(levelBox, 6);
+	quadTreeStageBuilder->ClearBoundingBox();
 
 	for (SizeT i = 0; i < this->nodes.Size(); i++)
 	{
@@ -291,6 +308,8 @@ Terrain::CreateQuadTree(const Ptr<Cell>& root)
 		if (c.isvalid())
 			c->SetCellId(i);
 	}
+
+	this->SetBoundingBox(quadTreeStageBuilder->GetRootBoundingBox());
 }
 
 void 
@@ -404,6 +423,7 @@ Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode
 	RenderDevice::Instance()->SetVertexBuffer(chunkPool->GetBuffer());
 	RenderDevice::Instance()->SetIndexBuffer(indexPool->GetBuffer());
 
+	terrRender->ApplyTransform();
 	for (SizeT i = 0; i < 4; i++)
 	{
 		mask.Format("Solid|KOK%d", i+1);

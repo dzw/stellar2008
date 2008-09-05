@@ -9,4 +9,10 @@ namespace KOK
 {
 ImplementClass(KOK::ManagedEquip, 'MDEQ', Models::ManagedModel);
 
+ManagedEquip::ManagedEquip():
+	textureId(-1),
+	weaponribbonLerp(false)
+{
+}
+
 } 
