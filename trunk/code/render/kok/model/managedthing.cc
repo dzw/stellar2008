@@ -8,4 +8,5 @@
 namespace KOK
 {
 ImplementClass(KOK::ManagedThing, 'MDTG', Models::ManagedModel);
+
 } 

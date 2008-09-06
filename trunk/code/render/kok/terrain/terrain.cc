@@ -24,6 +24,8 @@
 #include "coregraphics/renderdevice.h"
 #include "coregraphics/debugview.h"
 
+#include "graphics/stage.h"
+
 namespace KOK
 {
 ImplementClass(KOK::Terrain, 'TERN', Models::Model);
@@ -579,6 +581,16 @@ Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode
 	//	//if (LightingMode::None == this->lightingMode)
 	//						
 	//}
+}
+
+void 
+Terrain::AttachThingsToStage(const Ptr<Graphics::Stage>& stage)
+{
+	if (!stage.isvalid())
+		return;
+
+	for (SizeT i = 0; i < this->thingEntitys.Size(); i++)
+		stage->AttachEntity(this->thingEntitys[i].upcast<GraphicsEntity>());
 }
 
 } // namespace Models

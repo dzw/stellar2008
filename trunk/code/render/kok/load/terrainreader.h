@@ -16,6 +16,20 @@
 namespace KOK
 {
 
+struct sThingModelData
+{
+	DWORD dwThingModelID;
+	Util::String szModelName;   // 模型档名
+	int  iClass;
+	int  iType;
+
+	sThingModelData(){
+		dwThingModelID  = 0 ;
+		iClass      = 0 ;
+		iType       = 0 ;
+	};
+};
+
 class TerrainReader : public Models::ModelReader
 {
     DeclareClass(TerrainReader);
@@ -39,6 +53,7 @@ private:
 	void LoadModels(/*const Ptr<Stream>& stream*/);
 	/// 添加声音
 	void LoadAudios(/*const Ptr<Stream>& stream*/);
+	Ptr<ThingEntity> AddThing(const sThingModelData& model);
 
 	BYTE* mapBuffer;
 	Resources::ResourceId modelResId;

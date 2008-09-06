@@ -162,7 +162,8 @@ ModelEntity::OnRenderDebug()
 void 
 ModelEntity::AttachVisibleInstance()
 {
-	VisResolver::Instance()->AttachVisibleModelInstance(this->modelInstance);
+	if (this->modelInstance.isvalid())
+		VisResolver::Instance()->AttachVisibleModelInstance(this->modelInstance);
 }
 
 

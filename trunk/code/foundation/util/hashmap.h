@@ -108,6 +108,8 @@ HashMap<KEYTYPE, VALUETYPE, COMPARE>::operator=(const HashMap<KEYTYPE, VALUETYPE
 template<class KEYTYPE, class VALUETYPE, class COMPARE> const VALUETYPE&
 HashMap<KEYTYPE, VALUETYPE, COMPARE>::operator[](const KEYTYPE& key) const
 {
+	//return this->pairs[key];
+
 	ConstTypeIter it = this->pairs.find(key);
 	if (it == this->pairs.end())
 		n_assert(0);

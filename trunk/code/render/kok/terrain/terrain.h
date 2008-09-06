@@ -15,6 +15,7 @@
 #include "kok/terrain/districtnode.h"
 #include "kok/terrain/terrainrender.h"
 #include "graphics/cell.h"
+#include "kok/model/thingentity.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -108,6 +109,8 @@ public:
 
 	void AddVisibleDistrict(IndexT id);
 	void UpdateRenderList(IndexT frameIndex);
+
+	void AttachThingsToStage(const Ptr<Graphics::Stage>& stage);
 protected:
 	friend class TerrainReader;
 
@@ -139,6 +142,8 @@ protected:
 	/// ‰÷»æ≈≈–Ú∂”¡–
 	Util::Array<DrawTile>		renderLayer[4];
 	DWORD						frameIndex;
+
+	Util::Array<Ptr<ThingEntity>> thingEntitys;
 };
 
 inline const Ptr<TerrainMeshGrid>& 

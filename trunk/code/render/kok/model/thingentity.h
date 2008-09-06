@@ -12,6 +12,14 @@
 //------------------------------------------------------------------------------
 namespace KOK
 {
+
+/// 保存每个节点对应的纹理编号，没加载资源前需要保存这些编号，加载的时候设置对应Node
+struct NodeTextureParm 
+{
+	int nodeId;
+	int texId;
+};
+
 class ThingEntity : public Graphics::ModelEntity
 {
 public:
@@ -31,9 +39,19 @@ public:
     virtual void OnDeactivate();
     virtual void OnUpdate();
 
+	virtual void AttachVisibleInstance();
+
+	void SetTextureId(int nodeId, int texId);
 protected:
 	/// 类别
-	int category;
+	int		category;
+	/// 物件的ID
+	DWORD	m_dwObjId;
+	/// 物件的类型
+	int		m_iObjType;
+
+	/// 纹理
+	Util::Array<NodeTextureParm> texs;
 };
 
 //------------------------------------------------------------------------------
