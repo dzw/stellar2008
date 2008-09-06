@@ -9,6 +9,7 @@
 #include "kok/terrain/districtnode.h"
 #include "models/attributes.h "
 #include "memory/memory.h"
+#include "util/hashmap.h"
 
 namespace KOK
 {
@@ -226,7 +227,7 @@ TerrainReader::LoadToField()
 					this->stream->Read(&tempDWORD, sizeof(DWORD));
 					this->terrain->thingTex[i]->stTile.dwDWORD = tempDWORD;
 				}
-				return 0;	// 测试地形直接返回
+				//return 0;	// 测试地形直接返回
 			}
 			break;
 		case TERFILE_MAP_HIGH1:
@@ -251,6 +252,7 @@ TerrainReader::LoadToField()
 			{
 				// 读地上物清单
 				LoadModels();
+				return 0;
 			}
 			break;
 		case TERFILE_SOUND_SOURCE_LIST:
@@ -736,6 +738,8 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 
 	DWORD dwSpecialID = 0; // 特殊ID
 
+	// 模型档信息
+	HashMap<DWORD, sThingModelData, Util::DwordCompare> models;
 
 	// 读取地上物模型清单数量
 	stream->Read(&l_iModelSize, sizeof(int));
@@ -766,14 +770,19 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 			l_szChar[iNameSize] = '\0';
 
 			//TempModelData = AddModelDataID(l_TempDWORD,l_iClass , l_iType,l_szChar);
+			sThingModelData model;
+			model.dwThingModelID = l_TempDWORD;
+			model.iClass = l_iClass;
+			model.iType = l_iType;
+			model.szModelName = l_szChar;
+			models.Add(l_TempDWORD, model);
 
 			if(l_TempDWORD == 0)
 			{
 				//（严重）不因该有这样的值
-				//dwSpecialID = TempModelData->dwThingModelID;
+				dwSpecialID = model.dwThingModelID;
 			}
 		}
-
 	}
 
 	//cThing *TempData = NULL;
@@ -802,11 +811,11 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 		// 读取模型的ID
 		stream->Read(&l_dwModelDataID, sizeof(DWORD));
 
-		//if(l_dwModelDataID == 0)
-		//{
-		//	//（严重）不因该有这样的值
-		//	l_dwModelDataID = dwSpecialID;
-		//}  
+		if(l_dwModelDataID == 0)
+		{
+			//（严重）不因该有这样的值
+			l_dwModelDataID = dwSpecialID;
+		}  
 
 		stream->Read(&l_iTempX, sizeof(int));		// 读取 X 座标
 		stream->Read(&l_iTempY, sizeof(int));		// 读取 Y 座标
@@ -830,6 +839,13 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 		int l_iRepeatID = 0 ;
 		stream->Read(&l_iRepeatID, sizeof(int));
 
+		Ptr<ThingEntity> entity;
+		sThingModelData model;
+		if (models.Find(l_dwModelDataID, model))
+		{
+			entity = AddThing(model);
+		}
+
 		//TempModelData = ForageModelDataID(l_dwModelDataID);
 
 		/*if( TempModelData )
@@ -845,21 +861,27 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 		//if(l_iFileSize < (sizeof(int)*7)) return -1;
 		//l_iFileSize -= (sizeof(int)*7); 
 
-		//if(TempData)
-		//{
-		//	TempData->m_iX = l_iTempX;
-		//	TempData->m_iY = l_iTempY;
-		//	TempData->m_iZ = l_iTempZ;
-		//	TempData->m_iRightAngle = l_iTempRightAngle;
-		//	TempData->SetRepeatID(l_iRepeatID);
-		//	//TempData->iRepeatID   = l_iRepeatID;
-		//	TempData->m_iState      = l_iTempState;
+		matrix44 matTranslation, matScale, matRotate;
+		matTranslation = matrix44::identity();
+		matScale = matrix44::identity();
+		matRotate = matrix44::identity();
+		if(entity.isvalid())
+		{
+			matTranslation = matrix44::translation(Math::vector(l_iTempX, l_iTempY, l_iTempZ));
 
-		//	if(l_iTempState)
-		//	{
-		//		l_iTempState = l_iTempState;
-		//	}
-		//}
+			//TempData->m_iX = l_iTempX;
+			//TempData->m_iY = l_iTempY;
+			//TempData->m_iZ = l_iTempZ;
+			//TempData->m_iRightAngle = l_iTempRightAngle;
+			//TempData->SetRepeatID(l_iRepeatID);
+			////TempData->iRepeatID   = l_iRepeatID;
+			//TempData->m_iState      = l_iTempState;
+
+			/*if(l_iTempState)
+			{
+				l_iTempState = l_iTempState;
+			}*/
+		}
 
 		// 读取物件数量
 		stream->Read(&l_iObjSize, sizeof(int));
@@ -877,9 +899,7 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 		// 地物旋转
 		if( l_iTempRightAngle < 0 ) // 有设定旋转或放大缩小
 		{
-			matrix44 matScale, matRotate;
 			float fScale;
-
 
 			stream->Read(&fScale, sizeof(float));
 			matScale.scaling(fScale, fScale, fScale);
@@ -893,7 +913,11 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 			}*/
 		}
 
-		// 071009 cyhsieh 
+		matrix44 transform;
+		transform = matrix44::multiply(matScale, matRotate);
+		transform = matrix44::multiply(transform, matTranslation);
+		entity->SetTransform(transform);
+
 		/*if( TempData )
 		{
 			TempData->setIntoSceneMap();
@@ -934,6 +958,28 @@ TerrainReader::LoadAudios(/*const Ptr<Stream>& stream*/)
 	}
 }
 
+Ptr<ThingEntity>
+TerrainReader::AddThing(const sThingModelData& model)
+{
+	String name;
 
+	switch(model.iClass)
+	{
+	case 0: name = "mbld:"; break;
+	case 1: name = "mart:"; break;
+	case 2: name = "mnat:"; break;
+	case 3: name = "mitr:"; break;
+	case 4: name = "mclf:"; break;
+	}
+
+	name += model.szModelName;
+
+	Ptr<ThingEntity> entity = ThingEntity::Create();
+	entity->SetResourceId(name);
+
+	this->terrain->thingEntitys.Append(entity);
+
+	return entity;
+}
 
 } // namespace Models

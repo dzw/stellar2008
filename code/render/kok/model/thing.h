@@ -40,6 +40,8 @@ public:
 
 	virtual bool SetupFromStream(const Ptr<IO::Stream>& stream);
 	//void LoadTexture(const String& path);
+
+	void SetTextureId(int objId, int texId);
 protected:
 	friend class ThingReader;
 

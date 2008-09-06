@@ -6,6 +6,7 @@
 #include "kok/model/thingentity.h"
 #include "kok/model/managedthing.h"
 #include "resources/resourcemanager.h"
+#include "models/visresolver.h"
 
 namespace KOK
 {
@@ -44,8 +45,7 @@ ThingEntity::OnActivate()
     GraphicsEntity::OnActivate();
     
     // note: we will remain invalid until at least our model has loaded
-    this->SetValid(false);
-    this->managedModel = ResourceManager::Instance()->CreateManagedResource(Thing::RTTI, this->resId).downcast<ManagedThing>();
+    this->SetValid(true);
 }
 
 //------------------------------------------------------------------------------
@@ -65,8 +65,11 @@ ThingEntity::OnDeactivate()
 	}
 
     // discard our managed model
-    ResourceManager::Instance()->DiscardManagedResource(this->managedModel.upcast<ManagedResource>());
-    this->managedModel = 0;
+	if (this->managedModel.isvalid())
+	{
+	    ResourceManager::Instance()->DiscardManagedResource(this->managedModel.upcast<ManagedResource>());
+		this->managedModel = 0;
+	}
 
     // up to parent class
     GraphicsEntity::OnDeactivate();
@@ -75,7 +78,18 @@ ThingEntity::OnDeactivate()
 void
 ThingEntity::OnUpdate()
 {
-	ModelEntity::OnUpdate();
+	GraphicsEntity::OnUpdate();
+	//ModelEntity::OnUpdate();
+
+	if (this->managedModel.isvalid() && this->managedModel->GetState() == Resource::Loaded)
+	{
+		const Ptr<Thing>& thing = this->GetThing();
+		if (thing.isvalid())
+		{
+			for (SizeT i = 0; i < texs.Size(); i++)
+				thing->SetTextureId(texs[i].nodeId, texs[i].texId);
+		}
+	}
 
 	//if (this->managedModel.isvalid() && this->managedModel->GetThing().isvalid())
 	//{
@@ -99,6 +113,27 @@ ThingEntity::OnUpdate()
 	//	}
 	//	this->managedModel->GetThing()->LoadTexture(path);
 	//}
+}
+
+void 
+ThingEntity::AttachVisibleInstance()
+{
+	// 如果没创建资源，就在这创建
+	if (!this->managedModel.isvalid())
+		this->managedModel = ResourceManager::Instance()->CreateManagedResource(Thing::RTTI, this->resId).downcast<ManagedThing>();
+
+	if (this->modelInstance.isvalid())
+		VisResolver::Instance()->AttachVisibleModelInstance(this->modelInstance);
+}
+
+void 
+ThingEntity::SetTextureId(int nodeId, int texId)
+{
+	NodeTextureParm tex;
+	tex.nodeId = nodeId;
+	tex.texId = texId;
+
+	texs.Append(tex);
 }
 
 } // namespace Graphics
