@@ -335,14 +335,15 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 void 
 Thing::SetTextureId(int objId, int texId)
 {
-	if (objId > this->nodes.Size() || objId < 0)
+	const Array<Ptr<ModelNode>>& nodes = this->GetNodes();
+	if (objId > nodes.Size() || objId < 0)
 		return;
 	if (texId >= 100 || texId < 0)
 		return;
 
 	String path = this->GetResourceId().Value().ExtractDirName();
-	const Ptr<ThingNode> node = this->nodes[objId].downcast<ThingNode>();
-	node->LoadTexture(path, texId);
+	const Ptr<ThingNode> node = nodes[objId].downcast<ThingNode>();
+	node->LoadTextures(path, texId);
 }
 
 } // namespace Models

@@ -83,7 +83,7 @@ ThingEntity::OnUpdate()
 
 	if (this->managedModel.isvalid() && this->managedModel->GetState() == Resource::Loaded)
 	{
-		const Ptr<Thing>& thing = this->GetThing();
+		const Ptr<Thing>& thing = this->managedModel.downcast<ManagedThing>()->GetThing();
 		if (thing.isvalid())
 		{
 			for (SizeT i = 0; i < texs.Size(); i++)
