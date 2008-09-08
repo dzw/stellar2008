@@ -5,10 +5,9 @@ sampler s1 =
 sampler_state
 {
 	Texture = <tex>;
-	MipFilter = LINEAR;
-	MinFilter = Anisotropic;
+	MinFilter = LINEAR;
 	MagFilter = LINEAR;
-	MaxAnisotropy = 8;
+	MipFilter = LINEAR;
 	AddressU  = Wrap;
 	AddressV  = Wrap;
 };
@@ -95,6 +94,8 @@ technique t0<string Mask = "Solid|KOK1";>
     {
 		//FillMode		  = WireFrame;
 		AlphaBlendEnable  = false;
+		DepthBias		  = 0.0f;
+		
         VertexShader = compile vs_2_0 VertexShaderTestFunc();
         PixelShader = compile ps_2_0 PixelShaderTestFunc1();
     }
@@ -112,8 +113,9 @@ technique t0<string Mask = "Solid|KOK2";>
 		//AlphaArg1[0]	 = Texture;
 		//AlphaArg2[0]	 = TFactor;
 		//AlphaOp[0]		 = Modulate;
+		//FillMode		 = WireFrame;
+		DepthBias		  = 0.0f;
 		
-		FillMode		 = Solid;//WireFrame;
         VertexShader = compile vs_2_0 VertexShaderTestFunc();
         PixelShader = compile ps_2_0 PixelShaderTestFunc2();
     }
@@ -131,8 +133,9 @@ technique t0<string Mask = "Solid|KOK3";>
 		//AlphaArg1[0]	 = Texture;
 		//AlphaArg2[0]	 = TFactor;
 		//AlphaOp[0]		 = Modulate;
+		//FillMode		 = WireFrame;//Solid;
+		DepthBias		  = 0.0f;
 		
-		FillMode		 = Solid;//WireFrame;
         VertexShader = compile vs_2_0 VertexShaderTestFunc();
         PixelShader = compile ps_2_0 PixelShaderTestFunc3();
     }
@@ -150,8 +153,9 @@ technique t0<string Mask = "Solid|KOK4";>
 		//AlphaArg1[0]	 = Texture;
 		//AlphaArg2[0]	 = TFactor;
 		//AlphaOp[0]		 = Modulate;
+		//FillMode		 = WireFrame;
+		DepthBias		  = 0.0f;
 		
-		FillMode		 = Solid;//WireFrame;
         VertexShader = compile vs_2_0 VertexShaderTestFunc();
         PixelShader = compile ps_2_0 PixelShaderTestFunc4();
     }

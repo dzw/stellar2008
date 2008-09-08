@@ -5,6 +5,7 @@
 #include "stdneb.h"
 #include "kok/model/Thingnode.h"
 #include "kok/model/Thingnodeinstance.h"
+#include "coregraphics/shaderserver.h"
 
 namespace KOK
 {
@@ -77,7 +78,13 @@ ThingNode::CreateNodeInstance()const
 bool
 ThingNode::ApplySharedState()
 {
-	return KokShapeNode::ApplySharedState();
+	if (!KokShapeNode::ApplySharedState())
+		return false;
+
+	ShaderServer* shdServer = ShaderServer::Instance();
+	shdServer->SetFeatureBits(shdServer->FeatureStringToMask("Static"));
+
+	return true;
 }
 
 //------------------------------------------------------------------------------

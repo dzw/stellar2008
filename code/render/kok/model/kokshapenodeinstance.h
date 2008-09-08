@@ -10,6 +10,7 @@
 #include "models/nodes/transformnodeinstance.h"
 #include "coregraphics/shaderinstance.h"
 #include "coregraphics/shadervariable.h"
+#include "resources/managedtexture.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -28,7 +29,9 @@ public:
 	virtual void Update();
 	virtual void ApplyState();
 	virtual void OnNotifyVisible(IndexT frameIndex);
-	
+
+	virtual void LoadTexture(const Util::String& path, int texId);
+	const Ptr<CoreGraphics::Texture>& GetTexture()const;
 protected:
 	void CreateMaterial();
 	void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
@@ -39,7 +42,20 @@ protected:
 	Ptr<CoreGraphics::ShaderVariable> specularColor;
 	Ptr<CoreGraphics::ShaderVariable> emissiveColor;
 	Ptr<CoreGraphics::ShaderVariable> diffMap;				// ∆’Õ®Œ∆¿Ì
+
+	/// Œ∆¿Ì
+	Ptr<Resources::ManagedTexture> tex;
 };
+
+inline const Ptr<CoreGraphics::Texture>& 
+KokShapeNodeInstance::GetTexture()const
+{
+	if (tex.isvalid())
+		return tex->GetTexture();
+
+	static Ptr<CoreGraphics::Texture> tmp;
+	return tmp;
+}
 
 } // namespace Models
 //------------------------------------------------------------------------------

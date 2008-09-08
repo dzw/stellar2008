@@ -21,6 +21,7 @@ technique t0
         ScissorTestEnable = False;
         CullMode          = CCW;
         FillMode		  = solid;
+		DepthBias		  = 0.0f;
     }
 }
        

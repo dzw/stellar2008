@@ -15,6 +15,7 @@
 #include "coregraphics/indextype.h"
 #include "graphics/stage.h"
 
+
 namespace KOK
 {
 ImplementClass(KOK::TerrainEntity, 'TNET', Graphics::ModelEntity);
@@ -100,7 +101,8 @@ TerrainEntity::OnUpdate()
 		this->terrain = this->managedModel.downcast<ManagedTerrain>()->GetTerrain();
 		this->terrain->CreateQuadTree(this->stage->GetRootCell());
 		this->SetLocalBoundingBox(this->terrain->GetBoundingBox());
-		this->terrain->AttachThingsToStage(this->stage);
+		this->terrain->SetStage(this->stage);
+		this->terrain->UpdateThing();
 	}
 }
 

@@ -110,7 +110,8 @@ public:
 	void AddVisibleDistrict(IndexT id);
 	void UpdateRenderList(IndexT frameIndex);
 
-	void AttachThingsToStage(const Ptr<Graphics::Stage>& stage);
+	void SetStage(const Ptr<Graphics::Stage>& stage);
+	void UpdateThing();
 protected:
 	friend class TerrainReader;
 
@@ -143,7 +144,9 @@ protected:
 	Util::Array<DrawTile>		renderLayer[4];
 	DWORD						frameIndex;
 
+	/// 暂存未加载的thing物件列表
 	Util::Array<Ptr<ThingEntity>> thingEntitys;
+	Ptr<Graphics::Stage> stage;
 };
 
 inline const Ptr<TerrainMeshGrid>& 
