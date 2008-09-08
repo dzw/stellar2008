@@ -153,7 +153,7 @@ void
 ModelEntity::OnRenderDebug()
 {
     float4 color(1.0f, 0.0f, 0.0f, 0.5f);
-    matrix44 shapeTransform = this->localBox.to_matrix44();//this->GetGlobalBoundingBox().to_matrix44();
+    matrix44 shapeTransform = /*this->localBox.to_matrix44();*/this->GetGlobalBoundingBox().to_matrix44();
     ShapeRenderer::Instance()->DrawShape(shapeTransform, ShapeRenderer::Box, color);
 
     this->GetModelInstance()->RenderDebug();

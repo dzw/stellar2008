@@ -398,4 +398,17 @@ DistrictNode::SetRenderGroup(int pass, int texId)
 	return true;
 }
 
+void 
+DistrictNode::AddThing(const Ptr<ThingEntity>& entity)
+{
+	if (entity.isvalid())
+		this->things.Append(entity);
+}
+
+const Util::Array<Ptr<ThingEntity>>& 
+DistrictNode::GetThings()const
+{
+	return this->things;
+}
+
 }

@@ -309,7 +309,8 @@ KokShapeNode::ImportMaterialFromMemory( const Ptr<Stream>& stream, int iIndex, i
 	if( iTextureNameLength > 0 )
 	{
 		ReadString(stream, m_pMaterial[iIndex].m_pszTextName, iTextureNameLength);
-		m_pMaterial[iIndex].iNo = iIndex;
+		
+		//m_pMaterial[iIndex].iNo = iIndex;
 
 		//String tmp;
 		//ReadString(stream, tmp, iTextureNameLength);
@@ -603,8 +604,10 @@ KokShapeNode::CreateMesh(const Util::Array<CoreGraphics::VertexComponent>& verte
 		primGroups.Append(primGroup);
 	}
 
-	Resources::ResourceId meshID(this->GetName());
-	n_assert(!Resources::SharedResourceServer::Instance()->HasSharedResource(meshID));
+	String meshID;
+	meshID.AppendInt((int)this);
+	//Resources::ResourceId meshID(/*this->GetName()*/);
+	//n_assert(!Resources::SharedResourceServer::Instance()->HasSharedResource(meshID));
 	mesh = Resources::SharedResourceServer::Instance()->CreateSharedResource(meshID, CoreGraphics::Mesh::RTTI,CoreGraphics::StreamMeshLoader::RTTI).downcast<CoreGraphics::Mesh>();
 	mesh->SetState(Resource::Loaded);
 	mesh->SetVertexBuffer(vertexBuffer);
@@ -635,17 +638,26 @@ KokShapeNode::CreateMaterial()
 void 
 KokShapeNode::LoadTextures(const String& path, int texId)
 {
-	if (path.Length() == 0)
-		return;
+//	if (path.Length() == 0)
+//		return;
+//
+//	String fileName;
+//	for (int i = 0; i < m_dwNumMaterial; i++)
+//	{
+//		if (m_pMaterial[i].m_pszTextName.Length() == 0)
+//			continue;
+//
+//		// 测试代码，水不要在这里加载
+//		if (strstr(m_pMaterial[i].m_pszTextName.AsCharPtr(), "Water"))
+//			continue;
+//
+//		if (texId != -1)
+//			m_pMaterial[i].iNo = texId;
+//		fileName.Format("%s%s%02d.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), texId);
+//		m_pMaterial[i].LoadTexture(fileName);
+//	}
 
-	String fileName;
-	for (int i = 0; i < m_dwNumMaterial; i++)
-	{
-		if (texId != -1)
-			m_pMaterial[i].iNo = texId;
-		fileName.Format("%s%s%02d.dds", path.AsCharPtr(), m_pMaterial[i].m_pszTextName.AsCharPtr(), m_pMaterial[i].iNo);
-		m_pMaterial[i].LoadTexture(fileName);
-	}
+	// 找到nodeinstance，到那里加载纹理
 }
 
 }

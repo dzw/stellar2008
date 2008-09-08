@@ -861,14 +861,58 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 		//if(l_iFileSize < (sizeof(int)*7)) return -1;
 		//l_iFileSize -= (sizeof(int)*7); 
 
+		
+
+		// 读取物件数量
+		stream->Read(&l_iObjSize, sizeof(int));
+
+		for(j=0;j<l_iObjSize;j++)
+		{
+			// 读取物件的贴图
+			stream->Read(&l_TempINT, sizeof(int));
+
+			if (entity.isvalid())
+				entity->SetTextureId(j, l_TempINT);
+			/*if(TempData)
+				TempData->SetTexture(j,l_TempINT);*/
+
+		}
+
 		matrix44 matTranslation, matScale, matRotate;
 		matTranslation = matrix44::identity();
 		matScale = matrix44::identity();
 		matRotate = matrix44::identity();
 		if(entity.isvalid())
 		{
-			matTranslation = matrix44::translation(Math::vector(l_iTempX, l_iTempY, l_iTempZ));
+			float reviseX = 0.0f;
+			float reviseZ = 0.0f;
+			int tempAngle = l_iTempRightAngle;
+			if (tempAngle < 0)
+				tempAngle += 4;
+			switch(tempAngle)
+			{
+			case 1:
+				{
+					reviseX = 0.0f;
+					reviseZ = COMP * 1.0f;
+				}
+				break;
+			case 2:
+				{
+					reviseX = COMP * 1.0f;
+					reviseZ = COMP * 1.0f;
+				}
+				break;
+			case 3:
+				{
+					reviseX = COMP * 1.0f;
+					reviseZ = 0.0f;
+				}
+				break;
+			}
 
+			matTranslation = matrix44::translation(Math::vector(l_iTempX + reviseX, l_iTempY, l_iTempZ + reviseZ));
+			 
 			//TempData->m_iX = l_iTempX;
 			//TempData->m_iY = l_iTempY;
 			//TempData->m_iZ = l_iTempZ;
@@ -879,30 +923,17 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 
 			/*if(l_iTempState)
 			{
-				l_iTempState = l_iTempState;
+			l_iTempState = l_iTempState;
 			}*/
 		}
 
-		// 读取物件数量
-		stream->Read(&l_iObjSize, sizeof(int));
-
-		for(j=0;j<l_iObjSize;j++)
-		{
-			// 读取物件的贴图
-			stream->Read(&l_TempINT, sizeof(int));
-
-			/*if(TempData)
-				TempData->SetTexture(j,l_TempINT);*/
-
-		}
-
-		// 地物旋转
-		if( l_iTempRightAngle < 0 ) // 有设定旋转或放大缩小
+		// 有设定旋转或放大缩小
+		if( l_iTempRightAngle < 0 ) 
 		{
 			float fScale;
 
 			stream->Read(&fScale, sizeof(float));
-			matScale.scaling(fScale, fScale, fScale);
+			matScale = matrix44::scaling(fScale, fScale, fScale);
 
 			stream->Read(&matRotate, sizeof(matrix44));
 
@@ -912,9 +943,21 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 				TempData->m_mxRotate=matRotate;
 			}*/
 		}
+		else
+		{
+			// 旋转几个直角
+			float direction = l_iTempRightAngle * 90.0f;
+			matRotate = matrix44::rotationy((((int)direction+360)%360)*(N_PI/180.0f));
+		}
+
+		/*matrix44 matBlend;
+		Math::vector waveRotationAxis = Math::vector(1.0f, 0.0f, 0.0f);
+		matrix44::rotationaxis(waveRotationAxis, n_sin(reviseX + reviseZ + waveTime));*/
 
 		matrix44 transform;
-		transform = matrix44::multiply(matScale, matRotate);
+		transform = matrix44::identity();
+		transform = matrix44::multiply(transform, matScale);
+		transform = matrix44::multiply(transform, matRotate);
 		transform = matrix44::multiply(transform, matTranslation);
 		entity->SetTransform(transform);
 
@@ -973,6 +1016,7 @@ TerrainReader::AddThing(const sThingModelData& model)
 	}
 
 	name += model.szModelName;
+	name += ".obj";
 
 	Ptr<ThingEntity> entity = ThingEntity::Create();
 	entity->SetResourceId(name);

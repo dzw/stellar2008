@@ -79,7 +79,7 @@ KOKApplication::Open()
 		GraphicsServer* gfxServer = GraphicsServer::Instance();
 
 		this->stage = gfxServer->CreateStage(StringAtom("DefaultStage"), SimpleStageBuilder::Create());
-		this->dxutCameraUtil.Setup(Math::vector(0, 0, 0/*-600, 180, 76*/)/*vector(18468.0f, 177.0f, 14292.66f)*/);
+		this->dxutCameraUtil.Setup(Math::vector(0, 0, 0/*870, 200, 340*//*-600, 180, 76*/)/*vector(18468.0f, 177.0f, 14292.66f)*/);
 		this->cameraEntity = CameraEntity::Create();
 		cameraEntity->SetTransform(this->dxutCameraUtil.GetCameraTransform());
 		this->stage->AttachEntity(cameraEntity.upcast<GraphicsEntity>());

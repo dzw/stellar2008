@@ -169,6 +169,8 @@ View::ResolveVisibleModelNodeInstances()
         }
     }
     visResolver->EndResolve();
+
+	DebugView::Instance()->AddDebugString("visible entity", num);
 }
 
 //------------------------------------------------------------------------------
@@ -224,7 +226,7 @@ View::Render()
 void
 View::RenderDebug()
 {
-#if NEBULA3_DEBUG
+//#if NEBULA3_DEBUG
     n_assert(this->frameShader.isvalid());
 
     // setup global transforms...
@@ -244,10 +246,10 @@ View::RenderDebug()
     }
 
 	// cell debug
-	this->stage->GetRootCell()->OnRenderDebug();
+	//this->stage->GetRootCell()->OnRenderDebug();
 
     ShapeRenderer::Instance()->End();
-#endif
+//#endif
 }
 
 //------------------------------------------------------------------------------
@@ -345,6 +347,12 @@ View::RenderDebugString()
 
 	//	FontServer::Instance()->DrawText(szPos, float4(1, 0, 0, 1), rect, 0, true);
 	//}
+}
+
+Math::vector 
+View::GetCameraPos()
+{
+	return this->camera->GetTransform().getrow3();
 }
 
 } // namespace Graphics

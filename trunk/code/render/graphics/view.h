@@ -69,6 +69,7 @@ public:
     virtual void RenderDebugSimple();
 
 	void RenderDebugString();
+	Math::vector GetCameraPos();
 protected:
     friend class GraphicsServer;
 

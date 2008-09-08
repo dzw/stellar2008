@@ -30,6 +30,8 @@ namespace KOK
 
 #define DISTRICTCACHESIZE		9							  // district缓冲大小(4*4)
 
+const float DistanceToCamera = (TERRAIN_MINDTC + TERRAIN_MAXDTC) * 0.5f;	// 摄影机离区块中心的距离在多少内会显示不
+
 /*****************************/
 /*	map pos <--> tile
 /*****************************/

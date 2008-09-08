@@ -12,6 +12,7 @@
 #include "kok/terrain/terraindef.h"
 #include "kok/terrain/terrainmeshgrid.h"
 #include "coregraphics/primitivegroup.h"
+#include "kok/model/thingentity.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -52,7 +53,9 @@ public:
 	bool SetRenderGroup(int pass, int texId);
 	void Render();
 
-	
+	void AddThing(const Ptr<ThingEntity>& entity);
+	const Util::Array<Ptr<ThingEntity>>& GetThings()const;
+
 protected:
 	//friend class DistrictNodeInstance;
 
@@ -88,6 +91,9 @@ protected:
 	CoreGraphics::PrimitiveGroup group;
 	/// 每帧更新一次索引缓冲
 	bool updateIndexBuffer;
+
+	/// 区域中所包含的地物
+	Util::Array<Ptr<ThingEntity>> things;
 };
 
 inline DWORD

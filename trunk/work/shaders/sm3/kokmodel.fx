@@ -222,7 +222,7 @@ VSWeaponReflect(float4 pos 	: POSITION,
 {
 	vsOutReflect vout;
 	
-	flost4 oNor = mul(nor, world);
+	float3 oNor = mul(nor, world);
 	
 	vout.pos = mul(pos, mvp);
 	vout.tex = tex;
@@ -267,7 +267,7 @@ technique t0<string Mask = "Solid";>
 {
     pass p0
     {
-        CullMode     = NONE;        
+        //CullMode     = NONE;        
         VertexShader = compile vs_2_0 VSSample();
         PixelShader  = compile ps_2_0 PSSample();
     }
@@ -277,8 +277,20 @@ technique t0<string Mask = "Solid|Tex";>
 {
     pass p0
     {
-        CullMode     = NONE;        
+       // CullMode     = NONE;        
         VertexShader = compile vs_2_0 VSTexAni();
+        PixelShader  = compile ps_2_0 PSSample();
+    }
+}
+
+technique t0<string Mask = "Solid|Static";>
+{
+    pass p0
+    {
+		DepthBias	 = 0.0f;
+        CullMode     = CCW;
+		
+        VertexShader = compile vs_2_0 VSSample();
         PixelShader  = compile ps_2_0 PSSample();
     }
 }
@@ -311,7 +323,7 @@ technique t0<string Mask = "Solid|Weapon|Reflect";>
     pass p0
     {
         CullMode     = CCW;        
-        VertexShader = compile vs_2_0 VSSkinWeaponReflect();
+        VertexShader = compile vs_2_0 VSWeaponReflect();
         PixelShader  = compile ps_2_0 PSReflect();
     }
 }

@@ -251,7 +251,7 @@ GraphicsEntity::UpdateGlobalBoundingBox()
 {
     n_assert(this->globalBoxDirty);
     this->globalBox = this->localBox;
-    //this->globalBox.transform(this->transform);
+    this->globalBox.transform(this->transform);
     this->globalBoxDirty = false;
 }
 

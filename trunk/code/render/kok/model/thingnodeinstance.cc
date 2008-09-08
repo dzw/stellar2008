@@ -81,7 +81,7 @@ ThingNodeInstance::RenderBatch(IndexT index)
 	const AttributeRange& batch = node->GetAttributeTable()[index];
 	const cMaterial& material = node->GetMaterial()[index];
 
-	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !material.GetTexture().isvalid())
+	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !this->GetTexture().isvalid()/*!material.GetTexture().isvalid()*/)
 		return;
 
 	this->diffuseColor->SetVector(float4(
@@ -104,7 +104,7 @@ ThingNodeInstance::RenderBatch(IndexT index)
 		material.m_D3DMaterial.Emissive.g,
 		material.m_D3DMaterial.Emissive.b,
 		material.m_D3DMaterial.Emissive.a));
-	this->diffMap->SetTexture(material.GetTexture());
+	this->diffMap->SetTexture(this->GetTexture());
 
 
 	this->shaderInstance->Commit();

@@ -14,7 +14,6 @@
 #include "graphics/modelentity.h"
 #include "resources/resourcemanager.h"
 
-
 #include "coregraphics/vertexchunkpool.h"
 #include "kok/terrain/terrainentity.h"
 #include "kok/terrain/terraininstance.h"
@@ -25,6 +24,8 @@
 #include "coregraphics/debugview.h"
 
 #include "graphics/stage.h"
+#include "graphics/graphicsserver.h"
+#include "graphics/view.h"
 
 namespace KOK
 {
@@ -44,7 +45,8 @@ Terrain::Terrain():
 	tileMeshScale(1),
 	tilePosOffset(0.0),
 	meshData(0),
-	thingTex(0)
+	thingTex(0),
+	stage(0)
 {
 	this->terrRender = TerrainRender::Create();
 	this->terrRender->Init();
@@ -58,6 +60,8 @@ Terrain::~Terrain()
 	this->terrMeshGrid = 0;
 	this->cliffTable = 0;
 	this->terrRender = 0;
+	this->stage = 0;
+	this->thingEntitys.Clear();
 
 	if (this->thingTex)
 	{
@@ -329,7 +333,27 @@ Terrain::AddVisibleDistrict(IndexT id)
 	if(id < 0 && id >= this->nodes.Size())
 		return;
 	
-	this->renderList.Append(this->nodes[id].downcast<DistrictNode>());
+	const Ptr<DistrictNode>& node = this->nodes[id].downcast<DistrictNode>();
+	this->renderList.Append(node);
+
+
+	// 根据摄像机距离加载区域中可见的但未加载的thing
+	if (!this->stage.isvalid())
+		return;
+	vector camPas = GraphicsServer::Instance()->GetDefaultView()->GetCameraPos();
+	float camDist = camPas.lengthsq();
+	float thingDist;
+	float distLQ = DistanceToCamera * DistanceToCamera;
+	const Array<Ptr<ThingEntity>>& things = node->GetThings();
+	for (SizeT i = 0; i < things.Size(); i++)
+	{
+		if (things[i].isvalid() && !things[i]->IsActive())
+		{
+			thingDist = things[i]->GetTransform().getrow3().lengthsq();
+			if (camDist - thingDist < distLQ)
+				this->stage->AttachEntity(things[i].upcast<GraphicsEntity>());
+		}
+	}
 }
 
 void 
@@ -584,13 +608,41 @@ Terrain::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode
 }
 
 void 
-Terrain::AttachThingsToStage(const Ptr<Graphics::Stage>& stage)
+Terrain::SetStage(const Ptr<Graphics::Stage>& stage)
 {
 	if (!stage.isvalid())
 		return;
+	this->stage = stage;
 
-	for (SizeT i = 0; i < this->thingEntitys.Size(); i++)
-		stage->AttachEntity(this->thingEntitys[i].upcast<GraphicsEntity>());
+	/*for (SizeT i = 0; i < this->thingEntitys.Size(); i++)
+		stage->AttachEntity(this->thingEntitys[i].upcast<GraphicsEntity>());*/
+}
+
+//------------------------------------------------------------------------------
+/**
+	动态加载在摄像机范围内的物件
+	因为ThingEntity最初没法设置boundingbox，所以先把所有的thingEntity暂存到这里
+	在这里把所有地物分配到指定的区域。
+*/
+void
+Terrain::UpdateThing()
+{
+	if (this->thingEntitys.Size() == 0)
+		return;
+
+	const Array<Ptr<ModelNode>>& nodes = this->GetNodes();
+
+	for (IndexT i = 0; i < this->thingEntitys.Size(); i++)
+	{
+		const vector& pos = this->thingEntitys[i]->GetTransform().getrow3();
+		int x = (pos.x() + this->tilePosOffset) / (DISTRICT_VERTS*this->tileMeshScale*COMP);
+		int y = (pos.z() + this->tilePosOffset) / (DISTRICT_VERTS*this->tileMeshScale*COMP);
+		const Ptr<DistrictNode>& dist = nodes[x + y * this->terrInfo.GetDistrictCountX()].downcast<DistrictNode>();
+		if (dist.isvalid())
+			dist->AddThing(this->thingEntitys[i]);
+	}
+
+	this->thingEntitys.Clear();
 }
 
 } // namespace Models

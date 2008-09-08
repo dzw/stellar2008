@@ -195,32 +195,32 @@ void cMaterial::GetAnimatorAddress( DWORD& dwAddressU, DWORD& dwAddressV )
 void 
 cMaterial::LoadTexture(const String& filePath)
 {
-	if (m_pTexture.isvalid())
+	/*if (m_pTexture.isvalid())
 	{
 		ResourceManager::Instance()->DiscardManagedResource(this->m_pTexture.upcast<ManagedResource>());
 		m_pTexture = 0;
-	}
-	if (filePath.Length() > 0)
+	}*/
+	/*if (filePath.Length() > 0)
 	{
 		m_pTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, filePath).downcast<ManagedTexture>();
-	}
+	}*/
 }
 
 void 
 cMaterial::LoadFakeReflectTexture(const Util::String& filePath)
 {
-	if (this->fakeReflectTexture.isvalid())
-	{
-		ResourceManager::Instance()->DiscardManagedResource(this->fakeReflectTexture.upcast<ManagedResource>());
-		this->fakeReflectTexture = 0;
-	}
-	if (filePath.Length() > 0)
-	{
-		// 先判断反光贴图是否存在，只有存在的时候才加载，这地方有严重效率问题！！
-		const Ptr<IO::LPQArchive>& pack =  IO::LPQFileSystem::Instance()->FindLPQArchiveByName(filePath);
-		if (pack.isvalid())
-			this->fakeReflectTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, filePath).downcast<ManagedTexture>();
-	}
+	//if (this->fakeReflectTexture.isvalid())
+	//{
+	//	ResourceManager::Instance()->DiscardManagedResource(this->fakeReflectTexture.upcast<ManagedResource>());
+	//	this->fakeReflectTexture = 0;
+	//}
+	//if (filePath.Length() > 0)
+	//{
+	//	// 先判断反光贴图是否存在，只有存在的时候才加载，这地方有严重效率问题！！
+	//	const Ptr<IO::LPQArchive>& pack =  IO::LPQFileSystem::Instance()->FindLPQArchiveByName(filePath);
+	//	if (pack.isvalid())
+	//		this->fakeReflectTexture = ResourceManager::Instance()->CreateManagedResource(Texture::RTTI, filePath).downcast<ManagedTexture>();
+	//}
 }
 
 }

@@ -78,7 +78,7 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 
 	if (subMeshNum > 0)
 	{
-		String path = this->GetResourceId().Value().ExtractDirName();
+		//String path = this->GetResourceId().Value().ExtractDirName();
 
 		bbox b;
 		b.pmin = Math::vector(N_MAXREAL, N_MAXREAL, N_MAXREAL);
@@ -89,7 +89,7 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 			node->LoadFromStream(stream, this->meshVersion, false);
 
 			this->AttachNode(node.upcast<ModelNode>());
-			node->LoadTextures(path);
+			//node->LoadTextures(path);
 			b.extend(node->GetBoundingBox());
 
 			// 加载纹理，暂时放这
@@ -335,15 +335,19 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 void 
 Thing::SetTextureId(int objId, int texId)
 {
-	const Array<Ptr<ModelNode>>& nodes = this->GetNodes();
-	if (objId > nodes.Size() || objId < 0)
-		return;
-	if (texId >= 100 || texId < 0)
-		return;
+	//const Array<Ptr<ModelNode>>& nodes = this->GetNodes();
+	//if (objId > nodes.Size() || objId < 0)
+	//	return;
+	//if (texId >= 100 || texId < 0)
+	//	return;
 
-	String path = this->GetResourceId().Value().ExtractDirName();
-	const Ptr<ThingNode> node = nodes[objId].downcast<ThingNode>();
-	node->LoadTextures(path, texId);
+	//String path = this->GetResourceId().Value().ExtractDirName();
+	//const Ptr<ThingNode> node = nodes[objId].downcast<ThingNode>();
+
+	//if (node->GetEffectType() <= 0)		// 不是特效纹理，特效纹理后面不需要加00
+	//{
+	//	node->LoadTextures(path, texId);
+	//}
 }
 
 } // namespace Models
