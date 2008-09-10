@@ -109,7 +109,52 @@ MaterialNode::ApplySharedState()
     // set our shader instance as current
     ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
 
+	//const Array<CoreGraphics::ShaderVariableInstance>& variables = this->materialList[this->curMaterial];
+	//for (SizeT i = 0; i < variables.Size(); i++)
+	//{
+	//	variables[i]->Apply();
+	//	/*switch(variables[i]->GetType())
+	//	{
+	//	case ShaderVariable::IntType:
+	//		
+	//		break;
+	//	case ShaderVariable::FloatType:
+	//		break;
+	//	case ShaderVariable::VectorType:
+	//		break;
+	//	case ShaderVariable::MatrixType:
+	//		break;
+	//	case ShaderVariable::BoolType:
+	//		variables[i]->SetBool();
+	//		break;
+	//	case ShaderVariable::TextureType:
+	//		variables[i]->SetTexture(tex->GetTexture());
+	//		break;
+	//	}*/
+	//}
 	return true;
 }
+
+//------------------------------------------------------------------------------
+/**
+	Ôö¼ÓäÖÈ¾×´Ì¬
+*/
+//Ptr<ShaderVariableInstance>
+//MaterialNode::CreateShaderVariableInstance(const ShaderVariable::Semantic& sem)
+//{
+//	n_assert(!this->shaderVariableInstances.Contains(sem));
+//
+//	// get the shader from my StateNode
+//	n_assert(this->modelNode->IsA(StateNode::RTTI));
+//	const Ptr<ShaderInstance>& shaderInstance = this->modelNode.downcast<StateNode>()->GetShaderInstance();
+//	n_assert(shaderInstance.isvalid());
+//
+//	// create new shader variable instance
+//	n_assert(shaderInstance->HasVariableBySemantic(sem));
+//	const Ptr<ShaderVariable>& var = shaderInstance->GetVariableBySemantic(sem);
+//	Ptr<ShaderVariableInstance> varInst = var->CreateInstance();
+//	this->shaderVariableInstances.Add(sem, varInst);
+//	return varInst;
+//}
 
 } // namespace Models

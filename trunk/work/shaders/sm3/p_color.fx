@@ -22,6 +22,7 @@ technique t0
         CullMode          = CCW;
         FillMode		  = solid;
 		DepthBias		  = 0.0f;
+		//fillmode		  = wireframe;
     }
 }
        

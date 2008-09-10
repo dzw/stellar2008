@@ -128,6 +128,9 @@ public:
 	virtual void Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures);
 	/// get visible model nodes
 	const Util::Array<Ptr<ModelNode> >& GetVisibleModelNodes(ModelNodeType::Code t) const;
+
+	/// attach a ModelInstance to the Model
+    void AttachInstance(const Ptr<ModelInstance>& inst);
 private:
     friend class VisResolver;
     friend class ModelServer;
@@ -136,8 +139,6 @@ private:
 	friend class Terrain::TerrainTile;
 	friend class KOK::Terrain;
 
-    /// attach a ModelInstance to the Model
-    void AttachInstance(const Ptr<ModelInstance>& inst);
     /// remove a ModelInstance from the Model
     void RemoveInstance(const Ptr<ModelInstance>& inst);
     /// lookup node index by name

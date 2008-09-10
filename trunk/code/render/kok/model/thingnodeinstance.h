@@ -29,6 +29,8 @@ public:
 	virtual void ApplyState();
 	virtual void OnNotifyVisible(IndexT frameIndex);
 
+	/// ´´½¨mesh
+	void CreateMesh();
 protected:
 	void RenderBatch(IndexT index);
 };

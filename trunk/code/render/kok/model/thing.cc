@@ -5,8 +5,8 @@
 #include "stdneb.h"
 #include "kok/model/thing.h"
 #include "kok/model/modeldef.h"
-#include "kok/model/thingnode.h"
 #include "util/string.h"
+#include "kok/model/thinginstance.h"
 
 namespace KOK
 {
@@ -41,6 +41,14 @@ Thing::Unload()
 {    
 	// call parent class
     Model::Unload();
+}
+
+Ptr<ModelInstance> 
+Thing::CreateInstance()
+{
+	Ptr<ModelInstance> modelInstance = (ModelInstance*)ThingInstance::Create();
+	this->AttachInstance(modelInstance);
+	return modelInstance;
 }
 
 bool 
@@ -91,6 +99,9 @@ Thing::SetupFromStream(const Ptr<IO::Stream>& stream)
 			this->AttachNode(node.upcast<ModelNode>());
 			//node->LoadTextures(path);
 			b.extend(node->GetBoundingBox());
+
+			if (node->GetModelType() == TYPE_SELECT)
+				this->thingSelected.Append(node);
 
 			// 加载纹理，暂时放这
 			//node->LoadTextures(filePath);

@@ -707,6 +707,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\render\coregraphics\shaderstate.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\coregraphics\shaderstate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\coregraphics\shadervariable.cc"
 				>
 			</File>
@@ -2827,6 +2835,14 @@
 				</File>
 				<File
 					RelativePath="..\render\kok\model\thingentity.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\thinginstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\kok\model\thinginstance.h"
 					>
 				</File>
 				<File

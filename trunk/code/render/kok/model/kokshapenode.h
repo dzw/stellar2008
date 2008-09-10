@@ -71,6 +71,7 @@ public:
 	const Ptr<CoreGraphics::Mesh>& GetMesh()const;
 
 	int GetEffectType()const;
+	EThingSubMeshSpecialType GetModelType()const;
 protected:
 	friend class Thing;
 	friend class BeingNode;
@@ -174,6 +175,12 @@ inline const Ptr<CoreGraphics::Mesh>&
 KokShapeNode::GetMesh()const
 {
 	return this->mesh;
+}
+
+inline EThingSubMeshSpecialType 
+KokShapeNode::GetModelType()const
+{
+	return this->modelType;
 }
 
 } // namespace Models

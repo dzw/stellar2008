@@ -12,6 +12,7 @@
 #include "kok/model/animation/cAnimation.h"
 #include "kok/model/animation/cSkeletonHierarchy.h"
 #include "kok/effect/c3dsMaxParticle.h"
+#include "kok/model/thingnode.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
@@ -37,6 +38,8 @@ public:
 
     /// unload the resource, or cancel the pending load
     virtual void Unload();
+	/// create a ModelInstance of the Model
+	virtual Ptr<Models::ModelInstance> CreateInstance();
 
 	virtual bool SetupFromStream(const Ptr<IO::Stream>& stream);
 	//void LoadTexture(const String& path);
@@ -75,6 +78,9 @@ protected:
 	int               m_iDynamicStopSize;                     // 具有动态阻档的数量
 	bool*             m_pDynamicStopPoint;                    // 存放动态阻档点
 	bool*             m_pClsPoint;                            // 存放强制清除点
+
+	/// 用于碰撞检测的子模型，不需要参与渲染
+	Util::Array<Ptr<ThingNode>> thingSelected;				  
 };
 
 } // namespace Models

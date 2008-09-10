@@ -301,10 +301,10 @@ String::FindCharIndex(char c, IndexT startIndex) const
 bool 
 String::CheckStringExist(const String&s)
 {
-	if (!heapBuffer)
+	if (!this->AsCharPtr())
 		return false;
 
-	if (strstr(this->heapBuffer, s.AsCharPtr()) != NULL)
+	if (strstr(this->AsCharPtr(), s.AsCharPtr()) != NULL)
 		return true;
 	return false;
 }

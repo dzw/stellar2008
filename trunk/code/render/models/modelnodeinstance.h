@@ -58,6 +58,8 @@ public:
     /// called when attached to ModelInstance
     virtual void OnAttachToModelInstance(const Ptr<ModelInstance>& inst, const Ptr<ModelNode>& node, const Ptr<ModelNodeInstance>& parentNodeInst);
 
+	/// notify that we are visible
+    virtual void OnNotifyVisible(IndexT frameIndex);
 protected:
     friend class ModelInstance;
 
@@ -67,8 +69,6 @@ protected:
     void AddChild(const Ptr<ModelNodeInstance>& c);
     /// called when removed from ModelInstance
     virtual void OnRemoveFromModelInstance();
-    /// notify that we are visible
-    virtual void OnNotifyVisible(IndexT frameIndex);
     /// render node specific debug shape
     virtual void RenderDebug();
     /// set visible flag of children

@@ -844,6 +844,9 @@ TerrainReader::LoadModels(/*const Ptr<Stream>& stream*/)
 		if (models.Find(l_dwModelDataID, model))
 		{
 			entity = AddThing(model);
+
+			if (entity.isvalid())
+				entity->SetRepeatId(l_iRepeatID);
 		}
 
 		//TempModelData = ForageModelDataID(l_dwModelDataID);
