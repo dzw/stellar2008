@@ -101,13 +101,13 @@ ThingNode::LoadFromStream(const Ptr<Stream>& stream,
 
 	// 这里重新计算摇动所需的顶点数据
 
-	// 创建mesh
-	Util::Array<CoreGraphics::VertexComponent> components;
-	components.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
-	components.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
-	//components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
-	components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
-	CreateMesh(components, sizeof(VertexFVF));
+	//// 创建mesh
+	//Util::Array<CoreGraphics::VertexComponent> components;
+	//components.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+	//components.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
+	////components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
+	//components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+	//CreateMesh(components, sizeof(VertexFVF));
 }
 
 }

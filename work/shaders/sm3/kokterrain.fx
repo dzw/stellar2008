@@ -10,6 +10,7 @@ sampler_state
 	MipFilter = LINEAR;
 	AddressU  = Wrap;
 	AddressV  = Wrap;
+	//MipMapLodBias = -0.75;
 };
 
 

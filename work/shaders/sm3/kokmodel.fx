@@ -37,6 +37,7 @@ sampler_state
 	MipFilter = LINEAR;
 	AddressU  = Wrap;
 	AddressV  = Wrap;
+	//MipMapLodBias = -0.75;
 };
 
 sampler fr = 
@@ -48,6 +49,7 @@ sampler_state
 	MipFilter = LINEAR;
 	AddressU  = Wrap;
 	AddressV  = Wrap;
+	//MipMapLodBias = -0.75;
 };
 
 sampler frl = 
@@ -59,6 +61,7 @@ sampler_state
 	MipFilter = LINEAR;
 	AddressU  = Wrap;
 	AddressV  = Wrap;
+	//MipMapLodBias = -0.75;
 };
 
 struct vsOut
@@ -277,7 +280,8 @@ technique t0<string Mask = "Solid|Tex";>
 {
     pass p0
     {
-       // CullMode     = NONE;        
+       // CullMode     = NONE;
+		
         VertexShader = compile vs_2_0 VSTexAni();
         PixelShader  = compile ps_2_0 PSSample();
     }
@@ -289,6 +293,8 @@ technique t0<string Mask = "Solid|Static";>
     {
 		DepthBias	 = 0.0f;
         CullMode     = CCW;
+		AlphaTestEnable   = false;
+		AlphaBlendEnable = false;
 		
         VertexShader = compile vs_2_0 VSSample();
         PixelShader  = compile ps_2_0 PSSample();

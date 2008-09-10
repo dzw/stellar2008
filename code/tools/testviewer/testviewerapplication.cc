@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  testviewerapplication.cc
-//  (C) 2006 Radon Labs GmbH
+//  (C) 2008 cTuo
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "tools/testviewer/testviewerapplication.h"

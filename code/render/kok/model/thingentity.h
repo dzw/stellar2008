@@ -42,7 +42,10 @@ public:
 	virtual void AttachVisibleInstance();
 
 	void SetTextureId(int nodeId, int texId);
+	void SetRepeatId(int id);
 protected:
+	void SetVisiableRepeat();
+
 	/// 类别
 	int		category;
 	/// 物件的ID
@@ -50,8 +53,10 @@ protected:
 	/// 物件的类型
 	int		m_iObjType;
 
-	/// 纹理
+	/// 纹理编号，资源加载完后设置
 	Util::Array<NodeTextureParm> texs;
+	/// 需要显示的子模型Id
+	int repeatId;
 };
 
 //------------------------------------------------------------------------------

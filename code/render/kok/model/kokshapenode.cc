@@ -619,7 +619,8 @@ KokShapeNode::CreateMesh(const Util::Array<CoreGraphics::VertexComponent>& verte
 void
 KokShapeNode::CreateMaterial()
 {
-	this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(Resources::ResourceId("shd:kokmodel"));
+	if (!this->shaderInstance.isvalid())
+		this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(Resources::ResourceId("shd:kokmodel"));
 
 	/*this->diffuseColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffuseColor"));
 	this->ambientColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("AmbientColor"));

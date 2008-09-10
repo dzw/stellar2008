@@ -174,6 +174,10 @@ D3D9StreamTextureLoader::SetupTextureFromStream(const Ptr<Stream>& stream)
             // load 2D texture
             IDirect3DTexture9* d3d9Texture = 0;
             hr = D3DXCreateTextureFromFileInMemory(d3d9Device, srcData, srcDataSize, &d3d9Texture);
+			// mipmap support
+			/*hr = D3DXCreateTextureFromFileInMemoryEx(d3d9Device, srcData, srcDataSize, 
+				D3DX_DEFAULT, D3DX_DEFAULT, imageInfo.MipLevels, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, 
+				D3DX_DEFAULT, D3DX_DEFAULT, 0, NULL, NULL, &d3d9Texture);*/
             if (FAILED(hr))
             {
                 n_error("D3D9StreamTextureLoader: D3DXCreateTextureFromFileInMemory() failed for file '%s'!", this->resource->GetResourceId().Value().AsCharPtr());

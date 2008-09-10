@@ -136,8 +136,11 @@ ModelInstance::OnAttachToModel(const Ptr<Model>& m)
             parentNodeInst = this->nodeInstances[parentIndex];
         };
         Ptr<ModelNodeInstance> nodeInstance = modelNode->CreateNodeInstance();
-        nodeInstance->OnAttachToModelInstance(this, modelNode, parentNodeInst);
-        this->nodeInstances.Append(nodeInstance);
+		if (nodeInstance.isvalid())
+		{
+			nodeInstance->OnAttachToModelInstance(this, modelNode, parentNodeInst);
+			this->nodeInstances.Append(nodeInstance);
+		}
     }
 }
 
@@ -209,5 +212,6 @@ ModelInstance::RenderDebug()
         this->nodeInstances[i]->RenderDebug();
     }
 }
+
 
 } // namespace Models

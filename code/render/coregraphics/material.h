@@ -29,6 +29,12 @@ public:
 	BYTE		 cullMode;
 	BYTE		 wireFrame;
 	Ptr<Resources::ManagedTexture> managedTexture;
+
+	/*const Util::String& GetName()const;
+	void SetShaderVariable();
+protected:
+	Util::String name;
+	Ptr<CoreGraphics::ShaderInstance> shader;*/
 };
 
 }

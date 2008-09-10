@@ -10,6 +10,8 @@
 
 #include "models/modelnodeinstance.h"
 #include "kok/model/thingnodeinstance.h"
+#include "kok/model/thingnode.h"
+#include "kok/model/thinginstance.h"
 
 namespace KOK
 {
@@ -25,7 +27,8 @@ using namespace Util;
 //------------------------------------------------------------------------------
 /**
 */
-ThingEntity::ThingEntity()	
+ThingEntity::ThingEntity():
+	repeatId(0)
 {
 
 	this->SetType(ModelType);
@@ -95,21 +98,12 @@ ThingEntity::OnUpdate()
 			this->modelInstance = thing->CreateInstance();
 			this->modelInstance->SetTransform(this->GetTransform());
 			this->modelInstance->SetModelEntity(this);
-			this->modelInstance->SetAllNodeInstancesVisible(this->setModelNodesVisible);
+			//this->modelInstance->SetAllNodeInstancesVisible(this->setModelNodesVisible);
 			
-			// 设置每个node材质的纹理
-			const Array<Ptr<ModelNodeInstance> >& nodeInstances = this->modelInstance->GetNodeInstances();
-			String path = this->GetResourceId().Value().ExtractDirName();
-			for (SizeT i = 0; i < texs.Size(); i++)
-			{
-				if (texs[i].nodeId > nodeInstances.Size() || texs[i].nodeId < 0)
-					return;
-				if (texs[i].texId >= 100 || texs[i].texId < 0)
-					return;
-				
-				nodeInstances[texs[i].nodeId].downcast<ThingNodeInstance>()->LoadTexture(path, texs[i].texId);
-				//thing->SetTextureId(texs[i].nodeId, texs[i].texId);
-			}
+			const Ptr<ThingInstance>& t =this->modelInstance.downcast<ThingInstance>();
+			t->SetVisiableRepeat(this->repeatId);
+			for (SizeT i = 0; i < this->texs.Size(); i++)
+				t->SetTexture(this->texs[i].nodeId, this->texs[i].texId);
 
 			this->SetValid(true);
 		}
@@ -138,6 +132,10 @@ ThingEntity::AttachVisibleInstance()
 		VisResolver::Instance()->AttachVisibleModelInstance(this->modelInstance);
 }
 
+//------------------------------------------------------------------------------
+/**
+	设置显示的纹理，每个地物可能有很多套，在这里设置显示哪套纹理
+*/
 void 
 ThingEntity::SetTextureId(int nodeId, int texId)
 {
@@ -146,6 +144,12 @@ ThingEntity::SetTextureId(int nodeId, int texId)
 	tex.texId = texId;
 
 	texs.Append(tex);
+}
+
+void 
+ThingEntity::SetRepeatId(int id)
+{
+	this->repeatId = id;
 }
 
 } // namespace Graphics

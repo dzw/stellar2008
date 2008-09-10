@@ -113,4 +113,26 @@ ThingNodeInstance::RenderBatch(IndexT index)
 	RenderDevice::Instance()->Draw();
 }
 
+//------------------------------------------------------------------------------
+/**
+	有些模型只是拿顶点数据用的，不需要显示，所以不要在NODE中把所有的子模型都创建
+	MESH，在这里为需要显示的子模型创建MESH（THING中只有m_repeat和m_hd两种类型是
+	需要显示的，而前者更是将多个子模型放在一起，只显示其中的一个！）
+*/
+void 
+ThingNodeInstance::CreateMesh()
+{
+	const Ptr<ThingNode>& node = this->modelNode.downcast<ThingNode>();
+	if (node->GetMesh().isvalid())
+		return;
+
+	// 创建mesh
+	Util::Array<CoreGraphics::VertexComponent> components;
+	components.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+	components.Append(VertexComponent(VertexComponent::Normal, 0, VertexComponent::Float3));
+	//components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
+	components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+	node->CreateMesh(components, sizeof(VertexFVF));
+}
+
 }

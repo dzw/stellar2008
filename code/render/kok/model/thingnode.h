@@ -34,6 +34,8 @@ public:
 		int iVersion, bool bMirrorZ, bool bCompuiteDuplicateVertexCollection=false, bool bBlend=false);
 	
 protected:
+	friend class ThingInstance;
+
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance()const;
 	virtual void UnloadResources();
 	
