@@ -66,8 +66,8 @@ KokShapeNodeInstance::ApplyState()
 {
 	TransformNodeInstance::ApplyState();
 
-	//TransformDevice* transformDevice = TransformDevice::Instance();
-	//transformDevice->ApplyModelTransforms();
+	TransformDevice* transformDevice = TransformDevice::Instance();
+	transformDevice->ApplyModelTransforms();
 }
 
 //------------------------------------------------------------------------------

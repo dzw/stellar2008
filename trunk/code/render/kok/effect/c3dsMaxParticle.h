@@ -179,51 +179,51 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////////////////////
 class cParticleEffectBase
 {
-//public:
-//	cParticleEffectBase( cParticlePool* pParticlePool );
-//	virtual ~cParticleEffectBase();
-//
-//	void AddParticle( cParticle* pParticle );
-//	void AddParticleFirst( cParticle* pParticle );
-//	void FreeParticle( cParticle* pParticle );
-//
-//	virtual void FrameMove( float fElapsedTime ) = 0;
-//	virtual void DisableFrameMove( float fElapsedTime ) {}
-//	virtual void Draw( LPDIRECT3DDEVICE9 pD3DDevice );
-//
-//	void SetCurPosition( D3DXVECTOR3& vPos ) { m_vCurPosition = vPos; }
-//	D3DXVECTOR3& GetCurPosition( void ) { return m_vCurPosition; }
-//	void SetLinkName( Util::String pName );
-//	Util::String GetLinkName( void ) { return m_pLinkName; }
-//	c3dsMaxParticleRender* GetRender( void ) { return m_pRender; }
-//
-//	virtual void InitTransformMatrix( D3DXMATRIXA16* pTransform ) {}
-//	virtual void ApplyTransformMatrix( D3DXMATRIXA16* pTransform ) {}
-//	virtual void ApplyBoundingBox( const D3DXVECTOR3& vMin, const D3DXVECTOR3& vMax ) {}
-//
-//	// 070213 cyhsieh Particle Emit Time
-//	virtual void SetCurAnimTime( float fTime ) {}
-//
-//	DWORD GetRenderAlphaBlendType( void );
-//
-//	bool GetRenderEnabled( void )
-//	{
-//		if( m_pRender ) return m_pRender->bEnabled;
-//			return false;
-//	}
-//
-//	float ComputeFogAlphaFactor( void );
-//
-//protected:
-//	cParticlePool*  m_pParticlePool;
-//
-//	cParticle*      m_pFirstUsedParticle;
-//	cParticle*      m_pLastUsedParticle;
-//
-//	Util::String           m_pLinkName;
-//	D3DXVECTOR3     m_vCurPosition;
-//
-//	c3dsMaxParticleRender* m_pRender;
+public:
+	cParticleEffectBase( cParticlePool* pParticlePool );
+	virtual ~cParticleEffectBase();
+
+	void AddParticle( cParticle* pParticle );
+	void AddParticleFirst( cParticle* pParticle );
+	void FreeParticle( cParticle* pParticle );
+
+	virtual void FrameMove( float fElapsedTime ) = 0;
+	virtual void DisableFrameMove( float fElapsedTime ) {}
+	virtual void Draw( LPDIRECT3DDEVICE9 pD3DDevice );
+
+	void SetCurPosition( D3DXVECTOR3& vPos ) { m_vCurPosition = vPos; }
+	D3DXVECTOR3& GetCurPosition( void ) { return m_vCurPosition; }
+	void SetLinkName( Util::String pName );
+	Util::String GetLinkName( void ) { return m_pLinkName; }
+	//c3dsMaxParticleRender* GetRender( void ) { return m_pRender; }
+
+	virtual void InitTransformMatrix( D3DXMATRIXA16* pTransform ) {}
+	virtual void ApplyTransformMatrix( D3DXMATRIXA16* pTransform ) {}
+	virtual void ApplyBoundingBox( const D3DXVECTOR3& vMin, const D3DXVECTOR3& vMax ) {}
+
+	// 070213 cyhsieh Particle Emit Time
+	virtual void SetCurAnimTime( float fTime ) {}
+
+	DWORD GetRenderAlphaBlendType( void );
+
+	/*bool GetRenderEnabled( void )
+	{
+		if( m_pRender ) return m_pRender->bEnabled;
+			return false;
+	}*/
+
+	float ComputeFogAlphaFactor( void );
+
+protected:
+	cParticlePool*  m_pParticlePool;
+
+	cParticle*      m_pFirstUsedParticle;
+	cParticle*      m_pLastUsedParticle;
+
+	Util::String    m_pLinkName;
+	D3DXVECTOR3     m_vCurPosition;
+
+	//c3dsMaxParticleRender* m_pRender;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

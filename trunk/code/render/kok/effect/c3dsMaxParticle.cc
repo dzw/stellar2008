@@ -15,7 +15,7 @@ using namespace Memory;
 
 //D3DXVECTOR3 c3dsMaxParticleManager::m_vCameraPos;
 //D3DXMATRIXA16 c3dsMaxParticleManager::m_matCameraView;
-//
+
 //D3DXVECTOR3 cParticleZodiac::m_vDecalVertices[MAX_DECAL_VERTICES];
 //DWORD cParticleZodiac::m_dwDecalVertexCount = 0;
 //WORD cParticleZodiac::m_wDecalIndices[MAX_DECAL_VERTICES * 3];
@@ -362,7 +362,7 @@ void c3dsMaxEmitDataSuperSpray::CreateSpecialMaterialAnimator( void )
 ////-----------------------------------------------------------------------------
 //cParticleEffectBase::cParticleEffectBase( cParticlePool* pParticlePool )
 //:m_pParticlePool(pParticlePool), m_pFirstUsedParticle(NULL), m_pLastUsedParticle(NULL),
-// m_pLinkName(NULL), m_vCurPosition( 0.0f, 0.0f, 0.0f ), m_pRender(NULL)
+// m_pLinkName(NULL), m_vCurPosition( 0.0f, 0.0f, 0.0f )/*, m_pRender(NULL)*/
 //{
 //}
 //
@@ -384,7 +384,7 @@ void c3dsMaxEmitDataSuperSpray::CreateSpecialMaterialAnimator( void )
 //  }
 //
 //  n_delete_array( m_pLinkName );
-//  SAFE_RELEASE( m_pRender );
+//  //SAFE_RELEASE( m_pRender );
 //}
 //
 //
@@ -473,18 +473,18 @@ void c3dsMaxEmitDataSuperSpray::CreateSpecialMaterialAnimator( void )
 //// Name: Draw
 //// Desc: 
 ////-----------------------------------------------------------------------------
-//void cParticleEffectBase::Draw( LPDIRECT3DDEVICE9 pD3DDevice )
-//{
-//  if( m_pRender == NULL || m_pRender->m_dwVertexSize < 3 )
-//  {
-//    return;
-//  }
-//
-//  m_pRender->UpdateRenderBuffer();
-//  m_pRender->Draw( pD3DDevice );
-//  
-//  m_pRender->bEnabled = false;
-//}
+////void cParticleEffectBase::Draw( LPDIRECT3DDEVICE9 pD3DDevice )
+////{
+////  if( m_pRender == NULL || m_pRender->m_dwVertexSize < 3 )
+////  {
+////    return;
+////  }
+////
+////  m_pRender->UpdateRenderBuffer();
+////  m_pRender->Draw( pD3DDevice );
+////  
+////  m_pRender->bEnabled = false;
+////}
 //
 ////-----------------------------------------------------------------------------
 //// Name: SetLinkName
@@ -511,10 +511,10 @@ void c3dsMaxEmitDataSuperSpray::CreateSpecialMaterialAnimator( void )
 ////-----------------------------------------------------------------------------
 //DWORD cParticleEffectBase::GetRenderAlphaBlendType( void )
 //{
-//  if( m_pRender )
+//  /*if( m_pRender )
 //  {
 //    return m_pRender->GetMaterialAlphaBlendType();
-//  }
+//  }*/
 //  return 0;
 //}
 //
@@ -550,7 +550,7 @@ void c3dsMaxEmitDataSuperSpray::CreateSpecialMaterialAnimator( void )
 //
 //  return fFogAlphaFactor;
 //}
-//
+
 //
 ////-----------------------------------------------------------------------------
 //// Name: cParticleCloud
