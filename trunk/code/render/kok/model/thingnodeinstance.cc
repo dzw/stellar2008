@@ -7,6 +7,7 @@
 #include "kok/model/thingnode.h"
 #include "coregraphics/transformdevice.h"
 #include "coregraphics/renderdevice.h"
+#include "models/attributes.h"
 
 namespace KOK
 {
@@ -19,7 +20,10 @@ using namespace Math;
 //------------------------------------------------------------------------------
 /**
 */
-ThingNodeInstance::ThingNodeInstance()	
+ThingNodeInstance::ThingNodeInstance():
+	cullMode(0),
+	srcBlend(0),
+	destBlend(0)
 {
     // empty
 }
@@ -29,6 +33,9 @@ ThingNodeInstance::ThingNodeInstance()
 */
 ThingNodeInstance::~ThingNodeInstance()
 {
+	this->cullMode = 0;
+	this->srcBlend = 0;
+	this->destBlend = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -40,6 +47,13 @@ ThingNodeInstance::Render()
 	//this->modelNode.downcast<ThingNode>()->Render();
 
 	const Ptr<ThingNode>& node = this->modelNode.downcast<ThingNode>();
+
+	if (node->GetType() == ModelNodeType::Alpha)
+	{
+		this->cullMode->SetInt(node->GetInt(Attr::CullMode));
+		this->srcBlend->SetInt(node->GetInt(Attr::SrcAlphaBlend));
+		this->destBlend->SetInt(node->GetInt(Attr::DestAlphaBlend));
+	}
 
 	for (IndexT batchIndex = 0; batchIndex < node->GetAttribuateTableSize(); batchIndex++)
 	{
@@ -133,6 +147,22 @@ ThingNodeInstance::CreateMesh()
 	//components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
 	components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
 	node->CreateMesh(components, sizeof(VertexFVF));
+
+}
+
+void 
+ThingNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst,
+										   const Ptr<ModelNode>& node, 
+										   const Ptr<ModelNodeInstance>& parentNodeInst)
+{
+	KokShapeNodeInstance::OnAttachToModelInstance(inst, node, parentNodeInst);
+
+	if (node->GetType() == ModelNodeType::Alpha)
+	{
+		this->cullMode = shaderInstance->GetVariableByName(ShaderVariable::Name("CullMode"));
+		this->srcBlend = shaderInstance->GetVariableByName(ShaderVariable::Name("AlphaSrcBlend"));
+		this->destBlend = shaderInstance->GetVariableByName(ShaderVariable::Name("AlphaDestBlend"));
+	}
 }
 
 }

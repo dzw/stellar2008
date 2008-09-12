@@ -129,8 +129,10 @@ MayaCameraUtil::Update()
         this->centerOfInterest -= this->cameraTransform.getrow2() * this->viewDistance;
     }
 
+	//this->centerOfInterest.z() = -this->centerOfInterest.z();
+
     // get polar vector in cartesian space
-    matrix44 m = matrix44::translation(0.0f, 0.0f, this->viewDistance);
+    matrix44 m = matrix44::translation(0.0f, 0.0f, -this->viewDistance);
     m = matrix44::multiply(m, matrix44::rotationx(this->viewAngles.theta - (N_PI * 0.5f)));
     m = matrix44::multiply(m, matrix44::rotationy(this->viewAngles.rho));
     m = matrix44::multiply(m, matrix44::translation(this->centerOfInterest));

@@ -87,7 +87,7 @@ KOKApplication::Open()
 		// setup a default view
 		this->view = gfxServer->CreateView(View::RTTI, StringAtom("DefaultView"), true);
 		this->view->SetStage(this->stage);        
-		this->view->SetFrameShader(FrameServer::Instance()->GetFrameShaderByName(ResourceId(DEFAULT_FRAMESHADER_NAME)));
+		//this->view->SetFrameShader(FrameServer::Instance()->GetFrameShaderByName(ResourceId(DEFAULT_FRAMESHADER_NAME)));
 		this->view->SetCameraEntity(cameraEntity);
 
 		// setup resource mapper for meshes

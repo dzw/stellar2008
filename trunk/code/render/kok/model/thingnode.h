@@ -33,12 +33,14 @@ public:
 	void LoadFromStream(const Ptr<IO::Stream>& stream, 
 		int iVersion, bool bMirrorZ, bool bCompuiteDuplicateVertexCollection=false, bool bBlend=false);
 	
+	int GetCullMode()const;
+	int GetSrcBlend()const;
+	int GetDestBlend()const;
 protected:
 	friend class ThingInstance;
 
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance()const;
 	virtual void UnloadResources();
-	
 };
 
 } // namespace Models

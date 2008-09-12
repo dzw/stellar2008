@@ -33,6 +33,12 @@ public:
 	void CreateMesh();
 protected:
 	void RenderBatch(IndexT index);
+	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, 
+		const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
+
+	Ptr<CoreGraphics::ShaderVariable> cullMode;
+	Ptr<CoreGraphics::ShaderVariable> srcBlend;
+	Ptr<CoreGraphics::ShaderVariable> destBlend;
 };
 
 } // namespace Models

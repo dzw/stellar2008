@@ -42,6 +42,10 @@ namespace Attr
     DeclareFloat(MatSpecularPower, 'MSCP', ReadWrite);
     DeclareFloat(BumpScale, 'BMSC', ReadWrite);
 
+	// kok shader params
+	DeclareInt(SrcAlphaBlend, 'SABD', ReadWrite);
+	DeclareInt(DestAlphaBlend, 'DABD', ReadWrite);
+
     // Models::CharacterNode
     DeclareString(AnimFilename, 'ANFN', ReadWrite);
     DeclareBlob(JointIndices, 'JIND', ReadWrite);
