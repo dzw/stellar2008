@@ -53,7 +53,7 @@ void
 ThingNode::LoadResources()
 {
     // call parent class
-    TransformNode::LoadResources();
+    KokShapeNode::LoadResources();
 }
 
 //------------------------------------------------------------------------------
