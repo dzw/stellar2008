@@ -6,6 +6,7 @@
 	
 	<Pass name="Color1" renderTarget="ColorBuffer1" shader="p_color" clearColor="0.3,0.3,0.3,1.0" clearDepth="1.0" clearStencil="0">
         <Batch shader="b_sampler" type="Solid" shdFeatures="Solid" nodeFilter="Solid" sorting="None" lighting="None"/>
+		<Batch shader="b_alpha" type="Alpha" shdFeatures="Alpha" nodeFilter="Alpha" sorting="None" lighting="None"/>
 			<!--<ApplyShaderVariable sem="ModelViewProjection" value="mvp"/>
 		</Batch>-->
 	</Pass>

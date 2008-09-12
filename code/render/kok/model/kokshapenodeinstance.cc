@@ -101,6 +101,7 @@ void
 KokShapeNodeInstance::CreateMaterial()
 {
 	this->shaderInstance = this->modelNode.downcast<KokShapeNode>()->GetShaderInstance();
+	n_assert(this->shaderInstance.isvalid());
 
 	this->diffuseColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("DiffuseColor"));
 	this->ambientColor = shaderInstance->GetVariableBySemantic(ShaderVariable::Semantic("AmbientColor"));

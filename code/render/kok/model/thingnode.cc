@@ -6,6 +6,8 @@
 #include "kok/model/Thingnode.h"
 #include "kok/model/Thingnodeinstance.h"
 #include "coregraphics/shaderserver.h"
+#include "models/attributes.h"
+#include "coregraphics/shaderstate.h"
 
 namespace KOK
 {
@@ -18,6 +20,7 @@ using namespace Resources;
 using namespace Math;
 using namespace Memory;
 using namespace CoreGraphics;
+using namespace Attr;
 
 //------------------------------------------------------------------------------
 /**
@@ -108,6 +111,46 @@ ThingNode::LoadFromStream(const Ptr<Stream>& stream,
 	////components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
 	//components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
 	//CreateMesh(components, sizeof(VertexFVF));
+
+	if (this->m_dwNumMaterial > 0)
+	{
+		DWORD alphaBlendType = this->m_pMaterial[0].GetAlphaBlendType();
+		if ((alphaBlendType > 0 && alphaBlendType <= 4))
+		{
+			this->SetType(ModelNodeType::Alpha);
+
+			int srcBlend, destBlend, cullMode;
+			switch(alphaBlendType)
+			{
+			case 1:
+				srcBlend  = Blend_SrcAlpha;
+				destBlend = Blend_One;		
+				cullMode  = Cull_NoCull;
+				break;
+			case 2:
+				srcBlend  = Blend_SrcAlpha;
+				destBlend = Blend_InvSrcAlpha;
+				cullMode  = Cull_NoCull;
+				break;
+			case 3:
+				srcBlend = Blend_Zero;
+				destBlend = Blend_SrcColor;
+				cullMode = Cull_NoCull;
+				break;
+			case 4:
+				srcBlend = Blend_Zero;
+				destBlend = Blend_InvSrcColor;
+				cullMode = Cull_NoCull;
+				break;
+			}
+			this->SetInt(Attr::SrcAlphaBlend, srcBlend);
+			this->SetInt(Attr::DestAlphaBlend, destBlend);
+			this->SetInt(Attr::CullMode, cullMode);
+		}
+	}
+
+	if (!this->shaderInstance.isvalid())
+		this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(Resources::ResourceId("shd:kokstaticmodel"));
 }
 
 }

@@ -40,7 +40,7 @@ ThingInstance::SetTexture(int nodeId, int texId)
 	String path = this->GetModel()->GetResourceId().Value().ExtractDirName();
 	const Array<Ptr<ModelNode>>& nodes = this->GetModel()->GetNodes();
 
-	if (nodeId > nodes.Size() || nodeId < 0)
+	if (nodeId >= nodes.Size() || nodeId < 0)
 		return;
 	if (texId >= 100 || texId < 0)
 		return;

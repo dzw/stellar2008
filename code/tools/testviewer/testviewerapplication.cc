@@ -223,14 +223,16 @@ TestViewerApplication::Open()
 
 		this->view->SetFrameShader(Frame::FrameServer::Instance()->GetFrameShaderByName(ResourceId("DX9Sample")));
 
-		// 地物模型
+		// 地物模型	
+		//alpha测试:mart:m_hal055.obj
+		//effect测试:mart:m_hal022.obj
 		this->thingEntity = ThingEntity::Create();
-		this->thingEntity->SetResourceId(ResourceId("mart:m_hal056.obj"));
+		this->thingEntity->SetResourceId(ResourceId("mart:m_hal022.obj"));
 		this->thingEntity->SetTextureId(0, 0);
 		this->thingEntity->SetTextureId(1, 0);
 		this->stage->AttachEntity(this->thingEntity.upcast<GraphicsEntity>());
-
-		// 骨骼动画
+ 
+		//// 骨骼动画
 		//this->skeletonFactory = cSkeletonSerializerFactory::Create();
 		//this->skeletonFactory->Open();
 
@@ -294,7 +296,8 @@ TestViewerApplication::Close()
 {
 	this->beingEntity = 0;
 	this->thingEntity = 0;
-	this->skeletonFactory->Close();
+	if (this->skeletonFactory.isvalid())
+		this->skeletonFactory->Close();
 	this->skeletonFactory = 0;
 
     ViewerApplication::Close();
