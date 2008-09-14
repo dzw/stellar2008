@@ -100,6 +100,12 @@ protected:
 
 	//Ptr<CoreGraphics::Mesh> emitterMesh;
 	Ptr<CoreGraphics::DynamicMesh> particleMesh;
+
+	int srcBlend;
+	int destBlend;
+
+	/// 是否是alpha模式，如果是就需要放到alpha队列
+	bool isAlphaMode;
 };
 
 }

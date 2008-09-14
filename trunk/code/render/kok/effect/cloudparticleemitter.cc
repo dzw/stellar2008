@@ -16,119 +16,144 @@ CloudParticleEmitter::CloudParticleEmitter( cParticlePool* pParticlePool, CloudE
  m_vEmitDirRight(1.0f, 0.0f, 0.0f), m_vEmitDirUp(0.0f, 1.0f, 0.0f), m_vEmitDirForward(0.0f, 0.0f, 1.0f),
  m_vEmitForceDir(0.0f, 0.0f, 0.0f), m_vCenterOffset(0.0f, 0.0f, 0.0f)
 {
-  if( pEmitDataCloud )
-  {
-    m_sPCloudInfo = pEmitDataCloud->GetPCloudInfo();
-    SetLinkName( pEmitDataCloud->GetLinkName() );
+	if( pEmitDataCloud )
+	{
+		m_sPCloudInfo = pEmitDataCloud->GetPCloudInfo();
+		SetLinkName( pEmitDataCloud->GetLinkName() );
 
-    DWORD dwRenderAlphaBlendType = 0;
-    c3dsMaxParticleRender* pRender = (c3dsMaxParticleRender*)g_mScene->RenderCreate( RENDER_C_3DSMAXPARTICLE );
-    m_pRender = (c3dsMaxParticleRender*)pRender->Create();
-    if( m_pRender )
-    {
-      m_pRender->iMaterialSize = pEmitDataCloud->GetMaterialSize();
-      if( m_pRender->iMaterialSize > 0 )
-      {
-        cMaterial* pMaterial;
-        cMaterialAnimator* pMaterialAnimator;
-        m_pRender->m_pMaterial = _NEW cMaterial[m_pRender->iMaterialSize];
-        for( int i = 0; i < m_pRender->iMaterialSize; i++ )
-        {
-          pMaterial = pEmitDataCloud->GetMaterial( i );
-          if( pMaterial )
-          {
-            m_pRender->m_pMaterial[i].m_iNameSize = pMaterial->m_iNameSize;
-            if( pMaterial->m_iNameSize > 0 )
-            {
-              m_pRender->m_pMaterial[i].m_pszTextName = _NEW char[pMaterial->m_iNameSize + 1];
-              if( m_pRender->m_pMaterial[i].m_pszTextName )
-              {
-                strcpy( m_pRender->m_pMaterial[i].m_pszTextName, pMaterial->m_pszTextName );
-              }
-            }
-            m_pRender->m_pMaterial[i].SetAlphaBlendType( pMaterial->GetAlphaBlendType() );
-            m_pRender->m_pMaterial[i].SetTextureAniRows( pMaterial->GetTextureAniRows() );
-            m_pRender->m_pMaterial[i].SetTextureAniCols( pMaterial->GetTextureAniCols() );
-            m_pRender->m_pMaterial[i].SetTextureAniRepeat( pMaterial->GetTextureAniRepeat() );
+    //DWORD dwRenderAlphaBlendType = 0;
+    //c3dsMaxParticleRender* pRender = (c3dsMaxParticleRender*)g_mScene->RenderCreate( RENDER_C_3DSMAXPARTICLE );
+    //m_pRender = (c3dsMaxParticleRender*)pRender->Create();
+    //if( m_pRender )
+    //{
+    //  m_pRender->iMaterialSize = pEmitDataCloud->GetMaterialSize();
+    //  if( m_pRender->iMaterialSize > 0 )
+    //  {
+    //    cMaterial* pMaterial;
+    //    cMaterialAnimator* pMaterialAnimator;
+    //    m_pRender->m_pMaterial = _NEW cMaterial[m_pRender->iMaterialSize];
+    //    for( int i = 0; i < m_pRender->iMaterialSize; i++ )
+    //    {
+    //      pMaterial = pEmitDataCloud->GetMaterial( i );
+    //      if( pMaterial )
+    //      {
+    //        m_pRender->m_pMaterial[i].m_iNameSize = pMaterial->m_iNameSize;
+    //        if( pMaterial->m_iNameSize > 0 )
+    //        {
+    //          m_pRender->m_pMaterial[i].m_pszTextName = _NEW char[pMaterial->m_iNameSize + 1];
+    //          if( m_pRender->m_pMaterial[i].m_pszTextName )
+    //          {
+    //            strcpy( m_pRender->m_pMaterial[i].m_pszTextName, pMaterial->m_pszTextName );
+    //          }
+    //        }
+    //        m_pRender->m_pMaterial[i].SetAlphaBlendType( pMaterial->GetAlphaBlendType() );
+    //        m_pRender->m_pMaterial[i].SetTextureAniRows( pMaterial->GetTextureAniRows() );
+    //        m_pRender->m_pMaterial[i].SetTextureAniCols( pMaterial->GetTextureAniCols() );
+    //        m_pRender->m_pMaterial[i].SetTextureAniRepeat( pMaterial->GetTextureAniRepeat() );
 
-            if( i == 0 )
-            {
-              dwRenderAlphaBlendType = pMaterial->GetAlphaBlendType();
-            }
-          }
+    //        if( i == 0 )
+    //        {
+    //          dwRenderAlphaBlendType = pMaterial->GetAlphaBlendType();
+    //        }
+    //      }
 
-          pMaterialAnimator = pEmitDataCloud->GetMaterialAnimator( i );
-          if( pMaterialAnimator )
-          {
-            m_pRender->m_pMaterial[i].SetMaterialAnimator( pMaterialAnimator );
+    //      pMaterialAnimator = pEmitDataCloud->GetMaterialAnimator( i );
+    //      if( pMaterialAnimator )
+    //      {
+    //        m_pRender->m_pMaterial[i].SetMaterialAnimator( pMaterialAnimator );
 
-            // 070212 cyhsieh extended material animation texture address
-            if( m_pRender->m_pMaterial[i].GetTextureTransformMatrix() )
-            {
-              m_pRender->m_pMaterial[i].GetAnimatorAddress( m_pRender->m_dwAddressU, m_pRender->m_dwAddressV );
-            }
-          }
+    //        // 070212 cyhsieh extended material animation texture address
+    //        if( m_pRender->m_pMaterial[i].GetTextureTransformMatrix() )
+    //        {
+    //          m_pRender->m_pMaterial[i].GetAnimatorAddress( m_pRender->m_dwAddressU, m_pRender->m_dwAddressV );
+    //        }
+    //      }
 
-        }
-      }
+    //    }
+    //  }
+		
+    //  switch( dwRenderAlphaBlendType )
+    //  {
+    //  case 0:   // Opaque
+    //    m_pRender->m_bAlphaBlendenable = false;
+    //    m_pRender->m_bZWriteenable = true;
+    //    break;
+    //  case 1:   // Additive
+    //    m_pRender->m_bAlphaBlendenable = true;
+    //    m_pRender->m_dwSrcBlend = D3DBLEND_SRCALPHA;
+    //    m_pRender->m_dwDestBlend = D3DBLEND_ONE;
+    //    m_pRender->m_bZWriteenable = false;
+    //    break;
+    //  case 2:   // Alpha
+    //    m_pRender->m_bAlphaBlendenable = true;
+    //    m_pRender->m_dwSrcBlend = D3DBLEND_SRCALPHA;
+    //    m_pRender->m_dwDestBlend = D3DBLEND_INVSRCALPHA;
+    //    m_pRender->m_bZWriteenable = false;
+    //    break;
+    //  case 3:   // Modulate
+    //    m_pRender->m_bAlphaBlendenable = true;
+    //    m_pRender->m_dwSrcBlend = D3DBLEND_ZERO;
+    //    m_pRender->m_dwDestBlend = D3DBLEND_SRCCOLOR;
+    //    m_pRender->m_bZWriteenable = false;
+    //    break;
+    //  case 4:   // Modulate Inv
+    //    m_pRender->m_bAlphaBlendenable = true;
+    //    m_pRender->m_dwSrcBlend = D3DBLEND_ZERO;
+    //    m_pRender->m_dwDestBlend = D3DBLEND_INVSRCCOLOR;
+    //    m_pRender->m_bZWriteenable = false;
+    //    break;
+    //  }
 
-      switch( dwRenderAlphaBlendType )
-      {
-      case 0:   // Opaque
-        m_pRender->m_bAlphaBlendenable = false;
-        m_pRender->m_bZWriteenable = true;
-        break;
-      case 1:   // Additive
-        m_pRender->m_bAlphaBlendenable = true;
-        m_pRender->m_dwSrcBlend = D3DBLEND_SRCALPHA;
-        m_pRender->m_dwDestBlend = D3DBLEND_ONE;
-        m_pRender->m_bZWriteenable = false;
-        break;
-      case 2:   // Alpha
-        m_pRender->m_bAlphaBlendenable = true;
-        m_pRender->m_dwSrcBlend = D3DBLEND_SRCALPHA;
-        m_pRender->m_dwDestBlend = D3DBLEND_INVSRCALPHA;
-        m_pRender->m_bZWriteenable = false;
-        break;
-      case 3:   // Modulate
-        m_pRender->m_bAlphaBlendenable = true;
-        m_pRender->m_dwSrcBlend = D3DBLEND_ZERO;
-        m_pRender->m_dwDestBlend = D3DBLEND_SRCCOLOR;
-        m_pRender->m_bZWriteenable = false;
-        break;
-      case 4:   // Modulate Inv
-        m_pRender->m_bAlphaBlendenable = true;
-        m_pRender->m_dwSrcBlend = D3DBLEND_ZERO;
-        m_pRender->m_dwDestBlend = D3DBLEND_INVSRCCOLOR;
-        m_pRender->m_bZWriteenable = false;
-        break;
-      }
+    //  int iPredictVertexSize = m_sPCloudInfo.m_dwBirthRate * ( m_sPCloudInfo.m_dwLife / 160 ) * 4;
+    //  m_pRender->m_dwRenderMeshSize = ( iPredictVertexSize + 15 ) & ~0xF;  // 16计
+    //  m_pRender->m_pRenderMesh = _NEW EFFECT_MDLVTX[m_pRender->m_dwRenderMeshSize];
+    //}
+  
+  
+		DWORD dwRenderAlphaBlendType;
+		cMaterial* pMaterial;
+		pMaterial = pEmitDataCloud->GetMaterial(0);
+		dwRenderAlphaBlendType = pMaterial->GetAlphaBlendType();
 
-      int iPredictVertexSize = m_sPCloudInfo.m_dwBirthRate * ( m_sPCloudInfo.m_dwLife / 160 ) * 4;
-      m_pRender->m_dwRenderMeshSize = ( iPredictVertexSize + 15 ) & ~0xF;  // 16计
-      m_pRender->m_pRenderMesh = _NEW EFFECT_MDLVTX[m_pRender->m_dwRenderMeshSize];
-    }
-  }
+		this->isAlphaMode = true;
+		switch(dwRenderAlphaBlendType)
+		{
+		case 0:	// Opaque
+		  this->isAlphaMode = false;
+		  break;
+		case 1:	// Additive
+		  this->srcBlend = Blend_SrcAlpha;
+		  this->destBlend = Blend_One;
+		  break;
+		case 2:	// Alpha
+		  this->srcBlend = Blend_SrcAlpha;
+		  this->destBlend = Blend_InvSrcAlpha;
+		  break;
+		case 3:	// Modulate
+		  this->srcBlend = Blend_Zero;
+		  this->destBlend = Blend_SrcColor;
+		  break;
+		case 4:	// Modulate Inv
+		  this->srcBlend = Blend_Zero;
+		  this->destBlend = Blend_InvSrcColor;
+		}
+
+		// mesh大小
+		int iPredictVertexSize = m_sPCloudInfo.m_dwBirthRate * ( m_sPCloudInfo.m_dwLife / 160 ) * 4;
+		m_pRender->m_dwRenderMeshSize = ( iPredictVertexSize + 15 ) & ~0xF;  // 16计
+		m_pRender->m_pRenderMesh = _NEW EFFECT_MDLVTX[m_pRender->m_dwRenderMeshSize];
+	}
 }
 
-//-----------------------------------------------------------------------------
-// Name: FrameMove
-// Desc: 
-//-----------------------------------------------------------------------------
-void CloudParticleEmitter::FrameMove( float fElapsedTime )
+void
+CloudParticleEmitter::FrameMove( float fElapsedTime )
 {
-  if( m_pRender == NULL )
-  {
-    return;
-  }
+	float fFogAlphaFactor = ComputeFogAlphaFactor();
+	if( fFogAlphaFactor <= 0.0f )
+	{
+		return;
+	}
 
-  float fFogAlphaFactor = ComputeFogAlphaFactor();
-  if( fFogAlphaFactor <= 0.0f )
-  {
-    return;
-  }
-
-  // 070213 cyhsieh Particle Emit Time
   m_bEmitParticles = ( ( m_fCurAnimTime >= m_sPCloudInfo.m_dwEmitStart ) &&
                        ( m_fCurAnimTime <= m_sPCloudInfo.m_dwEmitStop ) );
  
@@ -158,7 +183,7 @@ void CloudParticleEmitter::FrameMove( float fElapsedTime )
           float fRandomLifeTime = ( (float)rand() / RAND_MAX ) * 2.0f - 1.0f;
           float fRandomSize = ( (float)rand() / RAND_MAX ) * 2.0f - 1.0f;
           
-          // 070731 cyhsieh particle initial rotation
+          // particle initial rotation
           if( m_sPCloudInfo.m_fSpinPhaseDeg == 0 )
           {
             pParticle->m_fAngle = 0.0f;
@@ -234,10 +259,10 @@ void CloudParticleEmitter::FrameMove( float fElapsedTime )
 
   const D3DXMATRIXA16& matView = c3dsMaxParticleManager::GetCameraViewMatrix();
 
-  D3DXVECTOR3 vRight = D3DXVECTOR3( matView._11, matView._21, matView._31 );
-  D3DXVECTOR3 vUp = D3DXVECTOR3( matView._12, matView._22, matView._32 );
-  D3DXVECTOR3 vDir = D3DXVECTOR3( matView._13, matView._23, matView._33 );
-  D3DXVECTOR3 vA = -vRight - vUp;
+	D3DXVECTOR3 vRight = D3DXVECTOR3( matView._11, matView._21, matView._31 );
+	D3DXVECTOR3 vUp = D3DXVECTOR3( matView._12, matView._22, matView._32 );
+	D3DXVECTOR3 vDir = D3DXVECTOR3( matView._13, matView._23, matView._33 );
+	D3DXVECTOR3 vA = -vRight - vUp;
 	D3DXVECTOR3 vB = -vRight + vUp;
 	D3DXVECTOR3 vC =  vRight - vUp;
 	D3DXVECTOR3 vD =  vRight + vUp;
@@ -354,10 +379,6 @@ void CloudParticleEmitter::FrameMove( float fElapsedTime )
   m_pRender->bEnabled = true;
 }
 
-//-----------------------------------------------------------------------------
-// Name: DisableFrameMove
-// Desc: 
-//-----------------------------------------------------------------------------
 void CloudParticleEmitter::DisableFrameMove( float fElapsedTime )
 {
   if( m_pRender == NULL )
