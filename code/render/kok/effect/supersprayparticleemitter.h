@@ -23,6 +23,7 @@ public:
 
 	virtual void FrameMove( float fElapsedTime );
 	virtual void DisableFrameMove( float fElapsedTime );
+	virtual int RenderParticles(float* dstVertices, int maxVertices);
 
 	virtual void ApplyTransformMatrix( D3DXMATRIXA16* pTransform );
 

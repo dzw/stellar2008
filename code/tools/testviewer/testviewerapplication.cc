@@ -227,7 +227,7 @@ TestViewerApplication::Open()
 		//alpha²âÊÔ:mart:m_hal055.obj
 		//effect²âÊÔ:mart:m_hal022.obj
 		this->thingEntity = ThingEntity::Create();
-		this->thingEntity->SetResourceId(ResourceId("mart:m_hal022.obj"));
+		this->thingEntity->SetResourceId(ResourceId("mart:m_hal068.obj"));
 		this->thingEntity->SetTextureId(0, 0);
 		this->thingEntity->SetTextureId(1, 0);
 		this->stage->AttachEntity(this->thingEntity.upcast<GraphicsEntity>());

@@ -14,6 +14,21 @@
 
 namespace KOK
 {
+struct ParticleFVF 
+{
+	D3DXVECTOR3 p;
+	D3DXCOLOR	color;
+	FLOAT		tu,tv;
+
+	ParticleFVF()
+	{
+		p		= D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		color	= D3DCOLOR_XRGB(255, 255, 255);
+		tu		= 0.0f;
+		tv		= 0.0f;
+	}
+};
+
 struct cParticle
 {
 	D3DXVECTOR3 m_vPos;
@@ -64,7 +79,8 @@ public:
 
 	virtual void FrameMove( float fElapsedTime ) = 0;
 	virtual void DisableFrameMove( float fElapsedTime ) {}
-	virtual void Draw( LPDIRECT3DDEVICE9 pD3DDevice );
+	virtual void Draw();
+	virtual int RenderParticles(float* dstVertices, int maxVertices){return 0;}
 
 	void SetCurPosition( D3DXVECTOR3& vPos ) { m_vCurPosition = vPos; }
 	D3DXVECTOR3& GetCurPosition( void ) { return m_vCurPosition; }

@@ -55,7 +55,7 @@ ThingInstance::SetTexture(int nodeId, int texId)
 		if (nodes[nodeId] == nodeInstances[i]->GetModelNode())
 		{
 			const Ptr<ThingNodeInstance>& t = nodeInstances[i].downcast<ThingNodeInstance>();
-			t->LoadTexture(path, texId);
+			t->CreateTexture(path, texId);
 		}
 	}
 }
@@ -159,6 +159,13 @@ ThingInstance::SetVisiableRepeat(int id)
 
 	for (SizeT i = 0; i < nodeInstances.Size(); i++)
 	{
+		// ÅÅ³ýÁ£×ÓÏµÍ³
+		if (!nodeInstances[i]->IsA(ThingNodeInstance::RTTI))
+		{
+			nodeInstances[i]->SetVisible(true);
+			continue;
+		}
+
 		const Ptr<ThingNode>& thingNode = nodeInstances[i]->GetModelNode().downcast<ThingNode>();
 		if (thingNode->GetModelType() == TYPE_REPEAT)
 		{

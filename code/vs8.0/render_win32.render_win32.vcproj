@@ -1903,22 +1903,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\render\models\nodes\materialnode.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\models\nodes\materialnode.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\models\nodes\materialnodeinstance.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\models\nodes\materialnodeinstance.h"
-					>
-				</File>
-				<File
 					RelativePath="..\render\models/nodes\particlesystemnode.cc"
 					>
 				</File>
@@ -2974,6 +2958,26 @@
 					</File>
 					<File
 						RelativePath="..\render\kok\model\particle\particlenodeinstance.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="material"
+					>
+					<File
+						RelativePath="..\render\kok\model\material\materialnode.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\material\materialnode.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\material\materialnodeinstance.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\render\kok\model\material\materialnodeinstance.h"
 						>
 					</File>
 				</Filter>

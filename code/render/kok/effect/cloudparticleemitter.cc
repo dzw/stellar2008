@@ -244,139 +244,6 @@ CloudParticleEmitter::FrameMove( float fElapsedTime )
 
     pParticle = pNext;
   }
-
-  EFFECT_MDLVTX* pRenderMesh = m_pRender->m_pRenderMesh;
-  if( pRenderMesh == NULL )
-  {
-    return;
-  }
-
-  cMaterial* pMaterial = NULL;
-  if( m_pRender->iMaterialSize > 0 )
-  {
-    pMaterial = &m_pRender->m_pMaterial[0];
-  }
-
-  const D3DXMATRIXA16& matView = c3dsMaxParticleManager::GetCameraViewMatrix();
-
-	D3DXVECTOR3 vRight = D3DXVECTOR3( matView._11, matView._21, matView._31 );
-	D3DXVECTOR3 vUp = D3DXVECTOR3( matView._12, matView._22, matView._32 );
-	D3DXVECTOR3 vDir = D3DXVECTOR3( matView._13, matView._23, matView._33 );
-	D3DXVECTOR3 vA = -vRight - vUp;
-	D3DXVECTOR3 vB = -vRight + vUp;
-	D3DXVECTOR3 vC =  vRight - vUp;
-	D3DXVECTOR3 vD =  vRight + vUp;
-
-  DWORD dwVertexSize = 0;
-  pParticle = m_pFirstUsedParticle;
-  DWORD dwTotalCount = 0;
-  while( pParticle )
-  {
-    dwTotalCount++;
-    if( dwTotalCount * 4 > m_pRender->m_dwRenderMeshSize )
-    {
-      break;
-    }
-
-    D3DXVECTOR3 vPos = pParticle->m_vPos;
-    if( m_sPCloudInfo.m_dwMoveType == 2 )
-    {
-      D3DXVec3TransformCoord( &vPos, &vPos, &m_matRotate );
-      vPos += m_vCurPosition;
-    }
-
-    if( pParticle->m_fAngle != 0 )
-    {
-      D3DXMATRIXA16 matRotate;
-      D3DXMatrixRotationAxis( &matRotate, &vDir, pParticle->m_fAngle );
-      D3DXVECTOR3 vRotateRight, vRotateUp;
-      D3DXVec3TransformNormal( &vRotateRight, &vRight, &matRotate );
-      D3DXVec3TransformNormal( &vRotateUp, &vUp, &matRotate );
-      D3DXVECTOR3 vRotateA = -vRotateRight - vRotateUp;
-	    D3DXVECTOR3 vRotateB = -vRotateRight + vRotateUp;
-	    D3DXVECTOR3 vRotateC =  vRotateRight - vRotateUp;
-	    D3DXVECTOR3 vRotateD =  vRotateRight + vRotateUp;
-      pRenderMesh[dwVertexSize + 0].p = vPos + vRotateA * pParticle->m_fSize;
-      pRenderMesh[dwVertexSize + 1].p = vPos + vRotateB * pParticle->m_fSize;
-      pRenderMesh[dwVertexSize + 2].p = vPos + vRotateC * pParticle->m_fSize;
-      pRenderMesh[dwVertexSize + 3].p = vPos + vRotateD * pParticle->m_fSize;
-    }
-    else
-    {
-      pRenderMesh[dwVertexSize + 0].p = vPos + vA * pParticle->m_fSize;
-      pRenderMesh[dwVertexSize + 1].p = vPos + vB * pParticle->m_fSize;
-      pRenderMesh[dwVertexSize + 2].p = vPos + vC * pParticle->m_fSize;
-      pRenderMesh[dwVertexSize + 3].p = vPos + vD * pParticle->m_fSize;
-    }
-
-    D3DCOLOR color = 0xFFFFFF | ( ( (DWORD)( fFogAlphaFactor * 255.0f ) ) << 24 );
-    if( pMaterial )
-    {
-      pMaterial->SetAniTime( pParticle->m_fTotalLifeTime - pParticle->m_fLifeTime );
-      const D3DXCOLOR* pColor = pMaterial->GetDiffuseOpacity();
-      if( pColor )
-      {
-        color = D3DCOLOR_COLORVALUE( pColor->r, pColor->g, pColor->b, pColor->a * fFogAlphaFactor );
-      }
-    }
-    pRenderMesh[dwVertexSize + 0].color = color;
-    pRenderMesh[dwVertexSize + 1].color = color;
-    pRenderMesh[dwVertexSize + 2].color = color;
-    pRenderMesh[dwVertexSize + 3].color = color;
-
-    // 070205 cyhsieh texture animation row & col
-    pParticle->m_fTextureAniTime += fElapsedTime;
-    if( pParticle->m_fTextureAniTime > 160.0f )
-    {
-      pParticle->m_fTextureAniTime -= 160.0f;
-      DWORD dwRepeat = 0;
-      if( pMaterial && ( dwRepeat = pMaterial->GetTextureAniRepeat() ) > 0 )
-      {
-        DWORD dwTextureAniRows = pMaterial->GetTextureAniRows();
-        DWORD dwTextureAniCols = pMaterial->GetTextureAniCols();
-        DWORD dwRowCols = dwTextureAniRows * dwTextureAniCols;
-
-        DWORD dwIndex = pParticle->m_dwTextureAniIndex % ( dwRowCols );
-        float fUDiff = 1.0f / dwTextureAniRows;
-        float fVDiff = 1.0f / dwTextureAniCols;
-
-        float fStartU = ( dwIndex % dwTextureAniRows ) * fUDiff;
-        float fStartV = ( dwIndex % dwTextureAniCols ) * fVDiff;
-
-        pRenderMesh[dwVertexSize + 0].tu = fStartU;
-        pRenderMesh[dwVertexSize + 0].tv = fStartV + fVDiff;
-        pRenderMesh[dwVertexSize + 1].tu = fStartU;
-        pRenderMesh[dwVertexSize + 1].tv = fStartV;
-        pRenderMesh[dwVertexSize + 2].tu = fStartU + fUDiff;
-        pRenderMesh[dwVertexSize + 2].tv = fStartV + fVDiff;
-        pRenderMesh[dwVertexSize + 3].tu = fStartU + fUDiff;
-        pRenderMesh[dwVertexSize + 3].tv = fStartV;
-
-        if( dwRepeat == 999 || pParticle->m_dwTextureAniIndex < dwRepeat * dwRowCols - 1 )
-        {
-          pParticle->m_dwTextureAniIndex++;
-        }
-      }
-      else
-      {
-        pRenderMesh[dwVertexSize + 0].tu = 0.0f;
-        pRenderMesh[dwVertexSize + 0].tv = 1.0f;
-        pRenderMesh[dwVertexSize + 1].tu = 0.0f;
-        pRenderMesh[dwVertexSize + 1].tv = 0.0f;
-        pRenderMesh[dwVertexSize + 2].tu = 1.0f;
-        pRenderMesh[dwVertexSize + 2].tv = 1.0f;
-        pRenderMesh[dwVertexSize + 3].tu = 1.0f;
-        pRenderMesh[dwVertexSize + 3].tv = 0.0f;
-      }
-    }
-
-    dwVertexSize += 4;
-
-    pParticle = pParticle->m_pNextParticle;
-  }
-
-  m_pRender->m_dwVertexSize = dwVertexSize;
-  m_pRender->bEnabled = true;
 }
 
 void CloudParticleEmitter::DisableFrameMove( float fElapsedTime )
@@ -449,6 +316,142 @@ void CloudParticleEmitter::ApplyBoundingBox( const D3DXVECTOR3& vMin, const D3DX
   m_sPCloudInfo.m_fEmitWidth = vDiff.x;
   m_sPCloudInfo.m_fEmitHeight = vDiff.y;
   m_sPCloudInfo.m_fEmitDepth = vDiff.z;
+}
+
+int 
+CloudParticleEmitter::RenderParticles(float* dstVertices, int maxVertices)
+{
+	if (dstVertices == NULL || maxVertices <= 0)
+		return 0;
+
+	
+
+	cMaterial* pMaterial = NULL;
+	if( m_pRender->iMaterialSize > 0 )
+	{
+		pMaterial = &m_pRender->m_pMaterial[0];
+	}
+
+	const D3DXMATRIXA16& matView = c3dsMaxParticleManager::GetCameraViewMatrix();
+
+	D3DXVECTOR3 vRight = D3DXVECTOR3( matView._11, matView._21, matView._31 );
+	D3DXVECTOR3 vUp = D3DXVECTOR3( matView._12, matView._22, matView._32 );
+	D3DXVECTOR3 vDir = D3DXVECTOR3( matView._13, matView._23, matView._33 );
+	D3DXVECTOR3 vA = -vRight - vUp;
+	D3DXVECTOR3 vB = -vRight + vUp;
+	D3DXVECTOR3 vC =  vRight - vUp;
+	D3DXVECTOR3 vD =  vRight + vUp;
+
+	DWORD dwVertexSize = 0;
+	pParticle = m_pFirstUsedParticle;
+	DWORD dwTotalCount = 0;
+	while( pParticle )
+	{
+		dwTotalCount++;
+		if( dwTotalCount * 4 > m_pRender->m_dwRenderMeshSize )
+		{
+			break;
+		}
+
+		D3DXVECTOR3 vPos = pParticle->m_vPos;
+		if( m_sPCloudInfo.m_dwMoveType == 2 )
+		{
+			D3DXVec3TransformCoord( &vPos, &vPos, &m_matRotate );
+			vPos += m_vCurPosition;
+		}
+
+		if( pParticle->m_fAngle != 0 )
+		{
+			D3DXMATRIXA16 matRotate;
+			D3DXMatrixRotationAxis( &matRotate, &vDir, pParticle->m_fAngle );
+			D3DXVECTOR3 vRotateRight, vRotateUp;
+			D3DXVec3TransformNormal( &vRotateRight, &vRight, &matRotate );
+			D3DXVec3TransformNormal( &vRotateUp, &vUp, &matRotate );
+			D3DXVECTOR3 vRotateA = -vRotateRight - vRotateUp;
+			D3DXVECTOR3 vRotateB = -vRotateRight + vRotateUp;
+			D3DXVECTOR3 vRotateC =  vRotateRight - vRotateUp;
+			D3DXVECTOR3 vRotateD =  vRotateRight + vRotateUp;
+			pRenderMesh[dwVertexSize + 0].p = vPos + vRotateA * pParticle->m_fSize;
+			pRenderMesh[dwVertexSize + 1].p = vPos + vRotateB * pParticle->m_fSize;
+			pRenderMesh[dwVertexSize + 2].p = vPos + vRotateC * pParticle->m_fSize;
+			pRenderMesh[dwVertexSize + 3].p = vPos + vRotateD * pParticle->m_fSize;
+		}
+		else
+		{
+			pRenderMesh[dwVertexSize + 0].p = vPos + vA * pParticle->m_fSize;
+			pRenderMesh[dwVertexSize + 1].p = vPos + vB * pParticle->m_fSize;
+			pRenderMesh[dwVertexSize + 2].p = vPos + vC * pParticle->m_fSize;
+			pRenderMesh[dwVertexSize + 3].p = vPos + vD * pParticle->m_fSize;
+		}
+
+		D3DCOLOR color = 0xFFFFFF | ( ( (DWORD)( fFogAlphaFactor * 255.0f ) ) << 24 );
+		if( pMaterial )
+		{
+			pMaterial->SetAniTime( pParticle->m_fTotalLifeTime - pParticle->m_fLifeTime );
+			const D3DXCOLOR* pColor = pMaterial->GetDiffuseOpacity();
+			if( pColor )
+			{
+				color = D3DCOLOR_COLORVALUE( pColor->r, pColor->g, pColor->b, pColor->a * fFogAlphaFactor );
+			}
+		}
+		pRenderMesh[dwVertexSize + 0].color = color;
+		pRenderMesh[dwVertexSize + 1].color = color;
+		pRenderMesh[dwVertexSize + 2].color = color;
+		pRenderMesh[dwVertexSize + 3].color = color;
+
+		// 070205 cyhsieh texture animation row & col
+		pParticle->m_fTextureAniTime += fElapsedTime;
+		if( pParticle->m_fTextureAniTime > 160.0f )
+		{
+			pParticle->m_fTextureAniTime -= 160.0f;
+			DWORD dwRepeat = 0;
+			if( pMaterial && ( dwRepeat = pMaterial->GetTextureAniRepeat() ) > 0 )
+			{
+				DWORD dwTextureAniRows = pMaterial->GetTextureAniRows();
+				DWORD dwTextureAniCols = pMaterial->GetTextureAniCols();
+				DWORD dwRowCols = dwTextureAniRows * dwTextureAniCols;
+
+				DWORD dwIndex = pParticle->m_dwTextureAniIndex % ( dwRowCols );
+				float fUDiff = 1.0f / dwTextureAniRows;
+				float fVDiff = 1.0f / dwTextureAniCols;
+
+				float fStartU = ( dwIndex % dwTextureAniRows ) * fUDiff;
+				float fStartV = ( dwIndex % dwTextureAniCols ) * fVDiff;
+
+				pRenderMesh[dwVertexSize + 0].tu = fStartU;
+				pRenderMesh[dwVertexSize + 0].tv = fStartV + fVDiff;
+				pRenderMesh[dwVertexSize + 1].tu = fStartU;
+				pRenderMesh[dwVertexSize + 1].tv = fStartV;
+				pRenderMesh[dwVertexSize + 2].tu = fStartU + fUDiff;
+				pRenderMesh[dwVertexSize + 2].tv = fStartV + fVDiff;
+				pRenderMesh[dwVertexSize + 3].tu = fStartU + fUDiff;
+				pRenderMesh[dwVertexSize + 3].tv = fStartV;
+
+				if( dwRepeat == 999 || pParticle->m_dwTextureAniIndex < dwRepeat * dwRowCols - 1 )
+				{
+					pParticle->m_dwTextureAniIndex++;
+				}
+			}
+			else
+			{
+				pRenderMesh[dwVertexSize + 0].tu = 0.0f;
+				pRenderMesh[dwVertexSize + 0].tv = 1.0f;
+				pRenderMesh[dwVertexSize + 1].tu = 0.0f;
+				pRenderMesh[dwVertexSize + 1].tv = 0.0f;
+				pRenderMesh[dwVertexSize + 2].tu = 1.0f;
+				pRenderMesh[dwVertexSize + 2].tv = 1.0f;
+				pRenderMesh[dwVertexSize + 3].tu = 1.0f;
+				pRenderMesh[dwVertexSize + 3].tv = 0.0f;
+			}
+		}
+
+		dwVertexSize += 4;
+
+		pParticle = pParticle->m_pNextParticle;
+	}
+
+	m_pRender->m_dwVertexSize = dwVertexSize;
+	m_pRender->bEnabled = true;
 }
 
 }

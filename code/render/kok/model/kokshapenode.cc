@@ -21,7 +21,7 @@
 
 namespace KOK
 {
-ImplementClass(KOK::KokShapeNode, 'KSNE', Models::TransformNode);
+ImplementClass(KOK::KokShapeNode, 'KSNE', KOK::MaterialNode);
 
 using namespace IO;
 using namespace Util;
@@ -39,14 +39,12 @@ KokShapeNode::KokShapeNode():
 	verticesBuffer(0),
 	indicesBuffer(0),
 	skinWeights(0),
-	attributeTable(0),
-	m_pMaterial(0),
-	m_pMaterialAnimator(0),
-	shaderInstance(0),
+	attributeTable(0)
+	/*,
 	diffuseColor(0),
 	ambientColor(0),
 	specularColor(0),
-	emissiveColor(0)
+	emissiveColor(0)*/
 {
 }
 
