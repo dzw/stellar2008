@@ -11,11 +11,12 @@
 #include "coregraphics/shaderinstance.h"
 #include "coregraphics/shadervariable.h"
 #include "resources/managedtexture.h"
+#include "kok/model/material/materialnodeinstance.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
 {
-class KokShapeNodeInstance : public Models::TransformNodeInstance
+class KokShapeNodeInstance : public MaterialNodeInstance
 {
     DeclareClass(KokShapeNodeInstance);
 public:
@@ -30,13 +31,13 @@ public:
 	virtual void ApplyState();
 	virtual void OnNotifyVisible(IndexT frameIndex);
 
-	virtual void LoadTexture(const Util::String& path, int texId);
-	const Ptr<CoreGraphics::Texture>& GetTexture()const;
+	//virtual void LoadTexture(const Util::String& path, int texId);
+	//const Ptr<CoreGraphics::Texture>& GetTexture()const;
 protected:
 	void CreateMaterial();
 	void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
 	
-	Ptr<CoreGraphics::ShaderInstance> shaderInstance;
+	//Ptr<CoreGraphics::ShaderInstance> shaderInstance;
 	Ptr<CoreGraphics::ShaderVariable> diffuseColor;
 	Ptr<CoreGraphics::ShaderVariable> ambientColor;
 	Ptr<CoreGraphics::ShaderVariable> specularColor;
@@ -44,18 +45,18 @@ protected:
 	Ptr<CoreGraphics::ShaderVariable> diffMap;				// ∆’Õ®Œ∆¿Ì
 
 	/// Œ∆¿Ì
-	Ptr<Resources::ManagedTexture> tex;
+	//Ptr<Resources::ManagedTexture> tex;
 };
 
-inline const Ptr<CoreGraphics::Texture>& 
-KokShapeNodeInstance::GetTexture()const
-{
-	if (tex.isvalid())
-		return tex->GetTexture();
-
-	static Ptr<CoreGraphics::Texture> tmp;
-	return tmp;
-}
+//inline const Ptr<CoreGraphics::Texture>& 
+//KokShapeNodeInstance::GetTexture()const
+//{
+//	if (tex.isvalid())
+//		return tex->GetTexture();
+//
+//	static Ptr<CoreGraphics::Texture> tmp;
+//	return tmp;
+//}
 
 } // namespace Models
 //------------------------------------------------------------------------------

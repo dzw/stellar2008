@@ -94,8 +94,9 @@ ThingNodeInstance::RenderBatch(IndexT index)
 	const Ptr<ThingNode>& node = this->modelNode.downcast<ThingNode>();
 	const AttributeRange& batch = node->GetAttributeTable()[index];
 	const cMaterial& material = node->GetMaterial()[index];
+	const Ptr<Texture>& tex = this->GetTexture(index);
 
-	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !this->GetTexture().isvalid()/*!material.GetTexture().isvalid()*/)
+	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !tex.isvalid())
 		return;
 
 	this->diffuseColor->SetVector(float4(
@@ -118,7 +119,7 @@ ThingNodeInstance::RenderBatch(IndexT index)
 		material.m_D3DMaterial.Emissive.g,
 		material.m_D3DMaterial.Emissive.b,
 		material.m_D3DMaterial.Emissive.a));
-	this->diffMap->SetTexture(this->GetTexture());
+	this->diffMap->SetTexture(tex);
 
 
 	this->shaderInstance->Commit();
@@ -147,7 +148,6 @@ ThingNodeInstance::CreateMesh()
 	//components.Append(VertexComponent(VertexComponent::Color, 0, VertexComponent::Float4));
 	components.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
 	node->CreateMesh(components, sizeof(VertexFVF));
-
 }
 
 void 

@@ -24,11 +24,12 @@
 #include "kok/material/cMaterialAnimator.h"
 #include "coregraphics/mesh.h"
 #include "coregraphics/shaderinstance.h"
+#include "kok/model/material/materialnode.h"
 
 //------------------------------------------------------------------------------
 namespace KOK
 {
-class KokShapeNode : public Models::TransformNode
+class KokShapeNode : public MaterialNode
 {
     DeclareClass(KokShapeNode);
 public:
@@ -64,8 +65,8 @@ public:
 	DWORD GetAttribuateTableSize()const;
 	const AttributeRange* GetAttributeTable()const;
 
-	DWORD GetMaterialSize()const;
-	const cMaterial* GetMaterial()const;
+	//DWORD GetMaterialSize()const;
+	//const cMaterial* GetMaterial()const;
 
 	const Ptr<CoreGraphics::ShaderInstance>& GetShaderInstance()const;
 	const Ptr<CoreGraphics::Mesh>& GetMesh()const;
@@ -105,19 +106,19 @@ protected:
 	AttributeRange* attributeTable;
 
 	/// material
-	DWORD m_dwNumMaterial;
+	/*DWORD m_dwNumMaterial;
 	cMaterial* m_pMaterial;
-	cMaterialAnimator* m_pMaterialAnimator;
+	cMaterialAnimator* m_pMaterialAnimator;*/
 
 	Ptr<CoreGraphics::Mesh> mesh;
 
 	/// shader & material
-	Ptr<CoreGraphics::ShaderInstance> shaderInstance;
+	/*Ptr<CoreGraphics::ShaderInstance> shaderInstance;
 	Ptr<CoreGraphics::ShaderVariable> diffuseColor;
 	Ptr<CoreGraphics::ShaderVariable> ambientColor;
 	Ptr<CoreGraphics::ShaderVariable> specularColor;
 	Ptr<CoreGraphics::ShaderVariable> emissiveColor;
-	Ptr<CoreGraphics::ShaderVariable> diffMap;
+	Ptr<CoreGraphics::ShaderVariable> diffMap;*/
 
 	/// 子模型类型
 	EThingSubMeshSpecialType modelType;
@@ -159,17 +160,17 @@ KokShapeNode::GetAttributeTable()const
 	return this->attributeTable;
 }
 
-inline DWORD 
-KokShapeNode::GetMaterialSize()const
-{
-	return this->m_dwNumMaterial;
-}
-
-inline const cMaterial* 
-KokShapeNode::GetMaterial()const
-{
-	return this->m_pMaterial;
-}
+//inline DWORD 
+//KokShapeNode::GetMaterialSize()const
+//{
+//	return this->m_dwNumMaterial;
+//}
+//
+//inline const cMaterial* 
+//KokShapeNode::GetMaterial()const
+//{
+//	return this->m_pMaterial;
+//}
 
 inline const Ptr<CoreGraphics::Mesh>& 
 KokShapeNode::GetMesh()const
