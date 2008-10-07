@@ -233,8 +233,8 @@ inline void
 bbox::transform(const matrix44& m)
 {
     /*static*/ Math::point temp;
-    /*static*/ Math::point minP(0, 0, 0);
-    /*static*/ Math::point maxP(0, 0, 0);        
+    /*static*/ Math::point minP(N_MAXREAL, N_MAXREAL, N_MAXREAL);
+    /*static*/ Math::point maxP(N_MINREAL, N_MINREAL, N_MINREAL);
     IndexT i; 
         
     for(i = 0; i < 8; ++i)
