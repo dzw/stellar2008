@@ -258,8 +258,12 @@ GraphicsServer::OnFrame(Timing::Time curTime)
     //// process window messages
     displayDevice->ProcessWindowMessages();
 
+	// 做了FPS限制，所以要把逝去的时间累计，这样动才不会有问题
+	static Timing::Time elapsedTime = 0.0f;
+	elapsedTime += curTime;
+	
     // start rendering
-    if (renderDevice->BeginFrame())
+    if (fps.Update() && renderDevice->BeginFrame())
     {
         // render the default view
         if (this->defaultView.isvalid() && this->defaultView->GetCameraEntity().isvalid())
@@ -268,7 +272,7 @@ GraphicsServer::OnFrame(Timing::Time curTime)
 
             // update the view's stage, this will happen only once
             // per frame, regardless of how many views are attached to the stage
-            defaultStage->UpdateEntities(curTime, this->frameCount);
+            defaultStage->UpdateEntities(elapsedTime, this->frameCount);
 
             // update visibility from the default view's camera
             this->defaultView->UpdateVisibilityLinks();
@@ -288,6 +292,8 @@ GraphicsServer::OnFrame(Timing::Time curTime)
         }
         renderDevice->EndFrame();
         renderDevice->Present();
+		
+		elapsedTime = 0.0f;
     }
     
     // call post-render update on Resource Manager
@@ -303,8 +309,6 @@ GraphicsServer::OnFrame(Timing::Time curTime)
     this->frameCount++;
 	
 	
-	fps.Update();
-
 	static int curFrame = 0;
 	if (this->frameCount - curFrame > 50)
 	{

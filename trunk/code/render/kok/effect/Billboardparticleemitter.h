@@ -10,6 +10,8 @@
 #include "kok/material/material.h"
 #include "kok/material/cMaterialAnimator.h"
 #include "kok/effect/particledata.h"
+#include "kok/model/kokshapenode.h"
+#include "kok/effect/particleemitter.h"
 
 namespace KOK
 {
@@ -17,7 +19,7 @@ namespace KOK
 class BillboardParticleEmitter : public ParticleEmitter
 {
 public:
-  cParticleBillboard( cParticlePool* pParticlePool, const Ptr<ModelNode>& pSubMeshSerializer, DWORD dwBillboardType );
+  BillboardParticleEmitter( cParticlePool* pParticlePool, const Ptr<KokShapeNode>& pSubMeshSerializer, DWORD dwBillboardType );
 
   virtual void FrameMove( float fElapsedTime );
 

@@ -332,7 +332,7 @@ CloudParticleEmitter::RenderParticles(float* dstVertices, int maxVertices)
 		pMaterial = &m_pRender->m_pMaterial[0];
 	}
 
-	const D3DXMATRIXA16& matView = c3dsMaxParticleManager::GetCameraViewMatrix();
+	const D3DXMATRIXA16& matView = ParticleServer::GetCameraViewMatrix();
 
 	D3DXVECTOR3 vRight = D3DXVECTOR3( matView._11, matView._21, matView._31 );
 	D3DXVECTOR3 vUp = D3DXVECTOR3( matView._12, matView._22, matView._32 );

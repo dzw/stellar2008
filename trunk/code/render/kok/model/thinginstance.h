@@ -25,10 +25,20 @@ public:
     virtual void Update();
 	void SetVisiableRepeat(int id);
 	void SetTexture(int nodeId, int texId);
+
+	const Util::String& GetFilePath()const;
 protected:
 	virtual void OnAttachToModel(const Ptr<Models::Model>& model);
 	virtual void NotifyVisible(IndexT frameIndex);
+
+	Util::String filePath;
 };
+
+inline const Util::String& 
+ThingInstance::GetFilePath()const
+{
+	return filePath;
+}
 
 } // namespace Models
 //------------------------------------------------------------------------------

@@ -20,7 +20,7 @@ namespace KOK
 class ZodiacParticleEmitter : public ParticleEmitter
 {
 public:
-  cParticleZodiac( cParticlePool* pParticlePool, const Ptr<KokShapeNode>& pSubMeshSerializer );
+  ZodiacParticleEmitter( cParticlePool* pParticlePool, const Ptr<KokShapeNode>& pSubMeshSerializer );
 
   virtual void FrameMove( float fElapsedTime );
 

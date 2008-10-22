@@ -83,4 +83,13 @@ ParticleNode::ApplySharedState()
 	return true;
 }
 
+void 
+ParticleNode::SetEmitData(EmitterData* data)
+{
+	this->emitData = data;
+
+	this->m_dwNumMaterial = data->m_dwNumMaterial;
+	this->m_pMaterial = data->m_pMaterial;
+	this->m_pMaterialAnimator = data->m_pMaterialAnimator;
+}
 }

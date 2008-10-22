@@ -70,17 +70,19 @@ protected:
 class ParticleEmitter
 {
 public:
-	ParticleEmitter( cParticlePool* pParticlePool );
+	ParticleEmitter( cParticlePool* pParticlePool, EmitterData* data );
 	virtual ~ParticleEmitter();
 
 	void AddParticle( cParticle* pParticle );
 	void AddParticleFirst( cParticle* pParticle );
 	void FreeParticle( cParticle* pParticle );
 
-	virtual void FrameMove( float fElapsedTime ) = 0;
+	/// 更新粒子
+	virtual void FrameMove( float fElapsedTime ){this->elapsedTime = fElapsedTime;};
 	virtual void DisableFrameMove( float fElapsedTime ) {}
 	virtual void Draw();
-	virtual int RenderParticles(float* dstVertices, int maxVertices){return 0;}
+	/// 画前更新缓冲数据
+	virtual void UpdateParticles(){}
 
 	void SetCurPosition( D3DXVECTOR3& vPos ) { m_vCurPosition = vPos; }
 	D3DXVECTOR3& GetCurPosition( void ) { return m_vCurPosition; }
@@ -105,6 +107,9 @@ public:
 
 	float ComputeFogAlphaFactor( void );
 
+	DWORD GetRenderMeshSize()const;
+	DWORD GetVertexSize()const;
+	ParticleFVF* GetParitcleVertex()const;
 protected:
 	cParticlePool*  m_pParticlePool;
 
@@ -114,15 +119,38 @@ protected:
 	Util::String    m_pLinkName;
 	D3DXVECTOR3     m_vCurPosition;
 
-	//Ptr<CoreGraphics::Mesh> emitterMesh;
-	Ptr<CoreGraphics::DynamicMesh> particleMesh;
-
 	int srcBlend;
 	int destBlend;
 
 	/// 是否是alpha模式，如果是就需要放到alpha队列
 	bool isAlphaMode;
+
+	DWORD m_dwRenderMeshSize;
+	DWORD m_dwVertexSize;
+	ParticleFVF* m_pRenderMesh;
+
+	EmitterData* emitData;
+
+	float elapsedTime;
 };
+
+inline DWORD 
+ParticleEmitter::GetRenderMeshSize()const
+{
+	return this->m_dwRenderMeshSize;
+}
+
+inline DWORD 
+ParticleEmitter::GetVertexSize()const
+{
+	return this->m_dwVertexSize;
+}
+
+inline ParticleFVF* 
+ParticleEmitter::GetParitcleVertex()const
+{
+	return this->m_pRenderMesh;
+}
 
 }
 

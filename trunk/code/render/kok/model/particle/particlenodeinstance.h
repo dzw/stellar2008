@@ -27,9 +27,12 @@ public:
 	virtual void Update();
 	virtual void ApplyState();
 	virtual void OnNotifyVisible(IndexT frameIndex);
-
+	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, 
+		const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
 protected:
-	
+	void CreateMaterial();
+
+	ParticleEmitter* emitter;
 	Ptr<CoreGraphics::ShaderVariable> diffMap;
 };
 

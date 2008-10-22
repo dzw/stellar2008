@@ -10,61 +10,61 @@ namespace KOK
 using namespace IO;
 using namespace Memory;
 
-RibbonParticleEmitter::RibbonParticleEmitter( cParticlePool* pParticlePool, cSubMeshSerializer* pSubMeshSerializer )
+RibbonParticleEmitter::RibbonParticleEmitter( cParticlePool* pParticlePool, const Ptr<KokShapeNode>& pSubMeshSerializer )
 :ParticleEmitter( pParticlePool ),
  m_fAddSegmentLength(1.0f), m_fMaxRibbonLength(10.0f), m_fRibbonWidth(0.5f)
 {
-  if( pSubMeshSerializer == NULL )
-  {
-    return;
-  }
-  
-  SetLinkName( pSubMeshSerializer->getSubMeshName() );
+  //if( pSubMeshSerializer == NULL )
+  //{
+  //  return;
+  //}
+  //
+  //SetLinkName( pSubMeshSerializer->getSubMeshName() );
 
-  m_fRibbonWidth = pSubMeshSerializer->GetRibbonWidth();
-  m_fMaxRibbonLength = pSubMeshSerializer->GetRibbonLength();
+  //m_fRibbonWidth = pSubMeshSerializer->GetRibbonWidth();
+  //m_fMaxRibbonLength = pSubMeshSerializer->GetRibbonLength();
 
-  m_fAddSegmentLength = m_fRibbonWidth;
+  //m_fAddSegmentLength = m_fRibbonWidth;
 
-  c3dsMaxParticleRender* pRender = (c3dsMaxParticleRender*)g_mScene->RenderCreate( RENDER_C_3DSMAXPARTICLE );
-  if( pRender == NULL )
-  {
-    return;
-  }
+  //c3dsMaxParticleRender* pRender = (c3dsMaxParticleRender*)g_mScene->RenderCreate( RENDER_C_3DSMAXPARTICLE );
+  //if( pRender == NULL )
+  //{
+  //  return;
+  //}
 
-  m_pRender = (c3dsMaxParticleRender*)pRender->Create();
-  m_pRender->iMaterialSize = pSubMeshSerializer->getSubMeshMaterialSize();
-  if( m_pRender->iMaterialSize > 0 )
-  {
-    cMaterial* pMaterial;
-    m_pRender->m_pMaterial = _NEW cMaterial[m_pRender->iMaterialSize];
-    for( int i = 0; i < m_pRender->iMaterialSize; i++ )
-    {
-      pMaterial = pSubMeshSerializer->getSubMeshMaterial( i );
-      if( pMaterial )
-      {
-        m_pRender->m_pMaterial[i].m_iNameSize = pMaterial->m_iNameSize;
-        if( pMaterial->m_iNameSize > 0 )
-        {
-          m_pRender->m_pMaterial[i].m_pszTextName = _NEW char[pMaterial->m_iNameSize + 1];
-          if( m_pRender->m_pMaterial[i].m_pszTextName )
-          {
-            strcpy( m_pRender->m_pMaterial[i].m_pszTextName, pMaterial->m_pszTextName );
-          }
-        }
-      }
-    }
-  }
+  //m_pRender = (c3dsMaxParticleRender*)pRender->Create();
+  //m_pRender->iMaterialSize = pSubMeshSerializer->getSubMeshMaterialSize();
+  //if( m_pRender->iMaterialSize > 0 )
+  //{
+  //  cMaterial* pMaterial;
+  //  m_pRender->m_pMaterial = _NEW cMaterial[m_pRender->iMaterialSize];
+  //  for( int i = 0; i < m_pRender->iMaterialSize; i++ )
+  //  {
+  //    pMaterial = pSubMeshSerializer->getSubMeshMaterial( i );
+  //    if( pMaterial )
+  //    {
+  //      m_pRender->m_pMaterial[i].m_iNameSize = pMaterial->m_iNameSize;
+  //      if( pMaterial->m_iNameSize > 0 )
+  //      {
+  //        m_pRender->m_pMaterial[i].m_pszTextName = _NEW char[pMaterial->m_iNameSize + 1];
+  //        if( m_pRender->m_pMaterial[i].m_pszTextName )
+  //        {
+  //          strcpy( m_pRender->m_pMaterial[i].m_pszTextName, pMaterial->m_pszTextName );
+  //        }
+  //      }
+  //    }
+  //  }
+  //}
 
-  m_pRender->iRenderType = 4;
-  m_pRender->m_dwCullMode = D3DCULL_NONE;
-  m_pRender->m_dwColorArg1 = D3DTA_TEXTURE;
-  m_pRender->m_dwColorOp = D3DTOP_SELECTARG1;
+  //m_pRender->iRenderType = 4;
+  //m_pRender->m_dwCullMode = D3DCULL_NONE;
+  //m_pRender->m_dwColorArg1 = D3DTA_TEXTURE;
+  //m_pRender->m_dwColorOp = D3DTOP_SELECTARG1;
 
-  // !!!To do... set correct rendermeshsize
-  m_pRender->m_dwRenderMeshSize = 128;
-  m_pRender->m_dwVertexSize = 0;
-  m_pRender->m_pRenderMesh = _NEW EFFECT_MDLVTX[pRender->m_dwRenderMeshSize];
+  //// !!!To do... set correct rendermeshsize
+  //m_pRender->m_dwRenderMeshSize = 128;
+  //m_pRender->m_dwVertexSize = 0;
+  //m_pRender->m_pRenderMesh = _NEW EFFECT_MDLVTX[pRender->m_dwRenderMeshSize];
 }
 
 //-----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ RibbonParticleEmitter::RibbonParticleEmitter( cParticlePool* pParticlePool, cSub
 //-----------------------------------------------------------------------------
 void RibbonParticleEmitter::FrameMove( float fElapsedTime )
 {
-  if( m_pRender == NULL )
+  /*if( m_pRender == NULL )
   {
     return;
   }
@@ -193,7 +193,7 @@ void RibbonParticleEmitter::FrameMove( float fElapsedTime )
   }
 
   m_pRender->m_dwVertexSize = dwVertexSize;
-  m_pRender->bEnabled = true;
+  m_pRender->bEnabled = true;*/
 }
 
 //-----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ void RibbonParticleEmitter::FrameMove( float fElapsedTime )
 //-----------------------------------------------------------------------------
 void RibbonParticleEmitter::DisableFrameMove( float fElapsedTime )
 {
-  if( m_pRender == NULL )
+  /*if( m_pRender == NULL )
   {
     return;
   }
@@ -239,7 +239,7 @@ void RibbonParticleEmitter::DisableFrameMove( float fElapsedTime )
     }
 
     pParticle = pNextParticle;
-  }
+  }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -248,7 +248,7 @@ void RibbonParticleEmitter::DisableFrameMove( float fElapsedTime )
 //-----------------------------------------------------------------------------
 void RibbonParticleEmitter::InitTransformMatrix( D3DXMATRIXA16* pTransform )
 {
-  m_vCurPosition.x = pTransform->_41;
+  /*m_vCurPosition.x = pTransform->_41;
   m_vCurPosition.y = pTransform->_42;
   m_vCurPosition.z = pTransform->_43;
   m_vLastPos = m_vCurPosition;
@@ -268,7 +268,7 @@ void RibbonParticleEmitter::InitTransformMatrix( D3DXMATRIXA16* pTransform )
 
       AddParticle( pParticle );
     }
-  }
+  }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -277,12 +277,12 @@ void RibbonParticleEmitter::InitTransformMatrix( D3DXMATRIXA16* pTransform )
 //-----------------------------------------------------------------------------
 void RibbonParticleEmitter::ApplyTransformMatrix( D3DXMATRIXA16* pTransform )
 {
-  m_vCurPosition.x = pTransform->_41;
+  /*m_vCurPosition.x = pTransform->_41;
   m_vCurPosition.y = pTransform->_42;
   m_vCurPosition.z = pTransform->_43;
 
   D3DXVECTOR3 vUp( 0.0f, 1.0f, 0.0f );
-  D3DXVec3TransformNormal( &m_vDirUp, &vUp, pTransform );
+  D3DXVec3TransformNormal( &m_vDirUp, &vUp, pTransform );*/
 }
 
 }

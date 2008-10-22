@@ -23,12 +23,10 @@ public:
 	
 	void SetTextureId(int id);
 	int  GetTextureId()const;
-	void LoadTexture();
 
 	void SetPartType(int type);
 	int  GetPartType()const;
 
-	void Update();
 private:
 	int textureId;
 	int partType;
@@ -53,12 +51,6 @@ inline int
 ManagedBeing::GetTextureId()const
 {
 	return this->textureId;
-}
-
-inline void 
-ManagedBeing::LoadTexture()
-{
-	GetBeing()->LoadTexture(this->textureId);
 }
 
 inline void 

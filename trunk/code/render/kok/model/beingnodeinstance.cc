@@ -171,8 +171,9 @@ BeingNodeInstance::RenderBatch(IndexT index, bool reflectRender)
 	const Ptr<BeingNode>& node = this->modelNode.downcast<BeingNode>();
 	const AttributeRange& batch = node->GetAttributeTable()[index];
 	const cMaterial& material = node->GetMaterial()[index];
+	const Ptr<Texture>& tex = this->GetTexture(index);
 
-	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !material.GetTexture().isvalid())
+	if (batch.FaceCount <= 0 || batch.VertexCount <= 0 || !tex.isvalid())
 		return;
 
 	const Ptr<Texture>& fakeReflect = material.GetFakeReflectTexture();
@@ -211,7 +212,7 @@ BeingNodeInstance::RenderBatch(IndexT index, bool reflectRender)
 		material.m_D3DMaterial.Emissive.g,
 		material.m_D3DMaterial.Emissive.b,
 		material.m_D3DMaterial.Emissive.a));
-	this->diffMap->SetTexture(material.GetTexture());
+	this->diffMap->SetTexture(tex);
 
 	
 	

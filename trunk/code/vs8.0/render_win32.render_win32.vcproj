@@ -2944,22 +2944,6 @@
 				<Filter
 					Name="particlenode"
 					>
-					<File
-						RelativePath="..\render\kok\model\particle\particlenode.cc"
-						>
-					</File>
-					<File
-						RelativePath="..\render\kok\model\particle\particlenode.h"
-						>
-					</File>
-					<File
-						RelativePath="..\render\kok\model\particle\particlenodeinstance.cc"
-						>
-					</File>
-					<File
-						RelativePath="..\render\kok\model\particle\particlenodeinstance.h"
-						>
-					</File>
 				</Filter>
 				<Filter
 					Name="material"
@@ -3080,83 +3064,11 @@
 				Name="effect"
 				>
 				<File
-					RelativePath="..\render\kok\effect\Billboardparticleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\Billboardparticleemitter.h"
-					>
-				</File>
-				<File
 					RelativePath="..\render\kok\effect\c3dsMaxParticle.cc"
 					>
 				</File>
 				<File
 					RelativePath="..\render\kok\effect\c3dsMaxParticle.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\cloudparticleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\cloudparticleemitter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\particledata.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\particledata.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\particleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\particleemitter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\particleserver.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\particleserver.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\Ribbonparticleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\Ribbonparticleemitter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\supersprayparticleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\supersprayparticleemitter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\WeaponRibbonparticleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\WeaponRibbonparticleemitter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\Zodiacparticleemitter.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\kok\effect\Zodiacparticleemitter.h"
 					>
 				</File>
 			</Filter>
