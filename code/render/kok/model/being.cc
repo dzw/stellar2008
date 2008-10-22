@@ -99,18 +99,6 @@ Being::SetupFromStream(const Ptr<IO::Stream>& stream)
 	return true;
 }
 
-void 
-Being::LoadTexture(int texId)
-{
-	String path = "mtext:";
-	const Array<Ptr<ModelNode>>& nodes = this->GetNodes();
-
-	for (SizeT i = 0; i < nodes.Size(); i++)
-	{
-		nodes[i].downcast<BeingNode>()->LoadTextures(path, texId);
-	}
-}
-
 void
 Being::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::Code& lightingMode, CoreGraphics::ShaderFeature::Mask& shaderFeatures)
 {

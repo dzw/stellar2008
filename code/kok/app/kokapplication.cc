@@ -150,6 +150,8 @@ KOKApplication::Open()
 		IoServer::Instance()->SetAssign(Assign("mtext", "Mesh\\Being\\Tex"));				// 物生纹理
 
 		IoServer::Instance()->SetAssign(Assign("mequp", "Mesh\\Equipment"));				// 装备
+		IoServer::Instance()->SetAssign(Assign("mtext", "Mesh\\Being\\Tex"));				// 物生纹理
+		IoServer::Instance()->SetAssign(Assign("etext", "Effect\\efm"));					// 特效纹理
 
 		LoadLPQFile();
 

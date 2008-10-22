@@ -11,6 +11,7 @@
 #include "kok/model/animation/cSkeletonSerializerFactory.h"
 #include "math/quaternion.h"
 #include "math/vector.h"
+#include "kok/model/beingnodeinstance.h"
 
 namespace KOK
 {
@@ -145,7 +146,6 @@ BeingEntity::UpdatePart()
 	{
 		if (this->changeList[i].isvalid() && this->changeList[i]->GetState() == Resource::Loaded)
 		{
-			this->changeList[i]->Update();
 			ValidateBodyInstance(this->changeList[i]);
 			
 			this->changeList.EraseIndex(i);
@@ -334,6 +334,15 @@ BeingEntity::ValidateBodyInstance(const Ptr<ManagedBeing>& managed)
 	this->bodyInstance[partType]->SetTransform(this->GetTransform());
 	this->bodyInstance[partType]->SetModelEntity(this);
 
+	// 加载纹理
+	String path = "mtext:";
+	const Array<Ptr<ModelNodeInstance>>& nodeInsts = this->bodyInstance[partType]->GetNodeInstances();
+	for (SizeT i = 0; i < nodeInsts.Size(); i++)
+	{
+		const Ptr<BeingNodeInstance>& inst = nodeInsts[i].downcast<BeingNodeInstance>();
+		inst->CreateTexture(path, managed->GetTextureId());
+	}
+
 	// 替换部件显示
 	this->bodyPart[managed->GetPartType()] = managed;
 }
@@ -406,7 +415,15 @@ BeingEntity::ChangePart(int partType, const String& modelName, int textureId)
 		if (partModel->GetTextureId() != textureId)
 		{
 			partModel->SetTextureId(textureId);
-			partModel->LoadTexture();
+
+			// 加载纹理
+			String path = "mtext:";
+			const Array<Ptr<ModelNodeInstance>>& nodeInsts = this->bodyInstance[partType]->GetNodeInstances();
+			for (SizeT i = 0; i < nodeInsts.Size(); i++)
+			{
+				const Ptr<BeingNodeInstance>& inst = nodeInsts[i].downcast<BeingNodeInstance>();
+				inst->CreateTexture(path, textureId);
+			}
 		}
 	}
 	

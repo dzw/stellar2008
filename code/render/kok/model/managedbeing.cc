@@ -14,10 +14,4 @@ ManagedBeing::ManagedBeing():
 {
 }
 
-void 
-ManagedBeing::Update()
-{
-	LoadTexture();
-}
-
 } 

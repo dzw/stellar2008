@@ -37,7 +37,6 @@ ThingInstance::SetTexture(int nodeId, int texId)
 {
 	// 设置每个node材质的纹理
 	const Array<Ptr<ModelNodeInstance> >& nodeInstances = this->GetNodeInstances();
-	String path = this->GetModel()->GetResourceId().Value().ExtractDirName();
 	const Array<Ptr<ModelNode>>& nodes = this->GetModel()->GetNodes();
 
 	if (nodeId >= nodes.Size() || nodeId < 0)
@@ -55,7 +54,7 @@ ThingInstance::SetTexture(int nodeId, int texId)
 		if (nodes[nodeId] == nodeInstances[i]->GetModelNode())
 		{
 			const Ptr<ThingNodeInstance>& t = nodeInstances[i].downcast<ThingNodeInstance>();
-			t->CreateTexture(path, texId);
+			t->CreateTexture(filePath, texId);
 		}
 	}
 }
@@ -106,6 +105,8 @@ ThingInstance::OnAttachToModel(const Ptr<Model>& model)
 		nodeInstance->OnAttachToModelInstance(this, modelNodes[modelNodeIndex], parent);
 		this->nodeInstances.Append(nodeInstance);
 	}
+
+	filePath = model->GetResourceId().Value().ExtractDirName();
 }
 
 //------------------------------------------------------------------------------

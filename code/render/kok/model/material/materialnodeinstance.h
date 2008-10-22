@@ -83,7 +83,9 @@ protected:
 inline const Ptr<CoreGraphics::Texture>& 
 MaterialNodeInstance::GetTexture(IndexT index)
 {
-	n_assert(index < materialInstances.Size() && materialInstances[index].diffMap.isvalid());
+	static Ptr<CoreGraphics::Texture> tex;
+	if(index >= materialInstances.Size() || !materialInstances[index].diffMap.isvalid())
+		return tex;
 	
 	return materialInstances[index].diffMap->GetTexture();
 }
@@ -91,7 +93,9 @@ MaterialNodeInstance::GetTexture(IndexT index)
 inline const Ptr<CoreGraphics::Texture>& 
 MaterialNodeInstance::GetFakeReflectTexture(IndexT index)
 {
-	n_assert(index < materialInstances.Size() && materialInstances[index].fakeReflect.isvalid());
+	static Ptr<CoreGraphics::Texture> tex;
+	if (index >= materialInstances.Size() || !materialInstances[index].fakeReflect.isvalid())
+		return tex;
 
 	return materialInstances[index].fakeReflect->GetTexture();
 }

@@ -12,40 +12,27 @@ using namespace IO;
 using namespace Memory;
 using namespace Util;
 
-ParticleEmitter::ParticleEmitter( cParticlePool* pParticlePool )
+ParticleEmitter::ParticleEmitter( cParticlePool* pParticlePool, EmitterData* data )
 :m_pParticlePool(pParticlePool), m_pFirstUsedParticle(NULL), m_pLastUsedParticle(NULL),
- m_pLinkName(NULL), m_vCurPosition( 0.0f, 0.0f, 0.0f )
+m_pLinkName(NULL), m_vCurPosition( 0.0f, 0.0f, 0.0f ),m_dwRenderMeshSize(0),
+m_dwVertexSize(0), m_pRenderMesh(0), emitData(data)
 {
-	//创建mesh,没设置缓冲大小，暂时直接使用nDynamicMesh中定义的大小
-	this->particleMesh = ParticleSystem::DynamicMesh::Create();
-	n_assert(particleMesh);
-
-	Util::Array<CoreGraphics::VertexComponent> vertexComponents;
-	vertexComponents.Append(CoreGraphics::VertexComponent(CoreGraphics::VertexComponent::Position,0,CoreGraphics::VertexComponent::Float3));
-	vertexComponents.Append(CoreGraphics::VertexComponent(CoreGraphics::VertexComponent::Color,0,CoreGraphics::VertexComponent::Float4));
-	vertexComponents.Append(CoreGraphics::VertexComponent(CoreGraphics::VertexComponent::TexCoord,0,CoreGraphics::VertexComponent::Float2));
-
-	//create resource ID
-	Util::String resourceID = "particle_";
-	resourceID.AppendInt((int)this);
-	Util::Atom<Util::String> atomResourceID(resourceID);
-
-	particleMesh->Initialize(atomResourceID,CoreGraphics::PrimitiveTopology::TriangleList,vertexComponents,false);
-
 }
 
 ParticleEmitter::~ParticleEmitter()
 {
-  // Free Particle
-  cParticle* pParticle = m_pFirstUsedParticle;
-  while( pParticle )
-  {
-    cParticle* pNext = pParticle->m_pNextParticle;
-    FreeParticle( pParticle );
+	// Free Particle
+	cParticle* pParticle = m_pFirstUsedParticle;
+	while( pParticle )
+	{
+		cParticle* pNext = pParticle->m_pNextParticle;
+		FreeParticle( pParticle );
 
-    pParticle = pNext;
-  }
- 
+		pParticle = pNext;
+	}
+
+	if (m_pRenderMesh)
+		n_delete_array(m_pRenderMesh);
 }
 
 void ParticleEmitter::AddParticle( cParticle* pParticle )
@@ -151,7 +138,7 @@ float ParticleEmitter::ComputeFogAlphaFactor( void )
     float fFogStart = g_mFogManage->GetFogStart();
     float fFogEnd = g_mFogManage->GetFogEnd();
 
-    D3DXVECTOR3 vToCamera = c3dsMaxParticleManager::GetCameraPos() - m_vCurPosition;
+    D3DXVECTOR3 vToCamera = ParticleServer::GetCameraPos() - m_vCurPosition;
     float fDistanceToCamera = D3DXVec3Length( &vToCamera );
 
     if( fDistanceToCamera <= fFogStart )
@@ -177,9 +164,7 @@ ParticleEmitter::Draw()
 	float* dstVertices = 0;
 	int maxVertices = 0;
 	int remVertices = 0;
-	this->particleMesh->Begin(dstVertices, maxVertices);
 	remVertices = RenderParticles(dstVertices, maxVertices);
-	this->particleMesh->End(remVertices);
 }
 
 }

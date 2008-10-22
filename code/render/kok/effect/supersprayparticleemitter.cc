@@ -6,16 +6,19 @@
 #include "kok/effect/particledata.h"
 #include "kok/effect/supersprayparticleemitter.h"
 #include "math/matrix44.h"
+#include "coregraphics/shaderstate.h"
+#include "coregraphics/transformdevice.h"
 
 namespace KOK
 {
 using namespace IO;
 using namespace Memory;
 using namespace Math;
+using namespace CoreGraphics;
 
 // particle superspray
 SuperSprayParticleEmitter::SuperSprayParticleEmitter( cParticlePool* pParticlePool, SuperSprayEmitterData* pEmitDataSuperSpray )
-:ParticleEmitter( pParticlePool ),
+:ParticleEmitter( pParticlePool, pEmitDataSuperSpray ),
  m_fTimeSinceLastEmit(0.0f), m_fCurAnimTime(0.0f), m_bEmitParticles(true),
  m_vEmitDirRight(1.0f, 0.0f, 0.0f), m_vEmitDirForward(0.0f, 0.0f, 1.0f), m_vEmitForceDir(0.0f, 0.0f, 0.0f)
 {
@@ -100,8 +103,9 @@ SuperSprayParticleEmitter::SuperSprayParticleEmitter( cParticlePool* pParticlePo
 			break;
 		}
 
-		//int iPredictVertexSize = m_sSuperSprayInfo.m_dwBirthRate * ( m_sSuperSprayInfo.m_dwLife / 160 ) * 4;
-		//m_pRender->m_dwRenderMeshSize = ( iPredictVertexSize + 15 ) & ~0xF;  // 16ªº­¿¼Æ
+		int iPredictVertexSize = m_sSuperSprayInfo.m_dwBirthRate * ( m_sSuperSprayInfo.m_dwLife / 160 ) * 4;
+		m_dwRenderMeshSize = ( iPredictVertexSize + 15 ) & ~0xF;	//16¶ÔÆë
+		m_pRenderMesh = n_new_array(ParticleFVF, m_dwRenderMeshSize);
     //}
   }
 }
@@ -214,6 +218,7 @@ SuperSprayParticleEmitter::FrameMove( float fElapsedTime )
     pParticle = pNext;
   }
 
+  ParticleEmitter::FrameMove(fElapsedTime);
 }
 
 void 
@@ -255,32 +260,28 @@ SuperSprayParticleEmitter::ApplyTransformMatrix( D3DXMATRIXA16* pTransform )
   m_matTransForm = *pTransform;
 }
 
-int 
-SuperSprayParticleEmitter::RenderParticles(float* dstVertices, int maxVertices)
+void 
+SuperSprayParticleEmitter::UpdateParticles()
 {
-	if (dstVertices == NULL || maxVertices <= 0)
-		return 0;
+	if (m_pRenderMesh == NULL || m_dwRenderMeshSize <= 0)
+		return ;
 
-	ParticleFVF* pRenderMesh = (ParticleFVF*)dstVertices;
-
-	EFFECT_MDLVTX* pRenderMesh = m_pRender->m_pRenderMesh;
-	if( pRenderMesh == NULL )
-	{
+	float fFogAlphaFactor = ComputeFogAlphaFactor();
+	if( fFogAlphaFactor <= 0.0f )
 		return;
-	}
 
 	cMaterial* pMaterial = NULL;
-	if( m_pRender->iMaterialSize > 0 )
-	{
-		pMaterial = &m_pRender->m_pMaterial[0];
-	}
+	if (emitData != NULL && emitData->GetMaterialSize() > 0)
+		pMaterial = emitData->GetMaterial(0);
+
+	ParticleFVF* pRenderMesh = m_pRenderMesh;
 
 	const matrix44& matView = TransformDevice::Instance()->GetViewTransform();
 	float4 r0 = matView.getrow0();
 	float4 r1 = matView.getrow1();
 	float4 r2 = matView.getrow2();
 
-	//const D3DXMATRIXA16& matView = c3dsMaxParticleManager::GetCameraViewMatrix();
+	//const D3DXMATRIXA16& matView = ParticleServer::GetCameraViewMatrix();
 
 	D3DXVECTOR3 vRight = D3DXVECTOR3( r0.x(), r1.x(), r2.x() );
 	D3DXVECTOR3 vUp = D3DXVECTOR3( r0.y(), r1.y(), r2.y() );
@@ -296,7 +297,7 @@ SuperSprayParticleEmitter::RenderParticles(float* dstVertices, int maxVertices)
 	while( pParticle )
 	{
 		dwTotalCount++;
-		if( dwTotalCount * 4 > m_pRender->m_dwRenderMeshSize )
+		if( dwTotalCount * 4 > m_dwRenderMeshSize )
 		{
 			break;
 		}
@@ -341,7 +342,7 @@ SuperSprayParticleEmitter::RenderParticles(float* dstVertices, int maxVertices)
 		pRenderMesh[dwVertexSize + 3].color = color;
 
 		// texture animation row & col
-		pParticle->m_fTextureAniTime += fElapsedTime;
+		pParticle->m_fTextureAniTime += this->elapsedTime;
 		if( pParticle->m_fTextureAniTime > 160.0f )
 		{
 			pParticle->m_fTextureAniTime -= 160.0f;
@@ -392,8 +393,7 @@ SuperSprayParticleEmitter::RenderParticles(float* dstVertices, int maxVertices)
 		pParticle = pParticle->m_pNextParticle;
 	}
 
-	m_pRender->m_dwVertexSize = dwVertexSize;
-	m_pRender->bEnabled = true;
+	m_dwVertexSize = dwVertexSize;
 }
 
 }

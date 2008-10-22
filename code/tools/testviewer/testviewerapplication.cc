@@ -218,6 +218,8 @@ TestViewerApplication::Open()
 		IoServer::Instance()->SetAssign(Assign("mequp", "Mesh\\Equipment"));				// 装备
 
 		IoServer::Instance()->SetAssign(Assign("mtext", "Mesh\\Being\\Tex"));				// 物生纹理
+		
+		IoServer::Instance()->SetAssign(Assign("etext", "Effect\\efm"));					// 特效纹理
 
 		LoadLPQFile();
 
@@ -226,36 +228,36 @@ TestViewerApplication::Open()
 		// 地物模型	
 		//alpha测试:mart:m_hal055.obj
 		//effect测试:mart:m_hal022.obj
-		this->thingEntity = ThingEntity::Create();
+		/*this->thingEntity = ThingEntity::Create();
 		this->thingEntity->SetResourceId(ResourceId("mart:m_hal068.obj"));
 		this->thingEntity->SetTextureId(0, 0);
 		this->thingEntity->SetTextureId(1, 0);
-		this->stage->AttachEntity(this->thingEntity.upcast<GraphicsEntity>());
+		this->stage->AttachEntity(this->thingEntity.upcast<GraphicsEntity>());*/
  
-		//// 骨骼动画
-		//this->skeletonFactory = cSkeletonSerializerFactory::Create();
-		//this->skeletonFactory->Open();
+		// 骨骼动画
+		this->skeletonFactory = cSkeletonSerializerFactory::Create();
+		this->skeletonFactory->Open();
 
-		//this->beingEntity = BeingEntity::Create();
-		//for (int i = 0; i < mptCloak; i++)
-		//{
-		//	String path = GetFilePath((BeingFilePath)(i+1));
-		//	String modelName;
-		//	switch(i)
-		//	{
-		//	case mptHair:
-		//	case mptHead:
-		//		modelName.Format("%s%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 1);
-		//		break;
-		//	default:
-		//		modelName.Format("%s%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 0);
-		//	}
-		//	this->beingEntity->SetPart(i, modelName, 1);
-		//}
-		////this->beingEntity->SetTransform(matrix44::translation(0.0f, 0.0f, 0.0f));
-		//CreateSkeleton(this->beingEntity, "ph1");
-		//this->beingEntity->CreateAnimationAction(100, 1.0, aoDefaultKeyframes, 0.2);
-		//this->stage->AttachEntity(this->beingEntity.upcast<GraphicsEntity>());
+		this->beingEntity = BeingEntity::Create();
+		for (int i = 0; i < mptCloak; i++)
+		{
+			String path = GetFilePath((BeingFilePath)(i+1));
+			String modelName;
+			switch(i)
+			{
+			case mptHair:
+			case mptHead:
+				modelName.Format("%s%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 1);
+				break;
+			default:
+				modelName.Format("%s%s%1d%1d%03d.atm", path.AsCharPtr(), s_aszMPName[i], sktMale, 0, 0);
+			}
+			this->beingEntity->SetPart(i, modelName, 1);
+		}
+		//this->beingEntity->SetTransform(matrix44::translation(0.0f, 0.0f, 0.0f));
+		CreateSkeleton(this->beingEntity, "ph1");
+		this->beingEntity->CreateAnimationAction(100, 1.0, aoDefaultKeyframes, 0.2);
+		this->stage->AttachEntity(this->beingEntity.upcast<GraphicsEntity>());
 
         return true;
     }

@@ -173,7 +173,7 @@ void BillboardParticleEmitter::FrameMove( float fElapsedTime )
     pMaterial = &m_pRender->m_pMaterial[0];
   }
 
-  const D3DXMATRIXA16& matView = c3dsMaxParticleManager::GetCameraViewMatrix();
+  const D3DXMATRIXA16& matView = ParticleServer::GetCameraViewMatrix();
 
   D3DXVECTOR3 vRight;
   D3DXVECTOR3 vUp;

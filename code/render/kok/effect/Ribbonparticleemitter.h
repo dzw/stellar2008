@@ -11,6 +11,7 @@
 #include "kok/material/cMaterialAnimator.h"
 #include "kok/effect/particledata.h"
 #include "kok/effect/particleemitter.h"
+#include "kok/model/kokshapenode.h"
 
 namespace KOK
 {
@@ -19,7 +20,7 @@ namespace KOK
 class RibbonParticleEmitter : public ParticleEmitter
 {
 public:
-  RibbonParticleEmitter( cParticlePool* pParticlePool, const Ptr<ModelNode>& pSubMeshSerializer );
+  RibbonParticleEmitter( cParticlePool* pParticlePool, const Ptr<KokShapeNode>& pSubMeshSerializer );
 
   virtual void FrameMove( float fElapsedTime );
   virtual void DisableFrameMove( float fElapsedTime );

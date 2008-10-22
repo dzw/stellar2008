@@ -31,21 +31,17 @@ public:
 	/// called when resources should be loaded
     virtual void LoadResources();
 
-	void SetEmitData(c3dsMaxEmitDataBase* data);
+	void SetEmitData(EmitterData* data);
 protected:
 	friend class ParticleNodeInstance;
 
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance()const;
 	virtual void UnloadResources();
 
-	c3dsMaxEmitDataBase* emitData;
+	EmitterData* emitData;
 };
 
-inline void 
-ParticleNode::SetEmitData(c3dsMaxEmitDataBase* data)
-{
-	this->emitData = data;
-}
+
 
 } // namespace Models
 //------------------------------------------------------------------------------
