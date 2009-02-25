@@ -1,0 +1,329 @@
+nGMMMeshCacheEntry  顶点缓冲
+nGeoMipMapNode 渲染一个tile
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+资源	加载	渲染	场景管理	多线程	
+================
+
+SharedResourceServer  资源共享
+
+
+
+
+WM4
+VisibleObject  渲染前设置可见对象
+
+
+vertexbuffer功能：
+顶点格式FVF  VertexLayout	VertexDecl -- VertexLayout
+顶点大小
+复制顶点数据 Lock unlock
+设备管理 IDirect3DVertexBuffer9
+
+
+
+WM4
+vertexbuffer:
+顶点属性（Position、Normal、Color、Fog、BlendIndices、Coord...)
+顶点数据
+设备管理（在bindable中保存设备指针)
+
+
+effect begin
+commit
+effect end
+
+D3D9RenderDevice::BeginFrame
+    FrameShader::Render					控制渲染多个FramePass
+        FramePass::Render				渲染到rendertarget
+	    // apply shader variables
+
+	    D3D9RenderDevice::BeginPass
+	    FrameBatch::Render				批次渲染，几个特效组合需要多次渲染。
+		// apply shader variables
+
+		BeginBatch
+		RenderBatch				设置Technique,variable等，并循环渲染
+		  GetVisibleModels			获取可见对象
+		  GetVisibleModelNodes			为每个Model获取Nodes
+		  SetFeatureBits			设置technique
+		  ApplySharedState			应用着色变量的状态
+		  SelectActiveVariation			激活technique
+
+		  GetVisibleModelNodeInstances		获得可见对象的所有实例，循环渲染所有实例
+		  ApplyState				应用实例的着色变量
+		  Render				渲染实例
+
+		EndBatch
+	    D3D9RenderDevice::EndPass
+D3D9RenderDevice::EndFrame
+
+根据不同的Technique分成不同的FrameBatch，一组一组渲染，用FramePass管理，每个FramePass有不同的RenderTarget，
+也就是说根据RenderTarget的不同分成不同的FramePass，而FramePass里面又根据不同的渲染Technique分成不同的FrameBatch。
+
+N3在XML中定义了FramePass，按FrameBatch直接顺序渲染可见的model，如果有多个FrameBatch，将会渲染多次，而没有判断哪个model是否需要用该FrameBatch？只是为每个实例可以设置不同的效果变量。
+
+
+每个FrameShader是一种渲染效果，比如阴影VSMShadowMapping，默认渲染效果DX9Default，每个XML中的FrameShader就是一个完整的效果，不能分开。也就是说FrameShader-FramePass-FrameBatch是一套的，不能使用其中某部份来渲染MODEL。
+N3中View中存放某种渲染效果，所有需要该种效果的MODEL需要ATTACH到该VIEW上，这样渲染时就可以有不同的效果。也就是说不同的渲染效果，ATTACH到不同的VIEW（view里面的State中）中。View已经集合了所有的效果，那具体某个对象使用不同的效果咋办？
+VisResolver类用于在每次渲染前将所有可见的MODEL找出来，解决每个MODEL使用不同的效果的方法是：在每种不同的渲染之前先遍历所有的MODEL，将需要使用该效果的MODEL找出，然后渲染。
+比如：渲染阴影，第一次渲染时先找出所有光，循环找出所有被光影响并可见的对象，加入列表，渲染的时候调用阴影的FrameShader(VSMShadowMapping)。渲好后，再使用默认的FrameShader(DX9Default)进行渲染。第二次渲染判断MODEL的是否有被光影响（LightingMode::SinglePass），如果有的将第一步渲染好的阴影rendertarget应用并渲染出来（ApplyModelEntityLights(),具体看算法）。
+
+
+
+我的想法：(错误，上面的才是正解)
+在XML文件中定义好有多少种FramePass，每种FramePass带有多个FrameBath，也就是说每个RenderTarget可以由多种technique效果组成，而每种technique被不同的model使用（在model中指定），用的时候顺序使用XML中定义的FramePass，判断当前可见的MODEL列表中是否有使用了该FramePass下的FrameBath，如果有就渲染。
+如普通的ShadowMap：在XML中定义两个FramePass，一张RenderTarget，每个FramePass中有一个FrameBatch，渲染的时候将需要设置阴影的MODEL加入第一个....(出错，无法解释)
+
+
+
+渲染设计：
+N3：View-ShadowMapServer-FrameShader
+view相当于空间可见性查找-ShaderMapServer相当于某种效果，默认有一种没有任何效果的Shader-FrameShader是效果的实现
+
+Spatial-Effect-FrameShader
+Spatial空间管理，Effect相当于ShadowMapServer，只不过Effect是默认的一个效果，可以继承它来实现自己的效果。FrameShader提供给Effect实现效果的接口。如实现SHADOWMAP时，有个ShadowMapEffect继承自Effect，并在里面使用FrameShader实现阴影效果。
+
+
+N3里面，某个对象使用某种效果并不是单独设置的，是根据对象是否受环境影响自动使用某种效果。比如阴影，只根据对象是否受光照影响。
+
+我们要实现在某个对象设置一个EFFECT属性，这样每个对象都可以有各自的效果。而且可以有多个EFFECT，实现多种效果。渲染时将所有可见的对象按EFFECT排序，将相同的一起渲染。
+
+
+WM4渲染过程
+
+Polylines::OnIdle
+  Renderer::DrawScene		获得可见对象
+    Renderer::Draw		渲染
+      SetGlobalState		设置全局状态（固定管线）
+      EnableIBuffer		设置索引缓冲
+      循环应用所有的效果（如果有多个）
+      ApplyEffect		应用效果并渲染
+        SetGlobalState		为每个EffectShader设置渲染状态（固定管线）
+	EnableVProgram		顶点着色
+	EnablePProgram		像素着色
+	EnableTexture		设置纹理
+	EnableVBuffer		顶点缓冲(这里还要从Attributes获取FVF）
+	DrawElements		真正渲染
+	...
+
+
+
+
+
+资源建立方式,具体见N3的ResourceManager
+ResourceManager
+    SharedResourceServer
+        Resource
+
+ResourceManager::CreateResource(const Rtti& resType, const string resName)
+ResourceManager::CreateResource(const Rtti& resType, const ResourceId& resId)
+{
+    SharedResourceServer::CreateSharedResource(resId, resClass, resLoaderClass)
+    load resource
+}
+
+vertex layout（FVF）设置方法:
+Array<VertexComponent> vertexComponents;
+vertexComponents.Append(VertexComponent(VertexComponent::Position, 0, VertexComponent::Float3));
+vertexComponents.Append(VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2));
+VertexBuffer.Setup(vertexComponents);
+
+
+shader应用:
+
+shader
+    constants
+    program
+
+EnableVProgram
+    SetVertexShader()
+    process the sampler information		设置纹理采样信息，指定采样类型、纹理编号
+    process the render constants		获取全局着色变量值，并设置到指定寄存器
+    process the numerical constants
+    process the user-defined constants
+EnablePProgram
+    步聚同上
+EnableTexture V
+    Anisotropic filtering value
+	D3DSAMP_MAXANISOTROPY
+    Set the filter mode
+	D3DSAMP_MAGFILTER
+    Set the mipmap mode
+	D3DSAMP_MINFILTER
+	D3DSAMP_MIPFILTER
+    Set the border color (for clamp to border)
+	D3DSAMP_BORDERCOLOR
+    Set Address mode
+	D3DSAMP_ADDRESSU
+	D3DSAMP_ADDRESSV
+	D3DSAMP_ADDRESSW   如果是3d采样
+    SetTexture
+EnableTexture P
+    同上
+OnEnableVBuffer
+    SetStreamSource
+    SetVertexDeclaration
+Draw
+
+
+Spatial
+    Local		本地坐标
+    World		世界坐标
+    WorldBound		世界包围盒
+    CullingMode		栋选方式
+    m_pkParent		父指针
+    m_kGlobalStates	全局渲染状态（数组）
+    m_kLights		灯光状态（数组）
+    m_kEffects		特效状态（数组）  多次着色过程
+
+Geometry 继承自Spatial
+    VertexBufferPtr	顶点缓冲
+    IndexBufferPtr	索引缓冲
+    BoundingVolumePtr	模型包围盒
+    LightingEffectPtr	光照效果
+    GeometryType     	PrimitiveTopology  渲染方式(LineList、TriangleStrip等)
+    GlobalState    	全局渲染状态(alpha,cull,material,zbuffer等等)
+    
+特殊的对象可以继承Geometry来实现特殊化。
+
+Node 继承自Spatial
+    m_kChild
+
+
+
+GeometryInstance
+    PrimitiveGroup			记录渲染顶点的开始位置和数量等信息。
+    Geometry				具体数据
+    BoundingVolumePtr			子模型包围盒
+    vector<ShaderVariableInstance>	shader variable  instance 多个变量
+    vector<ShaderInstance>		effect 多个shader
+
+
+    
+渲染状态设置方式：在引擎中不设置任何全局状态(WM4中有)，如果需要设置，在technique中设置，然后在ShaderInstance中选择不同的technique(通过ShaderFeature::Mask)，渲染前应用ShaderInstance，并将所有变量应用。 每个对象可以选择不同的technique,这样当使用不同的渲染状态时，可以建立多个technique。
+
+
+
+
+Renderer::DrawScene
+    循环处理所有可见对象
+    Draw(Geometry*)
+        SetGlobalState
+        SetWorldTransformation		从Draw参数传进一个Geometry，在这里更新世界矩阵，着色所需
+	EnableIBuffer			用Geometry设置索引缓冲
+	获得效果文件(数组)		Start,Quantity,效果文件从Start位置开始取Quantity个数量渲染
+	
+
+
+使用bsp：
+WM中BSP将空间分割成正、负和分割线三部份。
+怎么判断视截体在正面还是负面？Plane类有个成员函数WhichSide，判断输入的点是正边还是负边，Camera类
+有个成员函数WhichSide用于测试视截体的八个点在哪面，如果八个点都在正面，则返回正，如果八个点都在负
+面，则返回负面，如果有些在正面有些在负面，就返回0.
+
+
+The root of the BSP tree is a
+special node that helps determine in which leaf region the eye point is.
+
+BSP树的根节点是一个特殊的节点，它用于决定当前眼睛在哪个叶子范围。
+
+
+wm4渲染时，如果有多个对象使用相同的EFFECT，将排好序，调用相应EFFECT的DRAW函数渲染，如在NODE设置一个EFFECT，将影响其下的所有子节点。
+
+
+
+
+渲染状态管理：
+以下几个地方比较耗时，
+1、Vertex/Fragment Program模式和固定管线模式的切换（FF，Fixed Function Pipeline） 
+2、Vertex/Fragment Program本身程序的切换 
+3、改变Vertex/Fragment Program常量 
+4、纹理切换 
+5、顶点和索引缓存（Vertex & Index Buffers）切换 
+
+渲染状态分类：
+实际场景中，往往会出现这样的情况，一类对象其它渲染状态都一样，只是纹理和顶点、索引数据不同。
+所以按以下步骤渲染：
+1、将相同的渲染状态分成一组。
+2、将1中分好的组按纹理不同排序，相同纹理的一起渲染。
+
+多道渲染（Multipass Rendering）
+一些老的显卡或较复杂的效果需要多次渲染才能实现，渲染一次就是一个pass，如SHADOWMAP。
+不同的pass往往渲染状态和纹理都不同，而顶点、索引数据是一样的。
+这带来一个问题：是以对象为单位渲染，一次渲染一个对象的所有pass，然后渲染下一个对象；还是以pass为单位渲染，第一次渲染所有对象的第一个pass，第二次渲染所有对象的第二个pass。
+　　以对象为单位渲染，渲染一个对象的第一个pass后，马上紧接着渲染这个对象的第二个pass，而每个pass的顶点和索引数据是相同的，因此第一个pass将顶点和索引数据送入显卡后，显卡Cache中已经有了这个对象顶点和索引数据，后续pass不必重新将顶点和索引数据拷到显卡，因此速度会非常快。而问题是每个pass的渲染状态都不同，这使得实际上每次渲染都要设置新的渲染状态，会产生大量的多余渲染状态切换。
+
+　　以pass为单位渲染则正好相反，以Shader分组，相同Shader的对象一起渲染，可以只在这组开始时设置一次渲染状态，相比以对象为单位，大大减少了渲染状态切换。可是每次渲染的对象不同，因此每次都要将对象的顶点和索引数据拷贝到显卡，会消耗不少时间。
+
+
+我们选择以pass为单位渲染。
+
+
+
+N3的渲染状态全部使用FX文件实现，每个对象的EFFECT在.n2脚本文件中指定包括变量，总的渲染过程在.xml文件中定义，也就是将渲染按PASS分类，具体每个PASS下面使用每个对象的EFFECT。
+WM4渲染状态与Scene Graph结合，在SPATIAL中保存有对象EFFECT，如要实现特殊的效果需要建立一个类，在其中实现某种效果。
+
+结合以上两个引擎，渲染部份实现如下：
+渲染状态全部放到FX，代码中不需要设置任何GLOBAL STATE，为每个对象保存一个具体的实现EFFECT(ShaderInstance)。
+WM4的
+Render
+Scene Graph
+Effect		用于实现特殊效果，派生子类实现。在子类中使用ShaderInstance
+VisiableSet	可见性判断
+
+
+
+N3:ShaderInstance = WM4:ShaderEffect
+
+
+可见对象对多次渲染的判断。visiableSet
+当Node有设置EFFECT，那么所有NODE的子节点可以使用相同的EFFECT.
+
+
+
+22:41 2008-3-22==========================N3动画部分笔记==========================================================
+
+CharacterNode
+	AnimClip								动画索引，每个动画都有一个实例
+	ManagedAnimation				动画数据(加载nax2文件)
+	Char::Character					处理一个动画所需的所有数据
+		Char::nCharSkeleton		保存所有的骨骼
+	Char::CharacterSet			与character联合进行查询和操作数据
+	
+SkinShapeNode
+	Char::CharFragment			分批处理骨骼,每个fragment对应模型的一个primGrpIndex
+	Char::CharJointPalette	按fragment设置骨骼，即每个Fragment的骨骼集合
+	
+	
+	
+一个N2动画模型里面只有一个CharacterNode(保存动画数据)，有多个SkinShapeNode(保存每个Group和骨骼数据)
+
+
+nebula3中的动画系统是根据两个动画的权重进行插值混合的，每次进行运算的时候取得当前的权重，然后和动画的第一帧相乘，得到当前的动画，
+这样有个好处理，如：
+走路动画：BoneA -> BoneB
+跑步动画：BoneC -> BoneD
+现在正在播走路动画，放到一半，要切换动画，可以将BoneC做为目标与A进行混合，形成动画过渡！！！
+
+
+
+animation state 就是动画,如walk,run...
+An animation state is a collection of clips, and an animation clip is an animation with a specific blend value.
+
+
+
+One nAnimation object points to the data of exactly one "animation group" in an animation file (an animation group is a collection of curves that share the same attributes (number of keys, frame rate and looping type). Several nAnimation objects may access one animation file (since one animation file may contain several animation groups).
+一个nAnimation对象指出动画文件中的“动画组”数据，一个动画组就是动画曲线的集合，它们共享属性（关键帧数、帧率和循环类型）。几个nAnimation可能共享同一个动画文件（一个动画文件可能包函几组动画）.
+animation
+	curves(包含一些关键帧数、帧率、循环类型)
+	
+	
+CharacterNode	M2CharacterNode
+nCharacter	重新创建
+nCharSkeleton	不变
+nCharJoint	= Bone
+nClipAnim	不变
+nClipSchduler	不变
+SetJoint()

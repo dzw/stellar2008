@@ -1,0 +1,21 @@
+a linear and angular velocity (how fast it moves and spins), and a mass together with an intertia tensor (how the mass is distributed in the object). 
+(linear velocity)线性速度：移动速度
+(angular velocity)角速度：自转速度
+(intertia tensor)惯性张量：多块之间的分布关系。
+
+World：一连串的body
+body：速度和质量
+geoms：尺寸、形状、位置、方向，可以用简单的几何形状（如球、矩形）表示，也可以用复杂的模型面？（B-rep)
+space：怎么处理和管理一串geoms的碰撞检测。
+
+注意 geoms和bodies的区别是geoms具有几何属性（尺寸，形状，位置和方向）但是没有动态属性（如速度和质量），一个body和一个geom联系再一起表示出了仿真对象的全部属性。
+
+用临时joint摸拟碰撞/接解点，步聚：
+  detect collision, 
+  create contact objects (indicating physical parameters such as friction coefficients or bouncyness), 
+  create joints from these contacts, 
+  attach this joint two the two bodies involved. 
+
+
+
+
