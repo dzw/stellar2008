@@ -1,0 +1,52 @@
+
+N2格式
+
+CharacterNode
+modelnode	如:ntransformnode、nskinshapenode、nparticleshapenode2等
+
+
+每个模块都以以下两个开头：
+fourCC(uint)
+length(uShort)
+
+node之间有父子关系，暂未记录 
+----------------------------------CharacterNode--------------------------------------------
+SANM	.setanim	anims:characters/mensch_m_animations.nax2
+BJNT	.beginjoints
+SJNT	.setjoints	有多少个joint就有多少个SJNT模块，都是连续在一起，直到遇到EJNT
+EJNT	.endjoints
+BGCL	.beginclips
+STCL	.setclips	有多少个clips(动画，如gehen_01、idle_01)就有多少个STCL，都是连续在一起，直到遇到EDCL	
+EDCL	.endclips
+SVRT	.setvariations	anims:characters/mensch_m_variations.nax2
+BGVT	未解析
+STVT	未解析
+EDVT	未解析
+----------------------------------TransformNode---------------------------------------
+BCLS	.setlocalbox
+----------------------------------TransformNode---------------------------------------
+BCLS	.setlocalbox
+----------------------------------SkinShapeNode---------------------------------------
+BCLS	.setlocalbox
+STXT	.settexture	有多少张纹理就有多少个STXT，都连续在一起，例如：DiffMap0	textures:system/white.dds
+SINT	.setint		（好像是用int存放CULL类型）CullMode 2	如果有需要用到INT类型存放，在这里存在一起！
+SFLT	.setfloat	同上，存放一些参数
+FLTB	未解析
+SSHD	.setshader
+SMSH	.setmesh	meshes:characters/mensch_m/skins/koerper/koerper/mensch_standard_sk_0.nvx2
+SGRI	.setgroupindex	
+SNVS	未解析
+SSKA	未解析
+BGFR	.beginfragments
+SFGI	.setfraggroupindex
+BGJP	.beginjointpalette
+SJID	.setjointindices
+EDJP	.endjointpalette
+EDFR	.endfragments
+----------------------------------SkinShapeNode-------------------------
+.....
+.....
+
+
+
+
