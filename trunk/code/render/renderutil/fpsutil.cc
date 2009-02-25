@@ -50,7 +50,7 @@ FPSUtil::Update()
 }
 
 void
-FPSUtil::SetMaxps(SizeT maxFps)
+FPSUtil::SetMaxFps(SizeT maxFps)
 {
 	this->maxFps = maxFps;
 	this->frames = 0;
