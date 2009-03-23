@@ -1,3 +1,6 @@
+23:36 2009-3-23
+n3的HTTP系统存在一个BUG，当开启两个客户端时，TCPServer会联接相同的IP和端口，有一定机率导致退出的时候无法正常结束。线程锁住。
+
 13:55 2009-3-5
 错误：Rendering device doesn't support D24S8 depth buffer
 解决办法：修改桌面画质为32位即可。
