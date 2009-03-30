@@ -1,3 +1,18 @@
+0:03 2009-3-31
+骨骼动画优化
+Multi-Resolution Rendering of　Complex Animated Scenes
+模型优化
+Rendering complexscenes using spatial subdivision and textured LOD meshes
+场景优化
+Fast Rendering of Complex Environments Using a Spatial Hierarchy
+Preprocessing of Complex, Static Scenes for Fast Real-time Graphics
+
+怎么样设计材质
+Designing Plug-in Shaders with HLSL
+叶子边缓处理（效果不错）
+Alpha-to-Coverage in Depth
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\分割线KOK3到此结束\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 21:00 2008-12-9
 ***优化点：stage不需要用两个entities保存数据，很浪费！
 
