@@ -1,3 +1,80 @@
+0:08 2009-4-8
+通过反汇编得出以下为Drakensang中使用的顶点格式：
+
+float数 枚举值偏移			类型	语义		索引
+3	1				FLOAT3	POSITION	0
+3	2				FLOAT3	NORMAL		0
+1	4				UBYTE4N	NORMAL		0
+1	8				FLOAT2	TEXCOORD	0
+1	10				SHORT2	TEXCOORD	0
+1	20				FLOAT2	TEXCOORD	1
+1	40				SHORT2	TEXCOORD	1
+1	80				FLOAT2	TEXCOORD	2
+1	100				SHORT2	TEXCOORD	2
+1	200				FLOAT2	TEXCOORD	3
+1	400				SHORT2	TEXCOORD	3
+
+4	800		color		FLOAT4	COLOR		0	
+1	1000				UBYTE4N	COLOR		0
+3	2000		targent		FLOAT3	TANGENT		0
+1	4000				UBYTE4N	TANGENT		0
+3	8000		binormal	FLOAT3	BINORMAL	0
+1	10000				UBYTE4N	BINORMAL	0
+4	20000		weights		FLOAT4	BLENDWEIGHT	0
+1	40000				UBYTE4N	BLENDWEIGHT	0
+4	80000		jindices	FLOAT4	BLENDINDICES	0
+1	100000				UBYTE4	BLENDINDICES	0
+4	200000		coord4		FLOAT4	POSITION	0
+
+以上是Drakensang资源用到的vertex component类型,可以看出，比开源的N2里面多了不少格式，用这个格式应该可以解析所有Drakensang资源。
+
+在Drakensang中顶点格式普遍使用BYTE的类型的，可以省不少资源，也可以加快提交给GPU的速度!!!
+
+例：
+身体：vertex component
+154015
+101010100000000010101
+FLOAT3	POSITION
+UBYTE4N	NORMAL
+SHORT2	TEXCOORD
+UBYTE4N	TANGENT
+UBYTE4N	BINORMAL
+UBYTE4N	BLENDWEIGHT
+UBYTE4	BLENDINDICES
+
+23:02 2009-4-2
+终于把Drakensang资源画出来了，虽然只有一个叹号。。。。。。
+
+下一步处理shader，将N2的SHADER改用N3方式。
+
+计划：
+实现所有shader  高光，BUMP，等等，其实都已经有了。。
+地形开发，采用WOW的地形方式，写编辑器？暂时就地编、模型两个吧
+应用层开发
+
+粒子
+天空
+云
+。。。
+
+路漫漫啊。。。
+
+
+
+23:00 2009-4-2
+Drakensang中的地形也是一个个模型，根据区域分开，有８层小的地形贴图和２张大的ALPHA纹理，记录每层ALPHA值，最后还有lightmap、dumpmap、speculerMap三张贴图。
+
+16:35 2009-3-31
+Drakensang分析：
+装备分三层纹理：
+１：正常纹理
+２：反射或高光
+３：法线贴图
+
+如果其中一张贴图不存在有会用一张空图代替，这种方式用在很多地方，以保证shader正常使用（或者不需要切换shader？？）？GOOD！！！
+如果一群战士，穿不同的装备，有些有反光贴图而有些没有，如果切换成没有反光的画一次再切换回来再画一次，非常不合算。
+
+
 0:03 2009-3-31
 骨骼动画优化
 Multi-Resolution Rendering of　Complex Animated Scenes
