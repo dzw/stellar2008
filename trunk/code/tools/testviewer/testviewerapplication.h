@@ -10,9 +10,9 @@
     (C) 2006 Radon Labs GmbH
 */
 #include "apprender/viewerapplication.h"
-#include "kok/model/thingentity.h"
-#include "kok/model/beingentity.h"
-#include "kok/model/animation/cSkeletonSerializerFactory.h"
+#include "lighting/spotlightentity.h"
+#include "graphics/modelentity.h"
+#include "wow/world/worldmanager.h"
 
 //------------------------------------------------------------------------------
 namespace Tools
@@ -30,15 +30,15 @@ public:
     virtual void Close();
 
 private:
-	void LoadLPQFile();
     /// render current frame
     virtual void OnUpdateFrame();
 
-	void CreateSkeleton(const Ptr<KOK::BeingEntity>& entity, const Util::String& skeletonName);
-
-	Ptr<KOK::ThingEntity> thingEntity;
-	Ptr<KOK::BeingEntity> beingEntity;
-	Ptr<KOK::cSkeletonSerializerFactory> skeletonFactory;
+    Ptr<Graphics::ModelEntity> ground;
+    Ptr<Graphics::ModelEntity> head;
+	Ptr<Graphics::ModelEntity> tree;
+    Ptr<Lighting::GlobalLightEntity> globalLight;
+    Ptr<Lighting::SpotLightEntity> localLight0;
+    Ptr<Lighting::SpotLightEntity> localLight1;
 };
 
 } // namespace Test

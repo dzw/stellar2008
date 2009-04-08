@@ -412,10 +412,12 @@ N2ModelReader::ReadModelNodeData()
 		//debug
 		Util::String test = this->modelNodeParentName.Value();
 		//debug
-        n_assert(this->model->HasNode(modelNodeParentName));
-        const Ptr<ModelNode>& parentNode = this->model->LookupNode(modelNodeParentName);
-        newModelNode->SetParent(parentNode);
-        parentNode->AddChild(newModelNode);
+        if (this->model->HasNode(modelNodeParentName))
+		{
+			const Ptr<ModelNode>& parentNode = this->model->LookupNode(modelNodeParentName);
+			newModelNode->SetParent(parentNode);
+			parentNode->AddChild(newModelNode);
+		}
     }
     this->modelNodeStack.Push(objName);
 	Util::String test = GetStackPath();
@@ -523,7 +525,13 @@ N2ModelReader::ReadModelNodeAttributes(const Ptr<ModelNode>& modelNode)
                 // .setshader
                 String shaderResId("shd:");
                 shaderResId.Append(this->binaryReader->ReadString());
+
+				shaderResId = "shd:skinned";
+
                 // FIXME: n2 -> n3 shader mapping
+				if (shaderResId.CheckStringExist("skinned"))
+					shaderResId = "shd:skinned";
+
                 if (shaderResId == "shd:hair" 
                     || shaderResId == "shd:environment_skinned")
                 {

@@ -64,6 +64,10 @@ private:
     void SetupVertexBuffer();
     /// setup the index buffer object
     void SetupIndexBuffer();
+	/// recompute vertex width
+	int GetVertexWidthFromMask(uint mask);
+	/// read vertex when have unknow components
+	void ReadVertices(void* buffer, int realVertexWidth, uint componentMask);
 
     Ptr<Base::VertexBufferBase> vertexBuffer;
     Ptr<Base::IndexBufferBase> indexBuffer;
@@ -87,6 +91,8 @@ private:
     uint numEdges;
     uint vertexComponentMask;
     Util::Array<CoreGraphics::VertexComponent> vertexComponents;   
+
+	uint validVertexComponentMask;
 };
 
 //------------------------------------------------------------------------------

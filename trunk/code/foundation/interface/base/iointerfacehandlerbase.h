@@ -20,7 +20,6 @@
 #include "interface/iomsg/copyfile.h"
 #include "interface/iomsg/mountziparchive.h"
 #include "interface/iomsg/mountmpqarchive.h"
-#include "interface/iomsg/mountlpqarchive.h"
 #include "interface/iomsg/parsestream.h"
 
 //------------------------------------------------------------------------------
@@ -60,8 +59,6 @@ protected:
     void OnMountZipArchive(const Ptr<Interface::MountZipArchive>& msg);
 	/// handle MountMPQArchive message
 	void OnMountMPQArchive(const Ptr<Interface::MountMPQArchive>& msg);
-	/// handle MountLPQArchive message
-	void OnMountLPQArchive(const Ptr<Interface::MountLPQArchive>& msg);
 	///
 	void OnParseStream(const Ptr<Interface::ParseStream>& msg);
 

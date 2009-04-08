@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="testviewer"
-	ProjectGUID="{90902147-DB19-4BE6-84FB-0016EAE6B31C}"
+	ProjectGUID="{E4F14AF3-DD3B-4A4D-B076-EA584927A17C}"
 	>
 	<Platforms>
 		<Platform
@@ -47,7 +47,7 @@
 				AdditionalOptions=""
 				Optimization="0"
 				AdditionalIncludeDirectories="..;../foundation;../render;../extlibs;../tools;../addons ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
+				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -83,7 +83,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="gdi32.lib shell32.lib user32.lib dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib d_foundation_win32.lib d_render_win32.lib d_lua_win32.lib d_tinyxml_win32.lib d_zlib_win32.lib d_nebula2_win32.lib d_db_win32.lib d_sqlite_win32.lib d_ddslib_win32.lib d_mpq_win32.lib LagerPacket.lib"
-				OutputFile="..\..\bin\win32\testviewer_d.exe"
+				OutputFile="E:\GAME\Drakensang\DrakensangGame\unpack\testviewer_d.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\Win32\Debug,..\..\bin\win32,..\lib\win32_vc_i386;"
@@ -157,7 +157,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..;../foundation;../render;../extlibs;../tools;../addons ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
+				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -190,8 +190,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib foundation_win32.lib render_win32.lib lua_win32.lib tinyxml_win32.lib zlib_win32.lib nebula2_win32.lib db_win32.lib sqlite_win32.lib ddslib_win32.lib mpq_win32.lib LagerPacket.lib"
-				OutputFile="..\..\bin\win32\testviewer.exe"
+				AdditionalDependencies="dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib foundation_win32.lib render_win32.lib lua_win32.lib tinyxml_win32.lib zlib_win32.lib nebula2_win32.lib db_win32.lib sqlite_win32.lib ddslib_win32.lib"
+				OutputFile="E:\GAME\Drakensang\DrakensangGame\unpack\testviewer.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\Win32\Release,..\..\bin\win32,..\lib\win32_vc_i386;"
