@@ -47,7 +47,7 @@
 				AdditionalOptions=""
 				Optimization="0"
 				AdditionalIncludeDirectories="..;../foundation;../extlibs ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;__ZIP__;__LPQ__"
+				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;__ZIP__"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -136,7 +136,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..;../foundation;../extlibs ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
+				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -712,14 +712,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\foundation\interface\iomsg\mountlpqarchive.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\interface\iomsg\mountlpqarchive.h"
-					>
-				</File>
-				<File
 					RelativePath="..\foundation\interface\iomsg\mountmpqarchive.cc"
 					>
 				</File>
@@ -823,14 +815,6 @@
 			</File>
 			<File
 				RelativePath="..\foundation\io\ioserver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\foundation\io\lpqfilestream.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\foundation\io\lpqfilestream.h"
 				>
 			</File>
 			<File
@@ -1017,26 +1001,6 @@
 				</File>
 				<File
 					RelativePath="..\foundation\io\mpqfs\mpqfilesystem.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="lpq"
-				>
-				<File
-					RelativePath="..\foundation\io\lpqfs\lpqarchive.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\io\lpqfs\lpqarchive.h"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\io\lpqfs\lpqfilesystem.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\foundation\io\lpqfs\lpqfilesystem.h"
 					>
 				</File>
 			</Filter>

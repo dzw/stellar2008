@@ -37,7 +37,8 @@ Nvx2StreamReader::Nvx2StreamReader() :
     numEdges(0),
     vertexComponentMask(0)
 {
-    // empty
+	// 可用VertexComponent之和
+	this->validVertexComponentMask = 0x7FF;
 }
 
 //------------------------------------------------------------------------------
@@ -124,7 +125,7 @@ Nvx2StreamReader::ReadHeaderData()
     this->numIndices = ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host,*headerPtr++) * 3;
     this->numEdges = ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host,*headerPtr++);
     this->vertexComponentMask = ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host,*headerPtr++);
-    this->groupDataSize = 6 * sizeof(uint) * this->numGroups;
+	this->groupDataSize = 6 * sizeof(uint) * this->numGroups;
     this->vertexDataSize = this->numVertices * this->vertexWidth * sizeof(float);
     this->indexDataSize = this->numIndices * sizeof(ushort);
     this->groupDataPtr = headerPtr;
@@ -198,6 +199,38 @@ Nvx2StreamReader::SetupVertexComponents()
 
 //------------------------------------------------------------------------------
 /**
+*/
+int
+Nvx2StreamReader::GetVertexWidthFromMask(uint mask)
+{
+	int width = 0;
+	IndexT i;
+	for (i = 0; i < 11; i++)
+	{
+		if (mask & (1<<i))
+		{
+			switch (i)
+			{
+			case 0:     width += 3; break;
+			case 1:     width += 3; break;
+			case 2:     width += 2; break;
+			case 3:     width += 2; break;
+			case 4:     width += 2; break;
+			case 5:     width += 2; break;
+			case 6:     width += 4; break;
+			case 7:     width += 3; break;
+			case 8:     width += 3; break;
+			case 9:     width += 4; break;
+			case 10:    width += 4; break;
+			}
+		}
+	}
+
+	return width;
+}
+
+//------------------------------------------------------------------------------
+/**
     Since nvx2 files don't contain any bounding box information
     we need to compute per-primitive-group bounding boxes
     manually by walking the triangle indices. This may be inefficient
@@ -265,12 +298,74 @@ Nvx2StreamReader::SetupVertexBuffer()
     {
         this->vertexBufferLoader = MemoryVertexBufferLoader::Create();
     }
-    this->vertexBufferLoader->Setup(this->vertexComponents, this->numVertices, this->vertexDataPtr, this->vertexDataSize);
-    this->vertexBuffer->SetLoader(this->vertexBufferLoader.upcast<ResourceLoader>());
-    this->vertexBuffer->Load();
-    this->vertexBuffer->SetLoader(0);
-    this->vertexBufferLoader = 0;
-    n_assert(this->vertexBuffer->GetState() == VertexBuffer::Loaded);
+
+	uint componentMask = this->validVertexComponentMask & this->vertexComponentMask;
+	if (componentMask == this->vertexComponentMask)
+	{
+		this->vertexBufferLoader->Setup(this->vertexComponents, this->numVertices, this->vertexDataPtr, this->vertexDataSize);
+		this->vertexBuffer->SetLoader(this->vertexBufferLoader.upcast<ResourceLoader>());
+		this->vertexBuffer->Load();
+		this->vertexBuffer->SetLoader(0);
+		this->vertexBufferLoader = 0;
+		n_assert(this->vertexBuffer->GetState() == VertexBuffer::Loaded);
+	}
+	else
+	{
+		// 过滤未知的component
+		int realVertexWidth = GetVertexWidthFromMask(componentMask);
+		this->vertexDataSize = this->numVertices * realVertexWidth * sizeof(float);
+		this->vertexBufferLoader->Setup(this->vertexComponents, this->numVertices, this->vertexDataSize, VertexBuffer::UsageStaging, VertexBuffer::AccessWrite);
+		this->vertexBuffer->SetLoader(this->vertexBufferLoader.upcast<ResourceLoader>());
+		this->vertexBuffer->Load();
+		this->vertexBuffer->SetLoader(0);
+		this->vertexBufferLoader = 0;
+		n_assert(this->vertexBuffer->GetState() == VertexBuffer::Loaded);
+
+		void* vertexBufferPtr = this->vertexBuffer.downcast<CoreGraphics::VertexBuffer>()->Map(VertexBuffer::MapWrite);
+		ReadVertices(vertexBufferPtr, realVertexWidth, componentMask);
+		this->vertexBuffer.downcast<CoreGraphics::VertexBuffer>()->Unmap();
+	}
+}
+
+void
+Nvx2StreamReader::ReadVertices(void* buffer, int realVertexWidth, uint componentMask)
+{
+	float* destBuf = (float*)buffer;
+	uint v = 0;
+	for (v = 0; v < this->numVertices; v++)
+	{
+		float* vBuf = (float*)this->vertexDataPtr + v * this->vertexWidth;
+
+		int bitIndex;
+		for (bitIndex = 0; bitIndex < VertexComponent::Invalid; bitIndex++)
+		{
+			int mask = (1<<bitIndex);
+
+			// skip completely if current vertex component is not in file
+			if (0 == (this->vertexComponentMask & mask))
+			{
+				continue;
+			}
+
+			// get width of current vertex component
+			int width = GetVertexWidthFromMask(mask);
+			n_assert(width > 0);
+			if (componentMask & mask)
+			{
+				// read the vertex component
+				int f;
+				for (f = 0; f < width; f++)
+				{
+					*destBuf++ = *vBuf++;
+				}
+			}
+			else
+			{
+				// skip the vertex component
+				vBuf += width;
+			}
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -59,9 +59,10 @@ public:
 private:
     /// update the current time values
     void UpdateTime();
+#ifdef __MPQ__
 	/// 加载所有MPQ文件
 	void LoadMPQFile();
-
+#endif
 protected:
     /// set quit requested flag
     void SetQuitRequested(bool b);

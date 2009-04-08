@@ -601,8 +601,8 @@ D3D9RenderDevice::Draw()
         HRESULT hr;
         hr = this->d3d9Device->DrawIndexedPrimitive(
                 d3dPrimType,                                        // Type
-                this->primitiveGroup.GetBaseVertex(),               // BaseVertexIndex
-                0,									                // MinIndex
+                0,									               // BaseVertexIndex
+                this->primitiveGroup.GetBaseVertex(),              // MinIndex	Ｎ３中处理方式，比放在第一个参数更好（参考DX SDK）
                 this->primitiveGroup.GetNumVertices(),              // NumVertices
                 this->primitiveGroup.GetBaseIndex(),                // StartIndex
                 this->primitiveGroup.GetNumPrimitives());           // PrimitiveCount

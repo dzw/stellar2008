@@ -16,9 +16,10 @@
 #include "coregraphics/streamanimationloader.h"
 #include "nebula2/anim/managedanimation.h"
 #include "addons/nebula2/nebula2wrapper.h"
+#ifdef __MPQ__
 #include "interface/iomsg/mountmpqarchive.h"
 #include "io/mpqfilestream.h"
-
+#endif
 #if !__WII__
 #include "scripting/lua/luaserver.h"
 #include "commands/iolibrary.h"
@@ -208,6 +209,7 @@ RenderApplication::Open()
         animMapper->SetResourceClass(MemoryAnimation::RTTI);
         animMapper->SetResourceLoaderClass(StreamAnimationLoader::RTTI);
         animMapper->SetManagedResourceClass(ManagedAnimation::RTTI);
+		//animMapper->SetAsyncEnabled(false);	// 暂时直接加载
         this->resourceManager->AttachMapper(animMapper.upcast<ResourceMapper>());
 
         // setup input subsystem
