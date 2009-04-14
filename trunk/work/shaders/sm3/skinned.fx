@@ -51,16 +51,21 @@ struct vsSamplePassInputSkinned
     float4 weights  : BLENDWEIGHT;
     float4 indices  : BLENDINDICES;
     float2 uv0      : TEXCOORD0;
+	float2 uv1      : TEXCOORD1;
+	float2 uv2      : TEXCOORD2;
 };
 
 struct vsSamplePassOutput
 {
     float4 position    : POSITION;
     float2 uv0         : TEXCOORD0;
+	float2 uv1         : TEXCOORD1;
+	float2 uv2         : TEXCOORD2;
     //float4 worldPos    : TEXCOORD1;     // position in world space
    // float4 projPos     : TEXCOORD2;     // position in projection space    
    //float3 normal      : TEXCOORD3;
     // float3 worldEyeVec : COLOR0;        // normalized world space eye vector
+	
 };
 
 //------------------------------------------------------------------------------
@@ -78,12 +83,24 @@ struct vsSamplePassOutput
 float4
 skinnedPosition(const float4 inPos, const float4 weights, const float4 indices, const matrix<float,4,3> jointPalette[72])
 {    
-    float3 pos[4];
+	float sq = 1.0f / dot(weights, 1.0f);//;[0] + weights[1] + weights[2] + weights[3];
+	float4 wg = weights * sq;
+	
+	float3 pos[4];
+    pos[0] = (mul(inPos, jointPalette[indices[0]])) * wg[0];
+    pos[1] = (mul(inPos, jointPalette[indices[1]])) * wg[1];
+    pos[2] = (mul(inPos, jointPalette[indices[2]])) * wg[2];
+    pos[3] = (mul(inPos, jointPalette[indices[3]])) * wg[3];
+    return float4(pos[0] + pos[1] + pos[2] + pos[3], 1.0f);
+	
+    /*
+	float3 pos[4];
     pos[0] = (mul(inPos, jointPalette[indices[0]])) * weights[0];
     pos[1] = (mul(inPos, jointPalette[indices[1]])) * weights[1];
     pos[2] = (mul(inPos, jointPalette[indices[2]])) * weights[2];
     pos[3] = (mul(inPos, jointPalette[indices[3]])) * weights[3];
     return float4(pos[0] + pos[1] + pos[2] + pos[3], 1.0f);
+	*/
 }
 
 //------------------------------------------------------------------------------
@@ -192,7 +209,7 @@ ColorPassPixelShader(const vsColorPassOutput psIn, uniform int numLights) : COLO
     Vertex shader function for the color pass.
 */
 vsSamplePassOutput
-SamplePassVertexShaderSkinned(const vsColorPassInputSkinned vsIn)
+SamplePassVertexShaderSkinned(const vsSamplePassInputSkinned vsIn)
 {
     vsSamplePassOutput vsOut;
     float4 skinPos = skinnedPosition(vsIn.position, vsIn.weights, vsIn.indices, jPalette);  
@@ -204,7 +221,16 @@ SamplePassVertexShaderSkinned(const vsColorPassInputSkinned vsIn)
     //vsOut.worldEyeVec = normalize(eyePos - vsOut.worldPos);
     //float3 skinNormal = skinnedNormal(vsIn.normal, vsIn.weights, vsIn.indices, jPalette);
     //vsOut.normal      = normalize(mul(vsIn.position, model));
-    vsOut.uv0 = vsIn.uv0;
+	
+	float uvFactor = 1 / 8192.0f;
+    vsOut.uv0 = vsIn.uv0 * uvFactor;
+	
+	//uvFactor = 1 / dot(vsIn.uv1.xy, 1.0f);
+    vsOut.uv1 = vsIn.uv1 * uvFactor;
+	
+	//uvFactor = 1 / dot(vsIn.uv2.xy, 1.0f);
+    vsOut.uv2 = vsIn.uv2 * uvFactor;
+	
     return vsOut;
 }
 
@@ -214,7 +240,7 @@ SamplePassVertexShaderSkinned(const vsColorPassInputSkinned vsIn)
 float4 
 SamplePassPixelShader(const vsSamplePassOutput psIn, uniform int numLights) : COLOR
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	//return float4(1.0f, 1.0f, 1.0f, 1.0f);
     //float3 worldNormal = psWorldSpaceNormalFromBumpMap(bumpMapSampler, psIn.uv0, psIn.normal, psIn.tangent, psIn.binormal);
     float4 matDiffuse = tex2D(diffMapSampler, psIn.uv0);
 
@@ -229,14 +255,14 @@ LightTechnique(Solid1, "Solid|Skinned1", SamplePassVertexShaderSkinned, SamplePa
 LightTechnique(Solid, "Solid|Skinned", ColorPassVertexShaderSkinned, ColorPassPixelShader, 0);
 
 
-LightTechnique(SolidSkinned0, "Solid|Skinned|LocalLights0", SamplePassVertexShaderSkinned, SamplePassPixelShader, 0);
-LightTechnique(SolidSkinned1, "Solid|Skinned|LocalLights1", SamplePassVertexShaderSkinned, SamplePassPixelShader, 1);
-LightTechnique(SolidSkinned2, "Solid|Skinned|LocalLights2", SamplePassVertexShaderSkinned, SamplePassPixelShader, 2);
-LightTechnique(SolidSkinned3, "Solid|Skinned|LocalLights3", SamplePassVertexShaderSkinned, SamplePassPixelShader, 3);
-LightTechnique(SolidSkinned4, "Solid|Skinned|LocalLights4", SamplePassVertexShaderSkinned, SamplePassPixelShader, 4);
+LightTechnique(SolidSkinned0, "Solid|Skinned|LocalLights0", ColorPassVertexShaderSkinned, ColorPassPixelShader, 0);
+LightTechnique(SolidSkinned1, "Solid|Skinned|LocalLights1", ColorPassVertexShaderSkinned, ColorPassPixelShader, 1);
+LightTechnique(SolidSkinned2, "Solid|Skinned|LocalLights2", ColorPassVertexShaderSkinned, ColorPassPixelShader, 2);
+LightTechnique(SolidSkinned3, "Solid|Skinned|LocalLights3", ColorPassVertexShaderSkinned, ColorPassPixelShader, 3);
+LightTechnique(SolidSkinned4, "Solid|Skinned|LocalLights4", ColorPassVertexShaderSkinned, ColorPassPixelShader, 4);
 
-LightTechnique(AlphaSkinned0, "Alpha|Skinned|LocalLights0", SamplePassVertexShaderSkinned, SamplePassPixelShader, 0);
-LightTechnique(AlphaSkinned1, "Alpha|Skinned|LocalLights1", SamplePassVertexShaderSkinned, SamplePassPixelShader, 1);
-LightTechnique(AlphaSkinned2, "Alpha|Skinned|LocalLights2", SamplePassVertexShaderSkinned, SamplePassPixelShader, 2);
-LightTechnique(AlphaSkinned3, "Alpha|Skinned|LocalLights3", SamplePassVertexShaderSkinned, SamplePassPixelShader, 3);
-LightTechnique(AlphaSkinned4, "Alpha|Skinned|LocalLights4", SamplePassVertexShaderSkinned, SamplePassPixelShader, 4);
+LightTechnique(AlphaSkinned0, "Alpha|Skinned|LocalLights0", ColorPassVertexShaderSkinned, ColorPassPixelShader, 0);
+LightTechnique(AlphaSkinned1, "Alpha|Skinned|LocalLights1", ColorPassVertexShaderSkinned, ColorPassPixelShader, 1);
+LightTechnique(AlphaSkinned2, "Alpha|Skinned|LocalLights2", ColorPassVertexShaderSkinned, ColorPassPixelShader, 2);
+LightTechnique(AlphaSkinned3, "Alpha|Skinned|LocalLights3", ColorPassVertexShaderSkinned, ColorPassPixelShader, 3);
+LightTechnique(AlphaSkinned4, "Alpha|Skinned|LocalLights4", ColorPassVertexShaderSkinned, ColorPassPixelShader, 4);

@@ -166,7 +166,7 @@ Nvx2StreamReader::SetupVertexComponents()
     n_assert(this->vertexComponents.IsEmpty());
 
     IndexT i;
-    for (i = 0; i < 11; i++)
+    for (i = 0; i < 22; i++)
     {
         VertexComponent::SemanticName sem;
         VertexComponent::Format fmt;
@@ -177,15 +177,26 @@ Nvx2StreamReader::SetupVertexComponents()
             {
                 case 0:     sem = VertexComponent::Position;     fmt=VertexComponent::Float3; break;
                 case 1:     sem = VertexComponent::Normal;       fmt=VertexComponent::Float3; break;
-                case 2:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 0; break;
-                case 3:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 1; break;
-                case 4:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 2; break;
-                case 5:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 3; break;
-                case 6:     sem = VertexComponent::Color;        fmt=VertexComponent::Float4; break;
-                case 7:     sem = VertexComponent::Tangent;      fmt=VertexComponent::Float3; break;
-                case 8:     sem = VertexComponent::Binormal;     fmt=VertexComponent::Float3; break;
-                case 9:     sem = VertexComponent::SkinWeights;  fmt=VertexComponent::Float4; break;
-                case 10:    sem = VertexComponent::SkinJIndices; fmt=VertexComponent::Float4; break;
+				case 2:     sem = VertexComponent::Normal;       fmt=VertexComponent::UByte4N; break;
+                case 3:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 0; break;
+				case 4:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Short2; index = 0; break;
+                case 5:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 1; break;
+				case 6:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Short2; index = 1; break;
+                case 7:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 2; break;
+				case 8:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Short2; index = 2; break;
+                case 9:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 3; break;
+				case 10:    sem = VertexComponent::TexCoord;     fmt=VertexComponent::Short2; index = 3; break;
+                case 11:    sem = VertexComponent::Color;        fmt=VertexComponent::Float4;  break;
+				case 12:    sem = VertexComponent::Color;        fmt=VertexComponent::UByte4N; break;
+                case 13:    sem = VertexComponent::Tangent;      fmt=VertexComponent::Float3;  break;
+				case 14:    sem = VertexComponent::Tangent;      fmt=VertexComponent::UByte4N; break;
+                case 15:    sem = VertexComponent::Binormal;     fmt=VertexComponent::Float3;  break;
+				case 16:    sem = VertexComponent::Binormal;     fmt=VertexComponent::UByte4N; break;
+                case 17:    sem = VertexComponent::SkinWeights;  fmt=VertexComponent::Float4;  break;
+				case 18:    sem = VertexComponent::SkinWeights;  fmt=VertexComponent::UByte4N; break;
+                case 19:    sem = VertexComponent::SkinJIndices; fmt=VertexComponent::Float4;  break;
+				case 20:    sem = VertexComponent::SkinJIndices; fmt=VertexComponent::UByte4; break;
+				case 21:    sem = VertexComponent::Position;	 fmt=VertexComponent::Float4;  break;
                 default:
                     n_error("Can't happen!");
                     sem = VertexComponent::Position;
@@ -300,7 +311,7 @@ Nvx2StreamReader::SetupVertexBuffer()
     }
 
 	uint componentMask = this->validVertexComponentMask & this->vertexComponentMask;
-	if (componentMask == this->vertexComponentMask)
+	if (1 || componentMask == this->vertexComponentMask)
 	{
 		this->vertexBufferLoader->Setup(this->vertexComponents, this->numVertices, this->vertexDataPtr, this->vertexDataSize);
 		this->vertexBuffer->SetLoader(this->vertexBufferLoader.upcast<ResourceLoader>());
