@@ -74,9 +74,11 @@ TestViewerApplication::Open()
         this->ground->SetResourceId(ResourceId("mdl:examples/ground.n2"));
         this->stage->AttachEntity(ground.upcast<GraphicsEntity>());*/
 
+		lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
 		this->head = ModelEntity::Create();
         //this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
-        this->head->SetResourceId(ResourceId("mdl:characters/ardakor.n2"));
+        this->head->SetResourceId(ResourceId("mdl:characters/trollkroete.n2"));
+		this->head->SetTransform(lightTransform);
         this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
 
 		// wow:World\\AZEROTH\\BootyBay\\PassiveDoodad\\FishingBox\\FishingBox.m2

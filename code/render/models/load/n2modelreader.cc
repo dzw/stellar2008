@@ -526,7 +526,7 @@ N2ModelReader::ReadModelNodeAttributes(const Ptr<ModelNode>& modelNode)
                 String shaderResId("shd:");
                 shaderResId.Append(this->binaryReader->ReadString());
 
-				shaderResId = "shd:skinned";
+				//shaderResId = "shd:skinned";
 
                 // FIXME: n2 -> n3 shader mapping
 				if (shaderResId.CheckStringExist("skinned"))
