@@ -81,29 +81,39 @@ FighterApplication::Open()
 		this->view->SetCameraEntity(cameraEntity);
 
         // setup lights
-        matrix44 lightTransform = matrix44::rotationx(n_deg2rad(-70.0f));
-        this->globalLight = GlobalLightEntity::Create();
-        this->globalLight->SetTransform(lightTransform);
-        this->globalLight->SetColor(float4(1.0f, 1.0f, 1.5f, 1.0f));
-        //this->globalLight->SetBackLightColor(float4(0.0f, 0.0f, 0.0f, 0.0f));
-        this->globalLight->SetCastShadows(false);
-        this->stage->AttachEntity(this->globalLight.upcast<GraphicsEntity>());
+        //matrix44 lightTransform = matrix44::rotationx(n_deg2rad(-70.0f));
+        //this->globalLight = GlobalLightEntity::Create();
+        //this->globalLight->SetTransform(lightTransform);
+        //this->globalLight->SetColor(float4(1.0f, 1.0f, 1.5f, 1.0f));
+        ////this->globalLight->SetBackLightColor(float4(0.0f, 0.0f, 0.0f, 0.0f));
+        //this->globalLight->SetCastShadows(false);
+        //this->stage->AttachEntity(this->globalLight.upcast<GraphicsEntity>());
 		
 		this->view->SetFrameShader(Frame::FrameServer::Instance()->GetFrameShaderByName(ResourceId("DX9Sample")));
 
 
-		ResourceId modelResId;
-		if (this->args.HasArg("-n2"))
-		{
-			modelResId = this->args.GetString("-n2");
+		//ResourceId modelResId;
+		//if (this->args.HasArg("-n2"))
+		//{
+		//	modelResId = this->args.GetString("-n2");
 
-			lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
-			this->head = ModelEntity::Create();
-			//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
-			this->head->SetResourceId(modelResId);
-			this->head->SetTransform(lightTransform);
-			this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
-		}
+		//	lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
+		//	this->head = ModelEntity::Create();
+		//	//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
+		//	this->head->SetResourceId(modelResId);
+		//	this->head->SetTransform(lightTransform);
+		//	this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+		//}
+
+		this->terrainEntity = ModelEntity::Create();
+		this->terrainEntity->SetResourceId(ResourceId("mdl:examples/ground.n2"));
+		this->stage->AttachEntity(this->terrainEntity.upcast<GraphicsEntity>());
+
+		this->modelEntity = ModelEntity::Create();
+		this->modelEntity->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
+		this->stage->AttachEntity(this->modelEntity.upcast<GraphicsEntity>());
+
+		this->chaseCaneraUtil.SetEntity(this->modelEntity.upcast<GraphicsEntity>());
 
         return true;
     }
@@ -116,12 +126,12 @@ FighterApplication::Open()
 void
 FighterApplication::Close()
 {
-    this->globalLight = 0;
+    /*this->globalLight = 0;
     this->localLight0 = 0;
     this->localLight1 = 0;
     this->ground = 0;
     this->head   = 0;
-	this->tree	 = 0;
+	this->tree	 = 0;*/
 
 	GraphicsServer* gfxServer = GraphicsServer::Instance();
 	gfxServer->DiscardView(this->view);
@@ -129,6 +139,7 @@ FighterApplication::Close()
 	gfxServer->DiscardStage(this->stage);
 	this->stage = 0;
 	this->modelEntity = 0;
+	this->terrainEntity = 0;
 	this->lightEntity = 0;
 	this->cameraEntity = 0;
 
@@ -159,6 +170,23 @@ FighterApplication::OnProcessInput()
 	//}
 	//else
 	{
+		const Math::float2& v = mouse->GetMovement();
+		if (mouse->ButtonPressed(MouseButton::RightButton))
+		{
+			this->chaseCaneraUtil.SetOrbit(v.x(), v.y(), this->frameTime);
+		}
+		if (mouse->WheelForward())
+		{
+			this->chaseCaneraUtil.SetDistance(-1.0f);
+		}
+		if (mouse->WheelBackward())
+		{
+			this->chaseCaneraUtil.SetDistance(1.0f);
+		}
+
+		this->chaseCaneraUtil.Update(this->time, true);
+		this->cameraEntity->SetTransform(this->chaseCaneraUtil.GetCameraTransform());
+
 		// standard input handling: manipulate camera
 		this->mayaCameraUtil.SetOrbitButton(mouse->ButtonPressed(MouseButton::LeftButton));
 		this->mayaCameraUtil.SetPanButton(mouse->ButtonPressed(MouseButton::MiddleButton));
@@ -227,7 +255,7 @@ FighterApplication::OnProcessInput()
 		this->mayaCameraUtil.SetZoomIn(zoomIn);
 		this->mayaCameraUtil.SetZoomOut(zoomOut);
 		this->mayaCameraUtil.Update();
-		this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
+		//this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F5))

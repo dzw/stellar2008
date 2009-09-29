@@ -69,17 +69,34 @@ TestViewerApplication::Open()
 		
 		this->view->SetFrameShader(Frame::FrameServer::Instance()->GetFrameShaderByName(ResourceId("DX9Sample")));
 
+		ResourceId modelResId;
+		if (this->args.HasArg("-n2"))
+		{
+			modelResId = this->args.GetString("-n2");
+
+			lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
+			this->head = ModelEntity::Create();
+			//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
+			this->head->SetResourceId(modelResId);
+			this->head->SetTransform(lightTransform);
+			this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+		}
+
         // setup models
         /*this->ground = ModelEntity::Create();
         this->ground->SetResourceId(ResourceId("mdl:examples/ground.n2"));
         this->stage->AttachEntity(ground.upcast<GraphicsEntity>());*/
 
-		lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
-		this->head = ModelEntity::Create();
-        //this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
-        this->head->SetResourceId(ResourceId("mdl:characters/trollkroete.n2"));
-		this->head->SetTransform(lightTransform);
-        this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+
+
+		//lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
+		//this->head = ModelEntity::Create();
+  //      //this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
+  //      this->head->SetResourceId(ResourceId("mdl:characters/trollkroete.n2"));
+		//this->head->SetTransform(lightTransform);
+  //      this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+
+
 
 		// wow:World\\AZEROTH\\BootyBay\\PassiveDoodad\\FishingBox\\FishingBox.m2
 		// wow:creature\\deer\\deer.m2

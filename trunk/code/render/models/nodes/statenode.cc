@@ -14,6 +14,8 @@
 #include "timing/timer.h"
 #include "coregraphics/debugview.h"
 
+#include "skinshapenode.h"
+
 namespace Models
 {
 ImplementClass(Models::StateNode, 'STND', Models::TransformNode);
@@ -81,7 +83,17 @@ StateNode::LoadResources()
 
     // create a new shader instance from the Shader attribute
     const ResourceId& resId = this->GetString(Attr::Shader);
-    this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(resId);
+
+	if (!ShaderServer::Instance()->HasShader(resId))
+	{
+		/*if (this->IsA(SkinShapeNode::RTTI))
+			this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(ResourceId("shd:skinned"));
+		else
+			this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(ResourceId("shd:static"));*/
+		return;
+	}
+	else
+		this->shaderInstance = ShaderServer::Instance()->CreateShaderInstance(resId);
 
     // iterate through shader variables and set their attribute values on the shader
 	// 保存shader相关的变量,如果node中没有相关属性(attr)就不会设置。

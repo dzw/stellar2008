@@ -303,7 +303,7 @@ ManagedResource::SetPlaceholder(const Ptr<Resource>& p)
 inline const Ptr<Resource>&
 ManagedResource::GetResource() const
 {
-    if (this->resource.isvalid())
+	if (this->resource.isvalid() && this->resource->GetState() == Resource::Loaded)
     {
         return this->resource;
     }

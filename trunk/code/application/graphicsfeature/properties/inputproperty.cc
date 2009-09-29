@@ -208,7 +208,7 @@ InputProperty::OnBeginFrame()
         if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::S))
         {
             Ptr<MoveDirection> msg = MoveDirection::Create();
-            msg->SetDirection(vector(0,0,1));
+            msg->SetDirection(vector(0,0,-1));
             msg->SetCameraRelative(true);
             this->entity->SendSync(msg.upcast<Messaging::Message>());                
 
@@ -217,7 +217,7 @@ InputProperty::OnBeginFrame()
         if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::W))
         {            
             Ptr<MoveDirection> msg = MoveDirection::Create();
-            msg->SetDirection(vector(0,0,-1));
+            msg->SetDirection(vector(0,0,1));
             msg->SetCameraRelative(true);
             this->entity->SendSync(msg.upcast<Messaging::Message>());                
 

@@ -357,6 +357,66 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="gamestate"
+			>
+			<Filter
+				Name="charselect"
+				>
+			</Filter>
+			<Filter
+				Name="gamein"
+				>
+			</Filter>
+			<Filter
+				Name="gameloading"
+				>
+			</Filter>
+			<Filter
+				Name="mapchange"
+				>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="gamemanager"
+			>
+			<Filter
+				Name="character"
+				>
+			</Filter>
+			<Filter
+				Name="helper"
+				>
+			</Filter>
+			<Filter
+				Name="item"
+				>
+			</Filter>
+			<Filter
+				Name="move"
+				>
+			</Filter>
+			<Filter
+				Name="map"
+				>
+			</Filter>
+			<Filter
+				Name="effect"
+				>
+			</Filter>
+			<Filter
+				Name="battle"
+				>
+			</Filter>
+			<Filter
+				Name="interface"
+				>
+			</Filter>
+		</Filter>
+		<File
+			RelativePath="..\fighter\devlog.txt"
+			>
+		</File>
 		<File
 			RelativePath="..\tools\stdneb.cc"
 			>

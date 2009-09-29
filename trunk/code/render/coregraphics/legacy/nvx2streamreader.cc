@@ -166,7 +166,7 @@ Nvx2StreamReader::SetupVertexComponents()
     n_assert(this->vertexComponents.IsEmpty());
 
     IndexT i;
-    for (i = 0; i < 22; i++)
+    /*for (i = 0; i < 22; i++)
     {
         VertexComponent::SemanticName sem;
         VertexComponent::Format fmt;
@@ -203,6 +203,35 @@ Nvx2StreamReader::SetupVertexComponents()
                     fmt = VertexComponent::Float3;
                     break;
             }
+			this->vertexComponents.Append(VertexComponent(sem, index, fmt));
+		}
+	}*/
+	for (i = 0; i < 11; i++)
+	{
+		VertexComponent::SemanticName sem;
+		VertexComponent::Format fmt;
+		IndexT index = 0;
+		if (vertexComponentMask & (1<<i))
+		{
+			switch (i)
+			{
+			case 0:     sem = VertexComponent::Position;     fmt=VertexComponent::Float3; break;
+			case 1:     sem = VertexComponent::Normal;       fmt=VertexComponent::Float3; break;
+			case 2:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 0; break;
+			case 3:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 1; break;
+			case 4:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 2; break;
+			case 5:     sem = VertexComponent::TexCoord;     fmt=VertexComponent::Float2; index = 3; break;
+			case 6:     sem = VertexComponent::Color;        fmt=VertexComponent::Float4; break;
+			case 7:     sem = VertexComponent::Tangent;      fmt=VertexComponent::Float3; break;
+			case 8:     sem = VertexComponent::Binormal;     fmt=VertexComponent::Float3; break;
+			case 9:     sem = VertexComponent::SkinWeights;  fmt=VertexComponent::Float4; break;
+			case 10:    sem = VertexComponent::SkinJIndices; fmt=VertexComponent::Float4; break;
+			default:
+				n_error("Can't happen!");
+				sem = VertexComponent::Position;
+				fmt = VertexComponent::Float3;
+				break;
+			}
             this->vertexComponents.Append(VertexComponent(sem, index, fmt));
         }
     }
