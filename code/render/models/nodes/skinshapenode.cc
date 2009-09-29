@@ -66,7 +66,7 @@ SkinShapeNode::ApplySharedState()
    
     // set skinned shader feature
     ShaderServer* shdServer = ShaderServer::Instance();
-    shdServer->SetFeatureBits(shdServer->FeatureStringToMask("Skinned1"));
+    shdServer->SetFeatureBits(shdServer->FeatureStringToMask("Skinned"));
 
 	return true;
 }

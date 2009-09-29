@@ -317,7 +317,7 @@ GraphicsServer::OnFrame(Timing::Time curTime)
 		String sfps;
 		sfps.Format("%f\n", fps.GetFPS());
 		DebugView::Instance()->AddDebugString("FPS", sfps);
-		Core::SysFunc::DebugOut(sfps.AsCharPtr());
+		//Core::SysFunc::DebugOut(sfps.AsCharPtr());
 	}
 }
 

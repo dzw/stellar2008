@@ -60,7 +60,7 @@ ModelServer::Open()
     if (!this->modelResourceMapper.isvalid())
     {
         Ptr<SimpleResourceMapper> resMapper = SimpleResourceMapper::Create();
-		resMapper->SetPlaceholderResourceId(ResourceId("mdl:icon/dummyicon.n2"/*"mdl:system/placeholder.n2"*/));   // FIXME: n3!
+		resMapper->SetPlaceholderResourceId(ResourceId(/*"mdl:icon/dummyicon.n2"*/"mdl:system/placeholder.n2"));   // FIXME: n3!
         resMapper->SetResourceClass(Model::RTTI);
         resMapper->SetResourceLoaderClass(StreamModelLoader::RTTI);
         resMapper->SetManagedResourceClass(ManagedModel::RTTI);

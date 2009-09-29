@@ -290,7 +290,7 @@ ChaseCameraProperty::UpdateCamera(bool interpolate)
     // construct the new camera matrix
     matrix44 cameraMatrix;
     //
-    cameraMatrix = matrix44::lookatrh(this->cameraPos.GetState(), this->cameraLookat.GetState(), vector::upvec());
+    cameraMatrix = matrix44::lookatlh(this->cameraPos.GetState(), this->cameraLookat.GetState(), vector::upvec());
 
     // update the graphics subsystem camera
     this->cameraEntity->SetTransform(cameraMatrix);

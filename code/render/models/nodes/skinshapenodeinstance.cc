@@ -64,7 +64,7 @@ SkinShapeNodeInstance::Update()
 */
 void
 SkinShapeNodeInstance::ValidateCharacter()
-{
+{//return;
     if (!this->character.isvalid())
     {
         // get character from characternodeinstance

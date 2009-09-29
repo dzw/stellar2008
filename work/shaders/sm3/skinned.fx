@@ -251,8 +251,9 @@ SamplePassPixelShader(const vsSamplePassOutput psIn, uniform int numLights) : CO
 SimpleTechnique(Depth, "Depth|Skinned", DepthPassVertexShaderSkinned, DummyPixelShader);
 SimpleTechnique(VSMDepth, "VSMDepth|Skinned", VSMPassVertexShaderSkinned, VSMPassPixelShader);
 
-LightTechnique(Solid1, "Solid|Skinned1", SamplePassVertexShaderSkinned, SamplePassPixelShader, 0);
-LightTechnique(Solid, "Solid|Skinned", ColorPassVertexShaderSkinned, ColorPassPixelShader, 0);
+LightTechnique(Solid, "Solid|Skinned", SamplePassVertexShaderSkinned, SamplePassPixelShader, 0);
+LightTechnique(Alpha, "Alpha|Skinned", SamplePassVertexShaderSkinned, SamplePassPixelShader, 0);
+//LightTechnique(Solid, "Solid|Skinned", ColorPassVertexShaderSkinned, ColorPassPixelShader, 0);
 
 
 LightTechnique(SolidSkinned0, "Solid|Skinned|LocalLights0", ColorPassVertexShaderSkinned, ColorPassPixelShader, 0);

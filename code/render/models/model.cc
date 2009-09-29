@@ -240,6 +240,9 @@ Model::Render(const ModelNodeType::Code& nodeFilter, const Frame::LightingMode::
 
 		// if lighting mode is Off, we can render all node instances with the same shader
 		const Ptr<ShaderInstance>& shaderInst = shaderServer->GetActiveShaderInstance();
+		if (!shaderInst.isvalid())
+			continue;
+
 		if (LightingMode::None == lightingMode)
 		{
 			shaderInst->SelectActiveVariation(shaderServer->GetFeatureBits());

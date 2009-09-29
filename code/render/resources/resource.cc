@@ -64,7 +64,7 @@ Resource::Load()
     // check for error
     if (Failed == this->state)
     {
-        n_error("Failed to load resource '%s'!\n", this->resourceId.Value().AsCharPtr());
+        /*n_error*/n_warning("Failed to load resource '%s'!\n", this->resourceId.Value().AsCharPtr());
     }
     return this->state;
 }

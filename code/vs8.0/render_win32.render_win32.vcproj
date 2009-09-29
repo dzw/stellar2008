@@ -2043,6 +2043,14 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc"
 			>
 			<File
+				RelativePath="..\render\renderutil\chasecamerautil.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\render\renderutil\chasecamerautil.h"
+				>
+			</File>
+			<File
 				RelativePath="..\render\renderutil\dxutcamerautil.cc"
 				>
 			</File>
