@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="nebula2_win32"
 	ProjectGUID="{6D4FBE12-3B5E-4BE7-A20A-59FEA6698E2B}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

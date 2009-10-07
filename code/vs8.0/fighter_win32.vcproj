@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="fighter_win32"
 	ProjectGUID="{90902147-DB19-4BE6-84FB-0016EAE6B31C}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -82,7 +83,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="gdi32.lib shell32.lib user32.lib dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dinput8.lib xinput.lib dxerr9.lib d_foundation_win32.lib d_render_win32.lib d_lua_win32.lib d_tinyxml_win32.lib d_zlib_win32.lib d_nebula2_win32.lib d_db_win32.lib d_sqlite_win32.lib d_ddslib_win32.lib d_mpq_win32.lib LagerPacket.lib"
+				AdditionalDependencies="gdi32.lib shell32.lib user32.lib dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dxerr.lib dinput8.lib xinput.lib d_foundation_win32.lib d_render_win32.lib d_lua_win32.lib d_tinyxml_win32.lib d_zlib_win32.lib d_nebula2_win32.lib d_db_win32.lib d_sqlite_win32.lib d_ddslib_win32.lib LagerPacket.lib"
 				OutputFile="..\..\bin\win32\testviewer_d.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
@@ -93,6 +94,8 @@
 				GenerateMapFile="true"
 				MapFileName="..\..\bin\win32\testviewer.debug.map"
 				MapExports="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -112,9 +115,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -201,6 +201,8 @@
 				GenerateMapFile="true"
 				MapFileName="..\..\bin\win32\testviewer.release.map"
 				MapExports="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -220,9 +222,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -309,6 +308,8 @@
 				GenerateMapFile="true"
 				MapFileName="..\..\bin\win32\testviewer.release.map"
 				MapExports="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -328,9 +329,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

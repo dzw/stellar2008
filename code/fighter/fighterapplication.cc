@@ -113,7 +113,7 @@ FighterApplication::Open()
 		this->modelEntity->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
 		this->stage->AttachEntity(this->modelEntity.upcast<GraphicsEntity>());
 
-		this->chaseCaneraUtil.SetEntity(this->modelEntity.upcast<GraphicsEntity>());
+		//this->chaseCaneraUtil.SetEntity(this->modelEntity.upcast<GraphicsEntity>());
 
         return true;
     }
@@ -171,7 +171,7 @@ FighterApplication::OnProcessInput()
 	//else
 	{
 		const Math::float2& v = mouse->GetMovement();
-		if (mouse->ButtonPressed(MouseButton::RightButton))
+		/*if (mouse->ButtonPressed(MouseButton::RightButton))
 		{
 			this->chaseCaneraUtil.SetOrbit(v.x(), v.y(), this->frameTime);
 		}
@@ -185,7 +185,7 @@ FighterApplication::OnProcessInput()
 		}
 
 		this->chaseCaneraUtil.Update(this->time, true);
-		this->cameraEntity->SetTransform(this->chaseCaneraUtil.GetCameraTransform());
+		this->cameraEntity->SetTransform(this->chaseCaneraUtil.GetCameraTransform());*/
 
 		// standard input handling: manipulate camera
 		this->mayaCameraUtil.SetOrbitButton(mouse->ButtonPressed(MouseButton::LeftButton));
@@ -255,7 +255,7 @@ FighterApplication::OnProcessInput()
 		this->mayaCameraUtil.SetZoomIn(zoomIn);
 		this->mayaCameraUtil.SetZoomOut(zoomOut);
 		this->mayaCameraUtil.Update();
-		//this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
+		this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F5))
@@ -265,7 +265,7 @@ FighterApplication::OnProcessInput()
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F6))
 		{
-			isDebugRender = !isDebugRender;
+			this->view->ShowDebugInfo();
 		}
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F7))
@@ -284,8 +284,6 @@ void
 FighterApplication::OnRenderFrame()
 {
 	GraphicsServer::Instance()->OnFrame(this->timer.GetTime());
-	if (isDebugRender)
-		this->view->RenderDebug();
 
 	// if we are running in windowed mode, be multitasking friendly
 	// by giving up our time slice

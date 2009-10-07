@@ -13,7 +13,7 @@
 #include "coregraphics/debugview.h"
 #endif
 
-#include <dxerr9.h>
+#include <dxerr.h>
 
 namespace Direct3D9
 {
@@ -367,7 +367,7 @@ D3D9RenderDevice::OpenDirect3DDevice()
                                   &(this->d3d9Device));
     if (FAILED(hr))
     {
-        n_error("Failed to create Direct3D device object: %s!\n", DXGetErrorString9(hr));
+        n_error("Failed to create Direct3D device object: %s!\n", DXGetErrorString(hr));
         return false;
     }
 

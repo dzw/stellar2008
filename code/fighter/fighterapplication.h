@@ -19,7 +19,7 @@
 #include "renderutil/dxutcamerautil.h"
 //#include "renderutil/quaternioncamerautil.h"
 #include "renderutil/freecamerautil.h"
-#include "renderutil/chasecamerautil.h"
+//#include "renderutil/chasecamerautil.h"
 
 //------------------------------------------------------------------------------
 namespace Tools
@@ -64,7 +64,7 @@ private:
 	RenderUtil::MayaCameraUtil mayaCameraUtil;
 	RenderUtil::DXUTCameraUtil dxutCameraUtil;
 	RenderUtil::FreeCameraUtil freeCameraUtil;
-	RenderUtil::ChaseCameraUtil chaseCaneraUtil;
+//	RenderUtil::ChaseCameraUtil chaseCaneraUtil;
 	bool isDebugRender;
 };
 

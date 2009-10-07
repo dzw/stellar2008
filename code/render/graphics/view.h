@@ -70,6 +70,8 @@ public:
 
 	void RenderDebugString();
 	Math::vector GetCameraPos();
+
+	void ShowDebugInfo();
 protected:
     friend class GraphicsServer;
 
@@ -94,6 +96,8 @@ protected:
 
 	Math::matrix44 camPos;
 	bool needUpdate;
+
+	bool showDebugInfo;
 };
 
 //------------------------------------------------------------------------------
@@ -202,6 +206,15 @@ inline const Ptr<Frame::FrameShader>&
 View::GetFrameShader() const
 {
     return this->frameShader;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline void 
+View::ShowDebugInfo()
+{
+	this->showDebugInfo = !this->showDebugInfo;
 }
 
 } // namespace Graphics

@@ -32,6 +32,10 @@
 #define NODEFERWINDOWPOS
 #define NOMCX
 
+#define _DO_NOT_DECLARE_INTERLOCKED_INTRINSICS_IN_MEMORY
+#include <intrin.h>
+
+
 // Windows headers
 #include <windows.h>
 #include <process.h>

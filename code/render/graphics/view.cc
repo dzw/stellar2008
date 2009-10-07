@@ -32,7 +32,8 @@ using namespace Math;
 */
 View::View() :
     isAttachedToServer(false),
-	needUpdate(false)
+	needUpdate(false),
+	showDebugInfo(false)
 {
     // empty
 }
@@ -215,8 +216,13 @@ View::Render()
 		//lightServer->EndFrame();
 	}
 
+	if (showDebugInfo)
+	{
+		this->RenderDebug();
+		this->RenderDebugString();
+	}
 	//RenderDebug();
-	this->RenderDebugString();
+	//this->RenderDebugString();
 }
 
 //------------------------------------------------------------------------------

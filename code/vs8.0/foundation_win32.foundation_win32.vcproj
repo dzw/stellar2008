@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="foundation_win32"
 	ProjectGUID="{644EFE92-A26C-40AB-B173-5E7B80E29EEF}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
