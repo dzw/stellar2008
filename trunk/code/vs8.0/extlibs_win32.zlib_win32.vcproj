@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="zlib_win32"
 	ProjectGUID="{870DF0E6-6853-4FC3-AED5-1AD200A59BC4}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

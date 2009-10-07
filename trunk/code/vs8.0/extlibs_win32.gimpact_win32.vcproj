@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="gimpact_win32"
 	ProjectGUID="{C85DF2CE-2DCD-4D80-9095-535F94F1E6BC}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

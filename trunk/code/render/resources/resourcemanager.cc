@@ -239,7 +239,9 @@ ResourceManager::LookupManagedResource(const ResourceId& resId) const
 		if (res.isvalid())
 			return res;
 	}
-	return 0;
+
+	static Ptr<ManagedResource> ret;
+	return ret;
 
     return this->managedResources[resId.Value()];
 }

@@ -13,6 +13,7 @@
 #include "util/quadtree.h"
 #include "attr/attribute.h"
 #include "graphics/cell.h"
+#include "foundation/math/bbox.h"
 
 //------------------------------------------------------------------------------
 namespace Attr
@@ -35,7 +36,7 @@ public:
 	/// 初始化四叉树
 	void InitQuadtree(const Math::bbox& box, int level);
 	/// 设置叶子节点boundbox
-	void SetLeafNodeBoundingBox(int row, int col, const bbox& b);
+	void SetLeafNodeBoundingBox(int row, int col, const Math::bbox& b);
 	///
 	void AttachToCell(const Ptr<Graphics::Cell>& cell);
     /// 创建节点，加入到stage

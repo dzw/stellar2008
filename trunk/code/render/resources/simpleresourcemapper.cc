@@ -251,7 +251,7 @@ SimpleResourceMapper::OnPrepare()
         {
             loadNum++;
             // resource has finished loading, or failed to load
-			if (resource->LoadFailed)
+			if (resource->LoadFailed())
 			{
 			}
             this->managedResources[resource->GetResourceId().Value()]->SetResource(resource);            
