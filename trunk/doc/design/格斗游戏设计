@@ -1,0 +1,153 @@
+间隔判断：
+1：两个按键之间，两个按键间隔
+2：两个动作之间，当一个动作结束，与另一个动作间隔不超过N毫秒时,也就是说前面的动作在结束后的N毫秒之内可以产生新的动作，如跳跃滚动、跳跃攻击、连招等。
+
+按键处理、不处理两种情况：
+处理：当两个按键间隔在范围之内
+不处理：当两按键不在间隔范围内，或正在播放动作（直接忽略）
+
+按街霸4的作法，应该没有按键缓冲，按键都是即时处理的。或者说有个“即时”缓冲
+伪代码：
+
+数据结构：
+struct KeyInfo
+{
+  Time time; //间隔时间
+  BYTE type; //按键类型，如方向、功击、投郑等
+  int val;   //按键的值，每个键都有一个值衡量
+};
+enum KeyType
+{
+  Direction,	// 方向按键
+  Attact,	// 攻击按键
+  NumKeyType
+};
+enum CharState
+{
+  NormalState,	// 普通状态
+  DefenseState,	// 防御状态
+  AttachState,	// 攻击状态，简单点吧，三种状态太麻烦了
+  //AttactBeginState,// 开始攻击状态，开始攻击动作的时候设置
+  //AttactingState,  // 正在功击状态，攻击动作进行到一半的时候设置，这个标志用来判断是否完成一次攻击
+  //AttactEndState,  // 结束攻击状态，攻击动作结束的时候设置
+  NumCharState
+};
+//攻击中的三种状态，AttactBeginState、AttactingState、AttactEndState，AttactingState最强，当AttactingState碰上其它两种状态，算做强制进攻。
+
+enum AttactResult
+{
+  NoneAttact,	//没攻击
+  IsAttacted,	//被攻击
+  Defensing,	//防御
+  Counteraction,//抵消，双方同时处于攻击状态
+  NumAttactResult,
+};
+
+------------------------------------------
+1、输入函数：
+输入按键
+if(不在播放动作)
+{
+  加入到“按键缓冲”
+}
+------------------------------------------
+2、处理函数：
+if(正在播放动作)
+  return;
+bool isAttached = 调用受击处理函数;
+if(isAttached) //如果要处理受击
+{
+  清空“按键缓冲”；
+  return;
+}
+
+Array<KeyInfo> keys; //本次按键操作
+while(如果“按键缓冲”不为空）
+{
+  KeyInfo key = 从“按键缓冲”取得按键。//“按键缓冲”是一个堆栈队列
+  keys.Append(key);
+  if(key.time > 最大间隔时间)
+    break;
+  if(key.type != 方向键) //除方向键可以累计以外，其它键都可以马上处理
+    brak;
+}
+调用攻击处理函数（keys);
+清空“按键缓冲”；
+-------------------------------------------
+3、攻击处理函数：（Array<KeyInfo> keys）
+int val = InvalidCheck(kyes);
+if(charAction.IsContian(val))
+  播放动画（charAction[val])
+-------------------------------------------
+判断动作是否有效，并返回动作的有效值。
+4、int InvalidCheck(Array<KeyInfo> keys)
+{
+  if(keys.Size()==1)
+  {
+    return keys[0].val;
+  }
+
+  //根据按键优先级判断:
+  //1:大绝招 2:组合技 3:普通攻击
+  int val = 0;
+  for(int i = 0; i < keys.Size()-1; i++)
+  {
+    val+=keys[i].val;
+  }
+  if(charAction.IsContian(val)) //charActian保存当前角色的技能表map<int,int>，两个int分别是技能组合值和动作编号
+    return val;
+
+  return keys[0].val; // 直接返回第一个方向键.
+}
+-------------------------------------------
+5、受击处理函数
+bool hasAttacted = 判断是否有人攻击
+if(!hasAttacted) //没有人攻击
+  return false;
+
+//if(cs == AttachState) //如果对方攻击
+{
+  if(this->charState == DefenseState)//如果本身处在防御状态，那后面的动作就不要处理了，等对方这次攻击结束
+  {
+    hp -= little;	//减掉少量的血
+    播放动作（防御动作）;
+    return true;
+  }
+  if(this->charState == AttachState)//状态相同，抵消掉
+  {
+    return false;
+  }
+  if(this->charState == NormalState)
+  {
+    hp -= large;	//大出血
+    播放动作（受击动作）;
+    return true;
+  }
+}
+return false;
+-------------------------------------------
+
+把动作用数字代替，以数字累加的方式来确定使用哪个技能，如：
+上＝1
+下＝2
+左＝3
+右＝4
+轻拳＝5
+中拳＝6
+重拳＝7
+轻退＝8
+中退＝9
+重退＝10
+等...
+
+波动拳技能： ↓↘→+重拳 ＝ 2+4+7=13这就是该技能的值。
+
+动作列表：
+
+
+掉血情况：
+直接被击中		掉血最多
+防御状态被击中		掉一点血
+双方同时处在攻击状态	不掉血，抵消掉。
+
+不同的情况会用不同的特效表现，到时候在上面增加就可以了
