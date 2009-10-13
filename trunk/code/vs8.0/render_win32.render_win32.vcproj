@@ -1760,14 +1760,6 @@
 			<Filter
 				Name="ambientocclusion"
 				>
-				<File
-					RelativePath="..\render\lighting\ambientocclusion\aoserver.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\lighting\ambientocclusion\aoserver.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
