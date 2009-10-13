@@ -47,7 +47,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions=""
 				Optimization="0"
-				AdditionalIncludeDirectories="..;../foundation;../application;../application/basegamefeature;../application/corefeature;../application/graphicsfeature;../application/physicsfeature;../render;../extlibs;../addons;../extlibs/ode; ;"
+				AdditionalIncludeDirectories="..;../foundation;../application;../application/basegamefeature;../application/corefeature;../application/graphicsfeature;../application/physicsfeature;../application/fightingfeature;../render;../extlibs;../addons;../extlibs/ode"
 				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -1061,6 +1061,62 @@
 				</File>
 				<File
 					RelativePath="..\application\physicsfeature/properties\physicsproperty.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="fightingfeature"
+			>
+			<Filter
+				Name="msg"
+				>
+				<File
+					RelativePath="..\application\fightingfeature\msg\fightinginputresult.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\msg\fightinginputresult.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="properties"
+				>
+				<File
+					RelativePath="..\application\fightingfeature\properties\fightingactorgraphicsproperty.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\properties\fightingactorgraphicsproperty.h"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\properties\fightinginputproperty.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\properties\fightinginputproperty.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="managers"
+				>
+				<File
+					RelativePath="..\application\fightingfeature\managers\inputrulemanager.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\managers\inputrulemanager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\managers\skillmanager.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\application\fightingfeature\managers\skillmanager.h"
 					>
 				</File>
 			</Filter>
