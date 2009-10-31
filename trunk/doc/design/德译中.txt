@@ -1,0 +1,32 @@
+德译中：
+koerper		身体
+koerperteile	共享身体？
+kleidung	服装
+basiskleidung	基本服装
+ruestung	装备
+kopf		头
+haare		头发
+handschuhe	手套
+torso		躯干
+fuesse		脚
+beine		下半身（不包括脚）
+arme		手臂
+haende		手
+oberkoerper	腰部
+kraeftig	强壮的
+steingolem	石魔像
+klein		小的（小怪）
+boss		大怪
+duenn		薄的
+versteinert	石化
+
+
+NPC名字
+danos		达诺思
+jost		乔斯特
+
+
+
+动作：
+laufen		跑
+gehen		离开

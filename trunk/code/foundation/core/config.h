@@ -27,6 +27,8 @@
 
 // enable/disable support for Nebula2 file formats
 #define NEBULA3_LEGACY_SUPPORT (1)
+// 在Drakensang中用到的优化格式(.n2)
+#define NEBULA3_OPTIMIZEFILEFORMAT (1)
 
 // enable/disable mini dumps
 #define NEBULA3_ENABLE_MINIDUMPS (1)

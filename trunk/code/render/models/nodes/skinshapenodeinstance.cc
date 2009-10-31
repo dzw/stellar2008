@@ -64,7 +64,10 @@ SkinShapeNodeInstance::Update()
 */
 void
 SkinShapeNodeInstance::ValidateCharacter()
-{//return;
+{
+#if NEBULA3_OPTIMIZEFILEFORMAT
+	return;
+#endif
     if (!this->character.isvalid())
     {
         // get character from characternodeinstance
