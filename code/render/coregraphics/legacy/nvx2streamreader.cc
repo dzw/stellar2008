@@ -166,7 +166,9 @@ Nvx2StreamReader::SetupVertexComponents()
     n_assert(this->vertexComponents.IsEmpty());
 
     IndexT i;
-    /*for (i = 0; i < 22; i++)
+
+#if NEBULA3_OPTIMIZEFILEFORMAT
+    for (i = 0; i < 22; i++)
     {
         VertexComponent::SemanticName sem;
         VertexComponent::Format fmt;
@@ -205,7 +207,8 @@ Nvx2StreamReader::SetupVertexComponents()
             }
 			this->vertexComponents.Append(VertexComponent(sem, index, fmt));
 		}
-	}*/
+	}
+#else
 	for (i = 0; i < 11; i++)
 	{
 		VertexComponent::SemanticName sem;
@@ -235,6 +238,7 @@ Nvx2StreamReader::SetupVertexComponents()
             this->vertexComponents.Append(VertexComponent(sem, index, fmt));
         }
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
