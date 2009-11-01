@@ -52,7 +52,7 @@ void*
 D3D9VertexBuffer::Map(MapType mapType)
 {
     n_assert(0 != this->d3d9VertexBuffer);
-    DWORD lockFlags = D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_NOSYSLOCK;
+    DWORD lockFlags = 0;//D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_NOSYSLOCK;
     switch (mapType)
     {
         case MapRead:

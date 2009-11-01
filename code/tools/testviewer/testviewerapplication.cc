@@ -44,6 +44,9 @@ TestViewerApplication::Open()
     n_assert(!this->IsOpen());
     if (ViewerApplication::Open())
     {
+		this->animTable = Anim::AnimTable::Create();
+		this->animTable->Open();
+
         // setup lights
         matrix44 lightTransform = matrix44::rotationx(n_deg2rad(-70.0f));
         this->globalLight = GlobalLightEntity::Create();
@@ -73,13 +76,24 @@ TestViewerApplication::Open()
 		if (this->args.HasArg("-n2"))
 		{
 			modelResId = this->args.GetString("-n2");
+			String fileName = modelResId.Value();
 
 			lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
-			this->head = ModelEntity::Create();
-			//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
-			this->head->SetResourceId(modelResId);
-			this->head->SetTransform(lightTransform);
-			this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+			if (fileName.CheckStringExist("characters"))
+			{
+				this->actor = ActorEntity::Create();
+				this->actor->SetResourceId(modelResId);
+				this->actor->SetTransform(lightTransform);
+				this->stage->AttachEntity(this->actor.upcast<GraphicsEntity>());
+			}
+			else
+			{
+				this->head = ModelEntity::Create();
+				//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
+				this->head->SetResourceId(modelResId);
+				this->head->SetTransform(lightTransform);
+				this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+			}
 		}
 
         // setup models
@@ -128,7 +142,12 @@ TestViewerApplication::Close()
     this->ground = 0;
     this->head   = 0;
 	this->tree	 = 0;
-
+	this->actor  = 0;
+	if (this->animTable.isvalid())
+	{
+		//this->animTable->Close();
+		this->animTable = 0;
+	}
 	//this->worldManager->Close();
 	//this->worldManager = 0;
 
@@ -167,6 +186,13 @@ TestViewerApplication::OnUpdateFrame()
     lightTransform = matrix44::multiply(matrix44::scaling(75.0f, 75.0f, 100.0f), matrix44::lookatrh(pos, lookatPos, vector::upvec()));
     this->localLight1->SetTransform(lightTransform);
 */
+	static bool b = false;
+	if (this->actor.isvalid() && this->actor->IsValid() && !b)
+	{
+		b = true;
+		this->actor->SetBaseAnimation("angriff_bogen_shoot");
+	}
+
     ViewerApplication::OnUpdateFrame();
 }
 

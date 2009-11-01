@@ -12,7 +12,9 @@
 #include "apprender/viewerapplication.h"
 #include "lighting/spotlightentity.h"
 #include "graphics/modelentity.h"
-#include "wow/world/worldmanager.h"
+//#include "wow/world/worldmanager.h"
+#include "graphics/actorentity.h"
+#include "addons\nebula2\nebula2wrapper.h"
 
 //------------------------------------------------------------------------------
 namespace Tools
@@ -36,9 +38,11 @@ private:
     Ptr<Graphics::ModelEntity> ground;
     Ptr<Graphics::ModelEntity> head;
 	Ptr<Graphics::ModelEntity> tree;
+	Ptr<Graphics::ActorEntity> actor;
     Ptr<Lighting::GlobalLightEntity> globalLight;
     Ptr<Lighting::SpotLightEntity> localLight0;
     Ptr<Lighting::SpotLightEntity> localLight1;
+	Ptr<Anim::AnimTable> animTable;
 };
 
 } // namespace Test

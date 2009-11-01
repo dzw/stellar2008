@@ -1068,6 +1068,14 @@
 		<Filter
 			Name="fightingfeature"
 			>
+			<File
+				RelativePath="..\application\fightingfeature\fightingfeatureunit.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\application\fightingfeature\fightingfeatureunit.h"
+				>
+			</File>
 			<Filter
 				Name="msg"
 				>

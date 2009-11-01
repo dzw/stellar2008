@@ -37,6 +37,7 @@ public:
     virtual ~InputRuleManager();
 	/// 检查输入是否有效，并返回有效的值
 	DWORD CheckInvalid(const Util::Array<DWORD>& buffer)const;
+
 protected:
 	bool ParesRule();
 
