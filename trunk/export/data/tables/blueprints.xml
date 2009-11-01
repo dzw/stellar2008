@@ -23,7 +23,7 @@
     <!-- a ready-made actor entity -->
     <Entity type="Actor" cppclass="Entity">    
         <Property type="GraphicsFeature::InputProperty"/>
-        <Property type="GraphicsFeature::ActorGraphicsProperty"/>
+        <Property type="FightingFeature::FightingActorGraphicsProperty"/>
         <Property type="PhysicsFeature::ActorPhysicsProperty"/>
         <Property type="PhysicsFeature::MouseGripperProperty"/>
         <Property type="GraphicsFeature::ChaseCameraProperty"/>

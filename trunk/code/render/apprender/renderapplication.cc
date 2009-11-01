@@ -197,7 +197,7 @@ RenderApplication::Open()
 
         // setup resource mapper for meshes
         Ptr<SimpleResourceMapper> meshMapper = SimpleResourceMapper::Create();
-		meshMapper->SetPlaceholderResourceId(ResourceId(/*"msh:icon/dummyicon_s_0.nvx2"*/"msh:system/placeholder_s_0.nvx2"));
+		meshMapper->SetPlaceholderResourceId(ResourceId("msh:system/dummyicon_s_0.nvx2"/*"msh:system/placeholder_s_0.nvx2"*/));
         meshMapper->SetResourceClass(Mesh::RTTI);
         meshMapper->SetResourceLoaderClass(StreamMeshLoader::RTTI);
         meshMapper->SetManagedResourceClass(ManagedMesh::RTTI);

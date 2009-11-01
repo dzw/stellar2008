@@ -38,7 +38,11 @@ Nvx2StreamReader::Nvx2StreamReader() :
     vertexComponentMask(0)
 {
 	// 可用VertexComponent之和
+#if NEBULA3_OPTIMIZEFILEFORMAT
+	this->validVertexComponentMask = 0x3FFFFF;
+#else
 	this->validVertexComponentMask = 0x7FF;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -237,7 +241,6 @@ Nvx2StreamReader::SetupVertexComponents()
 			}
             this->vertexComponents.Append(VertexComponent(sem, index, fmt));
         }
-    }
 #endif
 }
 
@@ -344,7 +347,8 @@ Nvx2StreamReader::SetupVertexBuffer()
     }
 
 	uint componentMask = this->validVertexComponentMask & this->vertexComponentMask;
-	if (1 || componentMask == this->vertexComponentMask)
+	//if (1 || componentMask == this->vertexComponentMask)
+	if ( componentMask == this->vertexComponentMask)
 	{
 		this->vertexBufferLoader->Setup(this->vertexComponents, this->numVertices, this->vertexDataPtr, this->vertexDataSize);
 		this->vertexBuffer->SetLoader(this->vertexBufferLoader.upcast<ResourceLoader>());
