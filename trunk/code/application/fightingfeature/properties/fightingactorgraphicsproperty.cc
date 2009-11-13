@@ -22,6 +22,7 @@ using namespace Util;
 using namespace Math;
 using namespace Graphics;
 using namespace Nebula2;
+using namespace GraphicsFeature;
 
 //------------------------------------------------------------------------------
 /**

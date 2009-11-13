@@ -14,6 +14,7 @@
 #if __USE_PHYSICS__
 #include "physicsfeature/physicsfeatureunit.h"
 #endif
+#include "Fightingfeature/fightingfeatureunit.h"
 
 //------------------------------------------------------------------------------
 namespace Tools
@@ -39,6 +40,7 @@ private:
 #if __USE_PHYSICS__
     Ptr<PhysicsFeature::PhysicsFeatureUnit> physicsFeature;
 #endif    
+	Ptr<FightingFeature::FightingFeatureUnit> fightingFeature;
 };
 
 } // namespace Test

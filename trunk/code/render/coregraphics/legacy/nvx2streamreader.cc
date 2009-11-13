@@ -241,6 +241,7 @@ Nvx2StreamReader::SetupVertexComponents()
 			}
             this->vertexComponents.Append(VertexComponent(sem, index, fmt));
         }
+	}
 #endif
 }
 

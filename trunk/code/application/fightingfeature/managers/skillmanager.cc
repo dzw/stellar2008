@@ -59,26 +59,30 @@ SkillManager::ParesSkillList()
 	xmlReader->SetStream(stream);
 	if (xmlReader->Open())
 	{
-		if (xmlReader->SetToFirstChild("Skill")) do
+		if (xmlReader->HasNode("/SkillList"))
 		{
-			SkillInfo info;
-			if (xmlReader->HasAttr("KeyValue"))
-				info.keyValue = xmlReader->GetInt("KeyValue");
-			if (xmlReader->HasAttr("SP"))
-				info.sp = xmlReader->GetInt("SP");
-			if (xmlReader->HasAttr("MP"))
-				info.mp = xmlReader->GetInt("MP");
-			if (xmlReader->HasAttr("AP"))
-				info.ap = xmlReader->GetInt("AP");
-			if (xmlReader->HasAttr("VP"))
-				info.vp = xmlReader->GetInt("VP");
-			if (xmlReader->HasAttr("Delay"))
-				info.delay = xmlReader->GetInt("Delay");
-			if (xmlReader->HasAttr("animName"))
-				info.animName = xmlReader->GetString("animName");
-			this->skillList.Add(info.keyValue, info);
+			xmlReader->SetToNode("/SkillList");
+			if (xmlReader->SetToFirstChild("Skill")) do
+			{
+				SkillInfo info;
+				if (xmlReader->HasAttr("KeyValue"))
+					info.keyValue = xmlReader->GetInt("KeyValue");
+				if (xmlReader->HasAttr("SP"))
+					info.sp = xmlReader->GetInt("SP");
+				if (xmlReader->HasAttr("MP"))
+					info.mp = xmlReader->GetInt("MP");
+				if (xmlReader->HasAttr("AP"))
+					info.ap = xmlReader->GetInt("AP");
+				if (xmlReader->HasAttr("VP"))
+					info.vp = xmlReader->GetInt("VP");
+				if (xmlReader->HasAttr("Delay"))
+					info.delay = xmlReader->GetInt("Delay");
+				if (xmlReader->HasAttr("animName"))
+					info.animName = xmlReader->GetString("animName");
+				this->skillList.Add(info.keyValue, info);
+			}
+			while (xmlReader->SetToNextChild("Skill"));
 		}
-		while (xmlReader->SetToNextChild("Skill"));
 	}
 
 	return true;

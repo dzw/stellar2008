@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Nebula3 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/frame.xsd">
-
 <!-- 输入规则:
 按输入键位置判断是否有效，如第一键位置有哪几个按键有效，第二键位置有哪几个有效，以此判断。
 -->
@@ -9,27 +6,29 @@
 <InputRule CharSize="3">
 
 <!--第1键位置-->
-<Position Num="1">
-	<Key KeyValue="1">		<!-- ↑(上) -->
-	<Key KeyValue="10">		<!-- ↓(下) -->
-	<Key KeyValue="100">	<!-- ←(左) -->
-	<Key KeyValue="1000">	<!-- →(右) -->
-	<Key KeyValue="10000">	<!-- A(攻) -->
-	<Key KeyValue="100000">	<!-- J(跳) -->
-	<Key KeyValue="1000000"><!-- G(防) -->
+<Position Num="0">
+	<Key KeyValue="1"/>		<!-- ↑(上) -->
+	<Key KeyValue="10"/>		<!-- ↓(下) -->
+	<Key KeyValue="100"/>	<!-- ←(左) -->
+	<Key KeyValue="1000"/>	<!-- →(右) -->
+	<Key KeyValue="10000"/>	<!-- A(攻) -->
+	<Key KeyValue="100000"/>	<!-- J(跳) -->
+	<Key KeyValue="1000000"/><!-- G(防) -->
 </Position>
 
 <!--第2键位置-->
-<Position Num="2">
-	<Key KeyValue="1">	<!-- ↑(上) -->
-	<Key KeyValue="10">	<!-- ↓(下) -->
-	<Key KeyValue="100">	<!-- ←(左) -->
-	<Key KeyValue="1000">	<!-- →(右) -->
+<Position Num="1">
+	<Key KeyValue="1"/>	<!-- ↑(上) -->
+	<Key KeyValue="10"/>	<!-- ↓(下) -->
+	<Key KeyValue="100"/>	<!-- ←(左) -->
+	<Key KeyValue="1000"/>	<!-- →(右) -->
 </Position>
 
 <!--第3键位置-->
-<Position Num="3">
-	<Key KeyValue="10000">	<!-- A(攻) -->
-	<Key KeyValue="100000">	<!-- J(跳) -->
-	<Key KeyValue="1000000"><!-- G(防) -->
+<Position Num="2">
+	<Key KeyValue="10000"/>	<!-- A(攻) -->
+	<Key KeyValue="100000"/>	<!-- J(跳) -->
+	<Key KeyValue="1000000"/><!-- G(防) -->
 </Position>
+
+</InputRule>
