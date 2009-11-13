@@ -62,31 +62,33 @@ InputRuleManager::ParesRule()
 		if (xmlReader->Open())
 		{
 			int charSize = 0;
-			if (xmlReader->HasNode("InputRule"))
+			if (xmlReader->HasNode("/InputRule"))
 			{
-				xmlReader->SetToNode("InputRule");
+				xmlReader->SetToNode("/InputRule");
 				n_assert(xmlReader->HasAttr("CharSize"));
 				charSize = xmlReader->GetInt("CharSize");
-			}
-			this->inputRule.SetSize(charSize);
-			if (xmlReader->HasNode("Position"))
-			{
-				xmlReader->SetToNode("Position");
-				n_assert(xmlReader->HasAttr("Num"));
-				int pos = xmlReader->GetInt("Num");
-				if (pos < (int)this->inputRule.Size())
+				this->inputRule.SetSize(charSize);
+			
+				if (xmlReader->SetToFirstChild("Position"))do
 				{
-					if (xmlReader->SetToFirstChild("Key")) do
+					//xmlReader->SetToNode("Position");
+					n_assert(xmlReader->HasAttr("Num"));
+					int pos = xmlReader->GetInt("Num");
+					if (pos < (int)this->inputRule.Size())
 					{
-						n_assert(xmlReader->HasAttr("KeyValue"));
-						this->inputRule[pos].InsertSorted(xmlReader->GetInt("KeyValue"));
+						if (xmlReader->SetToFirstChild("Key")) do
+						{
+							n_assert(xmlReader->HasAttr("KeyValue"));
+							this->inputRule[pos].InsertSorted(xmlReader->GetInt("KeyValue"));
+						}
+						while (xmlReader->SetToNextChild("Key"));
 					}
-					while (xmlReader->SetToNextChild("Key"));
+					else
+					{
+						return false;
+					}
 				}
-				else
-				{
-					return false;
-				}
+				while (xmlReader->SetToNextChild("Position"));
 			}
 		}
 	}

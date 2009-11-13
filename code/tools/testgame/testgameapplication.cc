@@ -67,6 +67,9 @@ TestGameApplication::SetupGameFeatures()
     this->physicsFeature = PhysicsFeature::PhysicsFeatureUnit::Create();    
     this->gameServer->AttachGameFeature(this->physicsFeature.upcast<Game::FeatureUnit>());
 #endif	
+
+	this->fightingFeature = FightingFeature::FightingFeatureUnit::Create();
+	this->gameServer->AttachGameFeature(this->fightingFeature.upcast<Game::FeatureUnit>());
 }
 
 //------------------------------------------------------------------------------
