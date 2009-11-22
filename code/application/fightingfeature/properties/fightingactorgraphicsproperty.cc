@@ -8,6 +8,7 @@
 #include "msg/fightinginputresult.h"
 #include "msg/movedirection.h"
 #include "msg/movestop.h"
+#include "basegametiming\gametimesource.h"
 
 namespace Attr
 {
@@ -23,6 +24,7 @@ using namespace Math;
 using namespace Graphics;
 using namespace Nebula2;
 using namespace GraphicsFeature;
+using namespace Timing;
 
 //------------------------------------------------------------------------------
 /**
@@ -44,6 +46,11 @@ FightingActorGraphicsProperty::~FightingActorGraphicsProperty()
 void
 FightingActorGraphicsProperty::OnActivate()
 {  
+	// initialize feedback loops for motion smoothing
+	Time time = GameTimeSource::Instance()->GetTime();
+	//matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
+	this->smoothedPosition.Reset(time, 0.001f, 25.0f, Math::vector(0.0f, 0.0f, 0.0f)/*entityMatrix.getpos_component()*/);
+
 	ActorGraphicsProperty::OnActivate();
 }
 
@@ -94,6 +101,45 @@ FightingActorGraphicsProperty::HandleMessage(const Ptr<Messaging::Message>& msg)
 
 //------------------------------------------------------------------------------
 /**
+*/
+void 
+FightingActorGraphicsProperty::SetupCallbacks()
+{
+	this->entity->RegisterPropertyCallback(this, MoveAfter);
+}
+
+//------------------------------------------------------------------------------
+/**
+    The OnMoveAfter() method transfers the current physics entity transform to 
+    the game entity.
+*/
+void
+FightingActorGraphicsProperty::OnMoveAfter()
+{
+    if (1)
+    {
+        // if current state and goal are already close to each other,
+        // we don't send a position update
+        // NOTE: this check must be made before the feedback look update!
+        vector posError = this->smoothedPosition.GetState() - this->smoothedPosition.GetGoal();
+        
+        // always evaluate the feedback loops to keep them in valid time delta
+        Time time = GameTimeSource::Instance()->GetTime();
+        this->smoothedPosition.Update(time);
+
+        // only send update transform if anything changed
+        if ((posError.length() > 0.001f))
+        {
+            // construct the new entity matrix
+			matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
+			mat.translate(this->smoothedPosition.GetState());
+			UpdateTransform(mat);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
 	处理输入
 */
 void
@@ -128,6 +174,19 @@ FightingActorGraphicsProperty::ProcessInputResult(DWORD val, DWORD firstKey)
 	/*当前动作与新动作（skInfo）进行插值，在这里只做付值操作，每帧更新的时候才真正插值。
 		curAction = 当前动作;
 	nextAction = skInfo;*/
+
+	if (skInfo.keyValue == 1)
+	{
+		//const float Velocity = 10.0f;
+
+		vector dir(0.0f, 0.0f, 1.0f);
+		//vector desiredVelocity = dir * Velocity;
+
+		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
+		//mat.translate(dir);
+		this->smoothedPosition.SetGoal(dir);
+		//this->graphicsEntities[0]->SetTransform(mat);
+	}
 
 	Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
 	Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
