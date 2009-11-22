@@ -6,6 +6,7 @@
     (C) 2009 cTuo
 */
 #include "properties/actorgraphicsproperty.h"
+#include "math\pfeedbackloop.h"
 
 namespace Attr
 {
@@ -27,6 +28,13 @@ public:
     virtual void OnActivate();
     /// called from Entity::DeactivateProperties()
     virtual void OnDeactivate();
+	/// called after movement has happened
+	//virtual void OnMoveAfter();
+	/// called on begin of frame
+	virtual void OnMoveAfter();
+
+	/// setup callbacks for this property, call by entity in OnActivate()
+	virtual void SetupCallbacks();
 
     /// override to register accepted messages
     virtual void SetupAcceptedMessages();
@@ -35,6 +43,8 @@ public:
 
 protected:
 	void ProcessInputResult(DWORD val, DWORD firstKey);
+
+	Math::PFeedbackLoop<Math::vector> smoothedPosition;
 };
 RegisterClass(FightingActorGraphicsProperty);
 
