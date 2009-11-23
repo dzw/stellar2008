@@ -1,21 +1,21 @@
 //------------------------------------------------------------------------------
-//  game/fightingfeature.cc
+//  fightingfeature/fightingfeatureunit.cc
 //  (C) 2009 cTuo
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "fightingfeature/fightingfeatureunit.h"
-#include "fightingfeature\properties\fightingactorgraphicsproperty.h"
-#include "fightingfeature\properties\fightinginputproperty.h"
+#include "properties/fightinginputproperty.h"
+#include "properties/fightingactorgraphicsproperty.h"
 
 namespace FightingFeature
 {
-ImplementClass(FightingFeatureUnit, 'FFUT' , Game::FeatureUnit);
+ImplementClass(FightingFeatureUnit, 'FTFX' , Game::FeatureUnit);
 ImplementSingleton(FightingFeatureUnit);
 
 //------------------------------------------------------------------------------
 /**
 */
-FightingFeatureUnit::FightingFeatureUnit()
+FightingFeatureUnit::FightingFeatureUnit()    
 {
     ConstructSingleton;
 }
@@ -31,7 +31,7 @@ FightingFeatureUnit::~FightingFeatureUnit()
 //------------------------------------------------------------------------------
 /**
 */
-void
+void 
 FightingFeatureUnit::OnActivate()
 {
 	FeatureUnit::OnActivate();
@@ -39,19 +39,21 @@ FightingFeatureUnit::OnActivate()
 	this->inputRuleManager = InputRuleManager::Create();
 	this->skillManager = SkillManager::Create();
 
-    /// add this feature for render debug callback
-    //this->AddRenderDebugCallback(this, "Graphics");
+	this->AttachManager(this->inputRuleManager.upcast<Game::Manager>());
+	this->AttachManager(this->skillManager.upcast<Game::Manager>());
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-void
+void 
 FightingFeatureUnit::OnDeactivate()
 {
+	this->RemoveManager(this->inputRuleManager.upcast<Game::Manager>());
+	this->RemoveManager(this->skillManager.upcast<Game::Manager>());
+
 	this->inputRuleManager = 0;
 	this->skillManager = 0;
-    FeatureUnit::OnDeactivate();
 }
 
 }; // namespace Game
