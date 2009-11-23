@@ -48,8 +48,8 @@ FightingActorGraphicsProperty::OnActivate()
 {  
 	// initialize feedback loops for motion smoothing
 	Time time = GameTimeSource::Instance()->GetTime();
-	//matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
-	this->smoothedPosition.Reset(time, 0.001f, 25.0f, Math::vector(0.0f, 0.0f, 0.0f)/*entityMatrix.getpos_component()*/);
+	matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
+	this->smoothedPosition.Reset(time, 0.001f, -25.0f, entityMatrix.getpos_component());
 
 	ActorGraphicsProperty::OnActivate();
 }
@@ -95,8 +95,10 @@ FightingActorGraphicsProperty::HandleMessage(const Ptr<Messaging::Message>& msg)
 	{
 		return;
 	}
-       
-	ActorGraphicsProperty::HandleMessage(msg);
+	else
+	{
+		ActorGraphicsProperty::HandleMessage(msg);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -131,9 +133,15 @@ FightingActorGraphicsProperty::OnMoveAfter()
         if ((posError.length() > 0.001f))
         {
             // construct the new entity matrix
-			matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
-			mat.translate(this->smoothedPosition.GetState());
-			UpdateTransform(mat);
+			//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
+			//mat.translate(this->smoothedPosition.GetState());
+
+			float4 pos = this->smoothedPosition.GetState();
+			pos.w() = 1.0f;
+			matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
+			entityMatrix.setrow3(pos);
+			this->GetEntity()->SetMatrix44(Attr::Transform, entityMatrix);
+			UpdateTransform(entityMatrix);
         }
     }
 }
@@ -182,9 +190,10 @@ FightingActorGraphicsProperty::ProcessInputResult(DWORD val, DWORD firstKey)
 		vector dir(0.0f, 0.0f, 1.0f);
 		//vector desiredVelocity = dir * Velocity;
 
+		matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
 		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
 		//mat.translate(dir);
-		this->smoothedPosition.SetGoal(dir);
+		this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+dir);
 		//this->graphicsEntities[0]->SetTransform(mat);
 	}
 
