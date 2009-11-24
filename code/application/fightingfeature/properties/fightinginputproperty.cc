@@ -85,40 +85,68 @@ FightingInputProperty::OnBeginFrame()
             this->OnCameraZoomOut();
         }
 
-		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::S))
+		if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::S))
 		{
-			n_printf("S.");
+			n_printf("Down S.");
 			this->keyBuffer.Append(DownValue);
 		}
-		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::W))
+		if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::W))
 		{
-			n_printf("W.");
+			n_printf("Down W.");
 			this->keyBuffer.Append(UpValue);
 		}
-		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::A))
+		if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::A))
 		{
-			n_printf("A.");
+			n_printf("Down A.");
 			this->keyBuffer.Append(LeftValue);
 		}
-		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::D))
+		if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::D))
 		{
-			n_printf("D.");
+			n_printf("Down D.");
 			this->keyBuffer.Append(RightValue);
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::J))	// ¹¥»÷
 		{
-			n_printf("J.");
+			n_printf("Down J.");
 			this->keyBuffer.Append(AttactValue);
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::K))	// ÌøÔ¾
 		{
-			n_printf("K.");
+			n_printf("Down K.");
 			this->keyBuffer.Append(JumpValue);
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::L))	// ·ÀÊØ
 		{
-			n_printf("L.");
+			n_printf("Down L.");
 			this->keyBuffer.Append(DefenseValue);
+		}
+
+		if (this->keyBuffer.Size() == 0)
+		{
+			if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::S))
+			{
+				n_printf("S.");
+				this->keyBuffer.Clear();
+				this->keyBuffer.Append(DownValue);
+			}
+			if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::W))
+			{
+				n_printf("W.");
+				this->keyBuffer.Clear();
+				this->keyBuffer.Append(UpValue);
+			}
+			if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::A))
+			{
+				n_printf("A.");
+				this->keyBuffer.Clear();
+				this->keyBuffer.Append(LeftValue);
+			}
+			if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::D))
+			{
+				n_printf("D.");
+				this->keyBuffer.Clear();
+				this->keyBuffer.Append(RightValue);
+			}
 		}
 
 		if (this->keyBuffer.Size() > 0)
@@ -192,7 +220,7 @@ FightingInputProperty::ProcessKeyBuffer()
 	{
 		return;
 	}
-n_printf("ProcessKeyBuffer.\n");
+
 	DWORD val = InputRuleManager::Instance()->CheckInvalid(this->keyBuffer);
 	DWORD firstKey = this->keyBuffer[0];
 
