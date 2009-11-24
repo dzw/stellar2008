@@ -83,6 +83,7 @@ TestGameApplication::CleanupGameFeatures()
     this->gameServer->RemoveGameFeature(this->physicsFeature.upcast<Game::FeatureUnit>());
     this->physicsFeature = 0;
  #endif
+	this->fightingFeature = 0;
     GameApplication::CleanupGameFeatures();
 }
 } // namespace Tools

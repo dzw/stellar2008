@@ -348,13 +348,15 @@ ActorGraphicsProperty::HandleMessage(const Ptr<Messaging::Message>& msg)
     // TODO: move to extra property, just for testing
     else if (msg->CheckId(MoveDirection::Id))
     {
-        // set idle animation    
+        // set idle animation
+		n_printf("MoveDirection\n");
         Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
         Entity->SetBaseAnimation("laufen_01", 0.2f, 0.0f, true, true, 0.2f);  
     }
     else if (msg->CheckId(MoveStop::Id))
     {
         // set idle animation    
+		n_printf("MoveStop\n");
         Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
         Entity->SetBaseAnimation("idle_01", 0.2f, 0.0f, true, true, 0.2f);  
     }

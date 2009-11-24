@@ -8,7 +8,10 @@
 #include "msg/fightinginputresult.h"
 #include "msg/movedirection.h"
 #include "msg/movestop.h"
-#include "basegametiming\gametimesource.h"
+#include "basegametiming/gametimesource.h"
+#include "graphicsfeature/graphicsfeatureunit.h"
+#include "graphics/cameraentity.h"
+#include "managers/inputrulemanager.h"
 
 namespace Attr
 {
@@ -49,7 +52,7 @@ FightingActorGraphicsProperty::OnActivate()
 	// initialize feedback loops for motion smoothing
 	Time time = GameTimeSource::Instance()->GetTime();
 	matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
-	this->smoothedPosition.Reset(time, 0.001f, -25.0f, entityMatrix.getpos_component());
+	this->smoothedPosition.Reset(time, 0.001f, -10.0f, entityMatrix.getpos_component());
 
 	ActorGraphicsProperty::OnActivate();
 }
@@ -183,23 +186,51 @@ FightingActorGraphicsProperty::ProcessInputResult(DWORD val, DWORD firstKey)
 		curAction = 当前动作;
 	nextAction = skInfo;*/
 
-	if (skInfo.keyValue == 1)
+	if (skInfo.keyValue == UpValue)
 	{
 		//const float Velocity = 10.0f;
-
 		vector dir(0.0f, 0.0f, 1.0f);
-		//vector desiredVelocity = dir * Velocity;
+		const Ptr<Graphics::View>& curView = GraphicsFeature::GraphicsFeatureUnit::Instance()->GetDefaultView();
+		Graphics::CameraEntity* camera = curView->GetCameraEntity();
+		n_assert(camera);
+		matrix44 camTransform = camera->GetTransform();
+		camTransform.setpos_component(float4(0.0f, 0.0f, 0.0f, 1.0f));
+		dir = vector::transform(dir, camTransform);
+		dir.y() = 0.0f;
+		dir = vector::normalize(dir);
 
 		matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
 		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
 		//mat.translate(dir);
 		this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+dir);
 		//this->graphicsEntities[0]->SetTransform(mat);
+
+		Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+		Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
 	}
 
-	Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
-	Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
+	if (skInfo.keyValue == DownValue)
+	{
+		//const float Velocity = 10.0f;
+		vector dir(0.0f, 0.0f, -1.0f);
+		const Ptr<Graphics::View>& curView = GraphicsFeature::GraphicsFeatureUnit::Instance()->GetDefaultView();
+		Graphics::CameraEntity* camera = curView->GetCameraEntity();
+		n_assert(camera);
+		matrix44 camTransform = camera->GetTransform();
+		camTransform.setpos_component(float4(0.0f, 0.0f, 0.0f, 1.0f));
+		dir = vector::transform(dir, camTransform);
+		dir.y() = 0.0f;
+		dir = vector::normalize(dir);
 
+		matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
+		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
+		//mat.translate(dir);
+		this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+dir);
+		//this->graphicsEntities[0]->SetTransform(mat);
+
+		Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+		Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
+	}
 }
 
 
