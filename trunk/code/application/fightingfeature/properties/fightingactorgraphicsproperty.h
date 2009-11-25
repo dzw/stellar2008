@@ -7,6 +7,7 @@
 */
 #include "properties/actorgraphicsproperty.h"
 #include "math\pfeedbackloop.h"
+#include "math\angularpfeedbackloop.h"
 
 namespace Attr
 {
@@ -45,6 +46,8 @@ protected:
 	void ProcessInputResult(DWORD val, DWORD firstKey);
 
 	Math::PFeedbackLoop<Math::vector> smoothedPosition;
+	Math::AngularPFeedbackLoop smoothedHeading;
+	Math::vector lookatDirection;
 };
 RegisterClass(FightingActorGraphicsProperty);
 
