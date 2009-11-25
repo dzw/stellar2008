@@ -12,6 +12,7 @@
 #include "graphicsfeature/graphicsfeatureunit.h"
 #include "graphics/cameraentity.h"
 #include "managers/inputrulemanager.h"
+#include "math/polar.h"
 
 namespace Attr
 {
@@ -52,7 +53,10 @@ FightingActorGraphicsProperty::OnActivate()
 	// initialize feedback loops for motion smoothing
 	Time time = GameTimeSource::Instance()->GetTime();
 	matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
-	this->smoothedPosition.Reset(time, 0.001f, -10.0f, entityMatrix.getpos_component());
+	this->smoothedPosition.Reset(time, 0.001f, -25.0f, entityMatrix.getpos_component());
+
+	polar headingAngle(entityMatrix.getz_component());
+    this->smoothedHeading.Reset(time, 0.001f, -25.0f, headingAngle.rho);
 
 	ActorGraphicsProperty::OnActivate();
 }
@@ -131,6 +135,7 @@ FightingActorGraphicsProperty::OnMoveAfter()
         // always evaluate the feedback loops to keep them in valid time delta
         Time time = GameTimeSource::Instance()->GetTime();
         this->smoothedPosition.Update(time);
+		this->smoothedHeading.Update(time);
 
         // only send update transform if anything changed
         if ((posError.length() > 0.001f))
@@ -139,12 +144,15 @@ FightingActorGraphicsProperty::OnMoveAfter()
 			//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
 			//mat.translate(this->smoothedPosition.GetState());
 
-			float4 pos = this->smoothedPosition.GetState();
+			matrix44 matrix = matrix44::rotationy(this->smoothedHeading.GetState());
+            matrix.translate(this->smoothedPosition.GetState());
+
+			/*float4 pos = this->smoothedPosition.GetState();
 			pos.w() = 1.0f;
-			matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
-			entityMatrix.setrow3(pos);
-			this->GetEntity()->SetMatrix44(Attr::Transform, entityMatrix);
-			UpdateTransform(entityMatrix);
+			
+			entityMatrix.setrow3(pos);*/
+			this->GetEntity()->SetMatrix44(Attr::Transform, matrix);
+			UpdateTransform(matrix);
         }
     }
 }
@@ -198,12 +206,22 @@ FightingActorGraphicsProperty::ProcessInputResult(DWORD val, DWORD firstKey)
 		dir = vector::transform(dir, camTransform);
 		dir.y() = 0.0f;
 		dir = vector::normalize(dir);
+		this->lookatDirection = dir;
 
 		matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
 		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
 		//mat.translate(dir);
 		this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+dir);
 		//this->graphicsEntities[0]->SetTransform(mat);
+
+
+		matrix44 fixedTransform = matrix44::lookatlh(entityMatrix.getpos_component(), entityMatrix.getpos_component() + this->lookatDirection, vector::upvec());
+        //float4 pos = fixedTransform.getpos_component();
+        //pos.y() -= this->radius + this->hover;
+        //fixedTransform.setpos_component(pos);
+		polar headingAngles(fixedTransform.getz_component());
+		this->smoothedHeading.SetGoal(headingAngles.rho);
+
 
 		Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
 		Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
