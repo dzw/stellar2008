@@ -33,7 +33,8 @@ using namespace Timing;
 //------------------------------------------------------------------------------
 /**
 */
-FightingActorGraphicsProperty::FightingActorGraphicsProperty()
+FightingActorGraphicsProperty::FightingActorGraphicsProperty():
+preSkill(SL_Num)
 {
 }
 
@@ -154,6 +155,13 @@ FightingActorGraphicsProperty::OnMoveAfter()
 			this->GetEntity()->SetMatrix44(Attr::Transform, matrix);
 			UpdateTransform(matrix);
         }
+		else
+		{
+			Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+			Entity->SetBaseAnimation("idle_01", 0.2f, 0.0f, true, true, 0.2f);
+			this->preSkill = 0;
+		}
+
     }
 }
 
@@ -194,63 +202,106 @@ FightingActorGraphicsProperty::ProcessInputResult(DWORD val, DWORD firstKey)
 		curAction = µ±Ç°¶¯×÷;
 	nextAction = skInfo;*/
 
-	if (skInfo.keyValue == UpValue)
+	switch(skInfo.keyValue)
 	{
-		//const float Velocity = 10.0f;
-		vector dir(0.0f, 0.0f, 1.0f);
-		const Ptr<Graphics::View>& curView = GraphicsFeature::GraphicsFeatureUnit::Instance()->GetDefaultView();
-		Graphics::CameraEntity* camera = curView->GetCameraEntity();
-		n_assert(camera);
-		matrix44 camTransform = camera->GetTransform();
-		camTransform.setpos_component(float4(0.0f, 0.0f, 0.0f, 1.0f));
-		dir = vector::transform(dir, camTransform);
-		dir.y() = 0.0f;
-		dir = vector::normalize(dir);
-		this->lookatDirection = dir;
+	case SL_WalkUp:		// ÉÏ
+		{
+			Walk(vector(0.0f, 0.0f, 1.0f), skInfo.animName);
+			break;
+		}
+	case SL_WalkDown:		// ÏÂ
+		{
+			Walk(vector(0.0f, 0.0f, -1.0f), skInfo.animName);
+			break;
+		}
+	case SL_WalkLeft:		// ×ó
+		{
+			Walk(vector(-1.0f, 0.0f, 0.0f), skInfo.animName);
+			break;
+		}
+	case SL_WalkRight:		// ÓÒ
+		{
+			// ÔÚÅÜµÄ×´Ì¬
+			if (this->preSkill == SL_RunRight)
+			{
+				SkillInfo sk = skManager->GetSkillValue(this->preSkill);
+				Walk(vector(1.0f, 0.0f, 0.0f), sk.animName);
+			}
+			else
+			{
+				Walk(vector(1.0f, 0.0f, 0.0f), skInfo.animName);
+			}
+			break;
+		}
+	case SL_Attack:		// ¹¥(A)
+		{
+			break;
+		}
+	case SL_Jump:		// Ìø(J)
+		{
+			break;
+		}
+	case SL_Grard:		// ·À(G)
+		{
+			Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+			Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
+			break;
+		}
 
-		matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
-		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
-		//mat.translate(dir);
-		this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+dir);
-		//this->graphicsEntities[0]->SetTransform(mat);
-
-
-		matrix44 fixedTransform = matrix44::lookatlh(entityMatrix.getpos_component(), entityMatrix.getpos_component() + this->lookatDirection, vector::upvec());
-        //float4 pos = fixedTransform.getpos_component();
-        //pos.y() -= this->radius + this->hover;
-        //fixedTransform.setpos_component(pos);
-		polar headingAngles(fixedTransform.getz_component());
-		this->smoothedHeading.SetGoal(headingAngles.rho);
-
-
-		Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
-		Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
-	}
-
-	if (skInfo.keyValue == DownValue)
-	{
-		//const float Velocity = 10.0f;
-		vector dir(0.0f, 0.0f, -1.0f);
-		const Ptr<Graphics::View>& curView = GraphicsFeature::GraphicsFeatureUnit::Instance()->GetDefaultView();
-		Graphics::CameraEntity* camera = curView->GetCameraEntity();
-		n_assert(camera);
-		matrix44 camTransform = camera->GetTransform();
-		camTransform.setpos_component(float4(0.0f, 0.0f, 0.0f, 1.0f));
-		dir = vector::transform(dir, camTransform);
-		dir.y() = 0.0f;
-		dir = vector::normalize(dir);
-
-		matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
-		//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
-		//mat.translate(dir);
-		this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+dir);
-		//this->graphicsEntities[0]->SetTransform(mat);
-
-		Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
-		Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
+	case SL_RunRight:		// ±¼ÅÜÓÒ
+		{
+			Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+			Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
+			break;
+		}
+	case SL_RunLeft:		// ±¼ÅÜ×ó
+		{
+			break;
+		}
+	case SL_RunDown:		
+		{
+			break;
+		}
+	case SL_RunUp:
+		{
+			break;
+		}
 	}
 }
 
+void
+FightingActorGraphicsProperty::Walk(const Math::vector& dir, const Util::String& animName)
+{
+	Math::vector direction = dir;
+	direction = this->TransformDirection(dir);
+	direction.y() = 0.0f;
+	direction = vector::normalize(direction);
+
+	matrix44 entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
+	//matrix44 mat = this->graphicsEntities[0]->GetTransform(); 
+	//mat.translate(dir);
+	this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+direction);
+	//this->graphicsEntities[0]->SetTransform(mat);
+
+	this->lookatDirection = direction;
+	matrix44 fixedTransform = matrix44::lookatlh(entityMatrix.getpos_component(), entityMatrix.getpos_component() + this->lookatDirection, vector::upvec());
+	polar headingAngles(fixedTransform.getz_component());
+	this->smoothedHeading.SetGoal(headingAngles.rho);
+
+	Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+	Entity->SetBaseAnimation(animName, 0.2f, 0.0f, true, true, 0.2f);
+}
+
+Math::vector
+FightingActorGraphicsProperty::TransformDirection(const Math::vector& dir)
+{
+	const Ptr<Graphics::View>& curView = GraphicsFeature::GraphicsFeatureUnit::Instance()->GetDefaultView();
+	Graphics::CameraEntity* camera = curView->GetCameraEntity();
+	n_assert(camera);
+	matrix44 camTransform = camera->GetTransform();
+	camTransform.setpos_component(float4(0.0f, 0.0f, 0.0f, 1.0f));
+	return vector::transform(dir, camTransform);
+}
 
 }; // namespace GraphicsFeature
 
