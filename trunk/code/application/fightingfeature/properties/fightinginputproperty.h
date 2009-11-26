@@ -31,9 +31,24 @@ public:
 	virtual void OnBeginFrame();
 
 protected:
-	void ProcessKeyBuffer();
+	void ProcessKeyBuffer(const Util::Array<DWORD>& keys);
 
-	Util::Array<DWORD> keyBuffer;
+	struct InputKey
+	{
+		DWORD val;
+		Timing::Time t;
+
+		InputKey()
+		{
+		}
+		InputKey(DWORD v, Timing::Time tt)
+		{
+			val = v;
+			t = tt;
+		}
+	};
+
+	Util::Array<InputKey> keyBuffer;
 	Timing::Time lastTime;
 };
 RegisterClass(FightingInputProperty);

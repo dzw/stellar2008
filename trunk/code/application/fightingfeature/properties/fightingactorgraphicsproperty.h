@@ -44,10 +44,14 @@ public:
 
 protected:
 	void ProcessInputResult(DWORD val, DWORD firstKey);
+	Math::vector TransformDirection(const Math::vector& dir);
+	void Walk(const Math::vector& dir, const Util::String& animName);
 
 	Math::PFeedbackLoop<Math::vector> smoothedPosition;
 	Math::AngularPFeedbackLoop smoothedHeading;
 	Math::vector lookatDirection;
+
+	DWORD preSkill;
 };
 RegisterClass(FightingActorGraphicsProperty);
 

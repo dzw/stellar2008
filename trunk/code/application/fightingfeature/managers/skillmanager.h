@@ -15,6 +15,27 @@
 //------------------------------------------------------------------------------
 namespace FightingFeature
 {
+/// 技能列表
+enum SkillList
+{
+	SL_WalkUp		= 1,		// 上
+	SL_WalkDown		= 10,		// 下
+	SL_WalkLeft		= 100,		// 左
+	SL_WalkRight	= 1000,		// 右
+	SL_Attack		= 10000,	// 攻(A)
+	SL_Jump			= 100000,	// 跳(J)
+	SL_Grard		= 1000000,	// 防(G)
+
+	SL_RunRight		= 2000,		// 奔跑右
+	SL_RunLeft		= 200,		// 奔跑左
+	SL_RunDown		= 20,
+	SL_RunUp		= 2,
+
+	SL_AssaultRight	= 102000,	// 冲跳
+
+	SL_Num
+};
+
 struct SkillInfo 
 {
 	DWORD keyValue;	// 键值 
