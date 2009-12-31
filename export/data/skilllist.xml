@@ -14,7 +14,7 @@ Delay:动作结束后的延时，在这个延时范围内如果有新的动作可以做连击。如“空中翻滾”
 <Skill KeyValue="1000"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="laufen_01"/>	<!-- →(右) -->
 <Skill KeyValue="10000"		SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- A(攻) -->
 <Skill KeyValue="100000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- J(跳) -->
-<Skill KeyValue="1000000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- G(防) -->
+<Skill KeyValue="1000000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- D(防) -->
 
 <!-- 奔跑 -->
 <Skill KeyValue="2000"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="idle_01"/>	<!-- →→ -->

@@ -23,7 +23,7 @@ enum KeyValue
 	RightValue	= 1000,
 	AttactValue = 10000,
 	JumpValue	= 100000,
-	DefenseValue= 1000000,
+	DefendValue= 1000000,
 };
 
 class InputRuleManager : public Game::Manager

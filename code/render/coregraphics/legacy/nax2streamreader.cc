@@ -26,6 +26,17 @@ struct NaxHeader
     SizeT numKeys;
 };
 
+struct NaxGroup2
+{
+    SizeT numCurves;
+    IndexT startKey;
+    SizeT numKeys;
+    SizeT keyStride;
+    float keyTime;
+    float fadeInFrames;
+    int loopType;
+};
+
 struct NaxGroup
 {
     SizeT numCurves;
@@ -105,9 +116,9 @@ bool
 Nax2StreamReader::ReadAnimationData()
 {
     n_assert(this->animation.isvalid());
-
     n_assert(!this->animation->IsLoaded());
 
+	bool isNAX2 = false;
     String filename = this->animation->GetResourceId().Value().AsCharPtr();
     // read header
     NaxHeader naxHeader;
@@ -115,8 +126,15 @@ Nax2StreamReader::ReadAnimationData()
     FourCC magic = ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxHeader.magic);
     if (magic != 'NAX3')
     {
-        n_error("nMemoryAnimation::LoadNax2(): File %s has obsolete file format!", filename);        
-        return false;
+		if (magic == 'NAX2')
+		{
+			isNAX2 = true;
+		}
+		else
+		{
+			n_error("nMemoryAnimation::LoadNax2(): File %s has obsolete file format!", filename);
+			return false;
+		}
     }
 
     uint numGroups = ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxHeader.numGroups);
@@ -130,30 +148,55 @@ Nax2StreamReader::ReadAnimationData()
     this->keyArray.SetSize(numKeys);
 
     // read groups
-    SizeT groupDataSize = sizeof(NaxGroup) * numGroups;
-    NaxGroup* groupData = (NaxGroup*) Memory::Alloc(groupDataSize);
-    stream->Read(groupData, groupDataSize);
-    IndexT groupIndex = 0;
-    SizeT numCurves = 0;
-    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
-    {
-        const NaxGroup& naxGroup = groupData[groupIndex];
-        Animation::Group& group = this->animation->GetGroupAt(groupIndex);
-        group.SetNumCurves(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.numCurves));
-        group.SetStartKey(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.startKey));
-        group.SetNumKeys(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.numKeys));
-        group.SetKeyStride(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.keyStride));
-        group.SetKeyTime(ByteOrder::ConvertFloat(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.keyTime));
-        group.SetFadeInFrames(ByteOrder::ConvertFloat(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.fadeInFrames));
-        group.SetLoopType((Animation::Group::LoopType) ByteOrder::ConvertInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.loopType));
-        if (!group.SetMetaData(naxGroup.metaData))
-        {
-            n_error("MetaData error:\n String: %s\n Name: %s\n File: %s", naxGroup.metaData, "", filename);
-        }
-        numCurves += group.GetNumCurves();
-    }
-    Memory::Free(groupData);
-    groupData = 0;
+	IndexT groupIndex = 0;
+	SizeT numCurves = 0;
+	if (!isNAX2)
+	{
+		SizeT groupDataSize = sizeof(NaxGroup) * numGroups;
+		NaxGroup* groupData = (NaxGroup*) Memory::Alloc(groupDataSize);
+		stream->Read(groupData, groupDataSize);
+		for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
+		{
+			const NaxGroup& naxGroup = groupData[groupIndex];
+			Animation::Group& group = this->animation->GetGroupAt(groupIndex);
+			group.SetNumCurves(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.numCurves));
+			group.SetStartKey(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.startKey));
+			group.SetNumKeys(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.numKeys));
+			group.SetKeyStride(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.keyStride));
+			group.SetKeyTime(ByteOrder::ConvertFloat(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.keyTime));
+			group.SetFadeInFrames(ByteOrder::ConvertFloat(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.fadeInFrames));
+			group.SetLoopType((Animation::Group::LoopType) ByteOrder::ConvertInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.loopType));
+			if (!group.SetMetaData(naxGroup.metaData))
+			{
+				n_error("MetaData error:\n String: %s\n Name: %s\n File: %s", naxGroup.metaData, "", filename);
+			}
+			numCurves += group.GetNumCurves();
+		}
+		Memory::Free(groupData);
+		groupData = 0;
+	}
+	else
+	{
+		//old nax2
+		SizeT groupDataSize = sizeof(NaxGroup2) * numGroups;
+		NaxGroup2* groupData = (NaxGroup2*) Memory::Alloc(groupDataSize);
+		stream->Read(groupData, groupDataSize);
+		for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
+		{
+			const NaxGroup2& naxGroup = groupData[groupIndex];
+			Animation::Group& group = this->animation->GetGroupAt(groupIndex);
+			group.SetNumCurves(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.numCurves));
+			group.SetStartKey(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.startKey));
+			group.SetNumKeys(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.numKeys));
+			group.SetKeyStride(ByteOrder::ConvertUInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.keyStride));
+			group.SetKeyTime(ByteOrder::ConvertFloat(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.keyTime));
+			group.SetFadeInFrames(ByteOrder::ConvertFloat(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.fadeInFrames));
+			group.SetLoopType((Animation::Group::LoopType) ByteOrder::ConvertInt(ByteOrder::LittleEndian, ByteOrder::Host, naxGroup.loopType));
+			numCurves += group.GetNumCurves();
+		}
+		Memory::Free(groupData);
+		groupData = 0;
+	}
 
     // read curves
     SizeT curveDataSize = sizeof(NaxCurve) * numCurves;
