@@ -24,7 +24,7 @@ enum SkillList
 	SL_WalkRight	= 1000,		// ”“
 	SL_Attack		= 10000,	// π•(A)
 	SL_Jump			= 100000,	// Ã¯(J)
-	SL_Grard		= 1000000,	// ∑¿(G)
+	SL_Defend		= 1000000,	// ∑¿(D)
 
 	SL_RunRight		= 2000,		// ±º≈‹”“
 	SL_RunLeft		= 200,		// ±º≈‹◊Û

@@ -241,7 +241,7 @@ FightingActorGraphicsProperty::ProcessInputResult(DWORD val, DWORD firstKey)
 		{
 			break;
 		}
-	case SL_Grard:		// ·À(G)
+	case SL_Defend:		// ·À(D)
 		{
 			Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
 			Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
