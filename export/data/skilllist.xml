@@ -8,19 +8,19 @@ Delay:动作结束后的延时，在这个延时范围内如果有新的动作可以做连击。如“空中翻滾”
 -->
 <SkillList>
 <!--基本操作，优先级最低-->
-<Skill KeyValue="1"			SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="laufen_01"/>	<!-- ↑(上) -->
+<Skill KeyValue="1"			SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="gehen_01"/>	<!-- ↑(上) -->
 <Skill KeyValue="10"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="laufen_01"/>	<!-- ↓(下) -->
-<Skill KeyValue="100"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="laufen_01"/>	<!-- ←(左) -->
-<Skill KeyValue="1000"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="laufen_01"/>	<!-- →(右) -->
-<Skill KeyValue="10000"		SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- A(攻) -->
-<Skill KeyValue="100000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- J(跳) -->
-<Skill KeyValue="1000000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="laufen_01"/>	<!-- D(防) -->
+<Skill KeyValue="100"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="walk"/>	<!-- ←(左) -->
+<Skill KeyValue="1000"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="walk"/>	<!-- →(右) -->
+<Skill KeyValue="10000"		SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="attack"/>	<!-- A(攻) -->
+<Skill KeyValue="100000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="jump"/>	<!-- J(跳) -->
+<Skill KeyValue="1000000"	SP="0"	MP="0"	AP="0"	VP="0"	Delay="0"	animName="defend"/>	<!-- D(防) -->
 
 <!-- 奔跑 -->
-<Skill KeyValue="2000"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="idle_01"/>	<!-- →→ -->
-<Skill KeyValue="200"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="idle_01"/>	<!-- ←← -->
-<Skill KeyValue="20"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="idle_01"/>	<!-- ↓↓ -->
-<Skill KeyValue="2"			SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="idle_01"/>	<!-- ↑↑ -->
+<Skill KeyValue="2000"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="run"/>	<!-- →→ -->
+<Skill KeyValue="200"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="run"/>	<!-- ←← -->
+<Skill KeyValue="20"		SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="run"/>	<!-- ↓↓ -->
+<Skill KeyValue="2"			SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="run"/>	<!-- ↑↑ -->
 
 <!-- 冲跳 (奔跑 + (J) 或 著地時 + (J)) -->
 <Skill KeyValue="102000"	SP="0"	MP="0"	AP="0"	VP="1"	Delay="0"	animName="idle_01"/>	<!-- →→ -->

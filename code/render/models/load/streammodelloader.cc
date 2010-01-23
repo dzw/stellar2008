@@ -13,7 +13,7 @@
 #include "models/load/n2modelreader.h"
 #include "attr/attributecontainer.h"
 //#include "models/nodes/shapenode.h"
-
+#include "models/load/m2modelreader.h"
 
 namespace Models
 {
@@ -170,6 +170,13 @@ StreamModelLoader::SetupModelFromStream(const Ptr<Stream>& stream)
     {
         // legacy Nebula2 binary format
         modelReader = (ModelReader*) N2ModelReader::Create();
+        modelReader->SetModelResId(this->resource->GetResourceId());
+        isLegacyFile = true;
+    }
+	else if (fileExt == "m2")
+    {
+        // legacy Nebula2 binary format
+        modelReader = (ModelReader*) M2ModelReader::Create();
         modelReader->SetModelResId(this->resource->GetResourceId());
         isLegacyFile = true;
     }

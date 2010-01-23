@@ -7,8 +7,10 @@
 
 #include "modelheaders.h"
 
-//#include "vec3d.h"
+#include "vec3d.h"
 #include "quaternion.h"
+
+#include "io/stream.h"
 
 // interpolation functions
 template<class T>
@@ -25,6 +27,23 @@ inline T interpolateHermite(const float r, const T &v1, const T &v2, const T &in
 	float h2 = -2.0f*r*r*r + 3.0f*r*r;
 	float h3 = r*r*r - 2.0f*r*r + r;
 	float h4 = r*r*r - r*r;
+
+	// interpolation
+	return static_cast<T>(v1*h1 + v2*h2 + in*h3 + out*h4);
+}
+
+
+template<class T>
+inline T interpolateBezier(const float r, const T &v1, const T &v2, const T &in, const T &out)
+{
+	float InverseFactor = (1.0f - r);
+	float FactorTimesTwo = r*r;
+	float InverseFactorTimesTwo = InverseFactor*InverseFactor;
+	// basis functions
+	float h1 = InverseFactorTimesTwo * InverseFactor;
+	float h2 = 3.0f * r * InverseFactorTimesTwo;
+	float h3 = 3.0f * FactorTimesTwo * InverseFactor;
+	float h4 = FactorTimesTwo * r;
 
 	// interpolation
 	return static_cast<T>(v1*h1 + v2*h2 + in*h3 + out*h4);
@@ -47,7 +66,8 @@ extern int globalFrame;
 enum Interpolations {
 	INTERPOLATION_NONE,
 	INTERPOLATION_LINEAR,
-	INTERPOLATION_HERMITE
+	INTERPOLATION_HERMITE,
+	INTERPOLATION_BEZIER
 };
 
 template <class T>
@@ -63,7 +83,7 @@ public:
 // I don't really understand why as its only a very minor saving in model sizes and adds extra overhead in
 // processing the models.  Need this structure to read the data into.
 struct PACK_QUATERNION {  
-	__int16 x,y,z,w;  
+	int16 x,y,z,w;  
 }; 
 
 class Quat16ToQuat32 {
@@ -97,22 +117,86 @@ public:
 		(by default this is an identity function)
 	(there might be a nicer way to do this? meh meh)
 */
+
+#define	MAX_ANIMATED	500
 template <class T, class D=T, class Conv=Identity<T> >
 class Animated {
 public:
 
-	bool used;
 	int type, seq;
-	int *globals;
-
+	uint32 *globals;
+#ifndef WotLK
+	bool used;
 	std::vector<AnimRange> ranges;
 	std::vector<unsigned int> times;
 	std::vector<T> data;
 	// for nonlinear interpolations:
 	std::vector<T> in, out;
+#else
+	std::vector<unsigned int> times[MAX_ANIMATED];
+	std::vector<T> data[MAX_ANIMATED];
+	// for nonlinear interpolations:
+	std::vector<T> in[MAX_ANIMATED], out[MAX_ANIMATED];
+	size_t sizes; // for fix function
+#endif
+	bool uses(unsigned int anim)
+	{
+		if (seq>-1)
+			anim = 0;
+		return (data[anim].size() > 0);
+	}
 
 	T getValue(unsigned int anim, unsigned int time)
 	{
+#ifdef WotLK
+		// obtain a time value and a data range
+		if (seq>-1) {
+			// TODO
+			if (globals[seq]==0) 
+				time = 0;
+			else 
+				time = globalTime % globals[seq];
+			anim = 0;
+		}
+		if (data[anim].size()>1 && times[anim].size()>1) {
+			size_t t1, t2;
+			size_t pos=0;
+			int max_time = times[anim][times[anim].size()-1];
+			if (max_time > 0)
+				time %= max_time; // I think this might not be necessary?
+			for (size_t i=0; i<times[anim].size()-1; i++) {
+				if (time >= times[anim][i] && time < times[anim][i+1]) {
+					pos = i;
+					break;
+				}
+			}
+			t1 = times[anim][pos];
+			t2 = times[anim][pos+1];
+			float r = (time-t1)/(float)(t2-t1);
+
+			if (type == INTERPOLATION_NONE) 
+				return data[anim][pos];
+			else if (type == INTERPOLATION_LINEAR) 
+				return interpolate<T>(r,data[anim][pos],data[anim][pos+1]);
+			else if (type==INTERPOLATION_HERMITE){
+				// INTERPOLATION_HERMITE is only used in cameras afaik?
+				return interpolateHermite<T>(r,data[anim][pos],data[anim][pos+1],in[anim][pos],out[anim][pos]);
+			}
+			else if (type==INTERPOLATION_BEZIER){
+				//Is this used ingame or only by custom models?
+				return interpolateBezier<T>(r,data[anim][pos],data[anim][pos+1],in[anim][pos],out[anim][pos]);
+			}
+			else //this shouldn't appear!
+				return data[anim][pos];
+			
+		} else {
+			// default value
+			if (data[anim].size() == 0)
+				return T();
+			else
+				return data[anim][0];
+		}
+#else
 		if (type != INTERPOLATION_NONE || data.size()>1) {
 			AnimRange range;
 
@@ -160,25 +244,31 @@ public:
 			else
 				return data[0];
 		}
+
+#endif
+
 	}
 
-	void init(AnimationBlock &b, unsigned char* f, int *gs)
+	void init(AnimationBlock &b, unsigned char *f, uint32 *gs)
 	{
 		globals = gs;
 		type = b.type;
 		seq = b.seq;
 		if (seq!=-1) {
-            assert(gs);
+			assert(gs);
 		}
 
+#ifndef	WotLK
 		// Old method
 		//used = (type != INTERPOLATION_NONE) || (seq != -1);
 		// New method suggested by Cryect
 		used = (b.nKeys > 0);
+#endif
 
 		// ranges
+		#ifndef WotLK
 		if (b.nRanges > 0) {
-			uint32 *pranges = (uint32*)(f + b.ofsRanges);
+			uint32 *pranges = (uint32*)(f.getBuffer() + b.ofsRanges);
 			for (size_t i=0, k=0; i<b.nRanges; i++) {
 				AnimRange r;
 				r.first = pranges[k++];
@@ -191,16 +281,59 @@ public:
 			r.second = b.nKeys - 1;
 			ranges.push_back(r);
 		}
+		#endif
 
 		// times
 		assert(b.nTimes == b.nKeys);
-		uint32 *ptimes = (uint32*)(f + b.ofsTimes);
+#ifdef WotLK // by Flow
+		sizes = b.nTimes;
+		if( b.nTimes == 0 )
+			return;
+
+		for(size_t j=0; j < b.nTimes; j++) {
+			AnimationBlockHeader* pHeadTimes = (AnimationBlockHeader*)(f.getBuffer() + b.ofsTimes + j*sizeof(AnimationBlockHeader));
+		
+			unsigned int *ptimes = (unsigned int*)(f.getBuffer() + pHeadTimes->ofsEntrys);
+			for (size_t i=0; i < pHeadTimes->nEntrys; i++)
+				times[j].push_back(ptimes[i]);
+		}
+
+		// keyframes
+		for(size_t j=0; j < b.nKeys; j++) {
+			AnimationBlockHeader* pHeadKeys = (AnimationBlockHeader*)(f.getBuffer() + b.ofsKeys + j*sizeof(AnimationBlockHeader));
+
+			D *keys = (D*)(f.getBuffer() + pHeadKeys->ofsEntrys);
+			switch (type) {
+				case INTERPOLATION_NONE:
+				case INTERPOLATION_LINEAR:
+					for (size_t i = 0; i < pHeadKeys->nEntrys; i++) 
+						data[j].push_back(Conv::conv(keys[i]));
+					break;
+				case INTERPOLATION_HERMITE:
+					for (size_t i = 0; i < pHeadKeys->nEntrys; i++) {
+						data[j].push_back(Conv::conv(keys[i*3]));
+						in[j].push_back(Conv::conv(keys[i*3+1]));
+						out[j].push_back(Conv::conv(keys[i*3+2]));
+					}
+					break;
+				//let's use same values like hermite?!?
+				case INTERPOLATION_BEZIER:
+					for (size_t i = 0; i < pHeadKeys->nEntrys; i++) {
+						data[j].push_back(Conv::conv(keys[i*3]));
+						in[j].push_back(Conv::conv(keys[i*3+1]));
+						out[j].push_back(Conv::conv(keys[i*3+2]));
+					}
+					break;
+			}
+		}
+#else
+		uint32 *ptimes = (uint32*)(f.getBuffer() + b.ofsTimes);
 		for (size_t i=0; i<b.nTimes; i++) 
 			times.push_back(ptimes[i]);
 
 		// keyframes
-		assert((D*)(f + b.ofsKeys));
-		D *keys = (D*)(f + b.ofsKeys);
+		assert((D*)(f.getBuffer() + b.ofsKeys));
+		D *keys = (D*)(f.getBuffer() + b.ofsKeys);
 		switch (type) {
 			case INTERPOLATION_NONE:
 			case INTERPOLATION_LINEAR:
@@ -218,27 +351,162 @@ public:
 
 		if (data.size()==0) 
 			data.push_back(T());
+#endif
 	}
+
+#ifdef WotLK
+	void init(AnimationBlock &b, const Ptr<IO::Stream> f, uint32 *gs, const Ptr<IO::Stream> *animfiles)
+	{
+		globals = gs;
+		type = b.type;
+		seq = b.seq;
+		if (seq!=-1) {
+			assert(gs);
+		}
+
+#ifndef	WotLK
+		// Old method
+		//used = (type != INTERPOLATION_NONE) || (seq != -1);
+		// New method suggested by Cryect
+		used = (b.nKeys > 0);
+#endif
+
+		// times
+		assert(b.nTimes == b.nKeys);
+		sizes = b.nTimes;
+		if( b.nTimes == 0 )
+			return;
+
+		if (f->IsMapped())
+			f->Unmap();
+		char* mapPtr = (char*)f->Map();
+		f->Unmap();
+		for(size_t j=0; j < b.nTimes; j++) {
+			AnimationBlockHeader* pHeadTimes = (AnimationBlockHeader*)(mapPtr + b.ofsTimes + j*sizeof(AnimationBlockHeader));
+			uint32 *ptimes;
+			if ((uint32)animfiles[j]->GetSize() > pHeadTimes->ofsEntrys)
+			{
+				char* p = (char*)animfiles[j]->Map();
+				ptimes = (uint32*)(p + pHeadTimes->ofsEntrys);
+				animfiles[j]->Unmap();
+			}
+			else if ((uint32)f->GetSize() > pHeadTimes->ofsEntrys)
+				ptimes = (uint32*)(mapPtr + pHeadTimes->ofsEntrys);
+			else
+				continue;
+			
+			for (size_t i=0; i < pHeadTimes->nEntrys; i++)
+				times[j].push_back(ptimes[i]);
+		}
+
+		// keyframes
+		for(size_t j=0; j < b.nKeys; j++) {
+			AnimationBlockHeader* pHeadKeys = (AnimationBlockHeader*)(mapPtr + b.ofsKeys + j*sizeof(AnimationBlockHeader));
+			assert((D*)(mapPtr + pHeadKeys->ofsEntrys));
+			D *keys;
+			if ((uint32)animfiles[j]->GetSize() > pHeadKeys->ofsEntrys)
+			{
+				char* p = (char*)animfiles[j]->Map();
+				keys = (D*)(p + pHeadKeys->ofsEntrys);
+				animfiles[j]->Unmap();
+			}
+			else if ((uint32)f->GetSize() > pHeadKeys->ofsEntrys)
+				keys = (D*)(mapPtr + pHeadKeys->ofsEntrys);
+			else
+				continue;
+			switch (type) {
+				case INTERPOLATION_NONE:
+				case INTERPOLATION_LINEAR:
+					for (size_t i = 0; i < pHeadKeys->nEntrys; i++) 
+						data[j].push_back(Conv::conv(keys[i]));
+					break;
+				case INTERPOLATION_HERMITE:
+					for (size_t i = 0; i < pHeadKeys->nEntrys; i++) {
+						data[j].push_back(Conv::conv(keys[i*3]));
+						in[j].push_back(Conv::conv(keys[i*3+1]));
+						out[j].push_back(Conv::conv(keys[i*3+2]));
+					}
+					break;
+				case INTERPOLATION_BEZIER:
+					for (size_t i = 0; i < pHeadKeys->nEntrys; i++) {
+						data[j].push_back(Conv::conv(keys[i*3]));
+						in[j].push_back(Conv::conv(keys[i*3+1]));
+						out[j].push_back(Conv::conv(keys[i*3+2]));
+					}
+					break;
+			}
+		}
+	}
+#endif
 
 	void fix(T fixfunc(const T))
 	{
 		switch (type) {
 			case INTERPOLATION_NONE:
 			case INTERPOLATION_LINEAR:
-				for (size_t i=0; i<data.size(); i++) {
-                    data[i] = fixfunc(data[i]);
+#ifdef WotLK
+				for (size_t i=0; i<sizes; i++) {
+					for (size_t j=0; j<data[i].size(); j++) {
+						data[i][j] = fixfunc(data[i][j]);
+					}
 				}
+#else
+				for (size_t i=0; i<data.size(); i++) {
+					data[i] = fixfunc(data[i]);
+				}
+#endif
 				break;
 			case INTERPOLATION_HERMITE:
-				for (size_t i=0; i<data.size(); i++) {
-                    data[i] = fixfunc(data[i]);
-                    in[i] = fixfunc(in[i]);
-                    out[i] = fixfunc(out[i]);
+#ifdef WotLK
+				for (size_t i=0; i<sizes; i++) {
+					for (size_t j=0; j<data[i].size(); j++) {
+						data[i][j] = fixfunc(data[i][j]);
+						in[i][j] = fixfunc(in[i][j]);
+						out[i][j] = fixfunc(out[i][j]);
+					}
 				}
+#else
+				for (size_t i=0; i<data.size(); i++) {
+					data[i] = fixfunc(data[i]);
+					in[i] = fixfunc(in[i]);
+					out[i] = fixfunc(out[i]);
+				}
+#endif
+				break;
+			case INTERPOLATION_BEZIER:
+#ifdef WotLK
+				for (size_t i=0; i<sizes; i++) {
+					for (size_t j=0; j<data[i].size(); j++) {
+						data[i][j] = fixfunc(data[i][j]);
+						in[i][j] = fixfunc(in[i][j]);
+						out[i][j] = fixfunc(out[i][j]);
+					}
+				}
+#endif
 				break;
 		}
 	}
-
+	friend std::ostream& operator<<(std::ostream& out, Animated& v)
+	{
+		if (v.sizes == 0)
+			return out;
+		out << "      <type>"<< v.type << "</type>" << endl;
+		out << "      <seq>"<< v.seq << "</seq>" << endl;
+		out << "      <anims>"<< endl;
+		for(size_t j=0; j<v.sizes; j++) {
+			if (v.uses(j)) {
+				out << "    <anim id=\"" << j << "\">" << endl;
+				for(size_t k=0; k<v.data[j].size(); k++) {
+					out << "      <data time=\"" << v.times[j][k]  << "\">" << v.data[j][k] << "</data>" << endl;
+				}
+				out << "    </anim>" << endl;
+			}
+			if (v.seq > -1 && j > 0)
+				break;
+		}
+		out << "      </anims>"<< endl;
+		return out;
+	}
 };
 
 typedef Animated<float,short,ShortToFloat> AnimatedShort;

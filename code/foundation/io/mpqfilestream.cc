@@ -218,19 +218,20 @@ MPQFileStream::Map()
 {
     n_assert(this->IsOpen());
     n_assert(ReadAccess == this->accessMode);
-    Stream::Map();
+    //Stream::Map();
     n_assert(this->GetSize() > 0);
     return this->buffer;
 }
 
 //------------------------------------------------------------------------------
 /**
+	mpq²»ÐèÒªunmap
 */
 void
 MPQFileStream::Unmap()
 {
     n_assert(this->IsOpen());
-    Stream::Unmap();
+    //Stream::Unmap();
 }
 
 //------------------------------------------------------------------------------

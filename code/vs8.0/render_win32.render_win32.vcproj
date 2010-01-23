@@ -187,93 +187,6 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
-		<Configuration
-			Name="Realse|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="Nebula3 Interface Definition"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=""
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="true"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..;../foundation;../extlibs;../render;../addons;../addons/nebula2;../addons/nebula2/character;../addons/nebula2/anim; ;"
-				PreprocessorDefinitions="__WIN32__;WIN32;NT_PLUGIN;_HAS_EXCEPTIONS=0;__LPQ__"
-				StringPooling="true"
-				ExceptionHandling="0"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				EnableEnhancedInstructionSet="1"
-				FloatingPointModel="2"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdneb.h"
-				PrecompiledHeaderFile="$(OutDir)\$(ProjectName).pch"
-				WarningLevel="3"
-				WarnAsError="false"
-				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				CallingConvention="1"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Win32\Release\render_win32.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -574,15 +487,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Realse|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1267,14 +1171,6 @@
 				Name="win32"
 				Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc"
 				>
-				<File
-					RelativePath="..\render\coregraphics\legacy\m2streamreader.cc"
-					>
-				</File>
-				<File
-					RelativePath="..\render\coregraphics\legacy\m2streamreader.h"
-					>
-				</File>
 				<File
 					RelativePath="..\render\coregraphics/win32\win32displaydevice.cc"
 					>
@@ -2193,6 +2089,98 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="wow"
+			>
+			<Filter
+				Name="m2"
+				>
+				<File
+					RelativePath="..\render\wow\m2\animmanager.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\animmanager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\enums.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2characternode.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2characternode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2characternodeinstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2characternodeinstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2charjoint.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2charjoint.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2modelreader.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2modelreader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2skinshapenode.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2skinshapenode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2skinshapenodeinstance.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2skinshapenodeinstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\modelheaders.h"
+					>
+				</File>
+				<Filter
+					Name="animation"
+					>
+					<File
+						RelativePath="..\render\wow\m2\animation\animated.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\wow\m2\animation\matrix.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\wow\m2\animation\quaternion.h"
+						>
+					</File>
+					<File
+						RelativePath="..\render\wow\m2\animation\vec3d.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath="..\render\stdneb.cc"
 			>
@@ -2206,14 +2194,6 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Realse|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

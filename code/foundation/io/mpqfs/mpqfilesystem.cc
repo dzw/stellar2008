@@ -187,4 +187,15 @@ MPQFileSystem::ConvertFileToMPQURIIfExists(const URI& uri)
 	return uri;
 }
 
+SizeT 
+MPQFileSystem::GetMPQFileSize(const Util::String& name)
+{
+	String str = name;
+	str.SubstituteChar('/', '\\');
+	const Ptr<MPQArchive> archive = FindMPQArchiveByName(str);
+	if (!archive.isvalid())
+		return 0;
+	return archive->GetFileSize(str);
+}
+
 } // namespace IO

@@ -5,13 +5,21 @@
 /**
     @class Models::M2CharacterNode
 */    
-#include "models/nodes/characternode.h"
-#include "wow/m2/m2character.h"
+#include "models/nodes/transformnode.h"
+#include "wow/m2/m2charjoint.h"
+#include "wow/m2/animmanager.h"
+#include "wow/m2/modelheaders.h"
+#include "wow/m2/enums.h"
+
+namespace Models
+{
+class M2ModelReader;
+}
 
 //------------------------------------------------------------------------------
 namespace WOW
 {
-class M2CharacterNode : public Models::CharacterNode
+class M2CharacterNode : public Models::TransformNode
 {
     DeclareClass(M2CharacterNode);
 public:
@@ -24,91 +32,31 @@ public:
     virtual void LoadResources();
     /// called when resources should be unloaded
     virtual void UnloadResources();
-	
-	/// begin adding joints
-	void BeginJoints(int numJoints);
-	/// add a joint to the skeleton
-	void SetJoint(int index, unsigned char *f, ModelBoneDef &b, int *global);
-	/// finish adding joints
-	void EndJoints();
-	/// get number of joints in skeleton
-	int GetNumJoints();
-	/// get joint attributes
-	void GetJoint(int index, int& parentJointIndex, Math::vector& poseTranslate, Math::quaternion& poseRotate, Math::vector& poseScale, Util::String& name);
-
 
 	/// create a model node instance
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;
 
-	const Ptr<M2Character>& GetCharacter() const;
+	const Util::FixedArray<M2CharJoint>& GetJoints()const;
+	///
+	void UpdataBones(int anim, int time);
+protected:
+	friend class Models::M2ModelReader;
 
-	void SetAniManager(unsigned char* ptr, int num);
-private:
-	Ptr<M2Character> character;
-	
+	/// update bones
+	void CalcBones(int anim, int time);
+
+	Util::FixedArray<M2CharJoint> bones;
+	ModelAnimation* anims;
+	AnimManager* animManager;
+	int nAnimationLookup;
+	int16 keyBoneLookup[BONE_MAX];
+	Util::FixedArray<int> animLookups;
 };
 
-//------------------------------------------------------------------------------
-/**  
-*/
-inline void 
-M2CharacterNode::SetAniManager(unsigned char* ptr, int num)
+inline const Util::FixedArray<M2CharJoint>& 
+M2CharacterNode::GetJoints()const
 {
-	this->character->SetAniManager(ptr, num);
-}
-
-//------------------------------------------------------------------------------
-/**  
-*/
-inline const Ptr<M2Character>& 
-M2CharacterNode::GetCharacter() const
-{
-	return this->character;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-M2CharacterNode::BeginJoints(int numJoints)
-{
-	this->character->GetSkeleton().BeginJoints(numJoints);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-M2CharacterNode::SetJoint(int index, unsigned char *f, ModelBoneDef &b, int *global)
-{
-	this->character->GetSkeleton().SetJoint(index, f, b, global);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-M2CharacterNode::EndJoints()
-{
-
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline int 
-M2CharacterNode::GetNumJoints()
-{
-	return this->character->GetSkeleton().GetNumJoints();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-M2CharacterNode::GetJoint(int index, int& parentJointIndex, Math::vector& poseTranslate, Math::quaternion& poseRotate, Math::vector& poseScale, Util::String& name)
-{
-
+	return bones;
 }
 
 } // namespace Models

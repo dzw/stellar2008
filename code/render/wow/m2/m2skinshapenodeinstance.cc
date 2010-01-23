@@ -11,14 +11,16 @@
 #include "models/nodes/characternodeinstance.h"
 #include "timing/timer.h"
 #include "wow/m2/m2characternodeinstance.h"
+#include "wow/m2/m2skinshapenode.h"
 
 namespace WOW
 {
-ImplementClass(WOW::M2SkinShapeNodeInstance, 'M2SI', Models::SkinShapeNodeInstance);
+ImplementClass(WOW::M2SkinShapeNodeInstance, 'M2SI', Models::ShapeNodeInstance);
 
 using namespace CoreGraphics;
 using namespace Math;
 using namespace Models;
+using namespace Util;
 
 //------------------------------------------------------------------------------
 /**
@@ -48,7 +50,17 @@ M2SkinShapeNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst,
     ShaderVariable::Semantic paletteSemantic = ShaderVariable::Semantic("JointPalette");
     this->CreateShaderVariableInstance(paletteSemantic);
 
-    this->ValidateCharacter();
+    int searchLevel = 4;
+    Ptr<ModelNodeInstance> parent = this->GetParent();
+    while (parent.isvalid() && !parent->IsA(M2CharacterNodeInstance::RTTI) && searchLevel > 0)
+    {
+        parent = parent->GetParent();
+        searchLevel--;
+    }
+	this->character = parent.downcast<M2CharacterNodeInstance>();
+
+	bool isShow = node.downcast<M2SkinShapeNode>()->GetGeoset().id == 0;
+	this->SetVisible(isShow);
 }
 
 //------------------------------------------------------------------------------
@@ -57,30 +69,7 @@ M2SkinShapeNodeInstance::OnAttachToModelInstance(const Ptr<ModelInstance>& inst,
 void
 M2SkinShapeNodeInstance::Update()
 {
-    this->ValidateCharacter();
     ShapeNodeInstance::Update();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-M2SkinShapeNodeInstance::ValidateCharacter()
-{
-    if (!this->character.isvalid())
-    {
-        // get character from characternodeinstance
-        // find characternodeinstance
-        int searchLevel = 4;
-        Ptr<ModelNodeInstance> parent = this->GetParent();
-        /*while (!parent->IsA(M2CharacterNodeInstance::RTTI) && searchLevel > 0)
-        {
-            parent = parent->GetParent();
-            searchLevel--;
-        }*/
-        n_assert2(parent->IsA(M2CharacterNodeInstance::RTTI), "No CharacterNodeInstance found as parent!");
-        this->character = parent.downcast<M2CharacterNodeInstance>()->GetCharacter();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -89,9 +78,9 @@ M2SkinShapeNodeInstance::ValidateCharacter()
 void
 M2SkinShapeNodeInstance::OnRemoveFromModelInstance()
 {
-    this->character = 0;
+	this->character = 0;
 
-    SkinShapeNodeInstance::OnRemoveFromModelInstance();
+    ShapeNodeInstance::OnRemoveFromModelInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -121,57 +110,41 @@ M2SkinShapeNodeInstance::Render()
 void
 M2SkinShapeNodeInstance::RenderSkinning()
 {
-    const Ptr<SkinShapeNode>& charNode = this->GetModelNode().downcast<SkinShapeNode>();
-    int numFragments = charNode->GetNumFragments();
-    int fragIndex;
-    for (fragIndex = 0; fragIndex < numFragments; fragIndex++)
-    {
-        Char::CharFragment& fragment = charNode->GetFragmentArray()[fragIndex];
-        RenderFragment(fragment.GetMeshGroupIndex(), fragment.GetJointPalette());
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-M2SkinShapeNodeInstance::RenderFragment(int primGroupIndex, Char::CharJointPalette& jointPalette)
-{
-    static const int maxJointPaletteSize = 72;
+    const Ptr<M2SkinShapeNode>& charNode = this->GetModelNode().downcast<M2SkinShapeNode>();
+ 
+	static const int maxJointPaletteSize = 72;
     static matrix44 jointArray[maxJointPaletteSize];
     
-    // extract the current joint palette from the skeleton in the
-    // right format for the skinning shader
-    int paletteSize = jointPalette.GetNumJoints();
-    n_assert(paletteSize <= maxJointPaletteSize);
+    const Array<int>& joints = charNode->GetJointArray();
+    n_assert(joints.Size() <= maxJointPaletteSize);
 
-	if (paletteSize <= 0)
+	if (joints.Size() <= 0)
 		return;
 
-    if (this->character.isvalid())
+    //if (joints.Size() > 0)
     {
-        M2CharSkeleton& skeleton = this->character->GetSkeleton();
-        int paletteIndex;
-        for (paletteIndex = 0; paletteIndex < paletteSize; paletteIndex++)
+		const FixedArray<JointInstance>& jointData = character->GetJointData();
+        IndexT index;
+        for (index = 0; index < joints.Size(); index++)
         {
-			M2CharJoint& joint = skeleton.GetJointAt(jointPalette.GetJointIndexAt(paletteIndex));
-			jointArray[paletteIndex] = joint.GetSkinMatrix44();
+			JointInstance& joint = jointData[joints[index]];
+			jointArray[index] = joint.mat;	// 还要加上mrot!!!
         }
     }
-    else
+    /*else
     {
         int paletteIndex;
         for (paletteIndex = 0; paletteIndex < paletteSize; paletteIndex++)
         {            
             jointArray[paletteIndex] = matrix44::identity();
         }
-    }
+    }*/
 
     // transfer the joint palette to the current shader        
     ShaderVariable::Semantic paletteSemantic = ShaderVariable::Semantic("JointPalette");
     const Ptr<CoreGraphics::ShaderVariableInstance>& shdVar = this->GetShaderVariableInstance(paletteSemantic);
     n_assert(shdVar.isvalid());
-    shdVar->SetMatrixArray(jointArray, paletteSize);    
+    shdVar->SetMatrixArray(jointArray, joints.Size());    
     // apply shader variable
     shdVar->Apply();
 
@@ -181,10 +154,11 @@ M2SkinShapeNodeInstance::RenderFragment(int primGroupIndex, Char::CharJointPalet
 
     // set current vertex and index range and draw mesh
     RenderDevice* renderDevice = RenderDevice::Instance();    
-    const Ptr<SkinShapeNode>& charNode = this->GetModelNode().downcast<SkinShapeNode>();
+    /*const Ptr<ShapeNode>& charNode = this->GetModelNode().downcast<ShapeNode>();
     const Ptr<Mesh>& mesh = charNode->GetManagedMesh()->GetMesh();
-    renderDevice->SetPrimitiveGroup(mesh->GetPrimitiveGroupAtIndex(primGroupIndex));
+    renderDevice->SetPrimitiveGroup(mesh->GetPrimitiveGroupAtIndex(primGroupIndex));*/
     renderDevice->Draw();
+    
 }
 
 //------------------------------------------------------------------------------

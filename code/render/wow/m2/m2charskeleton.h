@@ -71,7 +71,7 @@ M2CharSkeleton::Evaluate(int anim, int time)
     // seconds pass: evaluate joints
     for (i = 0; i < num; i++)
     {
-        this->jointArray[i].Evaluate(jointArray, anim, time);
+        this->jointArray[i].Evaluate(&jointArray[0], anim, time);
     }
 }
 

@@ -51,6 +51,8 @@ public:
 	bool IsMPQFile(const URI& uri);
 	/// 
 	bool IsMPQFile(const Util::String& uri);
+	///
+	SizeT GetMPQFileSize(const Util::String& name);
 private:
     Util::Dictionary<Util::String,Ptr<MPQArchive> > archives;    // note: use absolute path for name!
 	IO::URI uri;
