@@ -39,6 +39,10 @@
 // use heap or memory pool
 #define NEBULA3_MEMORYPOOL (1)
 
+#define __MPQ__
+#define __ZIP__
+#undef  __LPQ__
+
 //------------------------------------------------------------------------------
 /**
     Xbox360 specifics.

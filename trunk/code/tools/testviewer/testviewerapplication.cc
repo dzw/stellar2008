@@ -113,11 +113,11 @@ TestViewerApplication::Open()
 
 
 		// wow:World\\AZEROTH\\BootyBay\\PassiveDoodad\\FishingBox\\FishingBox.m2
-		// wow:creature\\deer\\deer.m2
-		//this->tree = ModelEntity::Create();
-		//this->tree->SetResourceId(ResourceId("wow:creature\\deer\\deer.m2"));
+		// wow:creature\\deer\\deer.m2  Character\\Bloodelf\\male\\bloodelfmale.m2
+		this->tree = ModelEntity::Create();
+		this->tree->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
 		//this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
-		//this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
+		this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
 		
 		/*this->worldManager = WOW::WorldManager::Create();
 		this->worldManager->Open();

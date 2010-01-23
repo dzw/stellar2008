@@ -83,7 +83,7 @@ struct vsSamplePassOutput
 float4
 skinnedPosition(const float4 inPos, const float4 weights, const float4 indices, const matrix<float,4,3> jointPalette[72])
 {    
-	float sq = 1.0f / dot(weights, 1.0f);//;[0] + weights[1] + weights[2] + weights[3];
+	/*float sq = 1.0f / dot(weights, 1.0f);//;[0] + weights[1] + weights[2] + weights[3];
 	float4 wg = weights * sq;
 	
 	float3 pos[4];
@@ -92,15 +92,15 @@ skinnedPosition(const float4 inPos, const float4 weights, const float4 indices, 
     pos[2] = (mul(inPos, jointPalette[indices[2]])) * wg[2];
     pos[3] = (mul(inPos, jointPalette[indices[3]])) * wg[3];
     return float4(pos[0] + pos[1] + pos[2] + pos[3], 1.0f);
-	
-    /*
+	*/
+    
 	float3 pos[4];
     pos[0] = (mul(inPos, jointPalette[indices[0]])) * weights[0];
     pos[1] = (mul(inPos, jointPalette[indices[1]])) * weights[1];
     pos[2] = (mul(inPos, jointPalette[indices[2]])) * weights[2];
     pos[3] = (mul(inPos, jointPalette[indices[3]])) * weights[3];
     return float4(pos[0] + pos[1] + pos[2] + pos[3], 1.0f);
-	*/
+	
 }
 
 //------------------------------------------------------------------------------

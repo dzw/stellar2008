@@ -44,7 +44,8 @@ public:
 	const int GetFileNo()const;
 	/// find mpq file
 	bool FindMPQFile(const Util::String &name);
-
+	///
+	SizeT GetFileSize(const Util::String &name);
 private:
     URI uri;
     Util::String rootPath;          // location of the zip archive file

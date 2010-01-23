@@ -51,8 +51,6 @@ private:
     bool SetupMeshFromNvx3(const Ptr<IO::Stream>& stream);
     /// setup mesh from n3d3 file in memory
     bool SetupMeshFromN3d3(const Ptr<IO::Stream>& stream);
-	/// setup mesh from m2 file in memory
-	bool SetupMeshFromM2(const Ptr<IO::Stream>& stream);
 
     Ptr<Interface::ReadStream> readStreamMsg;
 };

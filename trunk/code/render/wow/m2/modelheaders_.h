@@ -1,6 +1,9 @@
 #ifndef MODELHEADERS_H
 #define MODELHEADERS_H
 
+#include "math/vector3.h"
+#include "math/float2.h"
+
 typedef unsigned char uint8;
 typedef char int8;
 typedef unsigned __int16 uint16;
@@ -10,12 +13,12 @@ typedef __int32 int32;
 
 #pragma pack(push,1)
 
-struct Vec3D{
-	float x, y, z;
-};
-struct Vec2D{
-	float x,y;
-};
+//struct Vec3D{
+//	float x, y, z;
+//};
+//struct Vec2D{
+//	float x,y;
+//};
 
 struct Vertex {
     float tu, tv;
@@ -134,7 +137,7 @@ struct ModelAnimation {
 	uint32 d2;
 	uint32 playSpeed;  // note: this can't be play speed because it's 0 for some models
 
-	Vec3D boxA, boxB;
+	Math::vector3 boxA, boxB;
 	float rad;
 
 	int16 s[2];
@@ -164,7 +167,7 @@ struct ModelBoneDef {
 	AnimationBlock translation;
 	AnimationBlock rotation;
 	AnimationBlock scaling;
-	Vec3D pivot;
+	Math::vector3 pivot;
 };
 
 struct ModelTexAnimDef {
@@ -172,11 +175,11 @@ struct ModelTexAnimDef {
 };
 
 struct ModelVertex {
-	Vec3D pos;
+	Math::vector3 pos;
 	uint8 weights[4];
 	uint8 bones[4];
-	Vec3D normal;
-	Vec2D texcoords;
+	Math::vector3 normal;
+	Math::float2 texcoords;
 	int unk1, unk2; // always 0,0 so this is probably unused
 };
 
@@ -202,8 +205,8 @@ struct ModelGeoset {
 	uint16 d4;		// ? always 1 to 4
 	uint16 d5;		// ?
 	uint16 d6;		// root bone?
-	Vec3D v;
-	//float unknown[4];	// Added in WoW 2.0?
+	Math::vector3 v;
+	float unknown[4];	// Added in WoW 2.0?
 };
 
 /// A texture unit (sub of material)
@@ -253,7 +256,7 @@ struct ModelTextureDef {
 struct ModelLightDef {
 	int16 type;
 	int16 bone;
-	Vec3D pos;
+	Math::vector3 pos;
 	AnimationBlock ambColor;
 	AnimationBlock ambIntensity;
 	AnimationBlock color;
@@ -267,9 +270,9 @@ struct ModelCameraDef {
 	int32 id;
 	float fov, farclip, nearclip;
 	AnimationBlock transPos;
-	Vec3D pos;
+	Math::vector3 pos;
 	AnimationBlock transTarget;
-	Vec3D target;
+	Math::vector3 target;
 	AnimationBlock rot;
 };
 
@@ -293,7 +296,7 @@ struct ModelParticleParams {
 struct ModelParticleEmitterDef {
     int32 id;
 	int32 flags;
-	Vec3D pos;
+	Math::vector3 pos;
 	int16 bone;
 	int16 texture;
 	int32 nModelName;
@@ -315,7 +318,7 @@ struct ModelParticleEmitterDef {
 struct ModelRibbonEmitterDef {
 	int32 id;
 	int32 bone;
-	Vec3D pos;
+	Math::vector3 pos;
 	int32 nTextures;
 	int32 ofsTextures;
 	int32 nUnknown;
@@ -336,7 +339,7 @@ struct ModelBlockQ {
 	char id[4];
 	int32 dbid;
 	int32 bone;
-	Vec3D pos;
+	Math::vector3 pos;
 	int16 type;
 	int16 seq;
 	uint32 nRanges;
@@ -349,7 +352,7 @@ struct ModelBlockQ {
 struct ModelAttachmentDef {
 	int32 id;
 	int32 bone;
-	Vec3D pos;
+	Math::vector3 pos;
 	AnimationBlock unk;
 };
 

@@ -3,15 +3,15 @@
 #define WOW_M2SKINSHAPENODE_H
 //------------------------------------------------------------------------------
 /**
+	每个m2skinshapenode只有一个批次，批次编号可通过Attr::MeshGroupIndex获得
 */    
-#include "models/nodes/Skinshapenode.h"
-#include "addons/nebula2/nebula2wrapper.h"
-#include "attr/attribute.h"
+#include "models/nodes/shapenode.h"
+#include "wow/m2/modelheaders.h"
 
 //------------------------------------------------------------------------------
 namespace WOW
 {
-class M2SkinShapeNode : public Models::SkinShapeNode
+class M2SkinShapeNode : public Models::ShapeNode
 {
     DeclareClass(M2SkinShapeNode);
 public:
@@ -23,44 +23,21 @@ public:
     /// create a model node instance
 	virtual Ptr<Models::ModelNodeInstance> CreateNodeInstance() const;    
     /// apply state shared by all my SkinShapeNodeInstances
-    virtual void ApplySharedState();
+    virtual bool ApplySharedState();
 
-    /// begin defining mesh fragments
-    void BeginFragments(int num);
-    /// set mesh group index of a skin fragment
-    void SetFragGroupIndex(int fragIndex, int primGroupIndex);
-    /// get mesh group index of a skin fragment
-    int GetFragGroupIndex(int fragIndex) const;
-    /// begin defining the joint palette of a fragment
-    void BeginJointPalette(int fragIndex, int numJoints);
-    /// add up to 8 joint indices to the fragments joint palette
-    void SetJointIndices(int fragIndex, int paletteIndex, int ji0, int ji1, int ji2, int ji3, int ji4, int ji5, int ji6, int ji7);
-    /// add a single joint index to the fragments joint palette
-    void SetJointIndex(int fragIndex, int paletteIndex, int jointIndex);
-    /// finish adding joints to the joint palette
-    void EndJointPalette(int fragIndex);
-    /// finish defining fragments
-    void EndFragments();
-    /// get number of fragments
-    int GetNumFragments() const;
-    /// get fragment array
-    const Util::FixedArray<Char::CharFragment>& GetFragmentArray() const;
-    /// get number of joints in a fragment's joint palette
-    int GetJointPaletteSize(int fragIndex) const;
-    /// get a joint index from a fragment's joint palette
-    int GetJointIndex(int fragIndex, int paletteIndex) const;
-    /// request load resources, if not loaded yet
-    void RequestLoadResources();
-    /// request to unload our resources
-    void RequestUnloadResources();
-   
+    int GetNumJoints() const;
+	void SetJointArray(Util::Array<int> j);
+	const Util::Array<int>& GetJointArray()const;
+
+	void SetGeoset(const ModelGeoset& g);
+	const ModelGeoset& GetGeoset()const;
 protected:   
     /// called when resources should be loaded
-    virtual void LoadResources();    
+    virtual void LoadResources();
 
-private:    
-    Util::FixedArray<Char::CharFragment> fragmentArray;
-    int resourceRefCount;
+private: 
+    Util::Array<int> jointArray;
+	ModelGeoset geoset;
 };
 
 //------------------------------------------------------------------------------
@@ -68,41 +45,36 @@ private:
     Get number of fragments.
 */
 inline int
-M2SkinShapeNode::GetNumFragments() const
+M2SkinShapeNode::GetNumJoints() const
 {
-    return this->fragmentArray.Size();
+    return this->jointArray.Size();
 }
 
-//------------------------------------------------------------------------------
-/**
-    Get fragments.
-*/
-inline const Util::FixedArray<Char::CharFragment>& 
-M2SkinShapeNode::GetFragmentArray() const
+inline void 
+M2SkinShapeNode::SetJointArray(Util::Array<int> j)
 {
-    return this->fragmentArray;
+	jointArray.Clear();
+	jointArray = j;
 }
 
-//------------------------------------------------------------------------------
-/**
-    Get joint palette size of a skin fragment.
-*/
-inline int
-M2SkinShapeNode::GetJointPaletteSize(int fragIndex) const
+inline const Util::Array<int>& 
+M2SkinShapeNode::GetJointArray()const
 {
-    return this->fragmentArray[fragIndex].GetJointPalette().GetNumJoints();
+	return jointArray;
 }
 
-//------------------------------------------------------------------------------
-/**
-    Get a joint index from a fragment's joint index.
-*/
-inline int
-M2SkinShapeNode::GetJointIndex(int fragIndex, int paletteIndex) const
+inline void 
+M2SkinShapeNode::SetGeoset(const ModelGeoset& g)
 {
-    return this->fragmentArray[fragIndex].GetJointPalette().GetJointIndexAt(paletteIndex);
+	Memory::Copy(&g, &geoset, sizeof(ModelGeoset));
 }
 
-} // namespace Models
+inline const ModelGeoset& 
+M2SkinShapeNode::GetGeoset()const
+{
+	return geoset;
+}
+
+}
 //------------------------------------------------------------------------------
 #endif

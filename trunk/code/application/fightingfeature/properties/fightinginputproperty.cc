@@ -125,7 +125,7 @@ FightingInputProperty::OnBeginFrame()
 		if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::L))	// ·ÀÊØ
 		{
 			n_printf("Down L.");
-			InputKey k(DefenseValue, curTime);
+			InputKey k(DefendValue, curTime);
 			this->keyBuffer.Append(k);
 		}
 

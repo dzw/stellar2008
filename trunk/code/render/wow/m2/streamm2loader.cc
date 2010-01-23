@@ -1,29 +1,34 @@
 //------------------------------------------------------------------------------
-//  streammeshloader.cc
+//  streammodelloader.cc
 //  (C) 2007 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "coregraphics/streammeshloader.h"
-#include "io/memorystream.h"
+#include "wow/m2/streamm2loader.h"
+#include "wow/m2/m2streamreader.h"
 #include "interface/iointerface.h"
+#include "interface/iomsg/readstream.h"
+#include "io/memorystream.h"
+#include "attr/attributecontainer.h"
 #include "coregraphics/mesh.h"
-#include "coregraphics/legacy/nvx2streamreader.h"
 
-
-namespace CoreGraphics
+namespace WOW
 {
-ImplementClass(CoreGraphics::StreamMeshLoader, 'SMLD', Resources::ResourceLoader);
+ImplementClass(WOW::StreamM2Loader, 'SM2L', Resources::ResourceLoader);
 
+using namespace Core;
+using namespace Messaging;
 using namespace IO;
+using namespace Util;
 using namespace Resources;
 using namespace Interface;
-using namespace Util;
-using namespace Messaging;
+using namespace Attr;
+using namespace Math;
+using namespace CoreGraphics;
 
 //------------------------------------------------------------------------------
 /**
 */
-StreamMeshLoader::StreamMeshLoader()
+StreamM2Loader::StreamM2Loader()
 {
     // empty
 }
@@ -31,7 +36,7 @@ StreamMeshLoader::StreamMeshLoader()
 //------------------------------------------------------------------------------
 /**
 */
-StreamMeshLoader::~StreamMeshLoader()
+StreamM2Loader::~StreamM2Loader()
 {
     // empty
 }
@@ -40,7 +45,7 @@ StreamMeshLoader::~StreamMeshLoader()
 /**
 */
 bool
-StreamMeshLoader::CanLoadAsync() const
+StreamM2Loader::CanLoadAsync() const
 {
     return true;
 }
@@ -49,13 +54,14 @@ StreamMeshLoader::CanLoadAsync() const
 /**
 */
 bool
-StreamMeshLoader::OnLoadRequested()
+StreamM2Loader::OnLoadRequested()
 {
     n_assert(this->GetState() == Resource::Initial);
     n_assert(this->resource.isvalid());
     if (this->resource->IsAsyncEnabled())
     {
         // perform asynchronous load
+        // send off an asynchronous loader job
         n_assert(!this->readStreamMsg.isvalid());
         this->readStreamMsg = ReadStream::Create();
         this->readStreamMsg->SetURI(this->resource->GetResourceId().Value());
@@ -70,7 +76,7 @@ StreamMeshLoader::OnLoadRequested()
     {
         // perform synchronous load
         Ptr<Stream> stream = IoServer::Instance()->CreateStream(this->resource->GetResourceId().Value());
-        if (this->SetupMeshFromStream(stream))
+        if (this->SetupModelFromStream(stream))
         {
             this->SetState(Resource::Loaded);
             return true;
@@ -85,7 +91,7 @@ StreamMeshLoader::OnLoadRequested()
 /**
 */
 void
-StreamMeshLoader::OnLoadCancelled()
+StreamM2Loader::OnLoadCancelled()
 {
     n_assert(this->GetState() == Resource::Pending);
     n_assert(this->readStreamMsg.isvalid());
@@ -98,7 +104,7 @@ StreamMeshLoader::OnLoadCancelled()
 /**
 */
 bool
-StreamMeshLoader::OnPending()
+StreamM2Loader::OnPending()
 {
     n_assert(this->GetState() == Resource::Pending);
     n_assert(this->readStreamMsg.isvalid());
@@ -111,7 +117,7 @@ StreamMeshLoader::OnPending()
         if (this->readStreamMsg->GetResult())
         {
             // IO operation was successful
-            if (this->SetupMeshFromStream(this->readStreamMsg->GetStream()))
+            if (this->SetupModelFromStream(this->readStreamMsg->GetStream()))
             {
                 // everything ok!
                 this->SetState(Resource::Loaded);                
@@ -119,7 +125,7 @@ StreamMeshLoader::OnPending()
             }
             else
             {
-                // file not found or not a valid mesh file...
+                // this probably wasn't a Model file...
                 this->SetState(Resource::Failed);
             }
         }
@@ -136,84 +142,45 @@ StreamMeshLoader::OnPending()
 
 //------------------------------------------------------------------------------
 /**
+    This method actually setups the Model object from the data in the stream.
 */
 bool
-StreamMeshLoader::SetupMeshFromStream(const Ptr<Stream>& stream)
+StreamM2Loader::SetupModelFromStream(const Ptr<Stream>& stream)
 {
     n_assert(stream.isvalid());
-    n_assert(this->resource.isvalid());
-    #if NEBULA3_LEGACY_SUPPORT
-    if (this->resource->GetResourceId().Value().GetFileExtension() == "nvx2")
-    {
-        return this->SetupMeshFromNvx2(stream);
-    }
-    else 
-    #endif
-    if (this->resource->GetResourceId().Value().GetFileExtension() == "nvx3")
-    {
-        return this->SetupMeshFromNvx3(stream);
-    }
-    else if (this->resource->GetResourceId().Value().GetFileExtension() == "n3d3")
-    {
-        return this->SetupMeshFromN3d3(stream);
-    }
-    else
-    {
-        n_error("StreamMeshLoader::SetupMeshFromStream(): unrecognized file extension in '%s'\n", this->resource->GetResourceId().Value().AsCharPtr());
-        return false;
-    }
-}
+    n_assert(stream->CanBeMapped());
 
-//------------------------------------------------------------------------------
-/**
-    Setup the mesh resource from legacy nvx2 file (Nebula2 binary mesh format).
-*/
-#if NEBULA3_LEGACY_SUPPORT
-bool
-StreamMeshLoader::SetupMeshFromNvx2(const Ptr<Stream>& stream)
-{
-    n_assert(stream.isvalid());    
-    Ptr<Legacy::Nvx2StreamReader> nvx2Reader = Legacy::Nvx2StreamReader::Create();
-    nvx2Reader->SetStream(stream);
-    if (nvx2Reader->Open())
-    {
-        const Ptr<Mesh>& res = this->resource.downcast<Mesh>();
-        n_assert(!res->IsLoaded());
-        res->SetVertexBuffer(nvx2Reader->GetVertexBuffer().downcast<CoreGraphics::VertexBuffer>());
-        res->SetIndexBuffer(nvx2Reader->GetIndexBuffer().downcast<CoreGraphics::IndexBuffer>());
-        res->SetPrimitiveGroups(nvx2Reader->GetPrimitiveGroups());
-        nvx2Reader->Close();
-        return true;
-    }
-    return false;
-}
-#endif
-
-//------------------------------------------------------------------------------
-/**
-    Setup the mesh resource from a nvx3 file (Nebula3's
-    native binary mesh file format).
-*/
-bool
-StreamMeshLoader::SetupMeshFromNvx3(const Ptr<Stream>& stream)
-{
-    // FIXME!
-    n_error("StreamMeshLoader::SetupMeshFromNvx3() not yet implemented");
+    // first decide what ModelReader to use
+    bool isLegacyFile = false;
+    String fileExt = this->resource->GetResourceId().Value().GetFileExtension();
+	fileExt.ToLower();
+	if (fileExt == "m2")
+	{
+		return this->SetupMeshFromM2(stream);
+	}
     return false;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Setup the mesh resource from a n3d3 file (Nebula3's
-    native ascii mesh file format).
+	Setup the mesh resource from a m2 file (wow model file).
 */
 bool
-StreamMeshLoader::SetupMeshFromN3d3(const Ptr<Stream>& stream)
+StreamM2Loader::SetupMeshFromM2(const Ptr<Stream>& stream)
 {
-    // FIXME!
-    n_error("StreamMeshLoader::SetupMeshFromN3d3() not yet implemented");
-    return false;
+	n_assert(stream.isvalid());    
+	Ptr<Legacy::M2StreamReader> m2Reader = Legacy::M2StreamReader::Create();
+	m2Reader->SetStream(stream);
+	if (m2Reader->Open())
+	{
+		const Ptr<Mesh>& res = this->resource.downcast<Mesh>();
+		n_assert(!res->IsLoaded());
+		res->SetVertexBuffer(m2Reader->GetVertexBuffer());
+		res->SetIndexBuffer(m2Reader->GetIndexBuffer());
+		res->SetPrimitiveGroups(m2Reader->GetPrimitiveGroups());
+		m2Reader->Close();
+		return true;
+	}
+	return false;
 }
-
-
-} // namespace CoreGraphics
+} // namespace Models

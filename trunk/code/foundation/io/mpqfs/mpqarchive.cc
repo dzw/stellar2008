@@ -109,4 +109,14 @@ MPQArchive::FindMPQFile(const String &name)
 	return true;
 }
 
+SizeT 
+MPQArchive::GetFileSize(const Util::String &name)
+{
+	fileno = libmpq_file_number(&this->mpqFileHandle, name.AsCharPtr());
+	if (fileno != LIBMPQ_EFILE_NOT_FOUND)
+		return libmpq_file_info(&this->mpqFileHandle, LIBMPQ_FILE_UNCOMPRESSED_SIZE, fileno);
+
+	return 0;
+}
+
 } // namespace IO

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cmath>
 
-#define PI 3.1415926535897932384626433832795
+//#define PI 3.1415926535897932384626433832795
 #define PIOVER180 (PI/180.0)
 
 class Vec3D {

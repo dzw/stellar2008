@@ -13,18 +13,23 @@
     
     (C) 2007 Radon Labs GmbH
 */
-#include "models/nodes/characternodeinstance.h"
-#include "models/nodes/shapenodeinstance.h"
-#include "addons/nebula2/nebula2wrapper.h"
-#include "wow/m2/m2character.h"
+#include "models/nodes/transformnodeinstance.h"
 
 //------------------------------------------------------------------------------
 namespace WOW
 {
-class M2CharacterNodeInstance : public Models::CharacterNodeInstance
+struct JointInstance
+{
+	Math::matrix44 mat;
+	Math::matrix44 mrot;
+};
+
+class M2CharacterNodeInstance : public Models::TransformNodeInstance
 {
     DeclareClass(M2CharacterNodeInstance);
 public:
+	
+
     /// constructor
     M2CharacterNodeInstance();
     /// destructor
@@ -32,12 +37,10 @@ public:
     
     /// perform per-frame updates
     virtual void Update();    
-
-    /// get character
-    const Ptr<M2Character>& GetCharacter() const;
-    /// get character set
-    //const Ptr<Char::CharacterSet>& GetCharacterSet() const;
-
+	/// get joint data
+	const Util::FixedArray<JointInstance> GetJointData()const;
+	///
+	void SetCurAnimID(int anim);
 protected:
     /// called when attached to ModelInstance
 	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
@@ -45,32 +48,28 @@ protected:
     virtual void OnRemoveFromModelInstance();
     /// render node specific debug shape
     virtual void RenderDebug();
-    /// validate character 
-    void ValidateCharacter();
     
-private:    
-    Ptr<M2Character> character;
-    //Ptr<Char::CharacterSet> characterSet;
-    //Util::Array<Char::SkinInfo> skinInfos;
+	Util::FixedArray<JointInstance> joints;
+
+	/// µ±Ç°¶¯»­ID
+	int curAnim;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline const Ptr<M2Character>& 
-M2CharacterNodeInstance::GetCharacter() const
+inline const Util::FixedArray<JointInstance> 
+M2CharacterNodeInstance::GetJointData()const
 {
-    return this->character;
+	return this->joints;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-//inline const Ptr<Char::CharacterSet>& 
-//M2CharacterNodeInstance::GetCharacterSet() const
-//{
-//    return this->characterSet;
-//}
+inline void 
+M2CharacterNodeInstance::SetCurAnimID(int anim)
+{
+	curAnim = anim;
+}
+
 } // namespace Models
 //------------------------------------------------------------------------------
 #endif

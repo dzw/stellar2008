@@ -356,7 +356,7 @@ ActorGraphicsProperty::HandleMessage(const Ptr<Messaging::Message>& msg)
     else if (msg->CheckId(MoveStop::Id))
     {
         // set idle animation    
-		n_printf("MoveStop\n");
+		//n_printf("MoveStop\n");
         Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
         Entity->SetBaseAnimation("idle_01", 0.2f, 0.0f, true, true, 0.2f);  
     }

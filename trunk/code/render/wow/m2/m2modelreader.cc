@@ -20,6 +20,8 @@
 #include "coregraphics/streammeshloader.h"
 #include "wow/m2/animation/animated.h"
 #include "wow/m2/m2skinshapenode.h"
+#include "io/mpqfs/mpqfilesystem.h"
+#include "io/ioserver.h"
 
 int globalTime = 0;
 
@@ -62,7 +64,8 @@ M2ModelReader::M2ModelReader() :
 	texPtr(0),
 	texDefPtr(0),
 	texLookUpPtr(0),
-	globalSequences(0)
+	globalSequences(0),
+	dataPtr(0)
 {
     // empty
 }
@@ -76,6 +79,9 @@ M2ModelReader::~M2ModelReader()
     {
         this->Close();
     }
+
+	if(dataPtr)
+		n_delete_array(dataPtr);
 }
 
 //------------------------------------------------------------------------------
@@ -114,10 +120,10 @@ M2ModelReader::Open()
 
 		// read data
 		this->ReadHeaderData();
-		this->ReadPrimitiveGroups();
+		//this->ReadPrimitiveGroups();
 		this->SetupVertexComponents();
-		this->SetupVertexBuffer();
-		this->SetupIndexBuffer();
+		//this->SetupVertexBuffer();
+		//this->SetupIndexBuffer();
 		this->UpdateGroupBoundingBoxes();
 		this->SetupManagedMesh();
 
@@ -149,7 +155,8 @@ M2ModelReader::Close()
 	this->primGroups.Clear();
 	this->vertexComponents.Clear();
 
-	this->stream->Unmap();
+	if (this->stream->IsMapped())
+		this->stream->Unmap();
     StreamReader::Close();
     this->isOpen = false;
 }
@@ -186,21 +193,26 @@ M2ModelReader::FillModel()
 			// attach to our model
 			this->model->AttachNode(characterNode.upcast<ModelNode>());
 
-			this->SetToFirstModelNode();
-			while(this->SetToNextModelNode()){}
+			//this->SetToFirstModelNode();
+			//while(this->SetToNextModelNode()){}
+
+			
 		}
 		break;        
 	case Static:
 		{
-			this->SetToFirstModel();
-			// go thru hierarchy and build modelnodes
-			if (this->SetToFirstModelNode()) do
-			{
-			}
-			while(this->SetToNextModelNode());
+			//this->SetToFirstModel();
+			//// go thru hierarchy and build modelnodes
+			//if (this->SetToFirstModelNode()) do
+			//{
+			//}
+			//while(this->SetToNextModelNode());
 		}
 		break;
 	}
+
+	LoadLodMesh();
+	SetupVertexBuffer();
 
 	return success;
 }
@@ -232,214 +244,86 @@ M2ModelReader::CreateCharacterNode()
 	// 创建CharacterNode
 	characterNode = M2CharacterNode::Create();
 	characterNode->SetName(modelResId);
-	
-	// anim  动画数据，直接设置  在N2中是加载nax2文件数据，形成ManagedAnimation
-	//characterNode->SetAnim(this->binaryReader->ReadString());
 
-	// joints
-	characterNode->BeginJoints(this->header->nBones);
+	String fullName = modelResId.Value();
+	fullName.StripFileExtension();
+	//fullName = fullName.ExtractToEnd(4);
 
-	/*Animated<Vec3D> trans;
-	Animated<Quaternion, PACK_QUATERNION, Quat16ToQuat32> rot;
-	Animated<Vec3D> scale;*/
+	FixedArray<Ptr<Stream>> animfiles;
+	if (header->nAnimations > 0) {
+		characterNode->anims = new ModelAnimation[header->nAnimations];
 
-	if (this->header->nGlobalSequences) {
-		globalSequences = n_new_array(int, header->nGlobalSequences);
-		CopyMemory(globalSequences, (this->mapPtr + this->header->ofsGlobalSequences), this->header->nGlobalSequences * 4);
-	}
-
-	//vector pivot;
-	//Bone *bones = new Bone[this->header->nBones];
-
-	ModelBoneDef *mb = (ModelBoneDef*)(this->mapPtr + this->header->ofsBones);
-	for (size_t i=0; i<this->header->nBones; i++) {
-		//if (i==0) mb[i].rotation.ofsRanges = 1.0f;
-		//bones[i].init(f, mb[i], globalSequences);
-		characterNode->SetJoint(i, this->mapPtr, mb[i], globalSequences);
-	}
-	characterNode->EndJoints();
-
-	if (this->header->nAnimations > 0) {
-		characterNode->SetAniManager(this->mapPtr + this->header->ofsAnimations, this->header->nAnimations);
-	}
-
-
-
-	// clip
-	/*characterNode->BeginClips(this->header->nAnimations);
-	for (SizeT i = 0; i <this->header->nAnimations; i++)
-	{
-		String clipName = "clip";
-		clipName.AppendInt(i);
-		characterNode->SetClip(i, i, clipName);
-	}
-	characterNode->EndClips();*/
-
-
-	// variations 变化的动画？？直接设置 
-	//characterNode->SetVariationsUri(this->binaryReader->ReadString());
+		#ifndef WotLK
+		memcpy(anims, f.getBuffer() + header.ofsAnimations, header.nAnimations * sizeof(ModelAnimation));
+		#else
+		ModelAnimationWotLK animsWotLK;
+		String tempname;
 		
-		
-	/*Ptr<nMemoryAnimation> animation = nMemoryAnimation::Create();
-	Array<Math::float4> keyArray;
-	
-	Ptr<Anim::ManagedAnimation> managedAnim = Anim::ManagedAnimation::Create();
-	managedAnim->SetResource(animation.upcast<Resources::Resource>());
-	
-	for(IndexT i = 0 ; i < this->header->nAnimations; i++)
-	{
-		nAnimation::Group& group = animation->GetGroupAt(i);
-		group->SetNumCurves(this->header->nAnimations * this->header->nBones * 3);
-		group->SetStartKey(0);
-		group.SetNumKeys(0);
-		group.SetKeyStride(1);
-		group.SetKeyTime(0.1f);
-		group.SetFadeInFrames(0.2f);
-		group.SetLoopType(1);
-	}*/
-	
-	// 求最大关键帧
-	// 循环所有range
-	/*int numKeys, beginRange, endRange;
-	for (IndexT i = 0; i < this->header->nAnimations; i++)
-	{
-		numKeys = 0;
-		for (IndexT n = 0; n < this->header->nBones; n++)
-		{
-			if (bones[n].trans.ranges.size() > i)
-			{
-				beginRange = bones[n].trans.ranges[i].first;
-				endRange = bones[n].trans.ranges[i].second;
+		animfiles.SetSize(header->nAnimations);
+		for(size_t i=0; i<header->nAnimations; i++) {
+			memcpy(&animsWotLK, this->mapPtr + header->ofsAnimations + i*sizeof(ModelAnimationWotLK), sizeof(ModelAnimationWotLK));
+			characterNode->anims[i].animID = animsWotLK.animID;
+			characterNode->anims[i].timeStart = 0;
+			characterNode->anims[i].timeEnd = animsWotLK.length;
+			characterNode->anims[i].moveSpeed = animsWotLK.moveSpeed;
+			characterNode->anims[i].flags = animsWotLK.flags;
+			characterNode->anims[i].probability = animsWotLK.probability;
+			characterNode->anims[i].d1 = animsWotLK.d1;
+			characterNode->anims[i].d2 = animsWotLK.d2;
+			characterNode->anims[i].playSpeed = animsWotLK.playSpeed;
+			characterNode->anims[i].rad = animsWotLK.rad;
+			characterNode->anims[i].NextAnimation = animsWotLK.NextAnimation;
+			characterNode->anims[i].Index = animsWotLK.Index;
 
-				if (endRange - beginRange > numKeys)
-					numKeys = endRange - beginRange;
-			}
-			if (bones[n].rot.ranges.size() > i)
+			tempname.Format("%s%04d-%02d.anim", fullName.AsCharPtr(), 
+				characterNode->anims[i].animID, animsWotLK.subAnimID);
+			//if (MPQFileSystem::Instance()->GetMPQFileSize(tempname) > 0) 
 			{
-				beginRange = bones[n].rot.ranges[i].first;
-				endRange = bones[n].rot.ranges[i].second;
-
-				if (endRange - beginRange > numKeys)
-					numKeys = endRange - beginRange;
-			}
-			if (bones[n].scale.ranges.size() > i)
-			{
-				beginRange = bones[n].scale.ranges[i].first;
-				endRange = bones[n].scale.ranges[i].second;
-
-				if (endRange - beginRange > numKeys)
-					numKeys = endRange - beginRange;
+				animfiles[i] = IoServer::Instance()->CreateStream(tempname);
 			}
 		}
-		nAnimation::Group& group = animation->GetGroupAt(i);
-		group.SetNumKeys(numKeys);
-	}*/
+		#endif
+
+		characterNode->animManager = new AnimManager(characterNode->anims);
+	}
 	
-	//int isanim, curveIndex = 0, keyIndex = 0, ntemp;
-	//Vec3D v;
-	//Quaternion q;
-	//float4 constValue;
-	//// 设置KEYS
-	//for (IndexT i = 0; i < this->header->nAnimations; i++)
-	//{
-	//	nAnimation::Group& group = animation->GetGroupAt(i);
-	//	numKeys = group.GetNumKeys();
-	//	for(IndexT boneIndex = 0; boneIndex < this->header->nBones; boneIndex++)
-	//	{
-	//		// trans
-	//		isanim = 0;
-	//		type = bones[boneIndex].trans.type;
-	//		if (type == 1 && bones[boneIndex].trans.ranges.size() > 0)
-	//			isanim = 1;
-	//		v = bones[boneIndex].trans.data[0];
-	//		constValue = float4(v.x, v.y, v.z, 0.0f);
-	//		nAnimation::Curve& curve = group->GetCurveAt(curveIndex++);
-	//		curve.SetIpolType((Animation::Curve::IpolType)1);
-	//		curve.SetIsAnimated(isanim);
-	//		curve.SetConstValue(constValue);
-	//		if (isanim)
-	//		{
-	//			curve.SetFirstKeyIndex(keyArray.Size());
+	if (1) {
+		// init bones...
+		characterNode->bones.SetSize(header->nBones);
+		ModelBoneDef *mb = (ModelBoneDef*)(this->mapPtr + header->ofsBones);
+		for (size_t i=0; i<header->nBones; i++) {
+			//if (i==0) mb[i].rotation.ofsRanges = 1.0f;
+#ifdef WotLK
+			//bones[i].model = this;
+			characterNode->bones[i].Init(this->stream, mb[i], globalSequences, &animfiles[0]);
+#else
+			bones[i].init(f, mb[i], globalSequences);
+#endif
+		}
 
-	//			ntemp = 0;
-	//			for (IndexT n = 0; n < numKeys; n++)
-	//			{
-	//				if (ntemp >= bones[boneIndex].trans.data.size())
-	//					ntemp = 0;
+		// Block keyBoneLookup is a lookup table for Key Skeletal Bones, hands, arms, legs, etc.
+		if (header->nKeyBoneLookup < BONE_MAX) {
+			memcpy(characterNode->keyBoneLookup, this->mapPtr + header->ofsKeyBoneLookup, sizeof(int16)*header->nKeyBoneLookup);
+		} else {
+			memcpy(characterNode->keyBoneLookup, this->mapPtr + header->ofsKeyBoneLookup, sizeof(int16)*BONE_MAX);
+			n_error("Error: keyBone number [%d] over [%d]", header->nKeyBoneLookup, BONE_MAX);
+		}
+	}
 
-	//				v = bones[boneIndex].trans.data[ntemp];
-	//				keyArray.Append(float4(v.x, v.y, v.z, 0.0f));
-	//			}
-	//		}
-	//		else
-	//		{
-	//			curve.SetFirstKeyIndex(-1);
-	//		}
+	for (SizeT i = 0; i < animfiles.Size(); i++)
+	{
+		animfiles[0] = 0;
+	}
+	animfiles.SetSize(0);
 
+	// Index at ofsAnimations which represents the animation in AnimationData.dbc. -1 if none.
+	if (header->nAnimationLookup > 0) 
+	{
+		characterNode->animLookups.SetSize(header->nAnimationLookup);
+		memcpy(&characterNode->animLookups[0], this->mapPtr + header->ofsAnimationLookup, sizeof(int16)*header->nAnimationLookup);
+	}
+	characterNode->nAnimationLookup = header->nAnimationLookup;
 
-	//		// rot
-	//		isanim = 0;
-	//		type = bones[boneIndex].rot.type;
-	//		if (type == 1 && bones[boneIndex].rot.ranges.size() > 0)
-	//			isanim = 1;
-	//		q = bones[boneIndex].rot.data[0];
-	//		constValue = float4(q.x, q.y, q.z, q.w);
-	//		nAnimation::Curve& curve = group->GetCurveAt(curveIndex++);
-	//		curve.SetIpolType((Animation::Curve::IpolType)1);
-	//		curve.SetIsAnimated(isanim);
-	//		curve.SetConstValue(constValue);
-	//		if (isanim)
-	//		{
-	//			curve.SetFirstKeyIndex(keyArray.Size());
-
-	//			ntemp = 0;
-	//			for (IndexT n = 0; n < numKeys; n++)
-	//			{
-	//				if (ntemp >= bones[boneIndex].rot.data.size())
-	//					ntemp = 0;
-
-	//				q = bones[boneIndex].rot.data[ntemp];
-	//				keyArray.Append(float4(q.x, q.y, q.z, q.w));
-	//			}
-	//		}
-	//		else
-	//		{
-	//			curve.SetFirstKeyIndex(-1);
-	//		}
-
-
-	//		// scale
-	//		isanim = 0;
-	//		type = bones[boneIndex].scale.type;
-	//		if (type == 1 && bones[boneIndex].scale.ranges.size() > 0)
-	//			isanim = 1;
-	//		v = bones[boneIndex].scale.data[0];
-	//		constValue = float4(v.x, v.y, v.z, 0.0f);
-	//		nAnimation::Curve& curve = group->GetCurveAt(curveIndex++);
-	//		curve.SetIpolType((Animation::Curve::IpolType)1);
-	//		curve.SetIsAnimated(isanim);
-	//		curve.SetConstValue(constValue);
-	//		if (isanim)
-	//		{
-	//			curve.SetFirstKeyIndex(keyArray.Size());
-
-	//			ntemp = 0;
-	//			for (IndexT n = 0; n < numKeys; n++)
-	//			{
-	//				if (ntemp >= bones[boneIndex].scale.data.size())
-	//					ntemp = 0;
-
-	//				v = bones[boneIndex].scale.data[ntemp];
-	//				keyArray.Append(float4(v.x, v.y, v.z, 0.0f));
-	//			}
-	//		}
-	//		else
-	//		{
-	//			curve.SetFirstKeyIndex(-1);
-	//		}
-	//	}
-	//}
-	
 	return characterNode;
 }
 
@@ -593,32 +477,14 @@ M2ModelReader::ReadModelNodeData()
 
 	if (newModelNode->IsA(M2SkinShapeNode::RTTI))
 	{
-		newModelNode->SetString(Attr::Shader, "shd:skinned");
+		const Ptr<M2SkinShapeNode>& node = newModelNode.downcast<M2SkinShapeNode>();
+		node->SetString(Attr::Shader, "shd:skinned");
+		node->SetJointArray(frgBoneList[nTex]);
 
-		SkinShapeNode* skinShapeNode = newModelNode.downcast<SkinShapeNode>().get();
-		// fragments  每个node只要一个！！一般一个geoset不会越过72个骨骼，所以不需要再按骨骼拆分mesh
-		skinShapeNode->BeginFragments(1/*this->viewPtr->nTex*/);
-		//for (IndexT i = 0; i < )
-		{
-			//Array<int> frgBoneList;
-			//CreateFragment(geoset, frgBoneList);
-			// fraggroupindex
-			skinShapeNode->SetFragGroupIndex(0/*numTexture*/, geoset);
-			// jointpalette
-			skinShapeNode->BeginJointPalette(0/*numTexture*/, frgBoneList[numTexture].Size());
-			// jointindices
-			for (IndexT i = 0; i < frgBoneList[numTexture].Size(); i++)
-				skinShapeNode->SetJointIndex(0/*numTexture*/, i, frgBoneList[numTexture][i]);
-			//skinShapeNode->SetJointIndices(numTexture, numTexture, boneLookup[numTexture], 0, 0, 0, 0, 0, 0, 0);
-			// jointpalette
-			skinShapeNode->EndJointPalette(0/*numTexture*/);
-		}
-		// fragments
-		skinShapeNode->EndFragments();
+		newModelNode->SetParent(characterNode.upcast<ModelNode>());
+		characterNode->AddChild(newModelNode.upcast<ModelNode>());
 	}
 
-	newModelNode->SetParent(characterNode.upcast<ModelNode>());
-	characterNode->AddChild(newModelNode.upcast<ModelNode>());
 	Attr::AttributeContainer attr = newModelNode->GetAttrs();
 	newModelNode->LoadFromAttrs(attr);
 
@@ -677,9 +543,9 @@ M2ModelReader::ReadHeaderData()
 	//uint* headerPtr = (uint*) this->mapPtr;
 
 	this->header = (ModelHeader*)this->mapPtr;
-	this->viewPtr = (ModelView*)(this->mapPtr + this->header->ofsViews);
-	this->opsPtr = (ModelGeoset*)(this->mapPtr + this->viewPtr->ofsSub);
-	this->texPtr = (ModelTexUnit*)(this->mapPtr + this->viewPtr->ofsTex);
+//	this->viewPtr = (ModelView*)(this->mapPtr + this->header->ofsViews);
+//	this->opsPtr = (ModelGeoset*)(this->mapPtr + this->viewPtr->ofsSub);
+//	this->texPtr = (ModelTexUnit*)(this->mapPtr + this->viewPtr->ofsTex);
 	this->texLookUpPtr = (uint16*)(this->mapPtr + this->header->ofsTexLookup);
 	this->texDefPtr = (ModelTextureDef*)(this->mapPtr + this->header->ofsTextures);
 	this->renderFlags = (ModelRenderFlags*)(this->mapPtr + this->header->ofsTexFlags);
@@ -688,6 +554,14 @@ M2ModelReader::ReadHeaderData()
 	//for (size_t i=0; i<header->nF; i++) {
 	//	boneLookup[i] = p[i];
 	//}
+
+	/*vfvf **/dataPtr = new vfvf[this->header->nVertices];
+
+	globalSequences = 0;
+	if (header->nGlobalSequences) {
+		globalSequences = new uint32[header->nGlobalSequences];
+		memcpy(globalSequences, (this->mapPtr + header->ofsGlobalSequences), header->nGlobalSequences * sizeof(uint32));
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -753,68 +627,60 @@ M2ModelReader::SetupVertexBuffer()
 	n_assert(this->vertexComponents.Size() > 0);
 
 			
-	struct vfvf 
-	{
-		float x,y,z;
-		float nx,ny,nz;
-		float weights[4];
-		float bones[4];
-		float2 tex;
-	};
+	
 
-	vfvf *dataPtr = new vfvf[this->header->nVertices];
 	ModelVertex *origVertices = (ModelVertex*)(this->mapPtr + this->header->ofsVertices);
 
 	vmin = vector( 9999999.0f, 9999999.0f, 9999999.0f);
 	vmax = vector(-9999999.0f,-9999999.0f,-9999999.0f);
 
 
-	uint16 *indexLookup = (uint16*)(this->mapPtr + this->viewPtr->ofsIndex);
-	uint16 *triangles = (uint16*)(this->mapPtr + this->viewPtr->ofsTris);
-	SizeT nIndices = this->viewPtr->nTris;
-	uint16 *indices = n_new_array(uint16, nIndices);
+	//uint16 *indexLookup = (uint16*)(this->mapPtr + this->viewPtr->ofsIndex);
+	//uint16 *triangles = (uint16*)(this->mapPtr + this->viewPtr->ofsTris);
+	//SizeT nIndices = this->viewPtr->nTris;
+	//uint16 *indices = n_new_array(uint16, nIndices);
 
-	for (size_t i = 0; i < nIndices; i++)
-		indices[i] = indexLookup[triangles[i]];
+	//for (size_t i = 0; i < nIndices; i++)
+	//	indices[i] = indexLookup[triangles[i]];
 
-	frgBoneList.SetSize(this->viewPtr->nTex);
-	for (IndexT j = 0; j < this->viewPtr->nTex; j++)
-	{
-		SizeT geoset = this->texPtr[j].op;
-		for (IndexT g = this->opsPtr[geoset].istart; g < this->opsPtr[geoset].istart + this->opsPtr[geoset].icount; g++)
-		{
-			uint16 ind = indices[g];
-			for (IndexT n = 0; n < 4; n++)
-			{
-				if (origVertices[ind].weights[n] > 0)
-				{
-					uint32 nBone = origVertices[ind].bones[n];
-					IndexT indexFind = frgBoneList[geoset].FindIndex(nBone);
-					if (indexFind == InvalidIndex)
-					{
-						frgBoneList[geoset].Append(nBone);
-						indexFind = frgBoneList[geoset].Size()-1;
-					}
-					// 设置成在新的列表中的位置
-					dataPtr[ind].bones[n] = indexFind;
-					dataPtr[ind].weights[n] = (float)origVertices[ind].weights[n] / 255.0f;
-				}
-			}
-		}
-	}
+	//frgBoneList.SetSize(this->viewPtr->nTex);
+	//for (IndexT j = 0; j < this->viewPtr->nTex; j++)
+	//{
+	//	SizeT geoset = this->texPtr[j].op;
+	//	for (IndexT g = this->opsPtr[geoset].istart; g < this->opsPtr[geoset].istart + this->opsPtr[geoset].icount; g++)
+	//	{
+	//		uint16 ind = indices[g];
+	//		for (IndexT n = 0; n < 4; n++)
+	//		{
+	//			if (origVertices[ind].weights[n] > 0)
+	//			{
+	//				uint32 nBone = origVertices[ind].bones[n];
+	//				IndexT indexFind = frgBoneList[geoset].FindIndex(nBone);
+	//				if (indexFind == InvalidIndex)
+	//				{
+	//					frgBoneList[geoset].Append(nBone);
+	//					indexFind = frgBoneList[geoset].Size()-1;
+	//				}
+	//				// 设置成在新的列表中的位置
+	//				dataPtr[ind].bones[n] = indexFind;
+	//				dataPtr[ind].weights[n] = (float)origVertices[ind].weights[n] / 255.0f;
+	//			}
+	//		}
+	//	}
+	//}
 
-	n_delete_array(indices);
+	//n_delete_array(indices);
 
 	for (size_t i = 0; i < this->header->nVertices; i++)
 	{
 		//CopyMemory(dataPtr[i].bones, origVertices[i].bones, sizeof(uint8)*4);
 		//CopyMemory(dataPtr[i].weights, origVertices[i].weights, sizeof(uint8)*4);
-		/*for (int n = 0; n < 4; n++)
+		for (int n = 0; n < 4; n++)
 		{
-			dataPtr[i].bones[n] = (float)origVertices[i].bones[n];
+			//dataPtr[i].bones[n] = (float)origVertices[i].bones[n];
 			if (origVertices[i].weights[n] > 0)
 				dataPtr[i].weights[n] = (float)origVertices[i].weights[n] / 255.0f;
-		}*/
+		}
 
 		dataPtr[i].x = origVertices[i].pos.x;//= FixCoordSystem(vector(origVertices[i].pos.x, origVertices[i].pos.y, origVertices[i].pos.z));
 		dataPtr[i].y = origVertices[i].pos.z;
@@ -856,8 +722,13 @@ M2ModelReader::SetupVertexBuffer()
 	this->vertexBuffer->SetLoader(vbLoader.upcast<ResourceLoader>());
 	this->vertexBuffer->Load();
 	this->vertexBuffer->SetLoader(0);
-	delete[] dataPtr;
+	//delete[] dataPtr;
 	n_assert(this->vertexBuffer->GetState() == VertexBuffer::Loaded);
+
+	for (SizeT i = 0; i < meshs.Size(); i++)
+	{
+		meshs[i]->SetVertexBuffer(this->vertexBuffer);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -912,6 +783,288 @@ M2ModelReader::SetupManagedMesh()
 	mesh->SetVertexBuffer(this->vertexBuffer);
 	mesh->SetIndexBuffer(this->indexBuffer);
 	mesh->SetPrimitiveGroups(this->primGroups);
+}
+
+void
+M2ModelReader::LoadLodMesh()
+{
+	if (header->nViews <= 0)
+		return;
+
+	// remove suffix .M2
+	String fullName = modelResId.Value();
+	fullName.StripFileExtension();
+	String lodname;
+	lodname = fullName + "00.skin";	// Lods: 00, 01, 02, 03
+	Ptr<Stream> g = IO::IoServer::Instance()->CreateStream(lodname);
+	if (!g->Open())
+	{
+		n_warning("load resource error: %s", lodname.AsCharPtr());
+		return;
+	}
+	char* ptr = (char*)g->Map();
+	ModelView *view = (ModelView*)(ptr);
+
+	// Indices,  Triangles
+	uint16 *indexLookup = (uint16*)(ptr + view->ofsIndex);
+	uint16 *triangles = (uint16*)(ptr + view->ofsTris);
+	uint32 nIndices = view->nTris;
+	uint16* indices = n_new_array(uint16, nIndices);
+	for (size_t i = 0; i<nIndices; i++) {
+        indices[i] = indexLookup[triangles[i]];
+	}
+
+	// render ops
+	ModelGeoset *ops = (ModelGeoset*)(ptr + view->ofsSub);
+	ModelTexUnit *tex = (ModelTexUnit*)(ptr + view->ofsTex);
+
+	/////////// create resource
+	Util::Array<CoreGraphics::PrimitiveGroup> primGroups;
+	for (size_t i = 0; i < view->nTex; i++)
+	{
+		PrimitiveGroup primGroup;
+		SizeT geoset = tex[i].op;
+		primGroup.SetBaseVertex(ops[geoset].vstart);
+		primGroup.SetNumVertices(ops[geoset].vcount);
+		primGroup.SetBaseIndex(ops[geoset].istart);   // firstTriangle
+		primGroup.SetNumIndices(ops[geoset].icount);   // numTriangles
+
+		primGroup.SetPrimitiveTopology(PrimitiveTopology::TriangleList);
+		primGroups.Append(primGroup);
+	}
+
+	// setup a new index buffer
+	Ptr<CoreGraphics::IndexBuffer> indexBuffer = IndexBuffer::Create();
+	Ptr<MemoryIndexBufferLoader> ibLoader = MemoryIndexBufferLoader::Create();
+	ibLoader->Setup(IndexType::Index16, nIndices, indices, sizeof(uint16)*nIndices);
+	indexBuffer->SetLoader(ibLoader.upcast<ResourceLoader>());
+	indexBuffer->Load();
+	indexBuffer->SetLoader(0);
+	n_assert(indexBuffer->GetState() == IndexBuffer::Loaded);
+	
+	Ptr<Mesh> mesh = SharedResourceServer::Instance()->CreateSharedResource(lodname, Mesh::RTTI, StreamMeshLoader::RTTI).downcast<Mesh>();
+	mesh->SetState(Resource::Loaded);
+	mesh->SetVertexBuffer(this->vertexBuffer);
+	mesh->SetIndexBuffer(indexBuffer);
+	mesh->SetPrimitiveGroups(primGroups);
+	meshs.Append(mesh);
+
+	ModelVertex *origVertices = (ModelVertex*)(this->mapPtr + this->header->ofsVertices);
+	frgBoneList.SetSize(0);
+	frgBoneList.SetSize(view->nTex);
+	/*for (IndexT i = 0; i < view->nTex; i++)
+	{
+		for (IndexT j = 0; j < header->nBones; j++)
+		{
+			frgBoneList[i].Append(j);
+		}
+	}*/
+	for (IndexT j = 0; j < view->nTex; j++)
+	{
+		SizeT geoset = tex[j].op;
+		for (IndexT g = ops[geoset].istart; g < ops[geoset].istart + ops[geoset].icount; g++)
+		{
+			uint16 ind = indices[g];
+			for (IndexT n = 0; n < 4; n++)
+			{
+				if (origVertices[ind].weights[n] > 0)
+				{
+					uint32 nBone = origVertices[ind].bones[n];
+					IndexT indexFind = frgBoneList[geoset].FindIndex(nBone);
+					if (indexFind == InvalidIndex)
+					{
+						frgBoneList[geoset].Append(nBone);
+						indexFind = frgBoneList[geoset].Size()-1;
+					}
+					//// 设置成在新的列表中的位置
+					dataPtr[ind].bones[n] = indexFind;
+					//dataPtr[ind].weights[n] = (float)origVertices[ind].weights[n] / 255.0f;
+				}
+			}
+		}
+	}
+	n_delete_array(indices);
+	///////////////////////////////
+
+
+
+	ModelRenderFlags *renderFlags = (ModelRenderFlags*)(this->mapPtr + header->ofsTexFlags);
+	uint16 *texlookup = (uint16*)(this->mapPtr + header->ofsTexLookup);
+	uint16 *texanimlookup = (uint16*)(this->mapPtr + header->ofsTexAnimLookup);
+	int16 *texunitlookup = (int16*)(this->mapPtr + header->ofsTexUnitLookup);
+
+	
+	bool *showGeosets = new bool[view->nSub];
+	for (size_t i=0; i<view->nSub; i++) {
+		//characterNode->geoset.Append(ops[i]);
+		showGeosets[i] = true;
+	}
+
+	for (size_t j = 0; j<view->nTex; j++) {
+		ModelRenderPass pass;
+
+		pass.useTex2 = false;
+		pass.useEnvMap = false;
+		pass.cull = false;
+		pass.trans = false;
+		pass.unlit = false;
+		pass.noZWrite = false;
+		pass.billboard = false;
+
+		//pass.texture2 = 0;
+		size_t geoset = tex[j].op;
+		
+		pass.geoset = (int)geoset;
+
+		pass.indexStart = ops[geoset].istart;
+		pass.indexCount = ops[geoset].icount;
+		pass.vertexStart = ops[geoset].vstart;
+		pass.vertexEnd = pass.vertexStart + ops[geoset].vcount;
+		
+		pass.order = tex[j].shading; //pass.order = 0;
+		
+		//TextureID texid = textures[texlookup[tex[j].textureid]];
+		//pass.texture = texid;
+		pass.tex = texlookup[tex[j].textureid];
+		
+		/*
+		// Render Flags
+		flags:
+		0x01 = Unlit
+		0x02 = ? glow effects ? no zwrite?
+		0x04 = Two-sided (no backface culling if set)
+		0x08 = (probably billboarded)
+		0x10 = Disable z-buffer?
+
+		blend:
+		Value	 Mapped to	 Meaning
+		0	 	0	 		Combiners_Opaque
+		1	 	1	 		Combiners_Mod
+		2	 	1	 		Combiners_Decal
+		3	 	1	 		Combiners_Add
+		4	 	1	 		Combiners_Mod2x
+		5	 	4	 		Combiners_Fade
+		6	 	4	 		Used in the Deeprun Tram subway glass, supposedly (src=dest_color, dest=src_color) (?)
+		*/
+		// TODO: figure out these flags properly -_-
+		ModelRenderFlags &rf = renderFlags[tex[j].flagsIndex];
+		
+		pass.blendmode = rf.blend;
+		//if (rf.blend == 0) // Test to disable/hide different blend types
+		//	continue;
+
+		pass.color = tex[j].colorIndex;
+		//pass.opacity = transLookup[tex[j].transid];
+
+		pass.unlit = (rf.flags & RENDERFLAGS_UNLIT)!= 0;
+
+		// This is wrong but meh.. best I could get it so far.
+		//pass.cull = (rf.flags & 0x04)==0 && pass.blendmode!=1 && pass.blendmode!=4 && (rf.flags & 17)!=17;
+		//pass.cull = false; // quick test
+		pass.cull = (rf.flags & RENDERFLAGS_TWOSIDED)==0 && rf.blend==0;
+
+		pass.billboard = (rf.flags & RENDERFLAGS_BILLBOARD) != 0;
+
+		pass.useEnvMap = (texunitlookup[tex[j].texunit] == -1) && pass.billboard && rf.blend>2; //&& rf.blend<5; // Use environmental reflection effects?
+
+		// Disable environmental mapping if its been unchecked.
+		//if (pass.useEnvMap && !video.useEnvMapping)
+		//	pass.useEnvMap = false;
+
+
+		//pass.noZWrite = (texdef[pass.tex].flags & 3)!=0;
+		/*
+		if (name == "Creature\\Turkey\\turkey.m2") // manual fix as I just bloody give up.
+			pass.noZWrite = false;
+		else
+			pass.noZWrite = (pass.blendmode>1);
+		*/
+			//pass.noZWrite = (pass.blendmode>1) && !(rf.blend==4 && rf.flags==17);
+		pass.noZWrite = (rf.flags & RENDERFLAGS_ZBUFFERED) != 0;
+
+		// ToDo: Work out the correct way to get the true/false of transparency
+		pass.trans = (pass.blendmode>0) && (pass.opacity>0);	// Transparency - not the correct way to get transparency
+
+		pass.p = ops[geoset].BoundingBox[0].z;
+
+		// Texture flags
+		//pass.swrap = (texdef[pass.tex].flags & TEXTURE_WRAPX) != 0; // Texture wrap X
+		//pass.twrap = (texdef[pass.tex].flags & TEXTURE_WRAPY) != 0; // Texture wrap Y
+		
+		//if (animTextures) {
+		//	// tex[j].flags: Usually 16 for static textures, and 0 for animated textures.	
+		//	if (tex[j].flags & TEXTUREUNIT_STATIC) {
+		//		pass.texanim = -1; // no texture animation
+		//	} else {
+		//		pass.texanim = texanimlookup[tex[j].texanimid];
+		//	}
+		//} else {
+		//	pass.texanim = -1; // no texture animation
+		//}
+
+
+
+		
+
+		String texName;
+		Ptr<ModelNode> newModelNode;
+		if (GatherModelType() == ModelType::Character)
+			newModelNode = M2SkinShapeNode::Create();
+		else
+			newModelNode = ShapeNode::Create();
+
+		static int nn=0;
+		String objName;
+		objName.AppendInt(nn++);
+		newModelNode->SetName(objName);
+
+		// Primitive Group
+		//SizeT geoset = this->texPtr[numTexture].op;
+		// texture
+		if (pass.tex <= (int)view->nTex)
+		{
+			/*if (this->texDefPtr[pass.tex].type == 0)
+			{
+				texName.AppendRange((char*)this->mapPtr + this->texDefPtr[nTex].nameOfs, this->texDefPtr[nTex].nameLen);
+				newModelNode->SetString(Attr::DiffMap0, texName);
+			}
+			else*/
+			{
+				// special texture - only on characters and such...
+				newModelNode->SetString(Attr::DiffMap0, String("textures:system/white.dds"));
+			}
+		}
+
+		newModelNode->SetString(Attr::Shader, "shd:static");
+
+		newModelNode->SetFloat4(Attr::BoxCenter, this->vcenter);
+		newModelNode->SetFloat4(Attr::BoxExtents, this->vmax - this->vcenter);
+
+		newModelNode->SetString(Attr::MeshResourceId, lodname);
+		newModelNode->SetInt(Attr::MeshGroupIndex, j);
+
+		if (newModelNode->IsA(M2SkinShapeNode::RTTI))
+		{
+			const Ptr<M2SkinShapeNode>& node = newModelNode.downcast<M2SkinShapeNode>();
+			node->SetString(Attr::Shader, "shd:skinned");
+			node->SetJointArray(frgBoneList[geoset]);
+			node->SetGeoset(ops[geoset]);
+
+			newModelNode->SetParent(characterNode.upcast<ModelNode>());
+			characterNode->AddChild(newModelNode.upcast<ModelNode>());
+		}
+
+		Attr::AttributeContainer attr = newModelNode->GetAttrs();
+		newModelNode->LoadFromAttrs(attr);
+
+		this->model->AttachNode(newModelNode);
+
+	}
+
+	g->Close();
+	g = 0;
+
+	n_delete_array(showGeosets);
 }
 
 } // namespace Models

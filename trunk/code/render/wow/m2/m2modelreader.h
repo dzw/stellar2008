@@ -25,6 +25,41 @@
 //------------------------------------------------------------------------------
 namespace Models
 {
+struct ModelRenderPass {
+	uint32 indexStart, indexCount, vertexStart, vertexEnd;
+	//TextureID texture, texture2;
+	int tex;
+	bool useTex2, useEnvMap, cull, trans, unlit, noZWrite, billboard;
+	float p;
+	
+	int16 texanim, color, opacity, blendmode;
+	uint16 order;
+
+	// Geoset ID
+	int geoset;
+
+	// texture wrapping
+	bool swrap, twrap;
+
+	// colours
+	Math::float4 ocol, ecol;
+
+	bool init(Model *m);
+	void deinit();
+
+	bool operator< (const ModelRenderPass &m) const
+	{
+		// This is the old sort order method which I'm pretty sure is wrong - need to try something else.
+		//return !trans;
+		if (order<m.order)
+			return true;
+		else if (order>m.order)
+			return false;
+		else
+			return blendmode == m.blendmode ? (p<m.p) : (blendmode<m.blendmode);
+	}
+};
+
 class M2ModelReader : public Models::ModelReader
 {
     DeclareClass(M2ModelReader);
@@ -90,7 +125,8 @@ private:
 	Ptr<WOW::M2CharacterNode> CreateCharacterNode();
 	/// 
 	void CreateFragment(int geoset, Util::Array<int>& frgBoneList);
-
+	///
+	void LoadLodMesh();
 	
 	
     Ptr<IO::BinaryReader> binaryReader;
@@ -132,11 +168,24 @@ private:
 	Math::vector vcenter, vmin, vmax;
 
 	int boneLookup[27];
-	int *globalSequences;
+	uint32 *globalSequences;
 
 	Util::FixedArray<Util::Array<int> > frgBoneList;
 
 	Ptr<WOW::M2CharacterNode> characterNode;
+
+
+	struct vfvf 
+	{
+		float x,y,z;
+		float nx,ny,nz;
+		float weights[4];
+		float bones[4];
+		Math::float2 tex;
+	};
+	vfvf *dataPtr;
+
+	Util::Array<Ptr<CoreGraphics::Mesh>> meshs;
 };
 
 //------------------------------------------------------------------------------
