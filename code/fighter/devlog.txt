@@ -1,0 +1,16 @@
+模块说明:
+gamestate	游戏状态，如选择人物、进入游戏、加载地图等
+	charselect		选择人物
+	gamein			在游戏中
+	gameloading		加载地图
+	
+gamemanager	游戏管理模块
+	character		人物管理，包括npc、player、hero、monster、bossmonster
+	helper			帮助
+	item			物品管理
+	move			人物移动管理
+	map				地图管理，如小地图等
+	effect			特效
+	battle			战斗系统
+	interface		界面
+	
