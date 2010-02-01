@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="fighter_win32"
 	ProjectGUID="{90902147-DB19-4BE6-84FB-0016EAE6B31C}"
+	RootNamespace="fighter_win32"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -83,7 +84,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="gdi32.lib shell32.lib user32.lib dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dxerr.lib dinput8.lib xinput.lib d_foundation_win32.lib d_render_win32.lib d_lua_win32.lib d_tinyxml_win32.lib d_zlib_win32.lib d_nebula2_win32.lib d_db_win32.lib d_sqlite_win32.lib d_ddslib_win32.lib LagerPacket.lib"
+				AdditionalDependencies="winmm.lib gdi32.lib shell32.lib user32.lib dbghelp.lib dxguid.lib wsock32.lib rpcrt4.lib wininet.lib d3d9.lib d3dx9.lib dxerr.lib dinput8.lib xinput.lib d_foundation_win32.lib d_render_win32.lib d_lua_win32.lib d_tinyxml_win32.lib d_zlib_win32.lib d_nebula2_win32.lib d_db_win32.lib d_sqlite_win32.lib d_ddslib_win32.lib LagerPacket.lib"
 				OutputFile="..\..\bin\win32\testviewer_d.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
@@ -236,17 +237,77 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc"
 			>
 			<File
+				RelativePath="..\fighter\fcameramanager.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fcameramanager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fighter\fighter.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\fighter\fighterapplication.cc"
+				RelativePath="..\fighter\flevel.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\fighter\fighterapplication.h"
+				RelativePath="..\fighter\flevel.h"
 				>
 			</File>
+			<File
+				RelativePath="..\fighter\fmain.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fmain.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fworldmanager.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fworldmanager.h"
+				>
+			</File>
+			<Filter
+				Name="character"
+				>
+				<File
+					RelativePath="..\fighter\fhero.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fhero.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fnpc.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fnpc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fobject.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fobject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fplayer.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fplayer.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="gamestate"

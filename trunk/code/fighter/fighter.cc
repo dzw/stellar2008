@@ -3,11 +3,11 @@
 //  (C) 2009 cTuo
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "fighter/fighterapplication.h"
+#include "fighter/fmain.h"
 
 ImplementNebulaApplication()
 
-using namespace Tools;
+using namespace Fighter;
 using namespace Util;
 
 //------------------------------------------------------------------------------
