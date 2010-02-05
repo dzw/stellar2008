@@ -265,6 +265,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fighter\fobjectmanager.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fobjectmanager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fighter\fworldmanager.cc"
 				>
 			</File>
@@ -281,6 +289,14 @@
 				</File>
 				<File
 					RelativePath="..\fighter\fhero.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fmonster.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\fighter\fmonster.h"
 					>
 				</File>
 				<File

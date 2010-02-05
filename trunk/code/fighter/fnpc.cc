@@ -5,7 +5,7 @@
 
 namespace Fighter
 {
-ImplementClass(Fighter::FNpc, 'FNPC', Core::RefCounted);
+ImplementClass(Fighter::FNpc, 'FNPC', Fighter::FObject);
 
 using namespace Graphics;
 using namespace Resources;

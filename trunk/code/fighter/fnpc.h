@@ -10,15 +10,12 @@
 		player
 		  hero
 */
-#include "core/refcounted.h"
-#include "core/types.h"
-#include "graphics/modelentity.h"
-#include "graphics/stage.h"
+#include "fobject.h"
 
 //------------------------------------------------------------------------------
 namespace Fighter
 {
-class FNpc : public Core::RefCounted
+class FNpc : public FObject
 {
 	DeclareClass(FNpc);
 public:

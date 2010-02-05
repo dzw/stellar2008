@@ -18,6 +18,14 @@
 //------------------------------------------------------------------------------
 namespace Fighter
 {
+enum ObjectType
+{
+	ObjectType_Hero = 0,
+	ObjectType_Npc,
+	ObjectType_Player,
+	ObjectType_Monster,
+	ObjectType_Num,
+};
 class FObject : public Core::RefCounted
 {
 	DeclareClass(FObject);
@@ -29,9 +37,20 @@ public:
 	
 	virtual void Init();
 	virtual void Clear();
+	virtual void Update();
+
+	BYTE GetObjectType()const;
+	
 private:
 	Ptr<Graphics::ModelEntity> model;
+	BYTE type;
 };
+
+inline BYTE 
+FObject::GetObjectType()const
+{
+	return this->type;
+}
 
 } // namespace Test
 //------------------------------------------------------------------------------

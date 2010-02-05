@@ -23,6 +23,7 @@
 
 #include "fighter/FWorldManager.h"
 #include "fighter/fcameramanager.h"
+#include "fighter/fobjectmanager.h"
 
 //------------------------------------------------------------------------------
 namespace Fighter
@@ -72,6 +73,7 @@ private:
 
 	Ptr<Fighter::FCameraManager> cameraManager;
 	Ptr<Fighter::FWorldManager> worldManager;
+	Ptr<Fighter::FObjectManager> objectManager;
 };
 
 } // namespace Test

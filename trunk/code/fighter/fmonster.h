@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FIGHTER_FHERO_H
-#define FIGHTER_FHERO_H
+#ifndef FIGHTER_FMONSTER_H
+#define FIGHTER_FMONSTER_H
 //------------------------------------------------------------------------------
 /**
 	对象层次关系:
@@ -10,24 +10,24 @@
 		player
 		  hero
 */
-#include "fplayer.h"
+
 
 //------------------------------------------------------------------------------
 namespace Fighter
 {
-class FHero : public FPlayer
+class FMonster : public FNpc
 {
-	DeclareClass(FHero);
+	DeclareClass(FMonster);
 public:
     /// constructor
-    FHero();
+    FMonster();
     /// destructor
-    virtual ~FHero();
+    virtual ~FMonster();
 	
 	virtual void Init();
 	virtual void Clear();
 private:
-	Ptr<CameraEntity> camera;
+	
 };
 
 } // namespace Test
