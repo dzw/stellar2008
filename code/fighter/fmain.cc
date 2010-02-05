@@ -97,6 +97,9 @@ FighterApplication::Open()
 		this->worldManager = FWorldManager::Create();
 		this->worldManager->Open();
 
+		this->objectManager = FObjectManager::Create();
+		this->objectManager->Open();
+
 		//ResourceId modelResId;
 		//if (this->args.HasArg("-n2"))
 		//{
@@ -149,11 +152,15 @@ FighterApplication::Close()
 		this->cameraManager->Close();
 		this->cameraManager = 0;
 	}
-
 	if (this->worldManager.isvalid())
 	{
 		this->worldManager->Close();
 		this->worldManager = 0;
+	}
+	if (this->objectManager.isvalid())
+	{
+		this->objectManager->Close();
+		this->objectManager = 0;
 	}
 
 	GraphicsServer* gfxServer = GraphicsServer::Instance();

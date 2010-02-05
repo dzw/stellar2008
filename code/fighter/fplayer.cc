@@ -5,7 +5,7 @@
 
 namespace Fighter
 {
-ImplementClass(Fighter::FPlayer, 'PLYR', Core::RefCounted);
+ImplementClass(Fighter::FPlayer, 'PLYR', Fighter::FNpc);
 
 using namespace Graphics;
 using namespace Resources;

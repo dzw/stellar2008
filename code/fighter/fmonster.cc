@@ -1,11 +1,11 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 #include "stdneb.h"
-#include "fighter/FObject.h"
+#include "fighter/fmonster.h"
 
 namespace Fighter
 {
-ImplementClass(Fighter::FObject, 'OBJT', Core::RefCounted);
+ImplementClass(Fighter::FMonster, 'MONT', Fighter::FNpc);
 
 using namespace Graphics;
 using namespace Resources;
@@ -13,7 +13,7 @@ using namespace Resources;
 //------------------------------------------------------------------------------
 /**
 */
-FObject::FObject()
+FMonster::FMonster()
 {
     // empty
 }
@@ -21,26 +21,21 @@ FObject::FObject()
 //------------------------------------------------------------------------------
 /**
 */
-FObject::~FObject()
+FMonster::~FMonster()
 {
 
 }
 
 void 
-FObject::Init()
+FMonster::Init()
+{
+
+}
+
+void 
+FMonster::Clear()
 {
 	
-}
-
-void 
-FObject::Clear()
-{
-	
-}
-
-void 
-FObject::Update()
-{
 }
 
 } // namespace Tools
