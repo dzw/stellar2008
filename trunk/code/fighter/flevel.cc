@@ -32,7 +32,7 @@ FLevel::Init(const Ptr<Stage>& s)
 	this->stage = s;
 
 	this->model = ModelEntity::Create();
-	this->model->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
+	this->model->SetResourceId(ResourceId("mdl:examples/ground.n2"));
 	this->stage->AttachEntity(this->model.upcast<GraphicsEntity>());
 }
 

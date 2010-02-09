@@ -249,6 +249,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fighter\finputmanager.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\finputmanager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fighter\flevel.cc"
 				>
 			</File>
@@ -270,6 +278,14 @@
 			</File>
 			<File
 				RelativePath="..\fighter\fobjectmanager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fskillmanager.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\fighter\fskillmanager.h"
 				>
 			</File>
 			<File

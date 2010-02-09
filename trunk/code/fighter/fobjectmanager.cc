@@ -9,9 +9,11 @@
 namespace Fighter
 {
 ImplementClass(Fighter::FObjectManager, 'OBJM', Core::RefCounted);
+ImplementSingleton(Fighter::FObjectManager);
 
 using namespace Graphics;
 using namespace Resources;
+using namespace Util;
 
 //------------------------------------------------------------------------------
 /**
@@ -19,7 +21,7 @@ using namespace Resources;
 FObjectManager::FObjectManager():
 isOpen(false)
 {
-    // empty
+    ConstructSingleton;
 }
 
 //------------------------------------------------------------------------------
@@ -27,7 +29,11 @@ isOpen(false)
 */
 FObjectManager::~FObjectManager()
 {
-
+	if (this->IsOpen())
+    {
+        this->Close();
+    }
+	DestructSingleton;
 }
 
 bool 
@@ -45,16 +51,32 @@ FObjectManager::Close()
 {
 	n_assert(this->IsOpen());
 
-	
+	for (int i = 0; i < ObjectType_Num; i++)
+	{
+		const Array<Ptr<FObject>>& objs = this->objects[i];
+		for (IndexT j = 0; j < objs.Size(); j++)
+		{
+			objs[j]->Clear();
+		}
+		this->objects[i].Clear();
+	}
 	this->isOpen = false;
 }
 
 void 
 FObjectManager::Update()
 {
+	for (int i = 0; i < ObjectType_Num; i++)
+	{
+		const Array<Ptr<FObject>>& objs = this->objects[i];
+		for (IndexT j = 0; j < objs.Size(); j++)
+		{
+			objs[j]->Update();
+		}
+	}
 }
 
-Ptr<FObject> 
+Ptr<FObject>
 FObjectManager::CreateObject(BYTE type)
 {
 	Ptr<FObject> object;
@@ -70,15 +92,24 @@ FObjectManager::CreateObject(BYTE type)
 		object = FPlayer::Create();
 		break;
 	}
-	this->objects[type].Add((DWORD)object, object);
+	object->Init();
 
+	this->objects[type].InsertSorted(object);
 	return object;
 }
 
 void 
 FObjectManager::RemoveObject(const Ptr<FObject>& obj)
 {
-	this->objects[obj->GetObjectType()].Erase((DWORD)obj);
+	if (obj.isvalid())
+	{
+		obj->Clear();
+		IndexT ind = this->objects[obj->GetObjectType()].FindIndex(obj);
+		if (ind != InvalidIndex)
+		{
+			this->objects[obj->GetObjectType()].EraseIndex(ind);
+		}
+	}
 }
 
 } // namespace Tools

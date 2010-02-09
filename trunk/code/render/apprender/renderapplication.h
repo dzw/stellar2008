@@ -55,7 +55,10 @@ public:
     virtual void Close();
     /// run the application
     virtual void Run();
-
+	/// get current absolute time
+    Timing::Time GetTime() const;
+    /// get current frame time
+    Timing::Time GetFrameTime() const;
 private:
     /// update the current time values
     void UpdateTime();
@@ -76,10 +79,7 @@ protected:
     virtual void OnUpdateFrame();
     /// render current frame
     virtual void OnRenderFrame();
-    /// get current absolute time
-    Timing::Time GetTime() const;
-    /// get current frame time
-    Timing::Time GetFrameTime() const;
+    
 
     Ptr<Core::CoreServer> coreServer;
     Ptr<IO::IoServer> ioServer;

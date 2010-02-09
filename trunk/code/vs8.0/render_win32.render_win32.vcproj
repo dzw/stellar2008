@@ -2132,6 +2132,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\render\wow\m2\m2entity.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\render\wow\m2\m2entity.h"
+					>
+				</File>
+				<File
 					RelativePath="..\render\wow\m2\m2modelreader.cc"
 					>
 				</File>
