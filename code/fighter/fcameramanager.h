@@ -3,7 +3,7 @@
 #define FIGHTER_CAMERAMANAGER_H
 //------------------------------------------------------------------------------
 /**
-
+	管理camera动作
 */
 #include "core/refcounted.h"
 #include "core/types.h"

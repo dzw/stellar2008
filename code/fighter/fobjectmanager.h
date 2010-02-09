@@ -40,7 +40,7 @@ public:
 	void RemoveObject(const Ptr<FObject>& obj);
 private:
 	bool isOpen;
-	Util::HashMap<DWORD, Ptr<FObject>, Util::DwordCompare> objects[ObjectType_Num];
+	Util::Array<Ptr<FObject>> objects[ObjectType_Num];
 };
 
 inline bool 

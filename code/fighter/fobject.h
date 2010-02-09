@@ -41,7 +41,7 @@ public:
 
 	BYTE GetObjectType()const;
 	
-private:
+protected:
 	Ptr<Graphics::ModelEntity> model;
 	BYTE type;
 };

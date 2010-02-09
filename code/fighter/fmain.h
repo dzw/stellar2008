@@ -24,6 +24,8 @@
 #include "fighter/FWorldManager.h"
 #include "fighter/fcameramanager.h"
 #include "fighter/fobjectmanager.h"
+#include "fighter/finputmanager.h"
+#include "fighter/fskillmanager.h"
 
 //------------------------------------------------------------------------------
 namespace Fighter
@@ -74,6 +76,8 @@ private:
 	Ptr<Fighter::FCameraManager> cameraManager;
 	Ptr<Fighter::FWorldManager> worldManager;
 	Ptr<Fighter::FObjectManager> objectManager;
+	Ptr<Fighter::FInputManager> inputManager;
+	Ptr<Fighter::FSkillManager> skillManager;
 };
 
 } // namespace Test

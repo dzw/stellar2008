@@ -38,4 +38,9 @@ FNpc::Clear()
 	
 }
 
+void 
+FNpc::SetCurrentAnimation(int id)
+{
+}
+
 } // namespace Tools

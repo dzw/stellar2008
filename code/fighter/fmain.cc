@@ -32,13 +32,14 @@ using namespace Lighting;
 using namespace Math;
 using namespace Input;
 using namespace Frame;
+using namespace IO;
 
 //------------------------------------------------------------------------------
 /**
 */
 FighterApplication::FighterApplication()
 {
-    // empty
+    
 }
 
 //------------------------------------------------------------------------------
@@ -50,6 +51,7 @@ FighterApplication::~FighterApplication()
     {
         this->Close();
     }
+	
 }
 
 //------------------------------------------------------------------------------
@@ -61,6 +63,9 @@ FighterApplication::Open()
     n_assert(!this->IsOpen());
     if (RenderApplication::Open())
     {
+		this->ioServer->SetAssign(Assign("data", "home:export/data"));        
+		this->ioServer->SetAssign(Assign("export", "home:export"));
+
 		GraphicsServer* gfxServer = GraphicsServer::Instance();
 
 		// setup the camera util object
@@ -93,12 +98,19 @@ FighterApplication::Open()
 
 		this->cameraManager = FCameraManager::Create();
 		this->cameraManager->Open(this->view);
+		this->cameraEntity = this->cameraManager->GetCamera();
 
 		this->worldManager = FWorldManager::Create();
 		this->worldManager->Open();
 
 		this->objectManager = FObjectManager::Create();
 		this->objectManager->Open();
+
+		this->inputManager = FInputManager::Create();
+		this->inputManager->Open();
+
+		this->skillManager = FSkillManager::Create();
+		this->skillManager->Open();
 
 		//ResourceId modelResId;
 		//if (this->args.HasArg("-n2"))
@@ -117,9 +129,9 @@ FighterApplication::Open()
 		this->modelEntity->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
 		this->stage->AttachEntity(this->modelEntity.upcast<GraphicsEntity>());*/
 
-		this->terrainEntity = ModelEntity::Create();
+		/*this->terrainEntity = ModelEntity::Create();
 		this->terrainEntity->SetResourceId(ResourceId("mdl:examples/ground.n2"));
-		this->stage->AttachEntity(this->terrainEntity.upcast<GraphicsEntity>());
+		this->stage->AttachEntity(this->terrainEntity.upcast<GraphicsEntity>());*/
 
 		/*this->modelEntity = ModelEntity::Create();
 		this->modelEntity->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
@@ -127,7 +139,7 @@ FighterApplication::Open()
 
 		//this->chaseCaneraUtil.SetEntity(this->modelEntity.upcast<GraphicsEntity>());
 
-		
+		this->objectManager->CreateObject(ObjectType_Hero);
 
         return true;
     }
@@ -147,6 +159,16 @@ FighterApplication::Close()
     this->head   = 0;
 	this->tree	 = 0;*/
 
+	if (this->skillManager.isvalid())
+	{
+		this->skillManager->Close();
+		this->skillManager = 0;
+	}
+	if (this->inputManager.isvalid())
+	{
+		this->inputManager->Close();
+		this->inputManager = 0;
+	}
 	if (this->cameraManager.isvalid())
 	{
 		this->cameraManager->Close();
@@ -184,6 +206,8 @@ FighterApplication::Close()
 void
 FighterApplication::OnProcessInput()
 {
+	this->inputManager->Update();
+
 	// @todo: include frame time!
 	// update the camera from input
 	InputServer* inputServer = InputServer::Instance();
@@ -378,6 +402,8 @@ FighterApplication::OnUpdateFrame()
     lightTransform = matrix44::multiply(matrix44::scaling(75.0f, 75.0f, 100.0f), matrix44::lookatrh(pos, lookatPos, vector::upvec()));
     this->localLight1->SetTransform(lightTransform);
 */
+	this->objectManager->Update();
+
     RenderApplication::OnUpdateFrame();
 }
 

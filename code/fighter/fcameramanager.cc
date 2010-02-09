@@ -5,10 +5,12 @@
 
 namespace Fighter
 {
-ImplementClass(Fighter::FCameraManager, 'FLEL', Core::RefCounted);
+ImplementClass(Fighter::FCameraManager, 'CARM', Core::RefCounted);
+ImplementSingleton(Fighter::FCameraManager);
 
 using namespace Graphics;
 using namespace Resources;
+using namespace Math;
 
 //------------------------------------------------------------------------------
 /**
@@ -16,7 +18,7 @@ using namespace Resources;
 FCameraManager::FCameraManager():
 isOpen(false)
 {
-    // empty
+    ConstructSingleton;
 }
 
 //------------------------------------------------------------------------------
@@ -24,7 +26,11 @@ isOpen(false)
 */
 FCameraManager::~FCameraManager()
 {
-
+if (this->IsOpen())
+    {
+        this->Close();
+    }
+	DestructSingleton;
 }
 
 bool 

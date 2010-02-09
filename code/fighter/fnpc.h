@@ -26,6 +26,7 @@ public:
 	
 	virtual void Init();
 	virtual void Clear();
+	virtual void SetCurrentAnimation(int id);
 private:
 	
 };
