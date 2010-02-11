@@ -40,7 +40,7 @@ public:
 	virtual void Update();
 
 	BYTE GetObjectType()const;
-	
+	const Ptr<Graphics::ModelEntity>& GetEntity()const;
 protected:
 	Ptr<Graphics::ModelEntity> model;
 	BYTE type;
@@ -50,6 +50,12 @@ inline BYTE
 FObject::GetObjectType()const
 {
 	return this->type;
+}
+
+inline const Ptr<Graphics::ModelEntity>& 
+FObject::GetEntity()const
+{
+	return this->model;
 }
 
 } // namespace Test

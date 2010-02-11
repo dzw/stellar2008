@@ -311,7 +311,7 @@ FighterApplication::OnProcessInput()
 		this->mayaCameraUtil.SetZoomIn(zoomIn);
 		this->mayaCameraUtil.SetZoomOut(zoomOut);
 		this->mayaCameraUtil.Update();
-		this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
+		//this->cameraEntity->SetTransform(this->mayaCameraUtil.GetCameraTransform());
 
 
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F5))

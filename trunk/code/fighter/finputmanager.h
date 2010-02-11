@@ -50,7 +50,8 @@ public:
 private:
 	bool ParesRule();
 	void ProcessKeyBuffer(const Util::Array<DWORD>& keys);
-	void ProcessInputResult(DWORD val, DWORD firstKey);
+	void ProcessInputResult(DWORD val);
+	IndexT CheckInput(IndexT input);
 
 	bool isOpen;
 	Util::FixedArray<Util::Array<DWORD> > inputRule;

@@ -11,6 +11,8 @@
 #include "graphics/cameraentity.h"
 #include "graphics/view.h"
 #include "math/vector.h"
+#include "renderutil/chasecamerautil.h"
+#include "fobject.h"
 
 //------------------------------------------------------------------------------
 namespace Fighter
@@ -35,9 +37,16 @@ public:
 
 	const Ptr<Graphics::CameraEntity>& GetCamera()const;
 	Math::vector TransformDirection(const Math::vector& dir);
+	
+	void UpdateCamera(float time);
+	void SetChaseObject(const Ptr<FObject>& obj);
+	void SetCameraOrbit(float x, float y, float time);
+	void SetCameraDistance(float d);
+
 private:
 	bool isOpen;
 	Ptr<Graphics::CameraEntity> camera;
+	RenderUtil::ChaseCameraUtil chaseCaneraUtil;
 };
 
 inline bool 

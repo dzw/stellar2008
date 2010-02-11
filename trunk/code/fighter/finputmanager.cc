@@ -3,6 +3,7 @@
 #include "stdneb.h"
 #include "FinputManager.h"
 #include "fskillmanager.h"
+#include "fcameramanager.h"
 #include "input/keyboard.h"
 #include "input/mouse.h"
 #include "input/gamepad.h"
@@ -25,7 +26,8 @@ using namespace Math;
 /**
 */
 FInputManager::FInputManager():
-isOpen(false)
+isOpen(false),
+preSkill(0)
 {
     ConstructSingleton;
 	
@@ -127,9 +129,7 @@ FInputManager::CheckInvalid(const Util::Array<DWORD>& buffer)const
 	for (SizeT i = 0; i < buffer.Size(); i++)
 	{
 		if (i >= this->inputRule.Size())
-		{
 			break;
-		}
 
 		IndexT index = this->inputRule[i].BinarySearchIndex(buffer[i]);
 		if (index != InvalidIndex)
@@ -141,124 +141,212 @@ FInputManager::CheckInvalid(const Util::Array<DWORD>& buffer)const
 	return val;
 }
 
+IndexT 
+FInputManager::CheckInput(IndexT input)
+{
+	static float intervalTime = 0.35f;
+	
+	FighterApplication* app = (FighterApplication*)FighterApplication::Instance();
+	if ((app->GetTime() - lastTime) > intervalTime)	// 超出间隔时间
+		this->preSkill = 0;
+
+	IndexT val = this->preSkill + input;
+	FSkillManager* skillManager = FSkillManager::Instance();
+	if (skillManager->HasSkillValue(val))
+	{
+		this->preSkill = val;
+		return val;
+	}
+	// 与上个动作不匹配，只做当前动作
+	this->preSkill = 0;
+	if (skillManager->HasSkillValue(input))
+	{
+		this->preSkill = input;
+		return input;
+	}
+	return 0;
+}
+
 void 
 FInputManager::Update()
 {
 	if (!this->hero.isvalid())
 		return;
 
+	FighterApplication* fighterApp = (FighterApplication*)FighterApplication::Instance();
 	InputServer* inputServer = InputServer::Instance();
 	const Ptr<Keyboard>& keyboard = inputServer->GetDefaultKeyboard();
 	const Ptr<Mouse>& mouse = inputServer->GetDefaultMouse();
 
-	FighterApplication* fighterApp = (FighterApplication*)FighterApplication::Instance();
 	Timing::Time curTime = fighterApp->GetTime();
+	if (FCameraManager::HasInstance())
+	{
+		FCameraManager* cameraManager = FCameraManager::Instance();
+		const Math::float2& v = mouse->GetMovement();
+		if (mouse->ButtonPressed(MouseButton::RightButton))
+		{
+			cameraManager->SetCameraOrbit(v.x(), v.y(), fighterApp->GetFrameTime());
+		}
+		if (mouse->WheelForward())
+		{
+			cameraManager->SetCameraDistance(-1.0f);
+		}
+		if (mouse->WheelBackward())
+		{
+			cameraManager->SetCameraDistance(1.0f);
+		}
+		cameraManager->UpdateCamera(curTime);
+	}
+
+	IndexT keyValue = 0;
+	bool isDirKeyDown = false;
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::S))
 	{
 		n_printf("Down S.");
-		InputKey k(SL_WalkDown, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_WalkDown);
+		//ProcessInputResult(SL_WalkDown);
+		isDirKeyDown = true;
+		//InputKey k(SL_WalkDown, curTime);
+		//this->keyBuffer.Append(k);
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::W))
 	{
 		n_printf("Down W.");
-		InputKey k(SL_WalkUp, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_WalkUp);
+		//ProcessInputResult(SL_WalkUp);
+		isDirKeyDown = true;
+		//InputKey k(SL_WalkUp, curTime);
+		//this->keyBuffer.Append(k);
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::A))
 	{
 		n_printf("Down A.");
-		InputKey k(SL_WalkLeft, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_WalkLeft);
+		//ProcessInputResult(SL_WalkLeft);
+		isDirKeyDown = true;
+		//InputKey k(SL_WalkLeft, curTime);
+		//this->keyBuffer.Append(k);
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::D))
 	{
 		n_printf("Down D.");
-		InputKey k(SL_WalkRight, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_WalkRight);
+		//ProcessInputResult(SL_WalkRight);
+		isDirKeyDown = true;
+		//InputKey k(SL_WalkRight, curTime);
+		//this->keyBuffer.Append(k);
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::J))	// 攻击
 	{
 		n_printf("Down J.");
-		InputKey k(SL_Attack, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_Attack);
+		//ProcessInputResult(SL_Attack);
+		//InputKey k(SL_Attack, curTime);
+		//this->keyBuffer.Append(k);
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::K))	// 跳跃
 	{
 		n_printf("Down K.");
-		InputKey k(SL_Jump, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_Jump);
+		//ProcessInputResult(SL_Jump);
+		//InputKey k(SL_Jump, curTime);
+		//this->keyBuffer.Append(k);
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::L))	// 防守
 	{
 		n_printf("Down L.");
-		InputKey k(SL_Defend, curTime);
-		this->keyBuffer.Append(k);
+		keyValue = CheckInput(SL_Defend);
+		//ProcessInputResult(SL_Defend);
+		//InputKey k(SL_Defend, curTime);
+		//this->keyBuffer.Append(k);
 	}
 
 	static Timing::Time tt = 0.35;
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::F2))	// 跳跃
+	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::F2))
 	{
 		tt += 0.05;
 	}
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::F3))	// 防守
+	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::F3))
 	{
 		tt -= 0.05;
 		if (tt < 0.001) tt = 0.0;
 	}
 
-	if (this->keyBuffer.Size() == 0)
+	if (!isDirKeyDown /*this->keyBuffer.Size() == 0*/)
 	{
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::S))
 		{
 			n_printf("S.");
-			Util::Array<DWORD> keys;
-			keys.Append(SL_WalkDown);
-			ProcessKeyBuffer(keys);
+			if (this->preSkill == SL_WalkDown || this->preSkill == SL_RunDown)
+			{
+				keyValue = this->preSkill;
+			}
+			else
+			{
+				keyValue = SL_WalkDown;
+			}
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::W))
 		{
 			n_printf("W.");
-			Util::Array<DWORD> keys;
-			keys.Append(SL_WalkUp);
-			ProcessKeyBuffer(keys);
+			if (this->preSkill == SL_WalkUp || this->preSkill == SL_RunUp)
+			{
+				keyValue = this->preSkill;
+			}
+			else
+			{
+				keyValue = SL_WalkUp;
+			}
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::A))
 		{
 			n_printf("A.");
-			Util::Array<DWORD> keys;
-			keys.Append(SL_WalkLeft);
-			ProcessKeyBuffer(keys);
+			if (this->preSkill == SL_WalkLeft || this->preSkill == SL_RunLeft)
+			{
+				keyValue = this->preSkill;
+			}
+			else
+			{
+				keyValue = SL_WalkLeft;
+			}
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::D))
 		{
 			n_printf("D.");
-			Util::Array<DWORD> keys;
-			keys.Append(SL_WalkRight);
-			ProcessKeyBuffer(keys);
+			if (this->preSkill == SL_WalkRight || this->preSkill == SL_RunRight)
+			{
+				keyValue = this->preSkill;
+			}
+			else
+			{
+				keyValue = SL_WalkRight;
+			}
 		}
 	}
 
-	if (this->keyBuffer.Size() > 0)
-	{
-		Util::Array<DWORD> keys;
-		for (SizeT i = 0; i < this->keyBuffer.Size(); i++)
-		{
-			if (curTime - this->keyBuffer[i].t > tt)
-				keys.Append(this->keyBuffer[i].val);
-		}
-		if (keys.Size() > 0)
-		{
-			n_printf("%f\n", curTime - lastTime);
-			ProcessKeyBuffer(keys);
-			lastTime = curTime;
-		}
-	}
-	else
-	{
-		// stop
-		this->hero->SetCurrentAnimation(50);
-	}
+	ProcessInputResult(keyValue);
+	lastTime = fighterApp->GetTime();
+
+	//if (this->keyBuffer.Size() > 0)
+	//{
+	//	Util::Array<DWORD> keys;
+	//	for (SizeT i = 0; i < this->keyBuffer.Size(); i++)
+	//	{
+	//		if (curTime - this->keyBuffer[i].t > tt)
+	//			keys.Append(this->keyBuffer[i].val);
+	//	}
+	//	if (keys.Size() > 0)
+	//	{
+	//		n_printf("%f\n", curTime - lastTime);
+	//		ProcessKeyBuffer(keys);
+	//		lastTime = curTime;
+	//	}
+	//}
+	//else
+	//{
+	//	// stop
+	//	//this->hero->SetCurrentAnimation(50);
+	//}
 }
 
 //------------------------------------------------------------------------------
@@ -276,7 +364,7 @@ FInputManager::ProcessKeyBuffer(const Util::Array<DWORD>& keys)
 	DWORD val = CheckInvalid(keys);
 	DWORD firstKey = keys[0];
 
-	ProcessInputResult(val, firstKey);
+	ProcessInputResult(val);
 
 	this->keyBuffer.Clear();
 }
@@ -286,9 +374,10 @@ FInputManager::ProcessKeyBuffer(const Util::Array<DWORD>& keys)
 	处理输入
 */
 void
-FInputManager::ProcessInputResult(DWORD val, DWORD firstKey)
+FInputManager::ProcessInputResult(DWORD val)
 {
-	DWORD keyValue = val;
+
+	
 	//// 受击处理
 	//bool isAttached = 调用受击处理函数;
 	//if(isAttached) //如果要处理受击
@@ -307,6 +396,9 @@ FInputManager::ProcessInputResult(DWORD val, DWORD firstKey)
 	//		keyValue =连击动作值;
 	//	}
 	//}
+	
+	IndexT keyValue = val;
+	
 	FSkillManager* skManager = FSkillManager::Instance();
 	SkillInfo skInfo;
 	if (skManager->HasSkillValue(keyValue))
@@ -341,7 +433,7 @@ FInputManager::ProcessInputResult(DWORD val, DWORD firstKey)
 			if (this->preSkill == SL_RunRight)
 			{
 				SkillInfo sk = skManager->GetSkillValue(this->preSkill);
-				this->hero->Walk(vector(1.0f, 0.0f, 0.0f), sk.animName);
+				this->hero->Run(vector(1.0f, 0.0f, 0.0f), sk.animName);
 			}
 			else
 			{
@@ -366,6 +458,8 @@ FInputManager::ProcessInputResult(DWORD val, DWORD firstKey)
 
 	case SL_RunRight:		// 奔跑右
 		{
+			SkillInfo sk = skManager->GetSkillValue(this->preSkill);
+			this->hero->Run(vector(1.0f, 0.0f, 0.0f), sk.animName);
 			//Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
 			//Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
 			break;
