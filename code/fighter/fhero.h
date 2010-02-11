@@ -3,6 +3,10 @@
 #define FIGHTER_FHERO_H
 //------------------------------------------------------------------------------
 /**
+	帧数低的时候卡的历害，走路会跳帧！！！
+
+	主角，唯一
+
 	对象层次关系:
 	object
 	  npc 
@@ -30,9 +34,10 @@ public:
 	virtual void Init();
 	virtual void Clear();
 	virtual void Update();
+	void SetSpeed(float f);
 	virtual void SetCurrentAnimation(int id);
 	void Walk(const Math::vector& dir, const Util::String& animName);
-
+	void Run(const Math::vector& dir, const Util::String& animName);
 protected:
 	Ptr<Graphics::CameraEntity> camera;
 	Math::PFeedbackLoop<Math::vector> smoothedPosition;
