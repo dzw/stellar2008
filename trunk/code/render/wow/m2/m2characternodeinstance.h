@@ -3,17 +3,12 @@
 #define WOW_M2CHARACTERNODEINSTANCE_H
 //------------------------------------------------------------------------------
 /**
-    @class Models::M2CharacterNodeInstance
+    @class WOW::M2CharacterNodeInstance
   
-    The M2CharacterNodeInstance actually renders a skinned shape, and holds
-    all the necessary per-instance state to do so.
-
-    It knows the selected visible skins an active textures for
-    actual rendering.
-    
-    (C) 2007 Radon Labs GmbH
+    (C) 2010 cTuo
 */
 #include "models/nodes/transformnodeinstance.h"
+#include "wow/m2/animmanager.h"
 
 //------------------------------------------------------------------------------
 namespace WOW
@@ -41,6 +36,8 @@ public:
 	const Util::FixedArray<JointInstance> GetJointData()const;
 	///
 	void SetCurAnimID(int anim);
+	void SetAnimManager(AnimManager* m);
+	const AnimManager* GetAnimManager()const;
 protected:
     /// called when attached to ModelInstance
 	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
@@ -53,6 +50,7 @@ protected:
 
 	/// µ±Ç°¶¯»­ID
 	int curAnim;
+	AnimManager* animManager;
 };
 
 //------------------------------------------------------------------------------
@@ -67,7 +65,20 @@ M2CharacterNodeInstance::GetJointData()const
 inline void 
 M2CharacterNodeInstance::SetCurAnimID(int anim)
 {
-	curAnim = anim;
+	if (animManager != 0)
+		animManager->Set(0, anim, true);
+}
+
+inline void 
+M2CharacterNodeInstance::SetAnimManager(AnimManager* m)
+{
+	animManager = m;
+}
+
+inline const AnimManager* 
+M2CharacterNodeInstance::GetAnimManager()const
+{
+	return animManager;
 }
 
 } // namespace Models

@@ -37,6 +37,7 @@ Ptr<ModelNodeInstance>
 M2CharacterNode::CreateNodeInstance() const
 {    
 	Ptr<ModelNodeInstance> newInst = (ModelNodeInstance*) M2CharacterNodeInstance::Create();
+	newInst.downcast<M2CharacterNodeInstance>()->SetAnimManager(animManager);
 	return newInst;
 }
 
@@ -175,11 +176,11 @@ M2CharacterNode::CalcBones(int anim, int time)
 }
 
 void 
-M2CharacterNode::UpdataBones(int anim, int time)
+M2CharacterNode::UpdataBones(int time)
 {
 	animManager->Tick(time);
 
-	CalcBones(anim, animManager->GetFrame());
+	CalcBones(animManager->GetAnim(), animManager->GetFrame());
 }
 
 } // namespace Models

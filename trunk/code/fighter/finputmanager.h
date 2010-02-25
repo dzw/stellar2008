@@ -47,17 +47,18 @@ public:
 	void Update();
 	/// 检查输入是否有效，并返回有效的值
 	DWORD CheckInvalid(const Util::Array<DWORD>& buffer)const;
+
 private:
 	bool ParesRule();
 	void ProcessKeyBuffer(const Util::Array<DWORD>& keys);
-	void ProcessInputResult(DWORD val);
+	void UpdateAction(DWORD val);
+	void UpdatePosition(DWORD keyValue);
 	IndexT CheckInput(IndexT input);
 
 	bool isOpen;
 	Util::FixedArray<Util::Array<DWORD> > inputRule;
 	Ptr<FHero> hero;
 	Util::Array<InputKey> keyBuffer;
-	Timing::Time lastTime;
 	DWORD preSkill;
 };
 

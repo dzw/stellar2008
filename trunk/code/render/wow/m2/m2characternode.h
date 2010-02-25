@@ -38,7 +38,7 @@ public:
 
 	const Util::FixedArray<M2CharJoint>& GetJoints()const;
 	///
-	void UpdataBones(int anim, int time);
+	void UpdataBones(int time);
 protected:
 	friend class Models::M2ModelReader;
 
