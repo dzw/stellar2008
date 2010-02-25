@@ -145,10 +145,12 @@ IndexT
 FInputManager::CheckInput(IndexT input)
 {
 	static float intervalTime = 0.35f;
-	
+	static float lastKeyTime = 0.0f;
+
 	FighterApplication* app = (FighterApplication*)FighterApplication::Instance();
-	if ((app->GetTime() - lastTime) > intervalTime)	// ³¬³ö¼ä¸ôÊ±¼ä
+	if ((app->GetTime() - lastKeyTime) > intervalTime)	// ³¬³ö¼ä¸ôÊ±¼ä
 		this->preSkill = 0;
+	lastKeyTime = (float)app->GetTime();
 
 	IndexT val = this->preSkill + input;
 	FSkillManager* skillManager = FSkillManager::Instance();
@@ -185,7 +187,7 @@ FInputManager::Update()
 		const Math::float2& v = mouse->GetMovement();
 		if (mouse->ButtonPressed(MouseButton::RightButton))
 		{
-			cameraManager->SetCameraOrbit(v.x(), v.y(), fighterApp->GetFrameTime());
+			cameraManager->SetCameraOrbit(v.x(), v.y(), (float)fighterApp->GetFrameTime());
 		}
 		if (mouse->WheelForward())
 		{
@@ -195,14 +197,41 @@ FInputManager::Update()
 		{
 			cameraManager->SetCameraDistance(1.0f);
 		}
-		cameraManager->UpdateCamera(curTime);
+		cameraManager->UpdateCamera((float)curTime);
 	}
 
-	IndexT keyValue = 0;
+	IndexT keyValue    = 0,
+		   actionValue = 0;
 	bool isDirKeyDown = false;
+	
+	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::J))	// ¹¥»÷
+	{
+		n_printf("Down J.\n");
+		actionValue = CheckInput(SL_Attack);
+		//ProcessInputResult(SL_Attack);
+		//InputKey k(SL_Attack, curTime);
+		//this->keyBuffer.Append(k);
+	}
+	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::K))	// ÌøÔ¾
+	{
+		n_printf("Down K.\n");
+		actionValue = CheckInput(SL_Jump);
+		//ProcessInputResult(SL_Jump);
+		//InputKey k(SL_Jump, curTime);
+		//this->keyBuffer.Append(k);
+	}
+	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::L))	// ·ÀÊØ
+	{
+		n_printf("Down L.\n");
+		actionValue = CheckInput(SL_Defend);
+		//ProcessInputResult(SL_Defend);
+		//InputKey k(SL_Defend, curTime);
+		//this->keyBuffer.Append(k);
+	}
+
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::S))
 	{
-		n_printf("Down S.");
+		n_printf("Down S.\n");
 		keyValue = CheckInput(SL_WalkDown);
 		//ProcessInputResult(SL_WalkDown);
 		isDirKeyDown = true;
@@ -211,7 +240,7 @@ FInputManager::Update()
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::W))
 	{
-		n_printf("Down W.");
+		n_printf("Down W.\n");
 		keyValue = CheckInput(SL_WalkUp);
 		//ProcessInputResult(SL_WalkUp);
 		isDirKeyDown = true;
@@ -220,7 +249,7 @@ FInputManager::Update()
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::A))
 	{
-		n_printf("Down A.");
+		n_printf("Down A.\n");
 		keyValue = CheckInput(SL_WalkLeft);
 		//ProcessInputResult(SL_WalkLeft);
 		isDirKeyDown = true;
@@ -229,54 +258,19 @@ FInputManager::Update()
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::D))
 	{
-		n_printf("Down D.");
+		n_printf("Down D.\n");
 		keyValue = CheckInput(SL_WalkRight);
 		//ProcessInputResult(SL_WalkRight);
 		isDirKeyDown = true;
 		//InputKey k(SL_WalkRight, curTime);
 		//this->keyBuffer.Append(k);
 	}
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::J))	// ¹¥»÷
-	{
-		n_printf("Down J.");
-		keyValue = CheckInput(SL_Attack);
-		//ProcessInputResult(SL_Attack);
-		//InputKey k(SL_Attack, curTime);
-		//this->keyBuffer.Append(k);
-	}
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::K))	// ÌøÔ¾
-	{
-		n_printf("Down K.");
-		keyValue = CheckInput(SL_Jump);
-		//ProcessInputResult(SL_Jump);
-		//InputKey k(SL_Jump, curTime);
-		//this->keyBuffer.Append(k);
-	}
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::L))	// ·ÀÊØ
-	{
-		n_printf("Down L.");
-		keyValue = CheckInput(SL_Defend);
-		//ProcessInputResult(SL_Defend);
-		//InputKey k(SL_Defend, curTime);
-		//this->keyBuffer.Append(k);
-	}
-
-	static Timing::Time tt = 0.35;
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::F2))
-	{
-		tt += 0.05;
-	}
-	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::F3))
-	{
-		tt -= 0.05;
-		if (tt < 0.001) tt = 0.0;
-	}
 
 	if (!isDirKeyDown /*this->keyBuffer.Size() == 0*/)
 	{
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::S))
 		{
-			n_printf("S.");
+			n_printf("Press S.\n");
 			if (this->preSkill == SL_WalkDown || this->preSkill == SL_RunDown)
 			{
 				keyValue = this->preSkill;
@@ -288,7 +282,7 @@ FInputManager::Update()
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::W))
 		{
-			n_printf("W.");
+			n_printf("Press W.\n");
 			if (this->preSkill == SL_WalkUp || this->preSkill == SL_RunUp)
 			{
 				keyValue = this->preSkill;
@@ -300,7 +294,7 @@ FInputManager::Update()
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::A))
 		{
-			n_printf("A.");
+			n_printf("Press A.\n");
 			if (this->preSkill == SL_WalkLeft || this->preSkill == SL_RunLeft)
 			{
 				keyValue = this->preSkill;
@@ -312,7 +306,7 @@ FInputManager::Update()
 		}
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::D))
 		{
-			n_printf("D.");
+			n_printf("Press D.\n");
 			if (this->preSkill == SL_WalkRight || this->preSkill == SL_RunRight)
 			{
 				keyValue = this->preSkill;
@@ -324,8 +318,22 @@ FInputManager::Update()
 		}
 	}
 
-	ProcessInputResult(keyValue);
-	lastTime = fighterApp->GetTime();
+	if (keyValue != 0)
+	{
+		UpdatePosition(keyValue);
+	}
+
+	if (actionValue != 0)
+	{
+		UpdateAction(actionValue);
+	}
+	else if (keyValue != 0)
+	{
+		UpdateAction(keyValue);
+	}
+
+	
+	//lastTime = fighterApp->GetTime();
 
 	//if (this->keyBuffer.Size() > 0)
 	//{
@@ -356,7 +364,7 @@ FInputManager::Update()
 void
 FInputManager::ProcessKeyBuffer(const Util::Array<DWORD>& keys)
 {
-	if (keys.Size() == 0)
+	/*if (keys.Size() == 0)
 	{
 		return;
 	}
@@ -366,7 +374,7 @@ FInputManager::ProcessKeyBuffer(const Util::Array<DWORD>& keys)
 
 	ProcessInputResult(val);
 
-	this->keyBuffer.Clear();
+	this->keyBuffer.Clear();*/
 }
 
 //------------------------------------------------------------------------------
@@ -374,7 +382,7 @@ FInputManager::ProcessKeyBuffer(const Util::Array<DWORD>& keys)
 	´¦ÀíÊäÈë
 */
 void
-FInputManager::ProcessInputResult(DWORD val)
+FInputManager::UpdateAction(DWORD keyValue)
 {
 
 	
@@ -396,8 +404,6 @@ FInputManager::ProcessInputResult(DWORD val)
 	//		keyValue =Á¬»÷¶¯×÷Öµ;
 	//	}
 	//}
-	
-	IndexT keyValue = val;
 	
 	FSkillManager* skManager = FSkillManager::Instance();
 	SkillInfo skInfo;
@@ -430,15 +436,99 @@ FInputManager::ProcessInputResult(DWORD val)
 	case SL_WalkRight:		// ÓÒ
 		{
 			// ÔÚÅÜµÄ×´Ì¬
-			if (this->preSkill == SL_RunRight)
+			/*if (this->preSkill == SL_RunRight)
 			{
 				SkillInfo sk = skManager->GetSkillValue(this->preSkill);
 				this->hero->Run(vector(1.0f, 0.0f, 0.0f), sk.animName);
 			}
-			else
+			else*/
 			{
 				this->hero->Walk(vector(1.0f, 0.0f, 0.0f), skInfo.animName);
 			}
+			break;
+		}
+	case SL_Attack:		// ¹¥(A)
+		{
+			this->hero->Attack(vector(0.0f, 0.0f, 0.0f), skInfo.animName);
+			break;
+		}
+	case SL_Jump:		// Ìø(J)
+		{
+			bool isRuning = false;
+			if (this->preSkill == SL_RunRight || this->preSkill == SL_RunLeft ||
+				this->preSkill == SL_RunDown || this->preSkill == SL_RunUp)
+			{
+				isRuning = true;
+			}
+			this->hero->Jump(vector(0.0f, 0.0f, 0.0f), skInfo.animName, isRuning);
+			break;
+		}
+	case SL_Defend:		// ·À(D)
+		{
+			this->hero->Defend(vector(0.0f, 0.0f, 0.0f), skInfo.animName);
+			break;
+		}
+
+	case SL_RunRight:		// ±¼ÅÜÓÒ
+		{
+			//SkillInfo sk = skManager->GetSkillValue(this->preSkill);
+			this->hero->Run(vector(1.0f, 0.0f, 0.0f), skInfo.animName);
+			//Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
+			//Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
+			break;
+		}
+	case SL_RunLeft:		// ±¼ÅÜ×ó
+		{
+			this->hero->Run(vector(-1.0f, 0.0f, 0.0f), skInfo.animName);
+			break;
+		}
+	case SL_RunDown:		
+		{
+			this->hero->Run(vector(0.0f, 0.0f, -1.0f), skInfo.animName);
+			break;
+		}
+	case SL_RunUp:
+		{
+			this->hero->Run(vector(0.0f, 0.0f, 1.0f), skInfo.animName);
+			break;
+		}
+	}
+}
+
+void
+FInputManager::UpdatePosition(DWORD keyValue)
+{
+	n_assert(this->hero.isvalid());
+	
+	float speed = -3.0f;
+	Math::vector dir = Math::vector::nullvec();
+	FSkillManager* skManager = FSkillManager::Instance();
+	SkillInfo skInfo;
+	if (skManager->HasSkillValue(keyValue))
+	{
+		skInfo = skManager->GetSkillValue(keyValue);
+	}
+
+	switch(skInfo.keyValue)
+	{
+	case SL_WalkUp:		// ÉÏ
+		{
+			dir.set(0.0f, 0.0f, 1.0f);
+			break;
+		}
+	case SL_WalkDown:		// ÏÂ
+		{
+			dir.set(0.0f, 0.0f, -1.0f);
+			break;
+		}
+	case SL_WalkLeft:		// ×ó
+		{
+			dir.set(-1.0f, 0.0f, 0.0f);
+			break;
+		}
+	case SL_WalkRight:		// ÓÒ
+		{
+			dir.set(1.0f, 0.0f, 0.0f);
 			break;
 		}
 	case SL_Attack:		// ¹¥(A)
@@ -458,25 +548,34 @@ FInputManager::ProcessInputResult(DWORD val)
 
 	case SL_RunRight:		// ±¼ÅÜÓÒ
 		{
-			SkillInfo sk = skManager->GetSkillValue(this->preSkill);
-			this->hero->Run(vector(1.0f, 0.0f, 0.0f), sk.animName);
+			speed = -8.0f;
+			//SkillInfo sk = skManager->GetSkillValue(this->preSkill);
+			dir.set(1.0f, 0.0f, 0.0f);
 			//Graphics::ActorEntity* Entity = this->GetGraphicsEntity();
 			//Entity->SetBaseAnimation(skInfo.animName, 0.2f, 0.0f, true, true, 0.2f);
 			break;
 		}
 	case SL_RunLeft:		// ±¼ÅÜ×ó
 		{
+			speed = -8.0f;
+			dir.set(-1.0f, 0.0f, 0.0f);
 			break;
 		}
 	case SL_RunDown:		
 		{
+			speed = -8.0f;
+			dir.set(0.0f, 0.0f, -1.0f);
 			break;
 		}
 	case SL_RunUp:
 		{
+			speed = -8.0f;
+			dir.set(0.0f, 0.0f, 1.0f);
 			break;
 		}
 	}
+	this->hero->SetPosition(dir);
+	this->hero->SetSpeed(speed);
 }
 
 } // namespace Tools

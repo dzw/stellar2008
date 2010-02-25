@@ -1,3 +1,7 @@
+12:05 2010-2-10
+参考u3: FD3DSceneRenderer::BuildBatches做批次优化
+所有特效可能过把自己的模型导进fx composer调效果，再导出shader,不是可以直接使用了？！！！！！什么效果都可以出来了!
+
 16:36 2010-1-25
 win32inputserver中FindWindow用的参数在多开情况下会有问题。
 

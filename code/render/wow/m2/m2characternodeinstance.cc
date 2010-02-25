@@ -26,7 +26,7 @@ using namespace Util;
 /**
 */
 M2CharacterNodeInstance::M2CharacterNodeInstance():
-curAnim(54)
+animManager(0)
 {
 }
 
@@ -77,7 +77,7 @@ M2CharacterNodeInstance::Update()
 		lastTime = timeGetTime();
 
 		//float tt = modelInstance->GetTime();	// 要换成整型timeGetTime
-		charNode->UpdataBones(curAnim, ddt);
+		charNode->UpdataBones(ddt);
 
 		const FixedArray<M2CharJoint>& j = charNode->GetJoints();
 		for (SizeT i = 0; i < joints.Size(); i++)

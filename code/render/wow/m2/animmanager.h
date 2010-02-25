@@ -48,6 +48,7 @@ class AnimManager {
 	float Speed;			// The speed of which to multiply the time given for Tick();
 	float mouthSpeed;
 
+	bool curAnimFinish;		// 当前动画播放结束
 public:
 	AnimManager(ModelAnimation *anim);
 	~AnimManager();
@@ -104,7 +105,15 @@ public:
 
 	int GetTimeDiff();
 	void SetTimeDiff(int i);
+
+	bool IsCurAnimFinish()const;
 };
+
+inline bool
+AnimManager::IsCurAnimFinish()const
+{
+	return this->curAnimFinish;
+}
 
 }; // namespace Nebula2
 //------------------------------------------------------------------------------

@@ -31,6 +31,8 @@ AnimManager::AnimManager(ModelAnimation *anim) {
 	mouthSpeed = 1.0f;
 	
 	Paused = false;
+
+	curAnimFinish = false;
 }
 
 AnimManager::~AnimManager() {
@@ -65,6 +67,8 @@ void AnimManager::Set(short index, unsigned int id, short loops) {
 
 	if (index+1 > Count)
 		Count = index+1;
+
+	curAnimFinish = false;
 }
 
 void AnimManager::Play() {
@@ -118,6 +122,8 @@ void AnimManager::Next() {
 #ifdef WotLK
 	TotalFrames = GetFrameCount();
 #endif
+
+	curAnimFinish = true;
 }
 
 void AnimManager::Prev() {
