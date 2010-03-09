@@ -16,6 +16,14 @@
 namespace WOW
 {
 //------------------------------------------------------------------------------
+struct ActionState
+{
+	int index;
+	int animTimeLength;
+	int animTime;
+	float playSpeed;
+	ActionState():index(0),animTimeLength(0),animTime(0),playSpeed(1.0f){}
+};
 
 struct AnimInfo {
 	short Loops;
@@ -49,6 +57,12 @@ class AnimManager {
 	float mouthSpeed;
 
 	bool curAnimFinish;		// 当前动画播放结束
+
+	AnimParam animParam;
+	ActionState curAction;
+	ActionState fadeoutAction;
+	int fadeoutTime;
+	int fadeoutTimeRemain;
 public:
 	AnimManager(ModelAnimation *anim);
 	~AnimManager();
@@ -107,6 +121,9 @@ public:
 	void SetTimeDiff(int i);
 
 	bool IsCurAnimFinish()const;
+
+	AnimParam& GetAnimParam();
+	void CreateAction(int actionindex, DWORD fadeout);
 };
 
 inline bool
@@ -115,6 +132,12 @@ AnimManager::IsCurAnimFinish()const
 	return this->curAnimFinish;
 }
 
-}; // namespace Nebula2
+inline AnimParam& 
+AnimManager::GetAnimParam()
+{
+	return this->animParam;
+}
+
+}; 
 //------------------------------------------------------------------------------
 #endif

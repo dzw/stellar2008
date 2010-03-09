@@ -18,6 +18,7 @@
 #include "graphics/cameraentity.h"
 #include "math/pfeedbackloop.h"
 #include "math/angularpfeedbackloop.h"
+#include "util/queue.h"
 
 //------------------------------------------------------------------------------
 namespace Fighter
@@ -28,6 +29,7 @@ enum AnimID
 	AID_Idle		= 50,
 	AID_Walk		= 54,
 	AID_Run			= 53,
+	AID_RunAttack	= 4,
 	AID_JumpStart	= 61,
 	AID_Jump		= 64,
 	AID_JumpEnd		= 63, 
@@ -47,7 +49,8 @@ public:
 	virtual void Init();
 	virtual void Clear();
 	virtual void Update();
-	void SetPosition(const Math::vector& dir);
+	void SetPosition(const Math::vector& dir, float dist=1.0f);
+	void SetDirection(const Math::vector& dir);
 	void SetSpeed(float f);
 	virtual void SetCurrentAnimation(int id);
 	void Walk(const Math::vector& dir, const Util::String& animName);
@@ -55,6 +58,7 @@ public:
 	void Jump(const Math::vector& dir, const Util::String& animName, bool isRuning);
 	void Defend(const Math::vector& dir, const Util::String& animName);
 	void Attack(const Math::vector& dir, const Util::String& animName);
+	void Move(float dist);
 protected:
 	void NextAnim(BYTE action);
 
@@ -63,6 +67,13 @@ protected:
 	Math::AngularPFeedbackLoop smoothedHeading;
 	Math::vector lookatDirection;
 	int curAnim;
+	Math::vector curDir;
+	//float curSpeed;
+
+
+	// param for debug 
+	float dbgSpeed,
+		  dbgMove;
 };
 
 } // namespace Test

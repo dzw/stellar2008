@@ -60,6 +60,7 @@ private:
 	Ptr<FHero> hero;
 	Util::Array<InputKey> keyBuffer;
 	DWORD preSkill;
+	bool stopMoving;
 };
 
 inline bool 

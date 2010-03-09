@@ -674,5 +674,17 @@ struct ModelAttachmentDef {
 		
 };
 
+struct AnimParam
+{
+	int actionIndex1;
+	int actionIndex2;
+	int animTime1;
+	int animTime2;
+	int secondaryIndex1;
+	int secondaryTime1;
+	float lerpValue;
+	AnimParam():actionIndex1(-1),actionIndex2(-1),animTime1(0),animTime2(0),
+		secondaryIndex1(0),secondaryTime1(0),lerpValue(0.0f){}
+};
 #pragma pack(pop)
 #endif

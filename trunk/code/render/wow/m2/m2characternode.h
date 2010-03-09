@@ -43,7 +43,7 @@ protected:
 	friend class Models::M2ModelReader;
 
 	/// update bones
-	void CalcBones(int anim, int time);
+	void CalcBones();
 
 	Util::FixedArray<M2CharJoint> bones;
 	ModelAnimation* anims;
