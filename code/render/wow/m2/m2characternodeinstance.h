@@ -35,9 +35,10 @@ public:
 	/// get joint data
 	const Util::FixedArray<JointInstance> GetJointData()const;
 	///
-	void SetCurAnimID(int anim);
+	void SetCurAnimID(int anim, int fadeout = 500);
 	void SetAnimManager(AnimManager* m);
 	const AnimManager* GetAnimManager()const;
+	void SetSecondaryAnimID(int anim);
 protected:
     /// called when attached to ModelInstance
 	virtual void OnAttachToModelInstance(const Ptr<Models::ModelInstance>& inst, const Ptr<Models::ModelNode>& node, const Ptr<Models::ModelNodeInstance>& parentNodeInst);
@@ -63,10 +64,19 @@ M2CharacterNodeInstance::GetJointData()const
 }
 
 inline void 
-M2CharacterNodeInstance::SetCurAnimID(int anim)
+M2CharacterNodeInstance::SetCurAnimID(int anim, int fadeout)
+{
+	//if (animManager != 0)
+	//	animManager->Set(0, anim, true);
+	if (animManager != 0)
+		animManager->CreateAction(anim, fadeout);
+}
+
+inline void
+M2CharacterNodeInstance::SetSecondaryAnimID(int anim)
 {
 	if (animManager != 0)
-		animManager->Set(0, anim, true);
+		animManager->SetSecondary(anim);
 }
 
 inline void 

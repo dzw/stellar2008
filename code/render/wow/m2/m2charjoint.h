@@ -22,6 +22,7 @@
 #include "wow/m2/animation/animated.h"
 #include "wow/m2/animation/quaternion.h"
 #include "wow/m2/animation/vec3d.h"
+#include "wow/m2/modelheaders.h"
 
 namespace WOW
 {
@@ -33,7 +34,10 @@ public:
     M2CharJoint();
     /// destructor
     ~M2CharJoint();
-    void Evaluate(M2CharJoint* allbones, int anim, int time, bool rotate = true);
+    void Evaluate(M2CharJoint* allbones, 
+					  int anim1, int animTime1,
+					  int anim2, int animTime2,
+					  float lerpValue, bool rotate = true);
 	
 #ifdef WotLK
 	void Init(const Ptr<IO::Stream> f, ModelBoneDef &b, uint32 *global, const Ptr<IO::Stream> *animfiles);
@@ -98,64 +102,139 @@ M2CharJoint::ClearUptodateFlag()
     uptodate!
 */
 inline void
-M2CharJoint::Evaluate(M2CharJoint* allbones, int anim, int time, bool rotate)
+M2CharJoint::Evaluate(M2CharJoint* allbones, 
+					  int anim1, int animTime1,
+					  int anim2, int animTime2,
+					  float lerpValue, bool rotate)
 {
     if (this->calc)
 		return;
         
 	Matrix m;
-	Quaternion q;
+	Quaternion q1,q2;
+	Vec3D tr1,tr2,
+		  sc1, sc2;
+	/*int anim1 = animParam.actionIndex1;
+	int anim2 = animParam.actionIndex2;
+	int animTime1 = animParam.animTime1;
+	int animTime2 = animParam.animTime2;
+	float lerpValue = animParam.lerpValue;*/
 
-	bool tr = rot.uses(anim) || scale.uses(anim) || trans.uses(anim) || billboard;
-	if (tr) {
+	if (trans.uses(anim1)) 
+	{
+		tr1 = trans.getValue(anim1, animTime1);
+	}
+	if (trans.uses(anim2)) 
+	{
+		if (trans.uses(anim1))
+		{
+			tr2 = trans.getValue(anim2, animTime2);
+			D3DXVec3Lerp((D3DXVECTOR3*)&tr1, (CONST D3DXVECTOR3*)&tr1, (CONST D3DXVECTOR3*)&tr2, lerpValue);
+		}
+		else
+		{
+			tr1 = trans.getValue(anim2, animTime2);
+		}
+	}
+
+	if (rot.uses(anim1) && rotate) 
+	{
+		q1 = rot.getValue(anim1, animTime1);
+	}
+	if (rot.uses(anim2) && rotate) 
+	{
+		if (rot.uses(anim1) && rotate)
+		{
+			q2 = rot.getValue(anim2, animTime2);
+			D3DXQuaternionSlerp((D3DXQUATERNION*)&q1,(CONST D3DXQUATERNION *)&q1,(CONST D3DXQUATERNION *)&q2,lerpValue);
+		}
+		else
+		{
+			q1 = rot.getValue(anim2, animTime2);
+		}
+	}
+	if (scale.uses(anim1)) 
+	{
+		sc1 = scale.getValue(anim1, animTime1);
+	}
+	if (scale.uses(anim2)) 
+	{
+		if (scale.uses(anim1))
+		{
+			sc2 = scale.getValue(anim2, animTime2);
+			D3DXVec3Lerp((D3DXVECTOR3*)&sc1, (CONST D3DXVECTOR3*)&sc1, (CONST D3DXVECTOR3*)&sc2, lerpValue);
+		}
+		else
+		{
+			sc1 = scale.getValue(anim2, animTime2);
+		}
+	}
+	bool bTrans = trans.uses(anim1) || trans.uses(anim2);
+	bool bRotate = (rot.uses(anim1) || rot.uses(anim2)) && rotate;
+	bool bScale = scale.uses(anim1) || scale.uses(anim2);
+
+	if (bTrans || bRotate || bScale)
+	{
 		m.translation(pivot);
-
-		if (trans.uses(anim)) {
-			Vec3D tr = trans.getValue(anim, time);
-			m *= Matrix::newTranslation(tr);
-		}
-
-		if (rot.uses(anim) && rotate) {
-			q = rot.getValue(anim, time);
-			m *= Matrix::newQuatRotate(q);
-		}
-
-		if (scale.uses(anim)) {
-			Vec3D sc = scale.getValue(anim, time);
-			m *= Matrix::newScale(sc);
-		}
-
-		//if (billboard) {			
-		//	float modelview[16];
-		//	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
-
-		//	Vec3D vRight = Vec3D(modelview[0], modelview[4], modelview[8]);
-		//	Vec3D vUp = Vec3D(modelview[1], modelview[5], modelview[9]); // Spherical billboarding
-		//	//Vec3D vUp = Vec3D(0,1,0); // Cylindrical billboarding
-		//	vRight = vRight * -1;
-		//	m.m[0][2] = vRight.x;
-		//	m.m[1][2] = vRight.y;
-		//	m.m[2][2] = vRight.z;
-		//	m.m[0][1] = vUp.x;
-		//	m.m[1][1] = vUp.y;
-		//	m.m[2][1] = vUp.z;
-		//}
-
+		if (bTrans)
+			m *= Matrix::newTranslation(tr1);
+		if (bRotate) 
+			m *= Matrix::newQuatRotate(q1);
+		if (bScale)
+			m *= Matrix::newScale(sc1);
 		m *= Matrix::newTranslation(pivot*-1.0f);
+	}
+	else m.unit();
 
-	} else m.unit();
+	//bool tr1 = rot.uses(anim1) || scale.uses(anim1) || trans.uses(anim1) || billboard;
+	//if (tr1) {
+	//	m.translation(pivot);
+
+	//	if (trans.uses(anim1)) {
+	//		tr = trans.getValue(anim1, animTime1);
+	//		m *= Matrix::newTranslation(tr);
+	//	}
+
+	//	if (rot.uses(anim1) && rotate) {
+	//		q = rot.getValue(anim1, animTime1);
+	//		m *= Matrix::newQuatRotate(q);
+	//	}
+
+	//	if (scale.uses(anim1)) {
+	//		sc = scale.getValue(anim1, animTime1);
+	//		m *= Matrix::newScale(sc);
+	//	}
+
+	//	//if (billboard) {			
+	//	//	float modelview[16];
+	//	//	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+
+	//	//	Vec3D vRight = Vec3D(modelview[0], modelview[4], modelview[8]);
+	//	//	Vec3D vUp = Vec3D(modelview[1], modelview[5], modelview[9]); // Spherical billboarding
+	//	//	//Vec3D vUp = Vec3D(0,1,0); // Cylindrical billboarding
+	//	//	vRight = vRight * -1;
+	//	//	m.m[0][2] = vRight.x;
+	//	//	m.m[1][2] = vRight.y;
+	//	//	m.m[2][2] = vRight.z;
+	//	//	m.m[0][1] = vUp.x;
+	//	//	m.m[1][1] = vUp.y;
+	//	//	m.m[2][1] = vUp.z;
+	//	//}
+
+	//	m *= Matrix::newTranslation(pivot*-1.0f);
+	//} else m.unit();
 
 	if (parent > -1) {
-		allbones[parent].Evaluate(allbones, anim, time, rotate);
+		allbones[parent].Evaluate(allbones, anim1, animTime1, anim2, animTime2, lerpValue, rotate);
 		mat = allbones[parent].mat * m;
 	} else mat = m;
 
 	// transform matrix for normal vectors ... ??
-	if (rot.uses(anim) && rotate) {
+	if (bRotate) {
 		if (parent>=0)
-			mrot = allbones[parent].mrot * Matrix::newQuatRotate(q);
+			mrot = allbones[parent].mrot * Matrix::newQuatRotate(q1);
 		else
-			mrot = Matrix::newQuatRotate(q);
+			mrot = Matrix::newQuatRotate(q1);
 	} else mrot.unit();
 
 	transPivot = mat * pivot;

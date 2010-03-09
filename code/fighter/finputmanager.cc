@@ -211,6 +211,7 @@ FInputManager::Update()
 		//ProcessInputResult(SL_Attack);
 		//InputKey k(SL_Attack, curTime);
 		//this->keyBuffer.Append(k);
+		stopMoving = false;
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::K))	// ÌøÔ¾
 	{
@@ -219,6 +220,7 @@ FInputManager::Update()
 		//ProcessInputResult(SL_Jump);
 		//InputKey k(SL_Jump, curTime);
 		//this->keyBuffer.Append(k);
+		//stopMoving = false;
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::L))	// ·ÀÊØ
 	{
@@ -227,6 +229,7 @@ FInputManager::Update()
 		//ProcessInputResult(SL_Defend);
 		//InputKey k(SL_Defend, curTime);
 		//this->keyBuffer.Append(k);
+		stopMoving = false;
 	}
 
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::S))
@@ -237,6 +240,7 @@ FInputManager::Update()
 		isDirKeyDown = true;
 		//InputKey k(SL_WalkDown, curTime);
 		//this->keyBuffer.Append(k);
+		stopMoving = true;
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::W))
 	{
@@ -246,6 +250,7 @@ FInputManager::Update()
 		isDirKeyDown = true;
 		//InputKey k(SL_WalkUp, curTime);
 		//this->keyBuffer.Append(k);
+		stopMoving = true;
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::A))
 	{
@@ -255,6 +260,7 @@ FInputManager::Update()
 		isDirKeyDown = true;
 		//InputKey k(SL_WalkLeft, curTime);
 		//this->keyBuffer.Append(k);
+		stopMoving = true;
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::D))
 	{
@@ -264,9 +270,10 @@ FInputManager::Update()
 		isDirKeyDown = true;
 		//InputKey k(SL_WalkRight, curTime);
 		//this->keyBuffer.Append(k);
+		stopMoving = true;
 	}
 
-	if (!isDirKeyDown /*this->keyBuffer.Size() == 0*/)
+	if (!isDirKeyDown && stopMoving/*this->keyBuffer.Size() == 0*/)
 	{
 		if (inputServer->GetDefaultKeyboard()->KeyPressed(Input::Key::S))
 		{
@@ -533,6 +540,7 @@ FInputManager::UpdatePosition(DWORD keyValue)
 		}
 	case SL_Attack:		// ¹¥(A)
 		{
+			//dir = curDir * 0.1f;
 			break;
 		}
 	case SL_Jump:		// Ìø(J)

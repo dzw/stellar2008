@@ -33,6 +33,10 @@ AnimManager::AnimManager(ModelAnimation *anim) {
 	Paused = false;
 
 	curAnimFinish = false;
+
+	fadeoutTimeRemain = 0;
+	fadeoutTime = 1;
+	CreateAction(0, 0);
 }
 
 AnimManager::~AnimManager() {
@@ -123,7 +127,7 @@ void AnimManager::Next() {
 	TotalFrames = GetFrameCount();
 #endif
 
-	curAnimFinish = true;
+	//curAnimFinish = true;
 }
 
 void AnimManager::Prev() {
@@ -182,6 +186,43 @@ int AnimManager::Tick(int time) {
 		return 1;
 	}
 
+
+	curAction.animTime += time*curAction.playSpeed;
+	if (curAction.animTime > curAction.animTimeLength)
+	{
+		curAction.animTime = 0;//curAction.animTimeLength;
+		curAnimFinish = true;
+	}
+	if (fadeoutTimeRemain > 0)
+	{
+		fadeoutTimeRemain -= time;
+		if (fadeoutTimeRemain <= 0)
+		{
+			fadeoutAction.index = -1;
+			fadeoutTimeRemain = 0;
+			fadeoutTime = 1;
+		}
+		else
+		{
+			fadeoutAction.animTime += time * fadeoutAction.playSpeed;
+			if (fadeoutAction.animTime > fadeoutAction.animTimeLength)
+			{
+				fadeoutAction.animTime = fadeoutAction.animTimeLength;
+				/*fadeoutAction.index = -1;
+				fadeoutTimeRemain = 0;*/
+			}
+		}
+	}
+
+	animParam.actionIndex1 = curAction.index;
+	animParam.actionIndex2 = fadeoutAction.index;
+	animParam.animTime1 = curAction.animTime;
+	animParam.animTime2 = fadeoutAction.animTime;
+	animParam.lerpValue = (float)fadeoutTimeRemain / (float)fadeoutTime;
+	animParam.secondaryIndex1 = AnimIDSecondary;
+	animParam.secondaryTime1 =  FrameSecondary;
+
+
 	return 0;
 }
 
@@ -231,6 +272,39 @@ void AnimManager::Clear() {
 	Count = 0;
 	CurLoop = 0;
 	Frame = 0;
+}
+
+void AnimManager::CreateAction(int actionindex, DWORD fadeout)
+{
+	if (curAction.index == actionindex)
+		return;
+
+	// 淡出处理
+	if (fadeout > 0)
+	{
+		fadeoutAction.index = curAction.index;
+		fadeoutAction.animTime = curAction.animTime;
+		fadeoutAction.animTimeLength = curAction.animTimeLength;
+		fadeoutAction.playSpeed = curAction.playSpeed;
+		fadeoutTime = fadeout;
+		fadeoutTimeRemain = fadeout;
+	}
+	else
+	{
+		fadeoutTime = 1;
+		fadeoutTimeRemain = 0;
+		fadeoutAction.index = -1;
+	}
+	if (fadeoutTime < 0) fadeoutTime = 1;
+
+	// 新动作
+	uint32 animLength = anims[actionindex].timeEnd - anims[actionindex].timeStart;
+	curAction.index = actionindex;
+	curAction.animTimeLength = animLength;
+	curAction.animTime = 0;
+	curAction.playSpeed = Speed;
+
+	curAnimFinish = false;
 }
 
 }; // namespace Nebula2
