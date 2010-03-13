@@ -37,6 +37,7 @@ AnimManager::AnimManager(ModelAnimation *anim) {
 	fadeoutTimeRemain = 0;
 	fadeoutTime = 1;
 	CreateAction(0, 0);
+	attachAction = -1;
 }
 
 AnimManager::~AnimManager() {
@@ -186,11 +187,10 @@ int AnimManager::Tick(int time) {
 		return 1;
 	}
 
-
 	curAction.animTime += time*curAction.playSpeed;
 	if (curAction.animTime > curAction.animTimeLength)
 	{
-		curAction.animTime = 0;//curAction.animTimeLength;
+		curAction.animTime = curAction.animTimeLength;
 		curAnimFinish = true;
 	}
 	if (fadeoutTimeRemain > 0)
@@ -222,6 +222,12 @@ int AnimManager::Tick(int time) {
 	animParam.secondaryIndex1 = AnimIDSecondary;
 	animParam.secondaryTime1 =  FrameSecondary;
 
+	if (curAnimFinish && this->attachAction != -1)
+	{
+		n_printf("attach: %d\n", attachAction);
+		CreateAction(this->attachAction, this->attachFadeout);
+		ClearAttachAction();
+	}
 
 	return 0;
 }
@@ -277,7 +283,12 @@ void AnimManager::Clear() {
 void AnimManager::CreateAction(int actionindex, DWORD fadeout)
 {
 	if (curAction.index == actionindex)
+	{
+		curAnimFinish = false;
+		if (curAction.animTime >= curAction.animTimeLength)
+			curAction.animTime = 0;
 		return;
+	}
 
 	// 淡出处理
 	if (fadeout > 0)
@@ -296,15 +307,27 @@ void AnimManager::CreateAction(int actionindex, DWORD fadeout)
 		fadeoutAction.index = -1;
 	}
 	if (fadeoutTime < 0) fadeoutTime = 1;
-
-	// 新动作
-	uint32 animLength = anims[actionindex].timeEnd - anims[actionindex].timeStart;
+	
+	// 新动作, 最后一帧不要，否则跳会出问题（被重置回第一帧了)
+	uint32 animLength = anims[actionindex].timeEnd - anims[actionindex].timeStart - 1; 
 	curAction.index = actionindex;
 	curAction.animTimeLength = animLength;
 	curAction.animTime = 0;
 	curAction.playSpeed = Speed;
 
 	curAnimFinish = false;
+}
+
+void AnimManager::CreateAttachAction(int actionindex, DWORD fadeout)
+{
+	this->attachAction = actionindex;
+	this->attachFadeout = fadeout;
+}
+
+void AnimManager::ClearAttachAction()
+{
+	this->attachAction = -1;
+	this->attachFadeout = 0;
 }
 
 }; // namespace Nebula2

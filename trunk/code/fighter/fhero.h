@@ -52,7 +52,10 @@ public:
 	void SetPosition(const Math::vector& dir, float dist=1.0f);
 	void SetDirection(const Math::vector& dir);
 	void SetSpeed(float f);
-	virtual void SetCurrentAnimation(int id);
+	virtual void SetCurrentAnimation(int id, DWORD fadeout=500);
+	void SetAttachAnimation(int id);
+	void SetSecondAnimation(int id);
+
 	void Walk(const Math::vector& dir, const Util::String& animName);
 	void Run(const Math::vector& dir, const Util::String& animName);
 	void Jump(const Math::vector& dir, const Util::String& animName, bool isRuning);
@@ -61,7 +64,7 @@ public:
 	void Move(float dist);
 protected:
 	void NextAnim(BYTE action);
-
+	
 	Ptr<Graphics::CameraEntity> camera;
 	Math::PFeedbackLoop<Math::vector> smoothedPosition;
 	Math::AngularPFeedbackLoop smoothedHeading;
@@ -69,7 +72,8 @@ protected:
 	int curAnim;
 	Math::vector curDir;
 	//float curSpeed;
-
+	bool stopMove,
+		 stopTurn;
 
 	// param for debug 
 	float dbgSpeed,

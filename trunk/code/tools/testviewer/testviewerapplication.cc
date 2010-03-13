@@ -79,21 +79,23 @@ TestViewerApplication::Open()
 			String fileName = modelResId.Value();
 
 			lightTransform = matrix44::scaling(0.5f, 0.5f, 0.5f);
-			if (fileName.CheckStringExist("characters"))
+			//if (fileName.CheckStringExist("characters"))
 			{
 				this->actor = ActorEntity::Create();
 				this->actor->SetResourceId(modelResId);
 				this->actor->SetTransform(lightTransform);
 				this->stage->AttachEntity(this->actor.upcast<GraphicsEntity>());
+
+				this->actor->SetBaseAnimation("attack");
 			}
-			else
-			{
-				this->head = ModelEntity::Create();
-				//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
-				this->head->SetResourceId(modelResId);
-				this->head->SetTransform(lightTransform);
-				this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
-			}
+			//else
+			//{
+			//	this->head = ModelEntity::Create();
+			//	//this->head->SetTransform(matrix44::translation(0.0f, 3.0f, 0.0f));
+			//	this->head->SetResourceId(modelResId);
+			//	this->head->SetTransform(lightTransform);
+			//	this->stage->AttachEntity(this->head.upcast<GraphicsEntity>());
+			//}
 		}
 
         // setup models
@@ -114,10 +116,10 @@ TestViewerApplication::Open()
 
 		// wow:World\\AZEROTH\\BootyBay\\PassiveDoodad\\FishingBox\\FishingBox.m2
 		// wow:creature\\deer\\deer.m2  Character\\Bloodelf\\male\\bloodelfmale.m2
-		this->tree = ModelEntity::Create();
-		this->tree->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
-		//this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
-		this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
+		//this->tree = ModelEntity::Create();
+		//this->tree->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
+		////this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
+		//this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
 		
 		/*this->worldManager = WOW::WorldManager::Create();
 		this->worldManager->Open();
