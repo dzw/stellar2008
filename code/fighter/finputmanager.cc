@@ -221,6 +221,7 @@ FInputManager::Update()
 		//InputKey k(SL_Jump, curTime);
 		//this->keyBuffer.Append(k);
 		//stopMoving = false;
+		stopMoving = false;
 	}
 	if (inputServer->GetDefaultKeyboard()->KeyDown(Input::Key::L))	// ∑¿ ÿ
 	{

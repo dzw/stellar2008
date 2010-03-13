@@ -27,7 +27,9 @@ using namespace Timing;
 FHero::FHero():
 curAnim(AID_Idle),
 dbgSpeed(-3.0f),
-dbgMove(1.0f)
+dbgMove(1.0f),
+stopMove(false),
+stopTurn(false)
 {
     // empty
 }
@@ -113,7 +115,7 @@ FHero::Update()
 			this->model->SetTransform(matrix);
 			//n_printf("Pos: %f %f %f, %f\n", posError.x(), posError.y(), posError.z(), posError.length());
 		}
-		else
+		//else
 		{
 			const Ptr<M2Entity>& entity = this->model.downcast<M2Entity>();
 			if (entity->IsAnimFinish())
@@ -145,41 +147,84 @@ FHero::NextAnim(BYTE action)
 	//if (!(entity->IsAnimFinish()))
 	//	return;
 
+	DWORD fadeout = 500;
+
+	switch (action)
+	{
+	case AID_Walk:
+	case AID_Run:
+		{
+			if (!entity->IsAnimFinish() &&
+				(  this->curAnim == AID_JumpStart 
+				|| this->curAnim == AID_JumpEnd 
+				|| this->curAnim == AID_Jump
+				|| this->curAnim == AID_Attack))
+			{
+				return;
+			}
+		}
+		break;
+	case AID_JumpStart:
+		{
+			fadeout = 200;
+		}
+		break;
+	case AID_JumpEnd:
+		{
+			fadeout = 200;
+		}
+		break;
+	}
+
 	switch (this->curAnim)
 	{
 	case AID_JumpStart:
 		{
-			//if (entity->IsAnimFinish())
+			if (action == AID_Attack)
+			{
+				/*SetSecondAnimation(AID_Attack);
+				return;*/
+				this->curAnim = AID_Attack;
+			}
+			else
 				this->curAnim = AID_JumpEnd;
+			fadeout = 200;
 		}
 		break;
-	case AID_Jump:
+	//case AID_Jump:
 		{
 			//if (与地面的做判断，如果小于等于地面高度)
 		//	{
 		//		this->curAnim = AID_JumpEnd;
 		//	}
+			//this->curAnim = AID_JumpEnd;
 		}
-		break;
-	case AID_JumpEnd:
-		{
-			//if (entity->IsAnimFinish())
-				this->curAnim = AID_Idle;
-		}
-		break;
-	case AID_Attack:
+		//break;
+	//case AID_JumpEnd:
+	//	{
+	//		//if (entity->IsAnimFinish())
+	//			this->curAnim = action;
+	//			stopMove = false;
+	//			stopTurn = false;
+	//	}
+	//	break;
+	/*case AID_Attack:
 		{
 			this->curAnim = action;
 		}
-		break;
+		break;*/
 	default:
-		this->curAnim = action;
+		{
+			this->curAnim = action;
+			stopTurn = false;
+			stopMove = false;
+		}
 	}
 
-	SetCurrentAnimation(this->curAnim);
+	SetCurrentAnimation(this->curAnim, fadeout);
 
 #ifdef NEBULA3_DEBUG
-	if (this->curAnim != 50 )
+	//if (this->curAnim != 50 )
 		n_printf("curanim: %d, %d\n", this->curAnim, action);
 #endif
 }
@@ -191,15 +236,32 @@ FHero::SetSpeed(float f)
 }
 
 void 
-FHero::SetCurrentAnimation(int id)
+FHero::SetCurrentAnimation(int id, DWORD fadeout)
 {
 	if (this->model.isvalid())
-		this->model.downcast<M2Entity>()->SetAnimation(id);
+		this->model.downcast<M2Entity>()->SetAnimation(id, fadeout);
+}
+
+void 
+FHero::SetAttachAnimation(int id)
+{
+	if (this->model.isvalid())
+		this->model.downcast<M2Entity>()->SetAttachAnimation(id);
+}
+
+void 
+FHero::SetSecondAnimation(int id)
+{
+	if (this->model.isvalid())
+		this->model.downcast<M2Entity>()->SetSecondaryAnim(id);
 }
 
 void
 FHero::SetPosition(const Math::vector& dir, float dist)
 {
+	if (stopMove)
+		return;
+
 	Math::vector direction = dir;
 	direction = FCameraManager::Instance()->TransformDirection(dir);
 	direction = vector::normalize(direction);
@@ -217,6 +279,9 @@ FHero::SetPosition(const Math::vector& dir, float dist)
 void 
 FHero::Move(float dist)
 {
+	if (stopMove)
+		return;
+
 	Math::vector pos = this->lookatDirection * dist;
 	matrix44 entityMatrix = this->model->GetTransform();
 	this->smoothedPosition.SetGoal(entityMatrix.getpos_component()+pos);
@@ -225,6 +290,9 @@ FHero::Move(float dist)
 void 
 FHero::SetDirection(const Math::vector& dir)
 {
+	if (stopTurn)
+		return;
+
 	curDir = dir;
 	Math::vector direction = dir;
 	direction = FCameraManager::Instance()->TransformDirection(dir);
@@ -270,7 +338,23 @@ FHero::Jump(const Math::vector& dir, const Util::String& animName, bool isRuning
 	//if (dir.length() > 0)
 	//	SetPosition(dir);
 
+	if (this->curAnim == AID_Run)
+	{
+		Move(7.0f);
+		SetSpeed(-2.10f);
+	}
+	else if (this->curAnim == AID_Walk)
+	{
+		Move(2.0f);
+		SetSpeed(-3.0f);
+	}
+
 	NextAnim(AID_JumpStart);
+	stopMove = true;
+	stopTurn = true;
+	//NextAnim(AID_Jump);
+	//SetAttachAnimation(AID_JumpEnd);
+
 	//this->curAnim = AID_JumpStart;
 
 	/*if (isRuning)
@@ -309,6 +393,8 @@ FHero::Attack(const Math::vector& dir, const Util::String& animName)
 		SetSpeed(-1.0f);
 		NextAnim(AID_Attack);
 	}
+	stopTurn = true;
+	stopMove = true;
 }
 
 } // namespace Tools

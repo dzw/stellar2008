@@ -16,6 +16,12 @@
 namespace WOW
 {
 //------------------------------------------------------------------------------
+struct ActionQueueInfo
+{
+	int action;
+	DWORD fadeout;
+};
+
 struct ActionState
 {
 	int index;
@@ -63,6 +69,9 @@ class AnimManager {
 	ActionState fadeoutAction;
 	int fadeoutTime;
 	int fadeoutTimeRemain;
+	int attachAction;		// 附加接下来要播的动作
+	int attachFadeout;
+
 public:
 	AnimManager(ModelAnimation *anim);
 	~AnimManager();
@@ -124,6 +133,8 @@ public:
 
 	AnimParam& GetAnimParam();
 	void CreateAction(int actionindex, DWORD fadeout);
+	void CreateAttachAction(int actionindex, DWORD fadeout);
+	void ClearAttachAction();
 };
 
 inline bool

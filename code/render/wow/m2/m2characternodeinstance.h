@@ -36,6 +36,8 @@ public:
 	const Util::FixedArray<JointInstance> GetJointData()const;
 	///
 	void SetCurAnimID(int anim, int fadeout = 500);
+	void SetAttachAnimId(int anim, int fadeout = 500);
+
 	void SetAnimManager(AnimManager* m);
 	const AnimManager* GetAnimManager()const;
 	void SetSecondaryAnimID(int anim);
@@ -70,6 +72,13 @@ M2CharacterNodeInstance::SetCurAnimID(int anim, int fadeout)
 	//	animManager->Set(0, anim, true);
 	if (animManager != 0)
 		animManager->CreateAction(anim, fadeout);
+}
+
+inline void 
+M2CharacterNodeInstance::SetAttachAnimId(int anim, int fadeout)
+{
+	if (animManager != 0)
+		animManager->CreateAttachAction(anim, fadeout);
 }
 
 inline void
