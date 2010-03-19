@@ -54,8 +54,6 @@ public:
 	void SetDirection(const Math::vector& dir);
 	void SetSpeed(float f);
 	virtual void SetCurrentAnimation(int id, DWORD fadeout=500);
-	void SetAttachAnimation(int id);
-	void SetSecondAnimation(int id);
 
 	void Walk(const Math::vector& dir, const Util::String& animName);
 	void Run(const Math::vector& dir, const Util::String& animName);

@@ -19,8 +19,9 @@ ImplementClass(Fighter::FHero, 'HERO', Fighter::FPlayer);
 using namespace Graphics;
 using namespace Resources;
 using namespace Math;
-using namespace WOW;
+//using namespace WOW;
 using namespace Timing;
+using namespace Util;
 
 //------------------------------------------------------------------------------
 /**
@@ -48,8 +49,8 @@ void
 FHero::Init()
 {
 	const Ptr<Stage>& stage = GraphicsServer::Instance()->GetDefaultView()->GetStage();
-	this->model = /*ActorEntity::Create();*/M2Entity::Create();
-	this->model->SetResourceId(ResourceId(/*"mdl:q.n2"*/"wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
+	this->model = ActorEntity::Create();//M2Entity::Create();
+	this->model->SetResourceId(ResourceId("mdl:q.n2"/*"wow:Character\\Bloodelf\\male\\bloodelfmale.m2"*/));
 	stage->AttachEntity(this->model.upcast<GraphicsEntity>());
 
 	this->camera = FCameraManager::Instance()->GetCamera();
@@ -119,9 +120,9 @@ FHero::Update()
 		}
 		//else
 		{
-			const Ptr<M2Entity>& entity = this->model.downcast<M2Entity>();
-			if (entity->IsAnimFinish())
-				NextAnim(AID_Idle);
+			//const Ptr<M2Entity>& entity = this->model.downcast<M2Entity>();
+			//if (entity->IsAnimFinish())
+				//NextAnim(AID_Idle);
 		}
 	}
 }
@@ -131,7 +132,7 @@ FHero::NextAnim(BYTE action)
 {
 	if (!this->model.isvalid() /*|| this->curAnim == action*/)
 		return;
-	const Ptr<M2Entity>& entity = this->model.downcast<M2Entity>();
+	const Ptr<ActorEntity>& entity = this->model.downcast<ActorEntity>();
 
 	DWORD fadeout = 500;
 
@@ -144,7 +145,7 @@ FHero::NextAnim(BYTE action)
 		lastTime = curTime;
 		if (curAnimTime > 0)
 		{
-			if (entity->IsAnimFinish())
+			//if (entity->IsAnimFinish())
 				SetCurrentAnimation(AID_Idle, fadeout);
 			return;
 		}
@@ -166,7 +167,7 @@ FHero::NextAnim(BYTE action)
 	case AID_Walk:
 	case AID_Run:
 		{
-			if (!entity->IsAnimFinish() &&
+			if (//!entity->IsAnimFinish() &&
 				(  this->curAnim == AID_JumpStart 
 				|| this->curAnim == AID_JumpEnd 
 				|| this->curAnim == AID_Jump
@@ -237,7 +238,7 @@ FHero::NextAnim(BYTE action)
 
 #ifdef NEBULA3_DEBUG
 	//if (this->curAnim != 50 )
-		n_printf("curanim: %d, %d\n", this->curAnim, action);
+		//n_printf("curanim: %d, %d\n", this->curAnim, action);
 #endif
 }
 
@@ -250,22 +251,42 @@ FHero::SetSpeed(float f)
 void 
 FHero::SetCurrentAnimation(int id, DWORD fadeout)
 {
-	if (this->model.isvalid())
-		this->model.downcast<M2Entity>()->SetAnimation(id, fadeout);
-}
-
-void 
-FHero::SetAttachAnimation(int id)
-{
-	if (this->model.isvalid())
-		this->model.downcast<M2Entity>()->SetAttachAnimation(id);
-}
-
-void 
-FHero::SetSecondAnimation(int id)
-{
-	if (this->model.isvalid())
-		this->model.downcast<M2Entity>()->SetSecondaryAnim(id);
+	String name;
+	switch (id)
+	{
+	case AID_Idle:
+		name = "idle";
+		break;
+	case AID_Walk:
+		name = "walk";
+		break;
+	case AID_Run:
+		name = "run";
+		break;
+	case AID_RunAttack:
+		name = "runattack";
+		break;
+	case AID_JumpStart:
+		name = "jumpstart";
+		break;
+	case AID_Jump:
+		name = "jump";
+		break;
+	case AID_JumpEnd:
+		name = "jumpend";
+		break;
+	case AID_Attack:
+		name = "attack";
+		break;
+	case AID_Defend:
+		name = "defend";
+		break;
+	case AID_Died:
+		name = "died";
+		break;
+	}
+	if (this->model.isvalid() && !name.IsEmpty())
+		this->model.downcast<ActorEntity>()->SetBaseAnimation(name, 0.2f, 0.0f, true, true, 0.2f);  //fadeout / 1000.0f);
 }
 
 void

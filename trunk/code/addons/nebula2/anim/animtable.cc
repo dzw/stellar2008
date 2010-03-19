@@ -68,7 +68,7 @@ AnimTable::LoadAnimTable()
     //    this->BuildAnimInfoTable(xmlTable);
 
     //    xmlSpreadSheet.Close();
-    //    return true;
+        return true;
     //}
 
     return false;
