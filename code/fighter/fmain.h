@@ -26,6 +26,7 @@
 #include "fighter/fobjectmanager.h"
 #include "fighter/finputmanager.h"
 #include "fighter/fskillmanager.h"
+#include "addons\nebula2\nebula2wrapper.h"
 
 //------------------------------------------------------------------------------
 namespace Fighter
@@ -78,6 +79,7 @@ private:
 	Ptr<Fighter::FObjectManager> objectManager;
 	Ptr<Fighter::FInputManager> inputManager;
 	Ptr<Fighter::FSkillManager> skillManager;
+	Ptr<Anim::AnimTable> animTable;
 };
 
 } // namespace Test

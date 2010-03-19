@@ -63,6 +63,9 @@ FighterApplication::Open()
     n_assert(!this->IsOpen());
     if (RenderApplication::Open())
     {
+		this->animTable = Anim::AnimTable::Create();
+		this->animTable->Open();
+
 		this->ioServer->SetAssign(Assign("data", "home:export/data"));        
 		this->ioServer->SetAssign(Assign("export", "home:export"));
 
@@ -159,6 +162,11 @@ FighterApplication::Close()
     this->head   = 0;
 	this->tree	 = 0;*/
 
+	if (this->animTable.isvalid())
+	{
+		this->animTable->Close();
+		this->animTable = 0;
+	}
 	if (this->skillManager.isvalid())
 	{
 		this->skillManager->Close();
