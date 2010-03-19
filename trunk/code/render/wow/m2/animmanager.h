@@ -72,6 +72,7 @@ class AnimManager {
 	int attachAction;		// 附加接下来要播的动作
 	int attachFadeout;
 
+	int curTime;
 public:
 	AnimManager(ModelAnimation *anim);
 	~AnimManager();

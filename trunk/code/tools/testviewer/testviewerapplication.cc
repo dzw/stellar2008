@@ -86,7 +86,7 @@ TestViewerApplication::Open()
 				this->actor->SetTransform(lightTransform);
 				this->stage->AttachEntity(this->actor.upcast<GraphicsEntity>());
 
-				this->actor->SetBaseAnimation("attack");
+				this->actor->SetBaseAnimation("walk");
 			}
 			//else
 			//{
