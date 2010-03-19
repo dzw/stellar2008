@@ -35,6 +35,7 @@ enum AnimID
 	AID_JumpEnd		= 63, 
 	AID_Attack		= 21,
 	AID_Defend		= 20,
+	AID_Died		= 0,
 };
 
 class FHero : public FPlayer
@@ -70,6 +71,8 @@ protected:
 	Math::AngularPFeedbackLoop smoothedHeading;
 	Math::vector lookatDirection;
 	int curAnim;
+	/// 动作倒计时,攻击动作需要最大攻击时间限制（1500毫秒，大概35帧）
+	int curAnimTime;	
 	Math::vector curDir;
 	//float curSpeed;
 	bool stopMove,

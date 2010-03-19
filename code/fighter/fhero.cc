@@ -8,8 +8,9 @@
 #include "fcameramanager.h"
 #include "finputmanager.h"
 #include "math/polar.h"
-#include "wow/m2/m2entity.h"
+//#include "wow/m2/m2entity.h"
 #include "fmain.h"
+#include "graphics/actorentity.h"
 
 namespace Fighter
 {
@@ -29,7 +30,8 @@ curAnim(AID_Idle),
 dbgSpeed(-3.0f),
 dbgMove(1.0f),
 stopMove(false),
-stopTurn(false)
+stopTurn(false),
+curAnimTime(0)
 {
     // empty
 }
@@ -46,8 +48,8 @@ void
 FHero::Init()
 {
 	const Ptr<Stage>& stage = GraphicsServer::Instance()->GetDefaultView()->GetStage();
-	this->model = M2Entity::Create();
-	this->model->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
+	this->model = /*ActorEntity::Create();*/M2Entity::Create();
+	this->model->SetResourceId(ResourceId(/*"mdl:q.n2"*/"wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
 	stage->AttachEntity(this->model.upcast<GraphicsEntity>());
 
 	this->camera = FCameraManager::Instance()->GetCamera();
@@ -131,23 +133,33 @@ FHero::NextAnim(BYTE action)
 		return;
 	const Ptr<M2Entity>& entity = this->model.downcast<M2Entity>();
 
-	/*static int lastTime = 0;
-	int curTime = timeGetTime();
-	if (curTime - lastTime <= 500 && !entity->IsAnimFinish())
-		return;
-	lastTime = curTime;*/
+	DWORD fadeout = 500;
+
+	// 限制攻击等动作最大帧，同步所有攻击动作
+	static int lastTime = 0;
+	if (curAnimTime > 0)
+	{
+		int curTime = timeGetTime();
+		curAnimTime = curAnimTime - (curTime - lastTime);
+		lastTime = curTime;
+		if (curAnimTime > 0)
+		{
+			if (entity->IsAnimFinish())
+				SetCurrentAnimation(AID_Idle, fadeout);
+			return;
+		}
+	}
+	else
+	{
+		if (action != AID_Idle && action != AID_Walk && action != AID_Run)
+			curAnimTime = 1500;
+	}
 
 	/*BYTE action;
 	if (!this->animQueue.IsEmpty())
 		action = this->animQueue.Dequeue();
 	else
 		action = AID_Idle;*/
-
-	
-	//if (!(entity->IsAnimFinish()))
-	//	return;
-
-	DWORD fadeout = 500;
 
 	switch (action)
 	{
