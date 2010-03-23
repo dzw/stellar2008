@@ -90,7 +90,6 @@ fn createAnimStatesFromMotionFlow =
 	            thisTrans = trans
 	            break
 	        )
-	        
 	        whichTrans = activeScript.tranIndices[1]
 	        ti = thisTrans.tranInfos[whichTrans]
 			sourceStart = ti.sourceStart
@@ -125,7 +124,8 @@ fn createAnimStatesFromMotionFlow =
         append collectedAnimStates anim
 		
         prevDestStart = destStart
-        lengthAccum += anim.duration
+        lengthAccum += sourceStart --anim.duration
+		--break()
     )
     
     return collectedAnimStates
