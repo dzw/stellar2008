@@ -120,9 +120,9 @@ FHero::Update()
 		}
 		//else
 		{
-			//const Ptr<M2Entity>& entity = this->model.downcast<M2Entity>();
-			//if (entity->IsAnimFinish())
-				//NextAnim(AID_Idle);
+			const Ptr<ActorEntity>& entity = this->model.downcast<ActorEntity>();
+			if (!entity->IsOverlayAnimationActive())
+				NextAnim(AID_Idle);
 		}
 	}
 }
@@ -145,7 +145,7 @@ FHero::NextAnim(BYTE action)
 		lastTime = curTime;
 		if (curAnimTime > 0)
 		{
-			//if (entity->IsAnimFinish())
+			if (!entity->IsOverlayAnimationActive())
 				SetCurrentAnimation(AID_Idle, fadeout);
 			return;
 		}
@@ -167,7 +167,7 @@ FHero::NextAnim(BYTE action)
 	case AID_Walk:
 	case AID_Run:
 		{
-			if (//!entity->IsAnimFinish() &&
+			if (entity->IsOverlayAnimationActive() &&
 				(  this->curAnim == AID_JumpStart 
 				|| this->curAnim == AID_JumpEnd 
 				|| this->curAnim == AID_Jump
@@ -286,7 +286,10 @@ FHero::SetCurrentAnimation(int id, DWORD fadeout)
 		break;
 	}
 	if (this->model.isvalid() && !name.IsEmpty())
-		this->model.downcast<ActorEntity>()->SetBaseAnimation(name, 0.2f, 0.0f, true, true, 0.2f);  //fadeout / 1000.0f);
+	{
+		this->model.downcast<ActorEntity>()->SetOverlayAnimation(name);
+		//this->model.downcast<ActorEntity>()->SetBaseAnimation(name, 0.2f, 0.0f, true, true, 0.2f);  //fadeout / 1000.0f);
+	}
 }
 
 void
@@ -336,7 +339,7 @@ FHero::SetDirection(const Math::vector& dir)
 	matrix44 entityMatrix = this->model->GetTransform();
 	matrix44 fixedTransform = matrix44::lookatlh(entityMatrix.getpos_component(), entityMatrix.getpos_component() + this->lookatDirection, vector::upvec());
 	polar headingAngles(fixedTransform.getz_component());
-	this->smoothedHeading.SetGoal(headingAngles.rho-1.57f);	// 方向不对，需要-1.57
+	this->smoothedHeading.SetGoal(headingAngles.rho/*-1.57f*/);	// 方向不对，需要-1.57
 }
 
 void
