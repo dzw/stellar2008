@@ -37,10 +37,10 @@
 
 
 // Windows headers
+#define NOMINMAX
 #include <windows.h>
 #include <process.h>
 #include <shfolder.h>
-#include <windows.h>
 #include <strsafe.h>
 #include <wininet.h>
 #include <winsock2.h>
