@@ -80,6 +80,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mpq_win32", "extlibs_win32.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{AD8B7404-4EFA-4EAE-B781-BBD3F1F37458}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "physx_win32", "physx_win32.physx_win32.vcproj", "{28E77117-83C6-4914-B907-5D1E4D44880B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -213,6 +215,12 @@ Global
 		{1D3541CF-4D46-4FBE-8777-95DA86BD4985}.Release|Win32.Build.0 = Release|Win32
 		{1D3541CF-4D46-4FBE-8777-95DA86BD4985}.ReleaseTest|Win32.ActiveCfg = Release|Win32
 		{1D3541CF-4D46-4FBE-8777-95DA86BD4985}.ReleaseTest|Win32.Build.0 = Release|Win32
+		{28E77117-83C6-4914-B907-5D1E4D44880B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28E77117-83C6-4914-B907-5D1E4D44880B}.Debug|Win32.Build.0 = Debug|Win32
+		{28E77117-83C6-4914-B907-5D1E4D44880B}.Release|Win32.ActiveCfg = Release|Win32
+		{28E77117-83C6-4914-B907-5D1E4D44880B}.Release|Win32.Build.0 = Release|Win32
+		{28E77117-83C6-4914-B907-5D1E4D44880B}.ReleaseTest|Win32.ActiveCfg = Release|Win32
+		{28E77117-83C6-4914-B907-5D1E4D44880B}.ReleaseTest|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
