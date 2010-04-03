@@ -20,7 +20,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Win32\Debug"
-			IntermediateDirectory=".\Win32\Debug\render_win32"
+			IntermediateDirectory=".\Win32\Debug\physx_win32"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -66,7 +66,7 @@
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				CallingConvention="1"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -82,7 +82,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\Win32\Debug\d_render_win32.lib"
+				OutputFile=".\Win32\Debug\d_physx_win32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -199,19 +199,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\addons\physx\memoryallocator.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\addons\physx\memoryallocator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\addons\physx\physxserver.cc"
 				>
 			</File>
 			<File
 				RelativePath="..\addons\physx\physxserver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\addons\physx\userallocator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\addons\physx\userallocator.h"
 				>
 			</File>
 		</Filter>
