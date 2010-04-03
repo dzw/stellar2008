@@ -7,11 +7,16 @@
     (C) 2010 
 */
 #include "core/refcounted.h"
+#include "core/singleton.h"
 
+#include "NxPhysics.h"
 #include "NxController.h"
-#include "UserAllocator.h"
+//#include "NxControllerManager.h"
+#include "ControllerManager.h"
+#include "NxControllerManager.h"
+#include "MemoryAllocator.h"
 #include "ErrorStream.h"
-#include "DebugRenderer.h"
+
 
 //------------------------------------------------------------------------------
 namespace PhysX
@@ -34,12 +39,13 @@ public:
 protected:
 	bool InitCooking(NxUserAllocator* allocator=0, NxUserOutputStream* outputStream=0);
 	void ReleaseScene();
+	const char* GetNxSDKCreateError(const NxSDKCreateError& errorCode);
 
 	NxPhysicsSDK*	physicsSDK;
 	NxCookingInterface *cooking;
     NxScene* scene;
 	NxControllerManager* controllerManager;
-	UserAllocator*	allocator;
+	MemoryAllocator*	allocator;
 };
 
 }; // namespace Physics

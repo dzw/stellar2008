@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "stdneb.h"
 #include "physx/physxserver.h"
-#include "NxPhysics.h"
+#include "NxCooking.h"
 
 namespace PhysX
 {
@@ -36,7 +36,7 @@ PhysXServer::~PhysXServer()
 void
 PhysXServer::Open()
 {
-	allocator = n_new(UserAllocator);
+	allocator = n_new(MemoryAllocator);
 
 	bool status = InitCooking();
 	if (!status) {
@@ -51,7 +51,7 @@ PhysXServer::Open()
 	physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, allocator, &errorStream, desc, &errorCode);
 	if(physicsSDK == NULL) 
 	{
-		n_printf("\nSDK create error (%d - %s).\nUnable to initialize the PhysX SDK.\n\n", errorCode, getNxSDKCreateError(errorCode));
+		n_printf("\nSDK create error (%d - %s).\nUnable to initialize the PhysX SDK.\n\n", errorCode, GetNxSDKCreateError(errorCode));
 		return;
 	}
 #if SAMPLES_USE_VRD
@@ -90,7 +90,6 @@ PhysXServer::CreateScene()
 	// Create a scene
 	NxSceneDesc sceneDesc;
 	sceneDesc.gravity = DefaultGravity;
-	sceneDesc.collisionDetection = true;
 	scene = physicsSDK->createScene(sceneDesc);
 	if(scene == NULL) 
 	{
@@ -98,7 +97,7 @@ PhysXServer::CreateScene()
 		return;
 	}
 
-	NxMaterial * defaultMaterial = gScene->getMaterialFromIndex(0); 
+	NxMaterial * defaultMaterial = scene->getMaterialFromIndex(0); 
 	defaultMaterial->setRestitution(0.0f);
 	defaultMaterial->setStaticFriction(0.5f);
 	defaultMaterial->setDynamicFriction(0.5f);
@@ -127,5 +126,21 @@ PhysXServer::ReleaseScene()
 		}
 	}
 }
+
+const char* 
+PhysXServer::GetNxSDKCreateError(const NxSDKCreateError& errorCode) 
+{
+	switch(errorCode) 
+	{
+		case NXCE_NO_ERROR: return "NXCE_NO_ERROR";
+		case NXCE_PHYSX_NOT_FOUND: return "NXCE_PHYSX_NOT_FOUND";
+		case NXCE_WRONG_VERSION: return "NXCE_WRONG_VERSION";
+		case NXCE_DESCRIPTOR_INVALID: return "NXCE_DESCRIPTOR_INVALID";
+		case NXCE_CONNECTION_ERROR: return "NXCE_CONNECTION_ERROR";
+		case NXCE_RESET_ERROR: return "NXCE_RESET_ERROR";
+		case NXCE_IN_USE_ERROR: return "NXCE_IN_USE_ERROR";
+		default: return "Unknown error";
+	}
+};
 
 }

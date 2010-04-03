@@ -11,6 +11,7 @@
 #define NOMINMAX
 #include <windows.h>
 #endif
+#include "NxUserOutputStream.h"
 
 //------------------------------------------------------------------------------
 namespace PhysX
