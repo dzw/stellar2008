@@ -20,6 +20,7 @@ class WriteStream : public IOMessage
     DeclareClass(WriteStream);
     DeclareMsgId;
 public:
+	~WriteStream();
     /// set stream which provides the data to write
     void SetStream(const Ptr<IO::Stream>& stream);
     /// get stream which provides the data

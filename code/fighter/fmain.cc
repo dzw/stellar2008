@@ -33,6 +33,9 @@ using namespace Math;
 using namespace Input;
 using namespace Frame;
 using namespace IO;
+#ifdef PHYSX
+using namespace PhysX;
+#endif
 
 //------------------------------------------------------------------------------
 /**
@@ -99,6 +102,12 @@ FighterApplication::Open()
 		
 		this->view->SetFrameShader(Frame::FrameServer::Instance()->GetFrameShaderByName(ResourceId("DX9Sample")));
 
+#ifdef PHYSX
+		this->physxServer = PhysXServer::Create();
+		this->physxServer->Open();
+		this->physxServer->CreateMeshFromFile("msh:examples/ground_s_0.nvx2");
+#endif
+
 		this->cameraManager = FCameraManager::Create();
 		this->cameraManager->Open(this->view);
 		this->cameraEntity = this->cameraManager->GetCamera();
@@ -161,6 +170,14 @@ FighterApplication::Close()
     this->ground = 0;
     this->head   = 0;
 	this->tree	 = 0;*/
+
+#ifdef PHYSX
+	if (this->physxServer.isvalid())
+	{
+		this->physxServer->Close();
+		this->physxServer = 0;
+	}
+#endif
 
 	if (this->animTable.isvalid())
 	{
@@ -327,6 +344,17 @@ FighterApplication::OnProcessInput()
 			ShaderServer::Instance()->Update();
 		}
 
+#ifdef PHYSX
+		if (keyboard->KeyDown(Key::Add))
+		{
+			this->physxServer->CreateBox(Math::vector(0.0f, 5.0f, 0.0f), Math::vector(0.5f, 0.5f, 0.5f));
+		}
+		if (keyboard->KeyDown(Key::F8))
+		{
+			this->view->ShowDebugPhysX();
+		}
+#endif
+
 		if (keyboard->KeyPressed(Key::Control) && keyboard->KeyPressed(Key::F6))
 		{
 			this->view->ShowDebugInfo();
@@ -411,6 +439,13 @@ FighterApplication::OnUpdateFrame()
     this->localLight1->SetTransform(lightTransform);
 */
 	this->objectManager->Update();
+
+#ifdef PHYSX
+	if (this->physxServer.isvalid())
+	{
+		this->physxServer->Update((float)this->frameTime);	
+	}
+#endif
 
     RenderApplication::OnUpdateFrame();
 }

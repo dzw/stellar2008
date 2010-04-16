@@ -12,6 +12,13 @@ ImplementClass(Interface::WriteStream, 'WRST', Interface::IOMessage);
 ImplementMsgId(WriteStream);
 
 using namespace IO;
+//------------------------------------------------------------------------------
+/**
+*/
+WriteStream::~WriteStream()
+{
+	this->stream = 0;
+}
 
 //------------------------------------------------------------------------------
 /**

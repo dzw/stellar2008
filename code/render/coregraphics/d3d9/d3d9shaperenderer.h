@@ -23,7 +23,8 @@ public:
     D3D9ShapeRenderer();
     /// destructor
     virtual ~D3D9ShapeRenderer();
-    
+	/// set z enable
+    void SetZEnable(bool b=false);
     /// open the shape renderer
     void Open();
     /// close the shape renderer
@@ -40,7 +41,14 @@ protected:
     ID3DXMesh* shapeMeshes[NumShapeTypes];
     Ptr<CoreGraphics::ShaderVariable> modelViewProj;
     Ptr<CoreGraphics::ShaderVariable> diffuseColor;
+	Ptr<CoreGraphics::ShaderVariable> zEnable;
 };
+
+inline void 
+D3D9ShapeRenderer::SetZEnable(bool b)
+{
+	this->zEnable->SetBool(b);
+}
 
 } // namespace Direct3D9
 //------------------------------------------------------------------------------

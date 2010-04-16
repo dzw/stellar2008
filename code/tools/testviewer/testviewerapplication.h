@@ -15,7 +15,9 @@
 //#include "wow/world/worldmanager.h"
 #include "graphics/actorentity.h"
 #include "addons\nebula2\nebula2wrapper.h"
-
+#ifdef PHYSX
+#include "addons/physx/physxserver.h"
+#endif
 //------------------------------------------------------------------------------
 namespace Tools
 {
@@ -34,6 +36,7 @@ public:
 private:
     /// render current frame
     virtual void OnUpdateFrame();
+	virtual void OnProcessInput();
 
     Ptr<Graphics::ModelEntity> ground;
     Ptr<Graphics::ModelEntity> head;
@@ -43,6 +46,7 @@ private:
     Ptr<Lighting::SpotLightEntity> localLight0;
     Ptr<Lighting::SpotLightEntity> localLight1;
 	Ptr<Anim::AnimTable> animTable;
+	Ptr<PhysX::PhysXServer> physxServer;
 };
 
 } // namespace Test

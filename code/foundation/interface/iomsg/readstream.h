@@ -22,6 +22,7 @@ class ReadStream : public IOMessage
     DeclareClass(ReadStream);
     DeclareMsgId;
 public:
+	~ReadStream();
     /// set a stream which consumes the result of the read operation
     void SetStream(const Ptr<IO::Stream>& stream);
     /// get stream with read result (after message has been handled!)
