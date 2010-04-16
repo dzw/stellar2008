@@ -60,6 +60,8 @@ D3D9ShapeRenderer::Open()
     // lookup ModelViewProjection shader variable
     this->modelViewProj = this->shapeShader->GetVariableBySemantic(ShaderVariable::Semantic("ModelViewProjection"));
     this->diffuseColor  = this->shapeShader->GetVariableBySemantic(ShaderVariable::Semantic("MatDiffuse"));
+	this->zEnable  = this->shapeShader->GetVariableBySemantic(ShaderVariable::Semantic("ZEnable"));
+	this->zEnable->SetBool(false);
 }
 
 //------------------------------------------------------------------------------

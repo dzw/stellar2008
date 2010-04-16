@@ -28,6 +28,10 @@
 #include "fighter/fskillmanager.h"
 #include "addons\nebula2\nebula2wrapper.h"
 
+#ifdef PHYSX
+#include "physx/physxserver.h"
+#endif
+
 //------------------------------------------------------------------------------
 namespace Fighter
 {
@@ -80,6 +84,9 @@ private:
 	Ptr<Fighter::FInputManager> inputManager;
 	Ptr<Fighter::FSkillManager> skillManager;
 	Ptr<Anim::AnimTable> animTable;
+#ifdef PHYSX
+	Ptr<PhysX::PhysXServer> physxServer;
+#endif
 };
 
 } // namespace Test

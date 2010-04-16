@@ -72,6 +72,7 @@ public:
 	Math::vector GetCameraPos();
 
 	void ShowDebugInfo();
+	void ShowDebugPhysX();
 protected:
     friend class GraphicsServer;
 
@@ -98,6 +99,7 @@ protected:
 	bool needUpdate;
 
 	bool showDebugInfo;
+	bool showPhysX;
 };
 
 //------------------------------------------------------------------------------
@@ -215,6 +217,12 @@ inline void
 View::ShowDebugInfo()
 {
 	this->showDebugInfo = !this->showDebugInfo;
+}
+
+inline void
+View::ShowDebugPhysX()
+{
+	this->showPhysX = !this->showPhysX;
 }
 
 } // namespace Graphics

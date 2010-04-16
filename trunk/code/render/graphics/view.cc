@@ -12,6 +12,9 @@
 #include "lighting/lightserver.h"
 #include "lighting/shadowserver.h"
 #include "coregraphics/debugview.h"
+#ifdef PHYSX
+#include "addons/physx/physxserver.h"
+#endif
 
 #if NEBULA3_DEBUG
 #include "graphics/cell.h"
@@ -33,7 +36,8 @@ using namespace Math;
 View::View() :
     isAttachedToServer(false),
 	needUpdate(false),
-	showDebugInfo(false)
+	showDebugInfo(false),
+	showPhysX(false)
 {
     // empty
 }
@@ -221,6 +225,14 @@ View::Render()
 		this->RenderDebug();
 		this->RenderDebugString();
 	}
+
+#ifdef PHYSX
+	if (showPhysX)
+	{
+		if (PhysX::PhysXServer::HasInstance())
+			PhysX::PhysXServer::Instance()->RenderDebug();
+	}
+#endif
 	//RenderDebug();
 	//this->RenderDebugString();
 }

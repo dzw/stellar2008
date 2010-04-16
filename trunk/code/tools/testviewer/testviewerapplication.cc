@@ -6,6 +6,8 @@
 #include "tools/testviewer/testviewerapplication.h"
 #include "frame/frameserver.h"
 #include "coregraphics/debugview.h"
+#include "input/inputserver.h"
+#include "input/keyboard.h"
 
 namespace Tools
 {
@@ -15,6 +17,8 @@ using namespace Util;
 using namespace Lighting;
 using namespace Resources;
 using namespace Timing;
+using namespace PhysX;
+using namespace Input;
 
 //------------------------------------------------------------------------------
 /**
@@ -126,7 +130,17 @@ TestViewerApplication::Open()
 		this->worldManager->InitWorld("Azeroth");*/
 
 		
-		
+		this->physxServer = PhysXServer::Create();
+		this->physxServer->Open();
+		//this->physxServer->Pause(true);
+		//this->physxServer->CreateGroundPlane();
+		this->physxServer->CreateMeshFromFile("msh:examples/ground_c_0.nvx2");
+		this->physxServer->CreateBox(Math::vector(0.0f, 3.0f, 0.0f), Math::vector(0.5f, 0.5f, 0.5f));
+		this->physxServer->CreateCapsule(Math::vector(1.0f, 3.0f, 0.0f), 0.55f, 0.75f);
+		this->physxServer->CreateSphere(Math::vector(-1.0f, 3.0f, 0.0f), 0.65f);
+		this->physxServer->AddUserDataToActor();
+		this->view->ShowDebugPhysX();
+
         return true;
     }
     return false;
@@ -152,6 +166,12 @@ TestViewerApplication::Close()
 	}
 	//this->worldManager->Close();
 	//this->worldManager = 0;
+
+	if (this->physxServer.isvalid())
+	{
+		this->physxServer->Close();
+		this->physxServer = 0;
+	}
 
     ViewerApplication::Close();
 }
@@ -195,7 +215,23 @@ TestViewerApplication::OnUpdateFrame()
 		this->actor->SetBaseAnimation("angriff_bogen_shoot");
 	}
 
+	this->physxServer->Update((float)this->frameTime);
+
     ViewerApplication::OnUpdateFrame();
+}
+
+void
+TestViewerApplication::OnProcessInput()
+{
+    InputServer* inputServer = InputServer::Instance();
+    const Ptr<Keyboard>& keyboard = inputServer->GetDefaultKeyboard();
+
+    if (keyboard->KeyDown(Key::Add))
+    {
+        this->physxServer->CreateBox(Math::vector(0.0f, 5.0f, 0.0f), Math::vector(0.5f, 0.5f, 0.5f));
+    }
+
+	ViewerApplication::OnProcessInput();
 }
 
 } // namespace Tools
