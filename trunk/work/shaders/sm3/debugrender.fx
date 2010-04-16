@@ -1,35 +1,37 @@
-//------------------------------------------------------------------------------
-//  shape.fx
-//  Shape shader for debug visualization.
-//  (C) 2007 Radon Labs GmbH
-//------------------------------------------------------------------------------
-
 float4x4 mvp : ModelViewProjection;
-float4 diffColor : MatDiffuse;
 bool zenable : ZEnable = false;
 
+struct vsOut
+{
+	float4 pos : POSITION;
+	float4 color : TEXCOORD0;
+};
+
 //------------------------------------------------------------------------------
 /**
 */
-float4
-VertexShaderFunc(float4 pos : POSITION) : POSITION
+vsOut
+VertexShaderColorFunc(float4 pos : POSITION, float4 col : TEXCOORD0)
 {
-    return mul(pos, mvp);
+	vsOut vout;
+	vout.pos = mul(pos, mvp);
+	vout.color = col;
+	return vout;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 float4
-PixelShaderFunc() : COLOR
+PixelShaderColorFunc(vsOut In) : COLOR
 {
-    return diffColor;
+    return In.color;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-technique Default
+technique t0<string Mask = "ShapeColor";>
 {
     pass p0
     {
@@ -44,8 +46,7 @@ technique Default
         AlphaTestEnable   = False;
         ScissorTestEnable = False;
         CullMode          = ccw;        
-        VertexShader = compile vs_2_0 VertexShaderFunc();
-        PixelShader = compile ps_2_0 PixelShaderFunc();
+        VertexShader = compile vs_2_0 VertexShaderColorFunc();
+        PixelShader = compile ps_2_0 PixelShaderColorFunc();
     }
 }
-
