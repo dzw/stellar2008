@@ -17,7 +17,7 @@
 #include "NxControllerManager.h"
 #include "MemoryAllocator.h"
 #include "ErrorStream.h"
-#include "physx/charactercontrolmanager.h"
+#include "physx/charactercontrolserver.h"
 #include "physx/debugrender.h"
 
 //------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ protected:
 	NxCookingInterface *cooking;
     NxScene* scene;
 	MemoryAllocator*	allocator;
-	Ptr<CharControlManager> controllerManager;
+	Ptr<CharControlServer> controllerManager;
 	//DebugRender dbgRender;
 };
 
