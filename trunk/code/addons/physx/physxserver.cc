@@ -354,6 +354,8 @@ PhysXServer::Update(float frameTime)
 	if (this->scene == 0)
 		return;
 
+	controllerManager->UpdateControllers();
+
 	// Start collision and dynamics for delta time since the last frame
 	if (!isPause)
 	{

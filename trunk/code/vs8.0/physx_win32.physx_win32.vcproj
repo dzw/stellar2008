@@ -195,11 +195,11 @@
 			Name="physx"
 			>
 			<File
-				RelativePath="..\addons\physx\charactercontrolmanager.cc"
+				RelativePath="..\addons\physx\charactercontrolserver.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\addons\physx\charactercontrolmanager.h"
+				RelativePath="..\addons\physx\charactercontrolserver.h"
 				>
 			</File>
 			<File
