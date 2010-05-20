@@ -1,3 +1,30 @@
+18:05 2010-5-20
+数据更新：
+客户端和服务端使用相同的脚本，所以更新数据的步骤为：
+修改resource目录下相关的txt文件，然后把数据同时复制到客户端和服务端resource目录，并在服务端运行数据库更新指令。
+
+NPC卖东西：
+item_npcStore.txt 保存所有商店类型的NPC和要卖的物品ID
+
+quest_main.txt 所有任务脚本，说明如下：
+	duty	//需要执行的任务
+	{
+		hunt	1	5	//杀怪	怪类型ID	杀怪数量
+		hunt	2	5
+	
+	}	
+	default	//获得的奖励（直接得到）
+	{	
+		exp	50		
+		sxp	50	
+	}
+	select	//选择其中一项奖励
+	{
+		item	1011	1
+		item	11011	1
+		item	21011	1
+	}
+
 23:25 2009/11/1
 n2子模型组织方式，动画模型致少（或只有？）一个characternode,其它子模型都做为其子模型。
 ncharacternode
