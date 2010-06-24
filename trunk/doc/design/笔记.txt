@@ -1,3 +1,320 @@
+16:44 2010-6-22
+修改的代码位置:
+player.cpp 	4843
+item_common.h	156
+itemdefine.h	111
+itemmanager_load.cpp 1141
+
+17:47 2010-6-21
+技能释放消息
+MSG_RES_SKILL_USED	server->client
+MSG_REQ_SKILL_USED	client->server
+MSG_SYN_SKILL_USED	server->client 广播给其它玩家
+
+技能释放类型
+enum eSHOTTYPE
+{
+	eSHOTTYPE_NONE = 0,					/// 
+	eSHOTTYPE_SPOT,						/// 瞬发
+	eSHOTTYPE_CASTING,					/// 读进度条
+	eSHOTTYPE_CHANNEL,					/// ??
+	eSHOTTYPE_AURA,						/// ??
+};
+
+/// 技能类型
+enum eSKILLTYPE
+{
+	eSKILLTYPE_PASSIVE = 1,				/// 被动技能
+	eSKILLTYPE_DAMAGE,				/// 主动-伤害
+	eSKILLTYPE_NONACTIVE,				/// 主动-??
+	eSKILLTYPE_HEAL,				/// 主动-??
+    	eSKILLTYPE_MPDAMAGE,				/// 主动-魔法伤害
+	eSKILLTYPE_TOTEM,				/// 图腾?
+};
+
+/// 攻击的目标范围
+enum eBOUNDTYPE
+{
+	eBOUNDTYPE_NONE = 0,				/// ?? ??
+	eBOUNDTYPE_SELF_TARGET,				/// ???(??) ???? - ??? ?? ??
+	eBOUNDTYPE_SELF_NOTARGET,			/// ???(??) ???? - ??? ?? ??? ?
+	eBOUNDTYPE_TARGET,					/// ?? ????
+	eBOUNDTYPE_FIELD,					/// ?? ????
+};
+
+/// 攻击的目标类型.如敌人,组队,好友,(可以理解为PK模式)
+enum eAPPLYTYPE
+{
+	eAPPLYTYPE_SELF = 1,				/// 自身?(安全模式?)
+	eAPPLYTYPE_ENEMY,				/// 敌人模式
+	eAPPLYTYPE_BUDDY,				/// 好友模式
+	eAPPLYTYPE_PARTY,				/// 组队模式
+	eAPPLYTYPE_DIEBUDDY,				/// 死亡好友?复活
+};
+
+
+人物状态
+enum ePLAYER_STATUS_EXT
+{
+	ePLAYER_STATUS_EXT_ATK = 0,		/// 物理近程攻击
+	ePLAYER_STATUS_EXT_RATK,		/// 物理远程攻击
+	ePLAYER_STATUS_EXT_DEF,			/// 物理防御?
+	ePLAYER_STATUS_EXT_MATK,		/// 魔法攻击
+	ePLAYER_STATUS_EXT_MDEF,		/// 魔法防御
+	ePLAYER_STATUS_EXT_CRI,			/// ?? ?? ??
+	ePLAYER_STATUS_EXT_MCRI,		/// ?? ?? ??
+	ePLAYER_STATUS_EXT_MAXHP,		/// HP
+	ePLAYER_STATUS_EXT_MAXMP,		/// MP
+	ePLAYER_STATUS_EXT_RECOVHP,		/// HP ???
+	ePLAYER_STATUS_EXT_RECOVMP,		/// MP ???
+	ePLAYER_STATUS_EXT_HIT,			/// ?????
+	ePLAYER_STATUS_EXT_MHIT,		/// ?????
+	ePLAYER_STATUS_EXT_AVOID,		/// ???
+	ePLAYER_STATUS_EXT_WEIGHT,		/// ??
+	ePLAYER_STATUS_EXT_ASPD,		/// ??????
+	ePLAYER_STATUS_EXT_COOLTIME,	/// cooltime
+	ePLAYER_STATUS_EXT_RANGE,		/// ???????
+	ePLAYER_STATUS_EXT_RRANGE,		/// ???(+??)????
+	ePLAYER_STATUS_EXT_SPD,			/// ????
+	ePLAYER_STATUS_EXT_HEAL,		/// ????
+	ePLAYER_STATUS_EXT_ATKTOTAL,	/// ??? ??
+	ePLAYER_STATUS_EXT_DEFTOTAL,	/// ??? ??
+
+
+	ePLAYER_STATUS_EXT_ATKMin,		/// ???? ??? ??
+	ePLAYER_STATUS_EXT_ATKMax,		/// ???? ??? ??
+	ePLAYER_STATUS_EXT_RATKMin,		/// ????? ??? ??
+	ePLAYER_STATUS_EXT_RATKMax,		/// ????? ??? ??
+	ePLAYER_STATUS_EXT_MATKMin,		/// ?? ??? ??
+	ePLAYER_STATUS_EXT_MATKMax,		/// ?? ??? ??
+	ePLAYER_STATUS_EXT_HEALMin,		/// ??? ??
+	ePLAYER_STATUS_EXT_HEALMax,		/// ??? ??
+
+	ePLAYER_STATUS_EXT2_MAX,		/// ?? ??? ??? ???
+
+	ePLAYER_STATUS_EXT_MAX = ePLAYER_STATUS_EXT_ATKMin,	/// ?? ??? ?? ?? ?? ???
+
+};
+
+物品和插槽(装备格子)匹配测试
+物品类型
+enum eItemFlag
+{
+	ITEM_FLAG_NULL		= 0,
+	ITEM_FLAG_WEAPON	= (1 <<  0),
+	ITEM_FLAG_WEAR		= (1 <<  1),
+	ITEM_FLAG_ACCESSORY	= (1 <<  2),
+
+	ITEM_FLAG_SWORD		= (1 <<  3) | ITEM_FLAG_WEAPON,		/// ???
+	ITEM_FLAG_BLADE		= (1 <<  4) | ITEM_FLAG_WEAPON,		/// ???
+	ITEM_FLAG_DUAL		= (1 <<  5) | ITEM_FLAG_WEAPON,		/// ???
+	ITEM_FLAG_CUTTER	= (1 <<  6) | ITEM_FLAG_WEAPON,		/// ??
+	ITEM_FLAG_GUN		= (1 <<  7) | ITEM_FLAG_WEAPON,		/// ?
+	ITEM_FLAG_STAFF		= (1 <<  8) | ITEM_FLAG_WEAPON,		/// ???
+	ITEM_FLAG_SHIELD	= (1 <<  9) | ITEM_FLAG_WEAPON,		/// ??
+
+	ITEM_FLAG_HEAD		= (1 << 10) | ITEM_FLAG_WEAR,		/// ??
+	ITEM_FLAG_UPPER		= (1 << 11) | ITEM_FLAG_WEAR,		/// ??
+	ITEM_FLAG_LOWER		= (1 << 12) | ITEM_FLAG_WEAR,		/// ??
+	ITEM_FLAG_HANDS		= (1 << 13) | ITEM_FLAG_WEAR,		/// ?
+	ITEM_FLAG_FEET		= (1 << 14) | ITEM_FLAG_WEAR,		/// ?
+	ITEM_FLAG_ONEPIECE	= (1 << 15) | ITEM_FLAG_WEAR,		/// ???
+
+	ITEM_FLAG_EARRING	= (1 << 16) | ITEM_FLAG_ACCESSORY,	/// ???
+	ITEM_FLAG_NECKLACE	= (1 << 17) | ITEM_FLAG_ACCESSORY,	/// ???
+	ITEM_FLAG_BROOCH	= (1 << 18) | ITEM_FLAG_ACCESSORY,	/// ???
+	ITEM_FLAG_BRACELET	= (1 << 19) | ITEM_FLAG_ACCESSORY,	/// ??
+	ITEM_FLAG_RING		= (1 << 20) | ITEM_FLAG_ACCESSORY,	/// ??
+
+	ITEM_FLAG_EQUIPCARD	= (1 << 21),						/// ??? ??
+	ITEM_FLAG_TALISMAN	= (1 << 22),						/// 法宝类型
+	ITEM_FLAG_UNKNOWN	= (1 << 23),
+
+	ITEM_FLAG_ALL		= 0x7FFFFFFF
+};
+
+TB_ITEM_ABILITY属性说明:
+物品属性:
+功击,防御,使用范围等不用介绍了,仔细说下后面的OPT01_INDEX,OPT01_VALUE参数,总共10个.
+OPT01_INDEX是参数类型,如加力量,敏捷等,OPT01_VALUE是加具体数值.
+enum eSTATUS_PLUS
+{	
+	eSTATUSPLUS_STR_PLUS = 1,	/// ?(+)
+	eSTATUSPLUS_DEX_PLUS,		/// ??(+)
+	eSTATUSPLUS_CON_PLUS,		/// ??(+)
+	eSTATUSPLUS_INT_PLUS,		/// ??(+)
+	eSTATUSPLUS_WIS_PLUS,		/// ??(+)
+
+	eSTATUSPLUS_BASE_MAX,
+
+
+	eSTATUSPLUS_ATK_PLUS = 101,	/// ??????(+)
+	eSTATUSPLUS_RATK_PLUS,		/// ???????(+)
+	eSTATUSPLUS_DEF_PLUS,		/// ?? ???(+)
+	eSTATUSPLUS_MATK_PLUS,		/// ?? ???(+)
+	eSTATUSPLUS_MDEF_PLUS,		/// ?? ???(+)
+
+	eSTATUSPLUS_CRI_PLUS,		/// ??????(+)
+	eSTATUSPLUS_MCRI_PLUS,		/// ??????(+)
+	eSTATUSPLUS_HP_PLUS,		/// HP(+)
+	eSTATUSPLUS_MP_PLUS,		/// MP(+)
+	eSTATUSPLUS_RECOVHP_PLUS,	/// HP????(+)	
+
+	eSTATUSPLUS_RECOVMP_PLUS,	/// MP????(+)
+	eSTATUSPLUS_HIT_PLUS,		/// ?????(+)
+	eSTATUSPLUS_MHIT_PLUS,		/// ?????(+)
+	eSTATUSPLUS_AVOID_PLUS,		/// ???(+)
+	eSTATUSPLUS_WEIGHT_PLUS,	/// ??(+)
+
+	eSTATUSPLUS_ASPD_PLUS,		/// ??????(+)
+	eSTATUSPLUS_COOLTIME_PLUS,	/// ???????(+)
+	eSTATUSPLUS_RANGE_PLUS,		/// ???????(+)
+	eSTATUSPLUS_RRANGE_PLUS,	/// ???(+??)????
+	eSTATUSPLUS_SPD_PLUS,		/// ????(+)	
+
+	/// ????? ?? ?? ?? plus?? ?? ?? ?? ??.
+	eSTATUSPLUS_SKILL_HP_PLUS_PLUS,	/// ????(+)	= eSTATUSPLUS_EXT_PLUS_MAX,
+	eSTATUSPLUS_ATKTOTAL_PLUS,	/// ??? ??(+)
+	eSTATUSPLUS_DEFTOTAL_PLUS,	/// ??? ??(+)
+
+
+	eSTATUSPLUS_ATK_PER = 201,	/// ??????(%)
+	eSTATUSPLUS_RATK_PER,		/// ???????(%)
+	eSTATUSPLUS_DEF_PER,		/// ?? ???(%)
+	eSTATUSPLUS_MATK_PER,		/// ?? ???(%)
+	eSTATUSPLUS_MDEF_PER,		/// ?? ???(%)
+
+	eSTATUSPLUS_CRI_PER,		/// ??????(%)
+	eSTATUSPLUS_MCRI_PER,		/// ??????(%)
+	eSTATUSPLUS_HP_PER,			/// HP(%)
+	eSTATUSPLUS_MP_PER,			/// MP(%)
+	eSTATUSPLUS_RECOVHP_PER,	/// HP????(%)
+
+	eSTATUSPLUS_RECOVMP_PER,	/// MP????(%)
+	eSTATUSPLUS_HIT_PER,		/// ?????(%)
+	eSTATUSPLUS_MHIT_PER,		/// ?????(%)
+	eSTATUSPLUS_AVOID_PER,		/// ???(%)
+	eSTATUSPLUS_WEIGHT_PER,		/// ??(%)	
+
+	eSTATUSPLUS_ASPD_PER,		/// ??????(%)
+	eSTATUSPLUS_COOLTIME_PER,	/// ???????(%)
+	eSTATUSPLUS_RANGE_PER,		/// ???????(%)
+	eSTATUSPLUS_RRANGE_PER,		/// ???(%??)????
+	eSTATUSPLUS_SPD_PER,		/// ????(%)
+
+	/// ????? ?? ?? ?? plus?? ?? ?? ?? ??.
+	eSTATUSPLUS_SKILL_HP_PLUS_PER,	/// ????(%)	= eSTATUSPLUS_EXT_PER_MAX,
+	eSTATUSPLUS_ATKTOTAL_PER,	/// ??? ??(%)
+	eSTATUSPLUS_DEFTOTAL_PER,	/// ??? ??(%)
+
+
+	eSTATUSPLUS_EXPADDPER = 301,			/// ??? ?? ??(%)
+	eSTATUSPLUS_EXPADDPLUS,					/// ??? ?? ??(+)
+	eSTATUSPLUS_SXPADDPER,					/// ????? ?? ??(%)
+	eSTATUSPLUS_SXPADDPLUS,					/// ????? ?? ??(+)
+
+	eSTATUSPLUS_BUFF_ETC_MAX,
+
+
+	eSTATUSPLUS_INSTANTPERHIT = 401,		/// ?? ?? ?? - %?? ??			功击成功率百分比
+	eSTATUSPLUS_INSTANTPLUSHIT,				/// ?? ?? ?? - ?? ??			功击成功率目前影响？
+	eSTATUSPLUS_PHYINSTANTPERCRI,			/// ???? ?? ??(??) - %?? ??
+	eSTATUSPLUS_PHYINSTANTPLUSCRI,			/// ???? ?? ??(??) - ?? ??
+	eSTATUSPLUS_MAGICINSTANTPERCRI,			/// ???? ?? ??(??) - %?? ??
+	eSTATUSPLUS_MAGICINSTANTPLUSCRI,		/// ???? ?? ??(??) - ?? ??
+	eSTATUSPLUS_PHYINSTANTPERATTACK,		/// ???(??) - %?? ??
+	eSTATUSPLUS_PHYINSTANTPLUSATTACK,		/// ???(??) - ?? ??
+	eSTATUSPLUS_MAGICINSTANTPERATTACK,		/// ???(??) - %?? ??
+	eSTATUSPLUS_MAGICINSTANTPLUSATTACK,		/// ???(??) - ?? ??
+	eSTATUSPLUS_INSTANTPERFINAL,			/// ?? ??? - %?? ??
+	eSTATUSPLUS_INSTANTPLUSFINAL,			/// ?? ??? - ?? ??
+
+	eSTATUSPLUS_DELETE_TARGETING,			/// ??? ??
+
+	eSTATUSPLUS_DAMAGECALC_MAX = eSTATUSPLUS_DELETE_TARGETING,
+
+	eSTATUSPLUS_DISPEL = 501,				/// ???
+	eSTATUSPLUS_RESURRECTION_HP_PLUS,		/// ??+HP(+)
+	eSTATUSPLUS_RESURRECTION_HP_PER,		/// ??+HP(%)
+	eSTATUSPLUS_RESURRECTION_MP_PLUS,		/// ??+MP(+)
+	eSTATUSPLUS_RESURRECTION_MP_PER,		/// ??+MP(%)
+	eSTATUSPLUS_BLINK,						/// ?? ????
+	eSTATUSPLUS_DISPEL_ALL,					/// ?? ???
+	eSTATUSPLUS_HP_ABSORB_INS,				/// ???? HP ?? ??
+	eSTATUSPLUS_MP_ABSORB_INS,				/// ???? MP ?? ??
+	eSTATUSPLUS_MONSTER_ESCAPE,				/// ??? ????? ??
+
+	eSTATUSPLUS_STOPMOVE = 551,				/// ?? ??
+	eSTATUSPLUS_STOPSKILL,					/// ?? ?? ??
+	eSTATUSPLUS_ATTACKERTARGETING,			/// ?? ???
+	eSTATUSPLUS_SLEEP,						/// ??
+	eSTATUSPLUS_STUN,						/// ??
+	eSTATUSPLUS_INVINCIBILITY_PHY,			/// ?? - ??
+	eSTATUSPLUS_INVINCIBILITY_MAG,			/// ?? - ??
+	eSTATUSPLUS_HP_ABSORB_LONG,				/// ???? HP ?? ??
+	eSTATUSPLUS_MP_ABSORB_LONG,				/// ???? MP ?? ??
+	eSTATUSPLUS_STOPITEM_KIND,				/// ??? ?? ?? - ???
+	eSTATUSPLUS_STOPITEM_IDX,				/// ??? ?? ?? - ???????
+	eSTATUSPLUS_DAMAGE_ABSORB_PHY,			/// ??? ??(??:???)
+	eSTATUSPLUS_DAMAGE_ABSORB_MAG,			/// ??? ??(??:???)
+	eSTATUSPLUS_DAMAGE_REFLECT_PHY,			/// ??? ??(??)
+	eSTATUSPLUS_DAMAGE_REFLECT_MAG,			/// ??? ??(??)
+
+	eSTATUSPLUS_CONDITIONINDISPOSITION_MAX,
+
+
+	eSTATUSPLUS_DOT_HPCHANGE_PLUS = 601,	///	(??) ?? HP +
+	eSTATUSPLUS_DOT_HPCHANGE_PER,			/// ?? HP %
+	eSTATUSPLUS_DOT_MPCHANGE_PLUS,			/// ?? MP +
+	eSTATUSPLUS_DOT_MPCHANGE_PER,			/// ?? MP %
+
+	eSTATUSPLUS_DOT_HPCHANGE_CALC_PLUS,		/// ?? HP +(?????)
+	eSTATUSPLUS_DOT_MPCHANGE_CALC_PLUS,		/// ?? MP +(?????)
+
+	eSTATUSPLUS_DOT_MAX,
+
+
+	eSTATUSPLUS_NONSKILL_HPCHANGE_PLUS = 701,	/// (??? ??) ?? hp +
+	eSTATUSPLUS_NONSKILL_HPCHANGE_PER,			/// ?? hp %
+	eSTATUSPLUS_NONSKILL_MPCHANGE_PLUS,			/// ?? mp +
+	eSTATUSPLUS_NONSKILL_MPCHANGE_PER,			/// ?? mp %
+
+	eSTATUSPLUS_NONSKILL_MAX,
+
+
+	eSTATUSPLUS_CHAR_SIZE = 1001,		/// ??? ????
+	eSTATUSPLUS_CHANGE_MONSTER,			/// ???? ????
+	eSTATUSPLUS_VEHICLE,				/// ?? 
+
+	eSTATUSPLUS_MAPCHANGE = 2000,			/// ???
+
+
+	eSTATUSPLUS_TAROT_MAX,
+};
+
+11:15 2010-6-13
+TB_INVENTORY表结构中apply字段说明：
+enum eInventoryApply
+{
+	InventoryApplyNone =0,					// ???? ? ? ? - ???.
+	InventoryApplyRemoved,					// ???? ???? - Database? ?? ??.
+	InventoryApplyExchange,					// ???? ? ? ? - GameServer??? ??.
+	InventoryApplyStallSell,				// ???? ? ? ? - GameServer??? ??.
+	InventoryApplyGetAuto,					// ???? ???? - GameServer??? ??.
+};
+
+NM_ITEM_INVENTORY_RES:跳场景发送身上带的物品ID
+SQL_GAME_PROCESS_INVENTORY_SELECT:选择角色，进入场景前
+
+15:26 2010-6-3
+数据报表软件：Strategy Companion Analyzer 
+
+11:41 2010-6-3
+item_define.txt物品定义缺少几项：
+sellType、buyType、maxHaveInven
+所以服务端加入数据库的数据是错的!!cSQLGame::InsertItemDefine中有人注释了错误的代码！
+导至在商人那无法显示和购买道具
+
 18:05 2010-5-20
 数据更新：
 客户端和服务端使用相同的脚本，所以更新数据的步骤为：
