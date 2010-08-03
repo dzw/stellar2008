@@ -13,6 +13,10 @@
 2、模型都是专用的，当然小物件是可以共用的，共用的模型需要在地编中摆放，而且没有阴影！！！
 3、lightmap生成后为每个物件指定阴影贴图
 
+
+3ds max中导入heightmap方法：
+http://www.gtaforums.com/index.php?showtopic=191636
+
 18:54 2010-7-16
 navimesh:场景高度，人物在场景中跑的实际高度，需要这个支持。
 navifield：阻档信息，有多级概念，默认为0级，可通过。
