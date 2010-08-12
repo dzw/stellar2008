@@ -1,3 +1,41 @@
+16:49 2010-8-11
+几个技能相关文件说明：
+人物技能列表：SkillList_PC.txt
+商店技能列表：Skill_NpcStore.txt
+技能提示文字：Skill_Tooltip.txt
+技能效果配置：SkillList_Effect.txt  包括特效模型，特效播放控制
+怪物技能列表：SkillList_Mon.txt
+图腾技能列表：SkillList_Trap.txt
+技能名字列表：Skill_Name.txt
+SkillList_Class.txt
+技能步骤：SkillList_Sub.txt
+
+
+16:30 2010-8-10
+eff_act_04.nif 飞行特效
+
+11:06 2010-8-10
+跳地图消息：NM_SKILL_ITEMMAPCHANGE_REQ
+骑马消息：NM_SKILL_ITEMVEHICLE_REQ
+
+
+技能过程：
+enum eSKILLPROCESS
+{
+	eSKILLPROCESS_CASTING,			/// ???	吟唱
+    	eSKILLPROCESS_ACTIVITY,			/// ??	发射
+	eSKILLPROCESS_PROJECTILE,		/// ???	发射过程中？使用过程中
+	eSKILLPROCESS_DAMAGE,			/// ???	伤害？
+	eSKILLPROCESS_HP,			/// HP		血？
+	eSKILLPROCESS_DESTRUCTION,		/// ??	结束
+};
+
+
+技能特效配置（使用道具，如传送、骑马等都属于使用技能）：
+技能属性在skillList_pc.txt中配置，
+道具属性在item_define.txt中配置，其中最后一项指向特效索引
+特效表现在skilllist_effect.txt中配置，最后都会调用这里的值表现效果,其中e_XXXXX.txt的文件配置具体特效方向、位置、模型名称等信息。
+
 18:16 2010-8-3
 地形场景制作：
 1、在MAX里面制作地形（或在地编制作好地型导出高度图，再导入MAX中）
@@ -734,3 +772,6 @@ nCharJoint	= Bone
 nClipAnim	不变
 nClipSchduler	不变
 SetJoint()
+
+k7t8b9d6 
+GB SN:C7DB3BE5B760D852
