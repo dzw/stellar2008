@@ -1,3 +1,18 @@
+23:54 2010/8/14
+±¾½ÚµãÄ¿±ê£º
+	1¡¢È·¶¨ÓÎÏ··ç¸ñ£¬ÖÆ×÷³¡¾°¡¢ÈËÎï¡¢¼¼ÄÜÌØÐ§£¬²ß»®ÌØÉ«ÏµÍ³¡¢Ö÷ÒªÄ£¿é¡£
+	2¡¢ÃÀÊõÏÈ×ö³¡¾°£¬·ç¸ñÓëÐùÔ¯ÏàÍ¬£¬×öºÃ³¡¾°ºó½ÓÏÂÀ´ÊÇ½ÇÉ«¡¢¶¯×÷¡¢¼¼ÄÜ¡£
+	3¡¢È·¶¨¹¤×÷ÊÒÃû×Ö¡¢Í¼±ê¡¢ÏîÄ¿Ãû³Æ
+	
+
+¹¤×÷ÊÒÃû£º·²ÓÎ »òÕß èóÓÎ
+ÏîÄ¿Ãû£º
+¡¶ÉñµÀ¡·
+¡¶ÏÉµÀ¡·
+¡¶ÏÉµÀ´«Ëµ¡·
+¡¶ÐÞÏÉÂ·¡·
+
+
 15:01 2010-8-14
 ÃÀÊõ£º
 	*Ô­»­
@@ -115,7 +130,7 @@ me:
 win32inputserverÖÐFindWindowÓÃµÄ²ÎÊýÔÚ¶à¿ªÇé¿öÏÂ»áÓÐÎÊÌâ¡£
 
 21:30 2010-1-5
-µ¼³ö²å¼þÓÐ¼¸¸öÐ¡ÎÊÌâ£¬²»¹ý»ù±¾²»Ó°ÏìÊ¹ÓÃ¡£
+µ¼³ö²å¼þÓÐ¼¸¸ö?¡ÎÊÌâ£¬²»¹ý»ù±¾²»Ó°ÏìÊ¹ÓÃ¡?
 ÑÐ¾¿¾ö¶¨£¬Ã÷Ìì¿ªÊ¼ÓÃWOWµÄ×ÊÔ´À´×ö²âÊÔ£¡
 
 
@@ -212,7 +227,7 @@ Bent normal:  Æ½¾ùÎ´ÕÚµµÃæµÄ·½Ïò£¬Èç¹ûÃæ¶¼Ã»±»ÕÚµµ£¬¾ÍÓë·¨ÏßÏàÍ¬¡£
 ÐèÒª×ÊÔ´£º
 ÈËÎï¶¯×÷£º´ý»ú¡¢ÐÐ×ß¡¢ÅÜ²½¡¢¹¥»÷¡¢ÊÜ»÷¶¯×÷¡£
 
-ÓÎÏ··ç¸ñ£º
+?ÎÏ··ç¸ñ£?
 ×÷³ÉÈçÍ¼ambientocc1-300x237.jpgÀàËÆ£¬¿¨Í¨äÖÈ¾£¿
 
 ³¡¾°ÐÎÊ½£º
@@ -414,7 +429,7 @@ Alpha-to-Coverage in Depth
 UIÏµÍ³ÎÆÀíÏà¹Ø£º
 Õ÷Í¾ÖÐµÄUIÎÆÀí²»ÐèÒª°´2µÄ±¶Êý½øÐÐ´¦Àí£¬¶øÊÇ°´Êµ¼ÊµÄ´óÐ¡±£´æ£¬Ê¹ÓÃµÄÊ±ºòÏÈ´´½¨Ò»¸öÎÆÀí£¬È»ºó°ÑÎÆÀí¼ÓÔØµ½ÄÚ´æ¡£·ñÔò°´2µÄ±¶Êý»áÓÐºÜ¶à¿Õ¼ä±»ÀË·Ñµô¡£
 
-×¢Òâ£ºPHOTOSHOPÖÐ±£´æTGAÓÐ¸öÑ¹ËõÑ¡Ïî£¬ÔÚ¸ß¼¶µÄ°æ±¾ÖÐÑ¹ËõÍêºó¿ÉÒÔ±£ÁôALPHAÍ¨µÀ£¬µÍ°æ±¾µÄÃ»ÓÐ£¬ËùÒÔ´æ³ÉTGA±ÈDDSÒªÊ¡3/4µÄ¿Õ¼ä£¡£¡£¡
+×¢Òâ£ºPHOTOSHOPÖÐ±£´æTGAÓÐ¸öÑ¹ËõÑ¡Ïî£¬ÔÚ¸ß¼¶µÄ°æ±¾ÖÐÑ¹ËõÍêºó¿ÉÒÔ±£ÁôALPHAÍ¨µÀ£¬µÍ°æ±¾µÄÃ»ÓÐ£¬?ùÒÔ´æ³ÉTGA±ÈDDSÒªÊ¡3/4µÄ¿Õ¼ä£¡£¡£¡
 
 11:38 2008-10-28
 ***ÓÅ»¯µã£ºÊ¹ÓÃNVPerfHUD¹¤¾ß¶ÔÐÔÄÜÐ§ÂÊ½øÐÐÈ«Ãæ²âÊÔ£¬¿ÉÒÔ²Î¿¼GPU Programming Guide Chinese£¨ÔÚD:\BOOKÖÐ£©Ò»Êé½øÐÐ²âÊÔ¡£
@@ -516,7 +531,7 @@ KOKÏÖÔÚµÄÉè¼Æ¾ÍÊÇ´ÓÄ§ÊÞÕù°ÔÖÐÀ´µÄ£¬¶øÄ§ÊÞÕù°Ô±¾ÉíÉè¼Æ¾Í²»ÊÇ×ö´óÊÀ½ç»òÕæÊµÊÀ½ç£¬¶
 ***ÓÅ»¯µã£ºÄ£ÐÍäÖÈ¾ÅÅÐòÓÅ»¯£º
 Model-node-batch
 °´Ä£ÐÍ-×ÓÄ£ÐÍ-Åú´ÎÅÅÐò¡£
-¼´£º»­×ÓÄ£ÐÍµÄÊ±ºòÔÙ¸ù¾ÝÅú´Î£¨Ò²¾ÍÊÇ²ÄÖÊ£©ÔÙÅÅÐò£¬ÒòÎªÏÖÔÚÒÑ¾­°´×ÓÄ£ÐÍÅÅÐòÁË£¬Ö»ÒªÔÚ»­×ÓÄ£ÐÍ(Node)ÊµÀýµÄÊ±ºòÔÙ°´Åú´ÎÅÅ¼´¿É¡£
+¼´£º»­×ÓÄ£ÐÍµÄÊ±ºòÔÙ¸ù¾ÝÅú´Î£¨Ò²¾ÍÊÇ²ÄÖÊ£©ÔÙÅÅÐò£¬ÒòÎªÏÖÔÚÒÑ¾­°´×ÓÄ£ÐÍÅÅÐòÁË£¬Ö»?ªÔÚ»­×ÓÄ£Ð?Node)ÊµÀýµÄÊ±ºòÔÙ°´Åú´ÎÅÅ¼´¿É¡£
 Õâ¸ö·½·¨Ö»ÊÇ¶ÔÏàÍ¬Ä£ÐÍµÄ¶à¸öÊµÀýÅÅÐò£¬²¢²»ÊÇ¶Ô²»Í¬Ä£ÐÍ×öÅÅÐò¡£
 Î±´úÂë£º
 for (int modelIndex = 0; modelIndex < model.Size(); modelIndex++)
@@ -679,7 +694,7 @@ thingentityÔÚÃ»ÓÐÁíÔØÇ°Ö»ÄÜ¸ù¾Ý¾àÀëÅÐ¶ÏÊÇ·ñÐèÒª¼ÓÔØ£¬±¾À´ÏëÈç¹û¿É¼û¾ÍÈÃ¼ÓÔØµÄ£¬µ
 17:26 2008-9-3
 µ¶¹â£ºÎäÆ÷×ÓÄ£ÐÍÖÐÃû×Ö´øm_shadowµÄ¾ÍÊÇÓÃÀ´×öµ¶¹âµÄ
 m_shadow•þÓÐƒÉ‚€¿ØÖÆüc£¬ÒÆ„ÓÎäÆ÷áá•þËã³öÐÂµÄm_shadow¿ØÖÆücÎ»ÖÃ£¬ÔÙŒ¢ÐÂÅf¿ØÖÆüc½M³Épolygon
-×Ô¼ºµÄµ¶¹âÓÐ×÷ƒÈ²å£¬„eÈËµÄµ¶¹â›]×÷ƒÈ²å£¬¿ÉÒÔ¿´³ö²î„e
+×Ô¼ºµÄµ¶¹âÓÐ×÷ƒÈ²å?¬„eÈËµÄµ¶¹â›]×÷ƒÈ²å£¬¿ÉÒÔ¿´³ö²î„e
 
 ÎäÆ÷×ÓÄ£ÐÍÖÐÃû×Ö´øb_00µÄ¾ÍÊÇÒ»‚€Á¢·½ów£¬Á£×ÓÌØÐ§Ö»•þÔÚß@‚€Á¢·½ów¹ ‡úƒÈ®aÉú
 
@@ -856,7 +871,7 @@ ligÊÇˆö¾°¹â×V™n£¬´æ¸÷•régµÄ­h¾³¹âºÍÌ«ê–¹â…¢”µÙYÁÏ
 15:59 2008-8-25
 ²ÉÓÃNEBULA2µÄ·½·¨ÉèÖÃ²ÄÖÊ£¬»ù±¾»úÖÆ²»±ä¡£
 StateNodeÊÇÒ»¸öshader£¬ÊÇ²ÄÖÊµÄ»ù´¡
-StateNodeInstanceÏàµ±ÓÚ²ÄÖÊ£¬²»Í¬µÄ×´Ì¬ºÍ²ÄÖÊÐÅÏ¢¶¼·ÅÕâÀï¸üÐÂ£¬Ã¿¸öÊµÀý¿ÉÄÜ¶¼²»ÏàÍ¬¡£
+StateNodeInstance?àµ±ÓÚ²ÄÖÊ£¬²»Í¬µÄ×´Ì¬ºÍ²ÄÖÊÐÅÏ¢¶¼·ÅÕâÀï¸üÐÂ£¬Ã¿¸öÊµÀý¿ÉÄÜ¶¼²»ÏàÍ¬¡?
 
 ***ÓÅ»¯µã£ºÊÇ·ñÐèÒªÔÚÉèÖÃeffect±äÁ¿µÄÊ±ºò¼Ó¸öÅÐ¶Ï£¬Èç¹ûÒªÉèÖÃµÄÖµºÍeffectÖÐÏàÍ¬¾Í²»ÉèÖÃ£¬ÒòÎªÉèÖÃÒ»´Î¶¼ÐèÒª¸üÐÂµ½GPUÉÏ¡£
 
@@ -1024,7 +1039,7 @@ dynamic vb
 15:35 2008-8-5
 ÎÊÌâ£º¶¥µã´ø¿íÌ«´ó£¬Ê¹ÓÃÁËÎå¸öÎÆÀí×ø±êÀ´±íÊ¾Ã¿²ãºÍÒõÓ°ÎÆÀíµÄÎ»ÖÃ£¡
 ½â¾ö£º
-1¡¢ÒòÎªÃ¿ÕÅÎÆÀíÖÐµÄ¿é´óÐ¡ÊÇ¹Ì¶¨µÄ£¬ËùÒÔÊ¹ÓÃshader£¬´«Èë¿é±àºÅ£¬À´Ê¹ÓÃÎÆÀí£¬ÕâÑùËÄÕÅÎÆÀíÒª´«Èë4¸ö±àºÅ£¬ÔÙ¼ÓÒ»¸öÒõÓ°£¬¾ÍÊÇ5¸öfloat
+1¡¢ÒòÎªÃ¿ÕÅÎÆÀíÖÐµÄ¿é´óÐ¡ÊÇ¹Ì¶¨µÄ£¬ËùÒÔÊ¹ÓÃshader£¬´«Èë¿é±àºÅ£¬À´Ê¹ÓÃÎÆÀí£¬ÕâÑùËÄÕÅÎÆÀíÒª´«Èë4¸ö±àºÅ£¬ÔÙ¼ÓÒ»¸öÒõÓ°£¬¾Í??¸öfloat
 2¡¢ÒòÎª´ó²¿·ÝµØÐÍÉÏ²»ÐèÒª×ö»ìºÏ£¬Ö»ÓÃÒ»ÕÅÎÆÀí£¬Ö»ÓÐ´¦Àí±ß½çµÄÊ±ºò²ÅÐèÒª»ìºÏ£¬ËùÒÔÔÚ½øÈë³¡¾°µÄÊ±ºòÔ¤äÖÈ¾Ò»ÕÅÎÆÀí£¬°ÑËùÓÐÓÃµ½µÄ±ß½çÏÈäÖÉÏÈ¥£¬ÓÃµÄÊ±ºòÅöµ½Ê¹ÓÃ»ìºÏµÄ¾Í´ÓÕâÀïÈ¡ÎÆÀí£¬ÕâÑù¾Í¿ÉÒÔÓÃÒ»ÕÅÎÆÀí£¬Ò»ÕÅÒõÓ°Í¼¸ã¶¨¡£
 
 ¿´Ñù×ÓÖ»ÄÜÑ¡ÔñµÚ1ÖÖ¡£
@@ -1093,7 +1108,7 @@ FMemStackºÍFrameAllocatorµÄÇø±ð
 0:43 2008-7-28
 ½ñÌì³öÏÖÁ½¸öÒýÇæÉè¼ÆÎÊÌâ£º
 1¡¢¶àÏß³Ì×ÊÔ´¼ÓÔØºÍ½âÎö£¬Ä¿Ç°ÒýÇæ²¢²»Ìá¹©¶àÏß³Ì½âÎö£¬ÓÃµÄÏûÏ¢»úÖÆ²¢²»Ö§³Ö¼Ì³Ð£¬ËùÒÔÐèÒªÔÙ´´½¨Ò»¸öÏß³Ì×¨ÃÅ×ö½âÎö£¬²¢ÇÒ¸ú¾Ý²»Í¬ÀàÐÍÊý¾ÝÖØÔØ½âÎöº¯Êý¡£
-2¡¢¼ÓÔØÊý¾ÝµÄÀà(XXXloader)ÊÇµ÷ÓÃ²»Í¬ÀàÐÍÊý¾ÝÀàÉèÖÃ¸÷ÖÖÊý¾Ý£¬ÒòÎª±äÁ¿ÊÇ±£»¤µÄ£¬ËùÒÔÒªÉèÖÃºÜ¶àº¯Êý£¬·Ç³£·±Ëø£¬½â¾ö°ì·¨£ºÖ±½ÓÉèÖÃ¼ÓÔØÀà(XXXloader)ÎªÓÑÔ±Àà£¬È»ºó¼ÓÔØµÄÊ±ºòÖ±½Óµ÷ÓÃ±äÁ¿ÉèÖÃ¡£
+2¡¢¼ÓÔØÊý¾ÝµÄÀà(XXXloader)ÊÇµ÷ÓÃ²»Í¬ÀàÐÍÊý¾ÝÀàÉè?Ã¸÷ÖÖÊý¾Ý£¬ÒòÎª±äÁ¿ÊÇ±£»¤µÄ£¬ËùÒÔÒªÉèÖÃºÜ¶àº¯Êý£¬·Ç³£·±Ëø£¬½â¾ö°ì·¨£ºÖ±½ÓÉèÖÃ¼ÓÔØÀ?XXXloader)ÎªÓÑÔ±Àà£¬È»ºó¼ÓÔØµÄÊ±ºòÖ±½Óµ÷ÓÃ±äÁ¿ÉèÖÃ¡£
 	ÕâÑùÒ»À´¾Í²»ÐèÒªÏñÀÏ·½·¨ÄÇÑù£¬Ã¿¸ö×ÊÔ´Àà¶¼ÐèÒª¼Ì³Ð×ÔAsyncLoad°Ñ¼ÓÔØºÍ½âÎö·ÅÔÚ×ÊÔ´ÀàÀïÃæ´¦Àí¡£
 
 2:36 2008-7-25
@@ -1209,7 +1224,7 @@ hasttableÀàÖÐ»¹ÓÐ¸öBUG£¬Ã»Ê±¼äÁË£¬ÏÂ´Î½â¾ö¡£
 
 2:24 2008-5-28
 ³¢ÊÔ½«×ÊÔ´¹ÜÀíÖÐÓÃµÄDirectory¸Ä³ÉHashTable.ÒÔÌá¸ßÐ§ÂÊ¡£
-·¢ÏÖÓÃAtom<String>×öÎªResourceId·Ç³£Âý£¬ÒòÎªÃ¿´Î×ÊÔ´Ôö¼ÓµÄÊ±ºò¶¼ÐèÒªÅÅÐò£¬¶Ô×Ö·û´®½øÐÐstrcmp£¬Õâ¸öº¯Êý·Ç³£Âý£¬ÌØ±ðÊÇµ÷ÓÃ´ÎÊý¹ý¶àµÄÊ±ºò¡£
+·¢ÏÖÓÃAtom<String>×öÎªResourceId·Ç³£Âý?¬ÒòÎªÃ¿´Î×ÊÔ´Ôö¼ÓµÄÊ±ºò¶¼ÐèÒªÅÅÐò£¬¶Ô×Ö·û´®½øÐÐstrcmp£¬Õâ¸öº¯Êý·Ç³£Âý£¬ÌØ±ðÊÇµ÷ÓÃ´ÎÊý¹ý¶àµÄÊ±ºò¡£
 2:23 2008-5-26
 Á½´¦¿ÉÄÜÒýÆð¿¨µÄÎÊÌâ£º
 1¡¢ÔÚStageÖÐ¸üÐÂËùÓÐentity£¬Ò»µ©enttiyºÜ¶àµÄÇé¿öÏÂ£¬Ã¿¸öentity¶¼Òª´´½¨instance£¬»áºÜÂý£¬
