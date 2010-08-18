@@ -1,3 +1,7 @@
+18:51 2010-8-18
+透明人物坐骑实现：(类似WOW幽灵坐骑）
+MAX导出后用AMD Tootle工具优化MESH，用半透明方式渲染即可。
+
 16:49 2010-8-11
 几个技能相关文件说明：
 人物技能列表：SkillList_PC.txt
@@ -10,6 +14,8 @@
 SkillList_Class.txt
 技能步骤：SkillList_Sub.txt
 
+骑马道具相关联技能设置：
+itemdefine->itemability->SkillList_PC->itemdefine
 
 16:30 2010-8-10
 eff_act_04.nif 飞行特效
