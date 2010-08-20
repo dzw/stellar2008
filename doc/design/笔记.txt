@@ -1,3 +1,30 @@
+12:30 2010-8-20
+坐骑设置：
+1、新建ITEM：
+注意字段：
+TB_ITEM_DEFINE：
+	TYPE：4
+	SUB_TYPE:7
+	ABILITY_INDEX：等于ITEM_ABILITY[INDEX]，一般ITEM_ABILITY[INDEX]=ITEM_DEFINE[INDEX]
+
+法宝和坐骑：表和数据库修改
+item_define:
+1385	2010-5-10 22:51:52	1100001	法宝1	11	0	1	1	1	1	0	0	0	1100001	0	1	0	0	0	0	0	0	0	151	0	0	6	NULL	0
+1386	2010-5-10 22:51:52	873030	vehicle	4	7	1	1	1	1	0	0	0	873030	0	1	873030	0	0	0	0	0	0	151	0	0	6	NULL	0
+
+item_ability:
+3595	873030	0	0	0	0	0	0	0	0	30000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	200001
+
+skill_pc:
+200001	170001	3665	0	0	0	0	0	0	0	873030	3	2	2	0	1	0	1	200001	1
+
+12:17 2010-8-20
+注意：
+服务端TB_ITEM_DEFINE定义中多了几个虚拟字段：
+idxAbility、idxLimit、idxCard、idxCardSlot、idxTarot、idxEnhancedRate、idxEnhanced、idxDisjoint、idxChange
+主要与每项具体属性的表（如ITEM_ABILITY）相关连，这些数据是在GP_ITEM_DEFINE_SELECT中通用SQL语言自动关联到其它表的，
+所以ITEM_DEFINE表中没有这几个字段，但是程序中有这几个使用。
+
 18:51 2010-8-18
 透明人物坐骑实现：(类似WOW幽灵坐骑）
 MAX导出后用AMD Tootle工具优化MESH，用半透明方式渲染即可。
