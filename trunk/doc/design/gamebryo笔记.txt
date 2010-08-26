@@ -1,0 +1,3 @@
+18:13 2010-8-26
+win32文件操作例子：
+NiTerrainSectorFile::Open
