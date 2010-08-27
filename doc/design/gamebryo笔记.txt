@@ -1,3 +1,15 @@
 18:13 2010-8-26
 win32文件操作例子：
 NiTerrainSectorFile::Open
+NiStreamLoadBinary
+
+
+地形：
+NiTerrainDataLeaf:地形的数据仓库，保存地图块贴图、顶点、meta数据等资源引用，本质上是个数据索引，真正的数据放在父sector上。
+		  一个块最多8张贴图
+
+NiTerrainSectorData:记录sector中叶节点的数据和变量，如块大小、LOD数量、顶点数据等
+
+NiTerrainSectorFile: 读取/保存sector文件数据。如顶点高度、法线等。
+
+scene graphics:
