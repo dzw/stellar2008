@@ -1,3 +1,13 @@
+23:43 2010/9/3
+ÒªÑ§µÄÈý¸ö¼¼Êõ£º
+hdr
+cubemap
+ParallaxOcclusionMapping 
+
+0:02 2010/9/2
+ÐèÐÞ¸Ä³ÌÐò£º
+ÐÞ¸ÄµØ±àÎÆÀíÌùÍ¼±ØÐè¸úµØÍ¼ÎÄ¼þÔÚÍ¬¸öÄ¿Â¼µÄÏÞÖÆ¡£
+
 9:39 2010-9-1
 ³ÌÐò¹¤×÷°²ÅÅ£º
 ·ÉÐÐ×èµµ
@@ -357,7 +367,7 @@ floatÊý Ã¶¾ÙÖµÆ«ÒÆ			ÀàÐÍ	ÓïÒå		Ë÷Òý
 1	100000				UBYTE4	BLENDINDICES	0
 4	200000		coord4		FLOAT4	POSITION	0
 
-ÒÔÉÏÊÇDrakensang×ÊÔ´ÓÃµ½µÄvertex componentÀàÐÍ,¿ÉÒÔ¿´³ö£¬±È¿ªÔ´µÄN2ÀïÃæ¶àÁË²»ÉÙ¸ñÊ½£¬ÓÃÕâ¸ö¸ñÊ½Ó¦¸Ã¿ÉÒÔ½âÎöËùÓÐDrakensang×ÊÔ´¡£
+ÒÔÉÏÊÇDrakensang×ÊÔ´ÓÃµ½µÄvertex componentÀàÐÍ,¿ÉÒÔ¿´³ö£¬±È¿ªÔ´µÄN2ÀïÃæ¶àÁË²»ÉÙ¸ñÊ½£¬ÓÃÕâ¸ö¸ñÊ½Ó¦¸Ã¿ÉÒÔ½âÎöËù?ÐDrakensang×ÊÔ´¡£
 
 ÔÚDrakensangÖÐ¶¥µã¸ñÊ½ÆÕ±éÊ¹ÓÃBYTEµÄÀàÐÍµÄ£¬¿ÉÒÔÊ¡²»ÉÙ×ÊÔ´£¬Ò²¿ÉÒÔ¼Ó¿ìÌá½»¸øGPUµÄËÙ¶È!!!
 
@@ -488,7 +498,7 @@ UI£ºÖ±½Ó°áÔ­À´µÄ£¬ÒÔ¼Ó¿ì¿ª·¢ËÙ¶È£¬ËùÒÔUIÒ²×öÎªÓ¦ÓÃ²ãÀ´×ö£¬¶ø²»ÊÇµÍ²ã
 µ×²ã£º
 ¿ÉÐÐ×ßµØÎï
 µÆ¹â
-Îí:Îí¡¢¿É¼û¾àÀë²Ã¼ô£¬Ôö¼Ó¿É¼ûZfarÖµ,²úÉúÔ¶´¦ÓÐÉ½µÄ¸Ð¾õ£¬ÎíºóÎïÌåÖ»äÖÈ¾¼¸ºÎ
+Îí:Îí¡¢?É¼û¾àÀë²Ã¼ô£¬Ôö¼Ó¿É¼ûZfarÖµ,²úÉúÔ¶´¦ÓÐÉ½µÄ¸Ð¾õ£¬ÎíºóÎïÌåÖ»äÖÈ¾¼¸ºÎ
 Ä§·¨ÌØÐ§£¨modeleffect)		10.8
 speedtree¼ÓÇ¿£ºÔØ¼ô¡¢LOD
 ×ÖÌå´¦Àí
@@ -589,7 +599,7 @@ ssaoÐ§¹û²»´í£¡
 ssaoÊÇCrysisÓÃµ½µÄËã·¨£¬¡°Screen-Space Ambient Occlusion¡± (ÆÁÄ»¿Õ¼ä»·¾³¹âÕÚ±Î)¡£
 SSAOÍ¨¹ý²ÉÑùÏóËØÖÜÎ§µÄÐÅÏ¢£¬²¢½øÐÐ¼òµ¥µÄÉî¶ÈÖµ¶Ô±ÈÀ´¼ÆËãÎïÌåÉíÉÏ»·¾³¹âÕÕÎÞ
 ·¨µ½´ïµÄ·¶Î§£¬´Ó¶ø¿ÉÒÔ½üËÆµØ±íÏÖ³öÎïÌåÉíÉÏÔÚ»·¾³¹âÕÕÏÂ²úÉúµÄÂÖÀªÒõÓ°¡£¿ÉÒÔÀû
-ÓÃ¡°ÖðÏóËØ³¡¾°Éî¶È¼ÆËã¡±¼¼Êõ¼ÆËãµÃ³öµÄÉî¶ÈÖµÖ±½Ó²ÎÓëÔËËã¡£
+ÓÃ¡°Öð?óËØ³¡¾°Éî¶È¼ÆËã¡±¼¼Êõ¼ÆËãµÃ³öµÄÉî¶ÈÖµÖ±½Ó²ÎÓëÔËËã¡?
 
 ÏÖÔÚµÄÐ§¹ûÈ·Êµ´íÎó»¹±È½Ï´ó£¬Ó¦¸ÃÏÈ½øÐÐ¼òµ¥µÄ¿Õ¼ä»®·Ö£¨»òÀàËÆ´¦Àí£©È»ºó¼ÆËã¡£
 ²»¹ý¸öÈËÈÏÎªÕâÖÖ·½·¨Ö»ÊÇ½üËÆµØÄ£Äâ£¬Ð§¹û²¢²»ÕýÈ·£¬µ«È·ÊµÄÜÔöÇ¿³¡¾°µÄ²ã´Î¸Ð£¬
@@ -697,7 +707,7 @@ TYPE_NORMAL,TYPE_HD,TYPE_REPEATÊÇ²ÎÓëäÖÈ¾µÄ×ÓÄ£ÐÍ£¬ÆäËüÄ£ÐÍ²»äÖÈ¾£¬ËùÒÔ²»ÐèÒª´´½
 µØÎï°Õ·ÅÎ»ÖÃÒÑÕýÈ·¡£
 
 1¡¢µØÎï¿É¼ûÐÔÅÐ¶Ï´æÔÚÎÊÌâ£¬¾­³£ÕÒµ½¼¸°Ù¸öÎï¼þ£¬ÊÇ·ñÐèÒª¼Ó¸ö¾àÀëÅÐ¶Ï£¿£¨ÔÚCELLÀïÃæ£©
-2¡¢¼ÓÔØ·½Ê½ÓÐÎÊÌâ£¬Ã»ÓÐ°´ÓÅÏÈ¼¶ÏÈ¼ÓÔØ¸½½üµÄÎï¼þ¡£
+2¡¢¼ÓÔØ·½Ê½ÓÐÎÊÌâ£¬Ã»ÓÐ°´ÓÅ?È¼¶ÏÈ¼ÓÔØ¸½½üµÄÎï¼þ¡?
 
 
 0:40 2008-9-7
@@ -932,11 +942,11 @@ being:
 23:27 2008-8-21
 ***ÓÅ»¯µã£ºÈ¥µôN3ÀïÃæ²»ÐèÒªµÄ¶«Î÷£¬ManagedResource¡¢ResourceReader¡¢N2¸ñÊ½µÈ¡£
 ***ÓÅ»¯µã£ºÓÅ»¯String¡¢Array¡¢Map¡¢HashTableµÈ¡£
-***ÓÅ»¯µã£ºÓÅ»¯vector¡¢float4µÈ¡£
+***ÓÅ»¯µã£ºÓÅ»¯vector?¢float4µÈ¡£
 ***ÓÅ»¯µã£ºÓÅ»¯camera²Ã¼ô£¬ÓÃfrustom²Ã¡£
 
 15:28 2008-8-21
-***ÓÅ»¯µã£ºMDLVTXÖÐblend×öÒ¡¶¯¶¯×÷µÄ»ìºÏ£¬Ö»ÓÐÐ¡²Ý²ÅÓÃµ½£¬²»ÐèÒª°ÑËùÓÐµÄµØÎï¶¼Éè³ÉÕâÖÖ¸ñÊ½£¡
+***ÓÅ?¯µã£ºMDLVTXÖÐblend×öÒ¡¶¯¶¯×÷µÄ»ìºÏ£¬Ö»ÓÐÐ¡²Ý²ÅÓÃµ½£¬²»ÐèÒª°ÑËùÓÐµÄµØÎï¶¼Éè³ÉÕâÖÖ¸ñÊ½£¡
 
 23:45 2008-8-20
 ***ÓÅ»¯µã£ºStringÀàÐèÒª×öÓÅ»¯£¬Ä¬ÈÏµÄ20¸ö×Ö½ÚºÜÀË·Ñ£¡×îºÃ´Ó¶ÑÉÏÃæ»ñÈ¡¿Õ¼ä£¬»òÕß×¨Îª×Ö·û´®ÀàÉêÇëÒ»´ó¿é¿Õ¼ä£¬¸øËùÓÐ×Ö·û´®ÓÃ¡£
@@ -1107,7 +1117,7 @@ speedtree		2-3	ÐèÒªÌí¼Ó¸öÖ§³Ö¿â£¬²¢ÓÅ»¯
 Ìì¿Õ			1
 Ë®			2-3	ÕÛÉä¡¢·´Éä¡¢HeatHazeÌØÐ§
 Á£×Ó			2
-ÌØÐ§			2	ÊµÏÖ¼òµ¥ÌØÐ§»òÕß¿ò¼Ü
+ÌØÐ§			2	ÊµÏÖ¼ò?¥ÌØÐ§»òÕß¿ò¼?
 ÉùÒô			1
 ½Å±¾			2	²»È·¶¨£¬¿ÉÄÜÐèÒªÐÂµÄÊý¾Ý¿âÖ§³Ö
 GUI			2	¹¦ÄÜµÄ¶«Î÷ÐèÒª×öÐ©µ÷Õû£¬?ùÒÔ´ó²¿·ÝÊ±¼ä»¨ÔÚÔõÃ´¼æÈÝ¹¦ÄÜÉÏ¡?
@@ -1221,7 +1231,7 @@ M2->N2
 ¼ÓÔØÄ£¿éÒÑ¾­´ïµ½³£Á¿¼¶£¬ÒÑ»ù±¾ÊµÏÖ²»¿¨¡£
 
 ½ÓÏÂÀ´µÄ¹¤×÷£º
-1¡¢µØÐÎÕý³£ä¯ÀÀ£¬Ä¿Ç°µØÐÎ¼ÓÔØÄ£¿éÉè¼Æ²»ÀíÏë£¬¼ÓÔØÄ£¿é¿ÉÒÔ³¢ÊÔÓÃÔ­À´µÄ·½·¨£¨¶ø²»ÊÇÊ¹ÓÃ·¢ÏûÏ¢È¥¼ÓÔØ£¬´ý¶¨£¡£©¡£
+1¡¢µØÐÎÕý³£ä¯ÀÀ?¬Ä¿Ç°µØÐÎ¼ÓÔØÄ£¿éÉè¼Æ²»ÀíÏë£¬¼ÓÔØÄ£¿é¿ÉÒÔ³¢ÊÔÓÃÔ­À´µÄ·½·¨£¨¶ø²»ÊÇÊ¹ÓÃ·¢ÏûÏ¢È¥¼ÓÔØ£¬´ý¶¨£¡£©¡?
 2¡¢ËÄ²æÊ÷£¬³¡¾°¸üÐÂºÍäÖÈ¾Ä¿Ç°Ö»ÓÐÊ®¼¸Ö¡¡£
 3¡¢Ìì¿Õ
 4¡¢Ë®
