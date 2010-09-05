@@ -25,7 +25,7 @@ ParallaxOcclusionMapping
 Éè¶¨50¼¶Ç°¸÷Ö°ÒµÈËÎï Ã¿¼¶ÊôÐÔ¡¢¼¼ÄÜ¹¦·¨ 
 1×ª2×ªµÄ·½Ïò£¨¼òµ¥Éè¶¨£©
 Ö÷·¨±¦ºÍ¸¨Öú·¨±¦Éè¶¨
-PVPÉè¶¨£¨ÈçÃÅÅÉÕ½¡¢¼Ò×åÕ½¡¢ÆÕÍ¨Õ½¶·µÈµÈ£©
+PVPÉè¶¨£¨ÈçÃÅÅÉÕ½¡¢¼Ò×åÕ½¡¢ÆÕÍ¨Õ½¶·µÈµÈ£©,ÒÔ¸±±¾5V5»¹ÊÇÖ±½ÓÔÚ³¡¾°ÖÐÕ½¶·£¿»ò¶¼ÓÐ£¿
 
 15:04 2010-8-18
 reduxÕûºÏ½øÒýÇæ
@@ -439,7 +439,7 @@ Alpha-to-Coverage in Depth
 
 17:37 2008-12-5
 µØÐÎLOD×¢Òâ£º
-ÇÐ»»µØÍ¼µÄÊ±ºò£¬LODË÷Òý»º³åÄÚÈÝ¿ÉÒÔ²»ÐèÒª±ä»¯£¬³ý·ÇÒª¼ÓÔØµÄµØÐÎ´óÐ¡ÓëÄ¿Ç°µÄ²»Í¬¡£
+ÇÐ»»µØÍ¼µÄÊ±ºò£¬LODË÷?ý»º³åÄÚÈÝ¿ÉÒÔ²»ÐèÒª±ä»¯£¬³ý·ÇÒª¼ÓÔØµÄµØÐÎ´óÐ¡ÓëÄ¿Ç°µÄ²»Í¬¡?
 ËùÓÐ»º³åÖ»ÐèÒª´´½¨Ò»´Î¼´¿É¡£
 
 20:59 2008-11-25
@@ -706,7 +706,7 @@ TYPE_NORMAL,TYPE_HD,TYPE_REPEATÊÇ²ÎÓëäÖÈ¾µÄ×ÓÄ£ÐÍ£¬ÆäËüÄ£ÐÍ²»äÖÈ¾£¬ËùÒÔ²»ÐèÒª´´½
 21:26 2008-9-8
 µØÎï°Õ·ÅÎ»ÖÃÒÑÕýÈ·¡£
 
-1¡¢µØÎï¿É¼ûÐÔÅÐ¶Ï´æÔÚÎÊÌâ£¬¾­³£ÕÒµ½¼¸°Ù¸öÎï¼þ£¬ÊÇ·ñÐèÒª¼Ó¸ö¾àÀëÅÐ¶Ï£¿£¨ÔÚCELLÀïÃæ£©
+1¡¢µØÎï¿É¼ûÐÔÅÐ¶Ï´æÔÚÎÊÌâ£¬¾­³£ÕÒµ½?¸°Ù¸öÎï¼þ£¬ÊÇ·ñÐèÒª¼Ó¸ö¾àÀëÅÐ¶Ï£¿£¨ÔÚCELLÀïÃæ£©
 2¡¢¼ÓÔØ·½Ê½ÓÐÎÊÌâ£¬Ã»ÓÐ°´ÓÅ?È¼¶ÏÈ¼ÓÔØ¸½½üµÄÎï¼þ¡?
 
 
@@ -819,7 +819,7 @@ EquipInstance : public ModelInstance	×°±¸ÊµÀý£¬¿ÉÄÜ°üº¬ºÜ¶àÌØÐ§£¬±¾À´ÏëÓÃEquipEn
 Ä£ÐÍÄ£¿éÖØÐÂÉè¼Æ£º
 ThingEntity		Í¼ÏñÊµÀý
   Thing			¼ÓÔØ×ÊÔ´¡¢¹ÜÀíËùÓÐ×ÓÄ£ÐÍµÈ
-    ThingNode		¾²Ì¬»òÒ¡¶¯Îï¼þÉèÖÃ£¬¿ÉÄÜÐèÒª¸Ä±ä¶¥µã¸ñÊ½
+    ThingNode		¾²?¬»òÒ¡¶¯Îï¼þÉèÖÃ£¬¿ÉÄÜÐèÒª¸Ä±ä¶¥µã¸ñÊ?
       kokShapeNode	Í³Ò»½âÎöÊý¾ÝµÄµØ·½£¬²úÉú»ù±¾µÄ¶¥µã¸ñÊ½£¬¸ù¾Ý¾ßÌåÊ¹ÓÃÇé¿ö£¬ÐèÒª¶ÔÕâÐ©¶¥µã×ö¸Ä±ä£¨ÈçÒ¡¶¯¡¢¹Ç÷À¶¯»­µÈ£©
 
 BeingEntity
@@ -1285,7 +1285,7 @@ CHUNK¼ÓÔØµÄÊ±ºò·Ç³£¿ì£¬¿¨×¡¿ÉÄÜÊÇÖ÷Ïß³ÌÄÄÀï¼ÓÔØµÄÊ±ºòÓÐÎÊÌâ¡£
 cell·Ö²¼ÓÐÎÊÌâ£¬ËÄ²æÊ÷ÖÐµÄÊµÀý²»ÊÇÆ½¾ù·Ö²¼µÄ£¿
 
 1:49 2008-5-12
-¶àÏß³Ì¼ÓÔØ»ù±¾¿ò¼ÜÒÑÊµÏÖ£¬»¹´æÔÚÐ©ÎÊÌâ£¬ÈçÔõÃ´ÑùÉèÖÃmanagedÀïÃæµÄ±äÁ¿£¡£¡
+¶àÏß³Ì¼ÓÔØ»ù±¾¿ò¼ÜÒÑÊµÏÖ£¬»¹´æÔÚÐ©ÎÊÌâ£¬ÈçÔõÃ´ÑùÉèÖÃmanagedÀïÃæµÄ±ä?¿£¡£?
 ¶àÏß³Ì¼ÓÔØ·½Ê½£º¸¨ÖúÏß³Ì¼ÓÔØÎÄ¼þ£¬ÐèÒªÊý¾ÝµÄµØ·½·¢¶ÁÎÄ¼þÏûÏ¢´Ó¸¨ÖúÏß³Ì¶Á£¬¶ø²»ÊÇÒ»¶¨ÐÔÈ«¼ÓÔØÁË¡£
 
 Õý³£ÔËÐÐ²¢ÏÔÊ¾µØÐÎ
