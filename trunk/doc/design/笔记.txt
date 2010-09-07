@@ -1,3 +1,23 @@
+22:51 2010/9/7
+·þÎñ¶ËÏûÏ¢¶¨ÒåÎÄ¼þ£ºprotocol.h
+µÇÂ½³¡¾°Ä£ÐÍ£¬Ìæ»»¼´¿É£º
+Map/MapBegin/character_select_bg.nif
+
+¿Í»§¶Ë¼¸¸ö½×¶Î£º
+enum eSTAGE
+{
+	eStage_Intro		= 0,	¿ªÊ¼½éÉÜ£¨¹ã¸æ£©½×¶Î
+	eStage_Login,			µÇÂ½½×¶Î
+	eStage_Server,			·þÎñÆ÷Ñ¡Ôñ½×¶Î
+	eStage_Select,			ÈËÎïÑ¡Ôñ½×¶Î
+	eStage_Make,			´´½¨½ÇÉ«½×¶Î£¨²»ÊÇ±ØÐèµÄ£©
+	eStage_Load,			µÇÂ½³¡¾°£¨½øÈëÓÎÏ·£©
+	eStage_MapChange,		ÌøµØÍ¼
+	eStage_Game,			½øÈëÓÎÏ·
+
+	eStage_Max,
+};
+
 12:30 2010-8-20
 ×øÆïÉèÖÃ£º
 1¡¢ÐÂ½¨ITEM£º
@@ -48,7 +68,8 @@ itemdefine->itemability->SkillList_PC->itemdefine
 eff_act_04.nif ·ÉÐÐÌØÐ§
 
 11:06 2010-8-10
-ÌøµØÍ¼ÏûÏ¢£ºNM_SKILL_ITEMMAPCHANGE_REQ
+»»µØÍ¼ÏûÏ¢£ºNM_PLAYER_MAPCHANGE_RES
+ÌøµØÍ¼¼¼ÄÜÏûÏ¢£ºNM_SKILL_ITEMMAPCHANGE_REQ
 ÆïÂíÏûÏ¢£ºNM_SKILL_ITEMVEHICLE_REQ
 
 
@@ -551,7 +572,7 @@ VisResolverÀàÓÃÓÚÔÚÃ¿´ÎäÖÈ¾Ç°½«ËùÓÐ¿É¼ûµÄMODELÕÒ³öÀ´£¬½â¾öÃ¿¸öMODELÊ¹ÓÃ²»Í¬µÄÐ§¹
 
 
 ÎÒµÄÏë·¨£º(´íÎó£¬ÉÏÃæµÄ²ÅÊÇÕý½â)
-ÔÚXMLÎÄ¼þÖÐ¶¨ÒåºÃÓÐ¶àÉÙÖÖFramePass£¬Ã¿ÖÖFramePass´øÓÐ¶à¸öFrameBath£¬Ò²¾ÍÊÇËµÃ¿¸öRenderTarget¿ÉÒÔÓÉ¶àÖÖtechniqueÐ§¹û×é³É£¬¶øÃ¿ÖÖtechnique±»²»Í¬µÄmodelÊ¹ÓÃ£¨ÔÚmodelÖÐÖ¸¶¨£©£¬ÓÃµÄÊ±ºòË³ÐòÊ¹ÓÃXMLÖÐ¶¨ÒåµÄFramePass£¬ÅÐ¶Ïµ±Ç°¿É¼ûµÄMODELÁÐ±íÖÐÊÇ·ñÓÐÊ¹ÓÃÁË¸ÃFramePassÏÂµÄFrameBath£¬Èç¹ûÓÐ¾ÍäÖÈ¾¡£
+ÔÚXMLÎÄ¼þÖÐ¶¨ÒåºÃÓÐ¶àÉÙÖÖFramePass£¬Ã¿ÖÖFramePass´øÓÐ¶à¸öFrameBath£¬Ò²¾ÍÊÇËµÃ¿¸öRenderTarget¿É?ÔÓÉ¶àÖÖtechniqueÐ§¹û×é³É£¬¶øÃ¿ÖÖtechnique±»²»Í¬µÄmodelÊ¹ÓÃ£¨ÔÚmodelÖÐÖ¸¶¨£©£¬ÓÃµÄÊ±ºòË³ÐòÊ¹ÓÃXMLÖÐ¶¨ÒåµÄFramePass£¬ÅÐ¶Ïµ±Ç°¿É¼ûµÄMODELÁÐ±íÖÐÊÇ·ñÓÐÊ¹ÓÃÁË¸ÃFramePassÏÂµÄFrameBath£¬Èç¹ûÓÐ¾ÍäÖÈ¾¡£
 ÈçÆÕÍ¨µÄShadowMap£ºÔÚXMLÖÐ¶¨ÒåÁ½¸öFramePass£¬Ò»ÕÅRenderTarget£¬Ã¿¸öFramePassÖÐÓÐÒ»¸öFrameBatch£¬äÖÈ¾µÄÊ±ºò½«ÐèÒªÉèÖÃÒõÓ°µÄMODEL¼ÓÈëµÚÒ»¸ö....(³ö´í£¬ÎÞ·¨½âÊÍ)
 
 
