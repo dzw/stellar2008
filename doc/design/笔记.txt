@@ -1,3 +1,12 @@
+0:59 2010/9/16
+任务消息：
+	NM_NPC_QUEST_ADD_REQ,					/// 新增加任务
+	NM_NPC_QUEST_ADD_RES,
+	NM_NPC_QUEST_COMPLETE_REQ,				/// 任务完成
+	NM_NPC_QUEST_COMPLETE_RES,
+	NM_NPC_QUEST_REWARD_REQ,				/// 任务奖励
+	NM_NPC_QUEST_REWARD_RES
+
 22:51 2010/9/7
 服务端消息定义文件：protocol.h
 登陆场景模型，替换即可：
