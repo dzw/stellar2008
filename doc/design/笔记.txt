@@ -1,3 +1,8 @@
+21:13 2010-9-20
+注意：一个技能可被多个职业使用！
+设置方法：skilllist_sub.txt中设置每个技能及等级属性，其中mJobType字段为适用的职业索引，与skilllist_class.txt中index对应.如果该字段为0,代表所有职业都可学习。
+	  skilllist_class.txt中保存最多三个职业类型，也就是说一个职业最多可以被三个职业共享使用!
+
 15:09 2010-9-20
 skilllist_pc.txt字段说明：(sPlayerSkillBaseInfo)
 //Index	
@@ -95,7 +100,7 @@ MAX导出后用AMD Tootle工具优化MESH，用半透明方式渲染即可。
 怪物技能列表：SkillList_Mon.txt
 图腾技能列表：SkillList_Trap.txt
 技能名字列表：Skill_Name.txt
-SkillList_Class.txt
+技能可使用的职业组合列表：SkillList_Class.txt 与skilllist_sub.txt配置，让一个技能同时被多个职业使用（最多三个）。
 技能步骤：SkillList_Sub.txt	包括每级技能属性
 
 骑马道具相关联技能设置：
