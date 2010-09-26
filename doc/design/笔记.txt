@@ -1,3 +1,6 @@
+23:34 2010/9/26
+sPlayerWeaponInfo
+
 21:13 2010-9-20
 注意：一个技能可被多个职业使用！
 设置方法：skilllist_sub.txt中设置每个技能及等级属性，其中mJobType字段为适用的职业索引，与skilllist_class.txt中index对应.如果该字段为0,代表所有职业都可学习。
@@ -135,7 +138,7 @@ enum eSKILLPROCESS
 18:16 2010-8-3
 地形场景制作：
 1、在MAX里面制作地形（或在地编制作好地型导出高度图，再导入MAX中）
-2、在MAX中摆放物件(需要阴影的物件都是在MAX中摆放好了再导出来，位置是确定好的，导入地编不用再调位置)
+2、在MAX中摆放物件(需要阴影的物件都是在MAX中摆放?昧嗽俚汲隼矗恢檬侨范ê玫模既氲乇嗖挥迷俚魑恢?
 3、渲染阴影贴图（lightmap，可用vRay渲染），并导出成颜色贴图（这张图还可以后期PS，增加效果）
 4、对每个物件指定单独的阴景贴图（也就是每个场景对象只能在指定场景中使用，可以将LIGHTMAP信息应用上去，效果能提升很多）
 5、导入高度图、颜色贴图到地编、增加地物。
@@ -325,7 +328,7 @@ enum eItemFlag
 
 TB_ITEM_ABILITY属性说明:
 物品属性:
-功击,防御,使用范围等不用介绍了,仔细说下后面的OPT01_INDEX,OPT01_VALUE参数,总共10个.
+功击,防御,使用范围等不用介绍了,仔细说下后面的OPT01_INDEX,OPT01_VALUE?问?总共10个.
 OPT01_INDEX是参数类型,如加力量,敏捷等,OPT01_VALUE是加具体数值.
 enum eSTATUS_PLUS
 {	
@@ -592,7 +595,7 @@ D3D9RenderDevice::BeginFrame
 		  ApplySharedState			应用着色变量的状态
 		  SelectActiveVariation			激活technique
 
-		  GetVisibleModelNodeInstances		获得可见对象的所有实例，循环渲染所有实例
+		  GetVisibleModelNodeInstances		获得?杉韵蟮乃惺道蜂秩舅惺道?
 		  ApplyState				应用实例的着色变量
 		  Render				渲染实例
 
@@ -680,7 +683,7 @@ shader
 
 EnableVProgram
     SetVertexShader()
-    process the sampler information		设置纹理采样信息，指定采样类型、纹理编号
+    process the sampler information		设置纹理采?畔ⅲ付ú裳嘈汀⑽评肀嗪?
     process the render constants		获取全局着色变量值，并设置到指定寄存器
     process the numerical constants
     process the user-defined constants
@@ -752,7 +755,7 @@ Renderer::DrawScene
     循环处理所有可见对象
     Draw(Geometry*)
         SetGlobalState
-        SetWorldTransformation		从Draw参数传进一个Geometry，在这里更新世界矩阵，着色所需
+        SetWorldTransformation		从Draw参数传进一个Geometry，在这里更新世界矩?螅派?
 	EnableIBuffer			用Geometry设置索引缓冲
 	获得效果文件(数组)		Start,Quantity,效果文件从Start位置开始取Quantity个数量渲染
 	
