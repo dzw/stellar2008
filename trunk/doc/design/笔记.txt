@@ -1,3 +1,12 @@
+23:48 2010/9/27
+武器技能实现：
+item_ability:influence_index改成指向skilllist_weapon:index,原来该字段指向的是skilllist_pc表的具体技能
+在skilllist_weapon表中设置四个技能指向skilllist_pc中具体技能
+
+游戏中开发步骤：
+1、装备武器－》显示技能－》使用技能－》更换武器（同时切换技能ICON显示）
+2、删除原有人物技能
+
 23:34 2010/9/26
 sPlayerWeaponInfo
 
