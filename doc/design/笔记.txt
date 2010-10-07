@@ -1,3 +1,17 @@
+23:15 2010/10/7
+关于模型光照：像IRIS直接在每个模型中罢放与场景相同的光源，因为其模型都是独用的，所以可以这么做。
+
+22:50 2010/10/7
+成长经历：
+1、熟悉游戏，引导
+2、玩游戏，熟悉技能、武器等系统
+3、开始对资源有需求，加入门派(或建立自己势力)，资源争夺
+4、黑暗入侵，与之对抗
+5、追求高级装备、PK
+6、重复3－5步，追求个人和集体荣誉
+
+贯穿整个游戏各阶段追求!
+
 23:48 2010/9/27
 武器技能实现：
 item_ability:influence_index改成指向skilllist_weapon:index,原来该字段指向的是skilllist_pc表的具体技能
@@ -65,7 +79,7 @@ enum eSTAGE
 	eStage_Server,			服务器选择阶段
 	eStage_Select,			人物选择阶段
 	eStage_Make,			创建角色阶段（不是必需的）
-	eStage_Load,			登陆场景（进入游戏）
+	eStage_Load,			登陆场景?ń胗蜗罚?
 	eStage_MapChange,		跳地图
 	eStage_Game,			进入游戏
 
@@ -749,13 +763,13 @@ Node 继承自Spatial
 GeometryInstance
     PrimitiveGroup			记录渲染顶点的开始位置和数量等信息。
     Geometry				具体数据
-    BoundingVolumePtr			子模型包围盒
+    BoundingVolumePtr			子模型包围??
     vector<ShaderVariableInstance>	shader variable  instance 多个变量
     vector<ShaderInstance>		effect 多个shader
 
 
     
-渲染状态设置方式：在引擎中不设置任何全局状态(WM4中有)，如果需要设置，在technique中设置，然后在ShaderInstance中选择不同的technique(通过ShaderFeature::Mask)，渲染前应用ShaderInstance，并将所有变量应用。 每个对象可以选择不同的technique,这样当使用不同的渲染状态时，可以建立多个technique。
+渲染状态设置方式：在引擎中不设置任何全局状态(WM4中有)，如果需要设置，在technique中设置，然后在ShaderInstance中选择?煌膖echnique(通过ShaderFeature::Mask)，渲染前应用ShaderInstance，并将所有变量应用。 每个对象可以选择不同的technique,这样当使用不同的渲染状态时，可以建立多个technique。
 
 
 
@@ -847,7 +861,7 @@ CharacterNode
 	
 SkinShapeNode
 	Char::CharFragment			分批处理骨骼,每个fragment对应模型的一个primGrpIndex
-	Char::CharJointPalette	按fragment设置骨骼，即每个Fragment的骨骼集合
+	Char::CharJointPalette	按fragment设置骨骼，即每个Fragment的骨骼??
 	
 	
 	
