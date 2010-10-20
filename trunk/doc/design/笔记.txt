@@ -1,3 +1,13 @@
+22:12 2010/10/19
+注意：
+1、飞行做成类似坐骑，被攻击或攻击别人（放技能的时候）自动下马。
+2、不能直接在海面上飞行，还是跳地图吧，但是可以做一个类似征途2固定路线飞行效果。
+
+22:42 2010/10/9
+设想：
+人物在地面有阻档点，可方便技能使用，而飞行中无阻档点，可方便行走。可行否？优缺点？
+有待讨论
+
 11:58 2010-10-9
 核心玩法：PK
 PK模式：DOTA、梦三
@@ -143,7 +153,7 @@ skill_pc:
 注意：
 服务端TB_ITEM_DEFINE定义中多了几个虚拟字段：
 idxAbility、idxLimit、idxCard、idxCardSlot、idxTarot、idxEnhancedRate、idxEnhanced、idxDisjoint、idxChange
-主要与每项具体属性的表（如ITEM_ABILITY）相关连，这些数据是在GP_ITEM_DEFINE_SELECT中通用SQL语言自动关联到其它表的，
+主要与每项具体属性的表（如ITEM_ABILITY）相关连，这些数据是在GP_ITEM_DEFINE_SELECT中通用SQL语言自动关联到?渌淼模?
 所以ITEM_DEFINE表中没有这几个字段，但是程序中有这几个使用。
 
 18:51 2010-8-18
@@ -199,7 +209,7 @@ enum eSKILLPROCESS
 4、对每个物件指定单独的阴景贴图（也就是每个场景对象只能在指定场景中使用，可以将LIGHTMAP信息应用上去，效果能提升很多）
 5、导入高度图、颜色贴图到地编、增加地物。
 6、在地编编辑地表贴图、调整颜色、声音、阻档、区域等。
-7、导出地编为.terrain和.scene文件给客户端使用
+7、导出地编为.terrain和.scene文件?突Ф耸褂?
 
 注意：
 1、这种方式全看美术表现，能极大提高效果
@@ -278,7 +288,7 @@ enum eSKILLTYPE
 	eSKILLTYPE_NONACTIVE,				/// 主动-??
 	eSKILLTYPE_HEAL,				/// 主动-治愈
     	eSKILLTYPE_MPDAMAGE,				/// 主动-魔法伤害
-	eSKILLTYPE_TOTEM,				/// 图腾?
+	eSKILLTYPE_TOTEM,				/// ?继?
 };
 
 /// 攻击的目标范围
@@ -345,7 +355,7 @@ enum ePLAYER_STATUS_EXT
 
 };
 
-物品和插槽(装备格子)匹配测试
+物?泛筒宀?装备格子)匹配测试
 物品类型
 enum eItemFlag
 {
@@ -575,7 +585,7 @@ item_npcStore.txt 保存所有商店类型的NPC和要卖的物品ID
 quest_main.txt 所有任务脚本，说明如下：
 	duty	//需要执行的任务
 	{
-		hunt	1	5	//杀怪	怪类型ID	杀怪数量
+		hunt	1	5	//杀怪	怪类型ID	杀怪数??
 		hunt	2	5
 	
 	}	
@@ -683,10 +693,10 @@ N3：View-ShadowMapServer-FrameShader
 view相当于空间可见性查找-ShaderMapServer相当于某种效果，默认有一种没有任何效果的Shader-FrameShader是效果的实现
 
 Spatial-Effect-FrameShader
-Spatial空间管理，Effect相当于ShadowMapServer，只不过Effect是默认的一个效果，可以继承它来实现自己的效果。FrameShader提供给Effect实现效果的接口。如实现SHADOWMAP时，有个ShadowMapEffect继承自Effect，并在里面使用FrameShader实现阴影效果。
+Spatial空间管理，Effect相当于ShadowMapServer，只不过Effect是默认的一个效果，可以继承它来实现自己的效果。FrameShader提供给Effect实现效果的接口。如实现SHADOWMAP时，有个ShadowMapEffect继承自Effect，并在里面?褂肍rameShader实现阴影效果。
 
 
-N3里面，某个对象使用某种效果并不是单独设置的，是根据对象是否受环境影响自动使用某种效果。比如阴影，只根据对象是否受光照影响。
+N3里面，某个对象使用某种效果并不是单独设置的，是根据对象是否受环境影响自动使用某种效?１热缫跤埃桓荻韵笫欠袷芄庹沼跋臁?
 
 我们要实现在某个对象设置一个EFFECT属性，这样每个对象都可以有各自的效果。而且可以有多个EFFECT，实现多种效果。渲染时将所有可见的对象按EFFECT排序，将相同的一起渲染。
 
@@ -821,7 +831,7 @@ Renderer::DrawScene
 WM中BSP将空间分割成正、负和分割线三部份。
 怎么判断视截体在正面还是负面？Plane类有个成员函数WhichSide，判断输入的点是正边还是负边，Camera类
 有个成员函数WhichSide用于测试视截体的八个点在哪面，如果八个点都在正面，则返回正，如果八个点都在负
-面，则返回负面，如果有些在正面有些在负面，就返回0.
+面，则返回?好妫绻行┰谡嬗行┰诟好妫头祷?.
 
 
 The root of the BSP tree is a
@@ -915,7 +925,7 @@ An animation state is a collection of clips, and an animation clip is an animati
 
 
 One nAnimation object points to the data of exactly one "animation group" in an animation file (an animation group is a collection of curves that share the same attributes (number of keys, frame rate and looping type). Several nAnimation objects may access one animation file (since one animation file may contain several animation groups).
-一个nAnimation对象指出动画文件中的“动画组”数据，一个动画组就是动画曲线的集合，它们共享属性（关键帧数、帧率和循环类型）。几个nAnimation可能共享同一个动画文件（一个动画文件可能包函几组动画）.
+一个nAnimation对象指出动画文件中的“动画组”数据，一个动画组就是动画曲线?募希枪蚕硎粜裕ü丶∈⒅÷屎脱防嘈停＜父鰊Animation可能共享同一个动画文件（一个动画文件可能包函几组动画）.
 animation
 	curves(包含一些关键帧数、帧率、循环类型)
 	
