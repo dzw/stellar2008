@@ -55,7 +55,7 @@ http://www.youxihun.com/bbs/thread-14831-1-1.html
 22:42 2010/10/9
 ÉèÏë£º
 ÈËÎïÔÚµØÃæÓÐ×èµµµã£¬¿É·½±ã¼¼ÄÜÊ¹ÓÃ£¬¶ø·ÉÐÐÖÐÎÞ×èµµµã£¬¿É·½±ãÐÐ×ß¡£¿ÉÐÐ·ñ£¿ÓÅÈ±µã£¿
-ÓÐ´ýÌÖÂÛ
+ÐèÒª×èµµ£¬¿ÉÔöÇ¿ÓÎÏ·ÐÔ£¬ÌØ±ðÊÇPKÀàÓÎÏ·¡£
 
 11:58 2010-10-9
 ºËÐÄÍæ·¨£ºPK
@@ -106,6 +106,7 @@ TB_INVENTORYÔö¼Ó×Ö¶Î£¬ÓÃÀ´±£´æÃ¿°ÑÎäÆ÷¼¼ÄÜµÈ¼¶
 item_ability:influence_index¸Ä³ÉÖ¸Ïòskilllist_weapon:index,Ô­À´¸Ã×Ö¶ÎÖ¸ÏòµÄÊÇskilllist_pc±íµÄ¾ßÌå¼¼ÄÜ
 ÔÚskilllist_weapon±íÖÐÉèÖÃËÄ¸ö¼¼ÄÜÖ¸Ïòskilllist_pcÖÐ¾ßÌå¼¼ÄÜ
 
+µÇÂ½Ñ¡Ôñ¼¼ÄÜ£º
 cGameProcess::SkillSelect
 
 ÓÎÏ·ÖÐ¿ª·¢²½Öè£º
@@ -117,7 +118,7 @@ sPlayerWeaponInfo
 
 21:13 2010-9-20
 ×¢Òâ£ºÒ»¸ö¼¼ÄÜ¿É±»¶à¸öÖ°ÒµÊ¹ÓÃ£¡
-ÉèÖÃ·½·¨£ºskilllist_sub.txtÖÐÉèÖÃÃ¿¸ö¼¼ÄÜ¼°µÈ¼¶ÊôÐÔ£¬ÆäÖÐmJobType×Ö¶ÎÎªÊÊÓÃµÄÖ°ÒµË÷Òý£¬Óëskilllist_class.txtÖÐindex¶ÔÓ¦.Èç¹û¸Ã×Ö¶ÎÎª0,´ú±íËùÓÐÖ°Òµ¶¼¿ÉÑ§Ï°¡£
+ÉèÖÃ·½·¨£ºskilllist_sub.txtÖÐÉèÖÃÃ¿¸ö¼¼ÄÜ¼°µÈ¼¶ÊôÐÔ£¬ÆäÖÐmJobType×Ö¶ÎÎªÊÊÓÃµÄÖ°ÒµË÷?ý£¬Óëskilllist_class.txtÖÐindex¶ÔÓ¦.Èç¹û¸Ã×Ö¶ÎÎª0,´ú±íËùÓÐÖ°Òµ¶¼¿ÉÑ§Ï°¡£
 	  skilllist_class.txtÖÐ±£´æ×î¶àÈý¸öÖ°ÒµÀàÐÍ£¬Ò²¾ÍÊÇËµÒ»¸ö¼¼ÄÜ×î¶à¿ÉÒÔ±»Èý¸öÖ°Òµ¹²ÏíÊ¹ÓÃ!
 
 ´úÂëÖÐ½á¹¹£º
@@ -256,7 +257,7 @@ enum eSKILLPROCESS
 µØÐÎ³¡¾°ÖÆ×÷£º
 1¡¢ÔÚMAXÀïÃæÖÆ×÷µØÐÎ£¨»òÔÚµØ±àÖÆ×÷ºÃµØÐÍµ¼³ö¸ß¶ÈÍ¼£¬ÔÙµ¼ÈëMAXÖÐ£©
 2¡¢ÔÚMAXÖÐ°Ú·ÅÎï¼þ(ÐèÒªÒõÓ°µÄÎï¼þ¶¼ÊÇÔÚMAXÖÐ°Ú·Å?ÃÁËÔÙµ¼³öÀ´£¬Î»ÖÃÊÇÈ·¶¨ºÃµÄ£¬µ¼ÈëµØ±à²»ÓÃÔÙµ÷Î»Ö?
-3¡¢äÖÈ¾ÒõÓ°ÌùÍ¼£¨lightmap£¬¿ÉÓÃvRayäÖÈ¾£©£¬²¢µ¼³ö³ÉÑÕÉ«ÌùÍ¼£¨ÕâÕÅÍ¼»¹¿ÉÒÔºóÆÚPS£¬Ôö¼ÓÐ§¹û£©
+3¡¢äÖÈ¾ÒõÓ°ÌùÍ¼£¨lightmap£¬¿ÉÓÃvRayäÖÈ¾£©£¬²¢µ¼?ö³ÉÑÕÉ«ÌùÍ¼£¨ÕâÕÅÍ¼»¹¿ÉÒÔºóÆÚPS£¬Ôö¼ÓÐ§¹û£©
 4¡¢¶ÔÃ¿¸öÎï¼þÖ¸¶¨µ¥¶ÀµÄÒõ¾°ÌùÍ¼£¨Ò²¾ÍÊÇÃ¿¸ö³¡¾°¶ÔÏóÖ»ÄÜÔÚÖ¸¶¨³¡¾°ÖÐÊ¹ÓÃ£¬¿ÉÒÔ½«LIGHTMAPÐÅÏ¢Ó¦ÓÃÉÏÈ¥£¬Ð§¹ûÄÜÌáÉýºÜ¶à£©
 5¡¢µ¼Èë¸ß¶ÈÍ¼¡¢ÑÕÉ«ÌùÍ¼µ½µØ±à¡¢Ôö¼ÓµØÎï¡£
 6¡¢ÔÚµØ±à±à¼­µØ±íÌùÍ¼¡¢µ÷ÕûÑÕÉ«¡¢ÉùÒô¡¢×èµµ¡¢ÇøÓòµÈ¡£
@@ -627,7 +628,7 @@ sellType¡¢buyType¡¢maxHaveInven
 
 18:05 2010-5-20
 Êý¾Ý¸üÐÂ£º
-¿Í»§¶ËºÍ·þÎñ¶ËÊ¹ÓÃÏàÍ¬µÄ½Å±¾£¬ËùÒÔ¸üÐÂÊý¾ÝµÄ²½ÖèÎª£º
+¿Í»§¶ËºÍ·þÎñ¶ËÊ¹ÓÃÏàÍ¬µÄ½Å±¾£¬ËùÒÔ¸üÐÂÊý¾ÝµÄ²½?èÎª£?
 ÐÞ¸ÄresourceÄ¿Â¼ÏÂÏà¹ØµÄtxtÎÄ¼þ£¬È»ºó°ÑÊý¾ÝÍ¬Ê±¸´ÖÆµ½¿Í»§¶ËºÍ·þÎñ¶ËresourceÄ¿Â¼£¬²¢ÔÚ·þÎñ¶ËÔËÐÐÊý¾Ý¿â¸üÐÂÖ¸Áî¡£
 
 NPCÂô¶«Î÷£º
@@ -874,7 +875,7 @@ Renderer::DrawScene
         SetGlobalState
         SetWorldTransformation		´ÓDraw²ÎÊý´«½øÒ»¸öGeometry£¬ÔÚÕâÀï¸üÐÂÊÀ½ç¾Ø?ó£¬×ÅÉ«ËùÐ?
 	EnableIBuffer			ÓÃGeometryÉèÖÃË÷Òý»º³å
-	»ñµÃÐ§¹ûÎÄ¼þ(Êý×é)		Start,Quantity,Ð§¹ûÎÄ¼þ´ÓStartÎ»ÖÃ¿ªÊ¼È¡Quantity¸öÊýÁ¿äÖÈ¾
+	»ñµÃÐ§¹ûÎÄ¼þ(Êý×é)		Start,Quantity,Ð§¹ûÎÄ¼þ´ÓStartÎ»ÖÃ?ªÊ¼È¡Quantity¸öÊýÁ¿äÖÈ¾
 	
 
 
@@ -916,7 +917,7 @@ wm4äÖÈ¾Ê±£¬Èç¹ûÓÐ¶à¸ö¶ÔÏóÊ¹ÓÃÏàÍ¬µÄEFFECT£¬½«ÅÅºÃÐò£¬µ÷ÓÃÏàÓ¦EFFECTµÄDRAWº¯ÊýäÖÈ
 Õâ´øÀ´Ò»¸öÎÊÌâ£ºÊÇÒÔ¶ÔÏóÎªµ¥Î»äÖÈ¾£¬Ò»´ÎäÖÈ¾Ò»¸ö¶ÔÏóµÄËùÓÐpass£¬È»ºóäÖÈ¾ÏÂÒ»¸ö¶ÔÏó£»»¹ÊÇÒÔpassÎªµ¥Î»äÖÈ¾£¬µÚÒ»´ÎäÖÈ¾ËùÓÐ¶ÔÏóµÄµÚÒ»¸öpass£¬µÚ¶þ´ÎäÖÈ¾ËùÓÐ¶ÔÏóµÄµÚ¶þ¸öpass¡£
 ¡¡¡¡ÒÔ¶ÔÏóÎªµ¥Î»äÖÈ¾£¬äÖÈ¾Ò»¸ö¶ÔÏóµÄµÚÒ»¸öpassºó£¬ÂíÉÏ½ô½Ó×ÅäÖÈ¾Õâ¸ö¶ÔÏóµÄµÚ¶þ¸öpass£¬¶øÃ¿¸öpassµÄ¶¥µãºÍË÷ÒýÊý¾ÝÊÇÏàÍ¬µÄ£¬Òò´ËµÚÒ»¸öpass½«¶¥µãºÍË÷ÒýÊý¾ÝËÍÈëÏÔ¿¨ºó£¬ÏÔ¿¨CacheÖÐÒÑ¾­ÓÐÁËÕâ¸ö¶ÔÏó¶¥µãºÍË÷ÒýÊý¾Ý£¬ºóÐøpass²»±ØÖØÐÂ½«¶¥µãºÍË÷ÒýÊý¾Ý¿½µ½ÏÔ¿¨£¬Òò´ËËÙ¶È»á·Ç³£¿ì¡£¶øÎÊÌâÊÇÃ¿¸öpassµÄäÖÈ¾×´Ì¬¶¼²»Í¬£¬ÕâÊ¹µÃÊµ¼ÊÉÏÃ¿´ÎäÖÈ¾¶¼ÒªÉèÖÃÐÂµÄäÖÈ¾×´Ì¬£¬»á²úÉú´óÁ¿µÄ¶àÓàäÖÈ¾×´Ì¬ÇÐ»»¡£
 
-¡¡¡¡ÒÔpassÎªµ¥Î»?ÖÈ¾ÔòÕýºÃÏà·´£¬ÒÔShader·Ö×é£¬ÏàÍ¬ShaderµÄ¶ÔÏóÒ»ÆðäÖÈ¾£¬¿ÉÒÔÖ»ÔÚÕâ×é¿ªÊ¼Ê±ÉèÖÃÒ»´ÎäÖÈ¾×´Ì¬£¬Ïà±ÈÒÔ¶ÔÏóÎªµ¥Î»£¬´ó´ó¼õÉÙÁËäÖÈ¾×´Ì¬ÇÐ»»¡£¿ÉÊÇÃ¿´ÎäÖÈ¾µÄ¶ÔÏó²»Í¬£¬Òò´ËÃ¿´Î¶¼Òª½«¶ÔÏóµÄ¶¥µãºÍË÷ÒýÊý¾Ý¿½±´µ½ÏÔ¿¨£¬»áÏûºÄ²»ÉÙÊ±¼ä¡£
+¡¡¡¡ÒÔpassÎªµ¥Î»?ÖÈ¾ÔòÕýºÃÏà·´£¬ÒÔShader·Ö×é£¬ÏàÍ¬ShaderµÄ¶ÔÏóÒ»ÆðäÖÈ¾£¬¿ÉÒÔÖ»ÔÚÕâ×é¿ªÊ¼Ê±ÉèÖÃÒ»´ÎäÖÈ¾×´Ì¬£¬Ïà±ÈÒÔ¶ÔÏóÎªµ¥Î»£¬´ó´ó¼õÉÙÁËäÖÈ¾×´Ì¬ÇÐ»»¡£¿ÉÊÇÃ¿´ÎäÖÈ¾µÄ¶ÔÏó²»?¬£¬Òò´ËÃ¿´Î¶¼Òª½«¶ÔÏóµÄ¶¥µãºÍË÷ÒýÊý¾Ý¿½±´µ½ÏÔ¿¨£¬»áÏûºÄ²»ÉÙÊ±¼ä¡?
 
 
 ÎÒÃÇÑ¡ÔñÒÔpassÎªµ¥Î»äÖÈ¾¡£
