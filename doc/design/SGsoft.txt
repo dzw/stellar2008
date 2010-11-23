@@ -5,3 +5,11 @@ http://www.gamedeception.net/content/130
 http://www.gamedev.net/community/forums/topic.asp?topic_id=554431
 http://www.gamedev.net/community/forums/topic.asp?topic_id=518173
 http://www.qqread.com/soft-engineering/a420905011.html
+
+DirectX Hooking Sample
+http://stackoverflow.com/questions/1994676/hooking-directx-endscene-from-an-injected-dll
+http://www.gamedev.net/community/forums/topic.asp?topic_id=359794
+
+
+
+http://blog.csdn.net/norains/archive/2008/01/03/2023957.aspx
