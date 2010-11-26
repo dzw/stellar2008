@@ -13,3 +13,9 @@ http://www.gamedev.net/community/forums/topic.asp?topic_id=359794
 
 
 http://blog.csdn.net/norains/archive/2008/01/03/2023957.aspx
+
+directdraw lib
+http://directdrawoverlaylib.codeplex.com/
+
+fswindow
+http://hack.gameres.com/showthread.asp?threadid=68939
