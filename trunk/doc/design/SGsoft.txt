@@ -19,3 +19,6 @@ http://directdrawoverlaylib.codeplex.com/
 
 fswindow
 http://hack.gameres.com/showthread.asp?threadid=68939
+
+在游戏中效果：
+http://picclique.com/		（右边的视频效果）
