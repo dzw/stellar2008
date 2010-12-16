@@ -1,3 +1,6 @@
+23:43 2010/12/16
+ui移动：DXUT参考
+
 19:19 2010/11/14
 1、MAX与场景比例问题
 2、挖洞空间问题，是否可以超出地形范围？
@@ -304,7 +307,7 @@ Bent normal:  平均未遮?得娴姆较颍绻娑济槐徽诘担陀敕ㄏ呦嗤?
 开发过程：
 场景:可行走的场景，简单到只要一个面即可
 人物:在场景上放人，人物行走，两个人，主角和NPC
-碰撞:人与场景碰撞，人与人碰撞，为战斗系统做准备
+碰撞:人与场景碰撞，人与人碰撞，为战斗系统做准??
 基本功击动作和受击动作:增加功击动作
 格斗系统实现（很多，暂时没想好）
 游戏??能实现（暂没想好?
@@ -604,7 +607,7 @@ for (int modelIndex = 0; modelIndex < model.Size(); modelIndex++)
   const Array<Ptr<ModelNode>>& nodes = model[modelIndex]->GetModelNodes();
   for (int nodeIndex = 0; nodeIndex < nodes.Size(); nodeIndex++)
   {
-    nodes[nodeIndex]->SetStreamSource(); // 设置VB,IB
+    nodes[nodeIndex]->SetStreamSource(); // ?柚肰B,IB
     int batchNum = nodes[nodeIndex]->GetBatchNum();
 
     const Array<Ptr<ModeNodeInstance>>& nodeInsts = nodes[nodeIndex]->GetNodeInstances();
@@ -1177,7 +1180,7 @@ FMemStack和FrameAllocator的区别
 	这样一来就不需要像老方法那样，每个资源类都需要继承自AsyncLoad把加载和解析放在资源类里面处理。
 
 2:36 2008-7-25
-内存管理，unreal3上有个FMallocWindows分配内存以及FStackMask用于临时变量分配，与TORQUE里面的DataChunk和FramerAllocator相似，看看哪个效率高，拿来使用。
+内存管理，unreal3上有个FMallocWindows分配内存以及FStackMask用于临时变量分配，与TORQUE里面的DataChunk和FramerAllocator相似，看看哪个效率高，拿来使?谩?
 另外，还要再加一个Memory pool固定大小内存的管理。
 
 unreal3里面的Array?ap可以拿过来用，效率应该不错，当然要与stl比较一下。
@@ -1378,7 +1381,7 @@ floating-point precision errors 浮点精度问题
 http://www.cs.unc.edu/~geom/theses/gottschalk/main.pdf     aabb
 
 
-0.使用天空球包围整个世界,使用雾限制可控远景.
+0.使用天?涨虬д鍪澜?使用雾限制可控远景.
 1.地形裁减: 
   1.使用四叉树算法对MapArea->AreaChunk逐层进行相对镜头的可见性裁减.
   2.在1过程中,对镜头内的地形进行水平线扫描剔??
