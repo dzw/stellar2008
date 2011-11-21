@@ -12,7 +12,7 @@
 #include "apprender/viewerapplication.h"
 #include "lighting/spotlightentity.h"
 #include "graphics/modelentity.h"
-//#include "wow/world/worldmanager.h"
+#include "wow/world/worldmanager.h"
 #include "graphics/actorentity.h"
 #include "addons\nebula2\nebula2wrapper.h"
 #ifdef PHYSX
@@ -46,7 +46,10 @@ private:
     Ptr<Lighting::SpotLightEntity> localLight0;
     Ptr<Lighting::SpotLightEntity> localLight1;
 	Ptr<Anim::AnimTable> animTable;
+	Ptr<WOW::WorldManager> worldManager;
+#ifdef PHYSX
 	Ptr<PhysX::PhysXServer> physxServer;
+#endif
 };
 
 } // namespace Test

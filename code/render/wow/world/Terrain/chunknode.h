@@ -37,7 +37,7 @@ protected:
 	///
 	virtual void UnloadResources();
 	///
-	virtual void ApplySharedState();
+	virtual bool ApplySharedState();
 
 	Ptr<Resources::ManagedMesh> managedMesh;
 	IndexT primGroupIndex;

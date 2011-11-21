@@ -73,6 +73,8 @@ public:
     void RemoveNode(const Ptr<ModelNode>& node);
     /// access to model nodes
     const Util::Array<Ptr<ModelNode> >& GetNodes() const;
+	///
+	SizeT GetNodeSize()const;
 
     /// create a ModelInstance of the Model
     virtual Ptr<ModelInstance> CreateInstance();
@@ -199,6 +201,15 @@ inline const Util::Array<Ptr<ModelNode> >&
 Model::GetNodes() const
 {
     return this->nodes;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline SizeT 
+Model::GetNodeSize()const
+{
+	return this->nodes.Size();
 }
 
 //------------------------------------------------------------------------------

@@ -17,7 +17,9 @@ using namespace Util;
 using namespace Lighting;
 using namespace Resources;
 using namespace Timing;
+#ifdef PHYSX
 using namespace PhysX;
+#endif
 using namespace Input;
 
 //------------------------------------------------------------------------------
@@ -120,16 +122,16 @@ TestViewerApplication::Open()
 
 		// wow:World\\AZEROTH\\BootyBay\\PassiveDoodad\\FishingBox\\FishingBox.m2
 		// wow:creature\\deer\\deer.m2  Character\\Bloodelf\\male\\bloodelfmale.m2
-		//this->tree = ModelEntity::Create();
-		//this->tree->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
-		////this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
-		//this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
+		this->tree = ModelEntity::Create();
+		this->tree->SetResourceId(ResourceId("wow:Character\\Bloodelf\\male\\bloodelfmale.m2"));
+		//this->tree->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"));
+		this->stage->AttachEntity(this->tree.upcast<GraphicsEntity>());
 		
-		/*this->worldManager = WOW::WorldManager::Create();
+		this->worldManager = WOW::WorldManager::Create();
 		this->worldManager->Open();
-		this->worldManager->InitWorld("Azeroth");*/
+		this->worldManager->InitWorld("Azeroth");
 
-		
+#ifdef PHYSX		
 		this->physxServer = PhysXServer::Create();
 		this->physxServer->Open();
 		//this->physxServer->Pause(true);
@@ -140,6 +142,7 @@ TestViewerApplication::Open()
 		this->physxServer->CreateSphere(Math::vector(-1.0f, 3.0f, 0.0f), 0.65f);
 		this->physxServer->AddUserDataToActor();
 		this->view->ShowDebugPhysX();
+#endif
 
         return true;
     }
@@ -164,14 +167,16 @@ TestViewerApplication::Close()
 		//this->animTable->Close();
 		this->animTable = 0;
 	}
-	//this->worldManager->Close();
-	//this->worldManager = 0;
+	this->worldManager->Close();
+	this->worldManager = 0;
 
+#ifdef PHYSX
 	if (this->physxServer.isvalid())
 	{
 		this->physxServer->Close();
 		this->physxServer = 0;
 	}
+#endif
 
     ViewerApplication::Close();
 }
@@ -186,7 +191,7 @@ TestViewerApplication::OnUpdateFrame()
 	tt.Reset();
 	tt.Start();
 
-	//this->worldManager->Update();
+	this->worldManager->Update();
 
 	tt.Stop();
 	float t = (float)tt.GetTime();
@@ -215,7 +220,9 @@ TestViewerApplication::OnUpdateFrame()
 		this->actor->SetBaseAnimation("angriff_bogen_shoot");
 	}
 
+#ifdef PHYSX
 	this->physxServer->Update((float)this->frameTime);
+#endif
 
     ViewerApplication::OnUpdateFrame();
 }
@@ -226,10 +233,12 @@ TestViewerApplication::OnProcessInput()
     InputServer* inputServer = InputServer::Instance();
     const Ptr<Keyboard>& keyboard = inputServer->GetDefaultKeyboard();
 
+#ifdef PHYSX
     if (keyboard->KeyDown(Key::Add))
     {
         this->physxServer->CreateBox(Math::vector(0.0f, 5.0f, 0.0f), Math::vector(0.5f, 0.5f, 0.5f));
     }
+#endif
 
 	ViewerApplication::OnProcessInput();
 }

@@ -54,39 +54,6 @@ protected:
 	Ptr<Models::TerrainChunk> terrain;
 };
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline bool 
-TerrainChunkEntity::Update()
-{
-    if (this->terrain.isvalid() && this->terrain->GetState() == Resources::Resource::Pending)
-        if (this->terrain->Load() == Resources::Resource::Loaded)
-        {
-            this->ValidateModelInstance();
-            return true;
-        }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline bool 
-TerrainChunkEntity::IsLoaded()
-{
-	return this->terrain->GetState() == Resources::Resource::Loaded;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline void 
-TerrainChunkEntity::UpdateChunk(const ChunkData& data)
-{
-    terrain->UpdateChunks(data);
-}
-
 } // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

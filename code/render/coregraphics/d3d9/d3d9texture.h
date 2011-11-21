@@ -13,11 +13,6 @@
 */
 #include "coregraphics/base/texturebase.h"
 
-namespace Models
-{
-	class TerrainChunk;
-}
-
 //------------------------------------------------------------------------------
 namespace Direct3D9
 {
@@ -50,16 +45,16 @@ public:
     /// get d3d9 volume texture pointer
     IDirect3DVolumeTexture9* GetD3D9VolumeTexture() const;
 
-protected:
-    friend class D3D9StreamTextureLoader;
-    friend class D3D9RenderTarget;
-
-    /// setup from a IDirect3DTexture9
+	/// setup from a IDirect3DTexture9
     void SetupFromD3D9Texture(IDirect3DTexture9* ptr);
     /// setup from a IDirect3DCubeTexture
     void SetupFromD3D9CubeTexture(IDirect3DCubeTexture9* ptr);
     /// setup from a IDirect3DVolumeTexture
     void SetupFromD3D9VolumeTexture(IDirect3DVolumeTexture9* ptr);
+
+protected:
+    friend class D3D9StreamTextureLoader;
+    friend class D3D9RenderTarget;
 
     IDirect3DBaseTexture9* d3d9BaseTexture;
     IDirect3DTexture9* d3d9Texture;                 // valid if type is Texture2D

@@ -27,7 +27,7 @@ using namespace Util;
 TerrainChunkEntity::TerrainChunkEntity()
 {
     this->SetType(ModelType);
-	this->SetStaticEnttiy();
+	//this->SetStaticEnttiy();
 }
 
 //------------------------------------------------------------------------------
@@ -231,6 +231,41 @@ TerrainChunkEntity::LoadChunk(const Resources::ResourceId& resId, int chunkId)
 	this->terrain->Load();
 
     //this->managedChunk = ResourceManager::Instance()->CreateManagedResource(Chunk::RTTI, this->resId).downcast<ManagedChunk>();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool 
+TerrainChunkEntity::Update()
+{
+    if (this->terrain.isvalid() && this->terrain->GetState() == Resources::Resource::Pending)
+	{
+        if (this->terrain->Load() == Resources::Resource::Loaded)
+        {
+            this->ValidateModelInstance();
+            return true;
+        }
+	}
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool 
+TerrainChunkEntity::IsLoaded()
+{
+	return this->terrain->GetState() == Resources::Resource::Loaded;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void 
+TerrainChunkEntity::UpdateChunk(const ChunkData& data)
+{
+    terrain->UpdateChunks(data);
 }
 
 } // namespace Graphics

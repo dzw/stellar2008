@@ -11,6 +11,7 @@
 */
 #include "models/modelnode.h"
 #include "wow/world/terrain/maptile.h"
+#include "wow/world/terrain/managedmaptile.h"
 
 //------------------------------------------------------------------------------
 namespace Models
@@ -25,7 +26,7 @@ public:
     virtual ~ChunkLoadingNode();
 
     /// apply state shared by all my ModelNodeInstances
-    virtual void ApplySharedState();
+    virtual bool ApplySharedState();
 
 protected:
     /// create a model node instance
@@ -36,7 +37,7 @@ protected:
 	virtual void UnloadResources();
 
 	/// ¼ÓÔØadtÎÄ¼þ
-	Ptr<Resource::ManagedMapTile> managedMaptile;
+	Ptr<ManagedMapTile> managedMaptile;
 };
 
 } // namespace Models

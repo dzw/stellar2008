@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="foundation_win32"
 	ProjectGUID="{644EFE92-A26C-40AB-B173-5E7B80E29EEF}"
+	RootNamespace="foundation_win32"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -170,6 +171,89 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile=".\Win32\Release\foundation_win32.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="EditorDebug|Win32"
+			OutputDirectory=".\Win32\EditorDebug"
+			IntermediateDirectory=".\Win32\EditorDebug\foundation_win32"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="Nebula3 Interface Definition"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions=""
+				Optimization="0"
+				AdditionalIncludeDirectories="..;../foundation;../extlibs ;"
+				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;EDITOR"
+				StringPooling="true"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="1"
+				FloatingPointModel="2"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="stdneb.h"
+				PrecompiledHeaderFile="$(OutDir)\$(ProjectName).pch"
+				WarningLevel="3"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CallingConvention="0"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile=".\Win32\Debug\d_foundation_win32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -1616,6 +1700,14 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="EditorDebug|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
