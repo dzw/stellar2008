@@ -78,7 +78,7 @@ PhysXServer::Open()
 
 	CreateScene();
 
-	controllerManager = CharControlManager::Create();
+	controllerManager = CharControlServer::Create();
 	controllerManager->Open();
 }
 
@@ -132,7 +132,7 @@ PhysXServer::ReleaseScene()
 	{
 		if(scene)
 		{
-			controllerManager->ReleaseCharacterControllers(*scene);
+			//controllerManager->ReleaseCharacterControllers(*scene);
 			//NxReleaseControllerManager(controllerManager);
 			physicsSDK->releaseScene(*scene);
 			scene = NULL;
@@ -354,7 +354,7 @@ PhysXServer::Update(float frameTime)
 	if (this->scene == 0)
 		return;
 
-	controllerManager->UpdateControllers();
+	controllerManager->UpdateCharacter(frameTime);
 
 	// Start collision and dynamics for delta time since the last frame
 	if (!isPause)

@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="tools_win32"
 	ProjectGUID="{E4F14AF3-DD3B-4A4D-B076-EA584927A17C}"
+	RootNamespace="tools_win32"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -48,7 +49,7 @@
 				AdditionalOptions=""
 				Optimization="0"
 				AdditionalIncludeDirectories="..;../foundation;../render;../extlibs;../tools;../addons;&quot;D:/engine/nvidia physx sdk 2.8.1/sdks/Foundation/include&quot;;&quot;D:/engine/nvidia physx sdk 2.8.1/SDKs/Physics/include&quot;;&quot;D:/engine/nvidia physx sdk 2.8.1/SDKs/Cooking/Include&quot;;&quot;D:/engine/nvidia physx sdk 2.8.1/SDKs/NxCharacter/include&quot;;&quot;D:/engine/nvidia physx sdk 2.8.1/SDKs/PhysXLoader/include&quot;"
-				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0;PHYSX"
+				PreprocessorDefinitions="__WIN32__;WIN32;_DEBUG;NT_PLUGIN;_HAS_EXCEPTIONS=0"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"

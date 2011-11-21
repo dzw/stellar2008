@@ -150,7 +150,7 @@ ChunkNode::UnloadResources()
 //------------------------------------------------------------------------------
 /**
 */
-void
+bool
 ChunkNode::ApplySharedState()
 {
 	n_assert(this->managedMesh.isvalid());
@@ -196,6 +196,8 @@ ChunkNode::ApplySharedState()
 	}
 
 	ShaderServer::Instance()->SetActiveShaderInstance(this->shaderInstance);
+
+	return true;
 }
 
 } // namespace Models

@@ -13,6 +13,7 @@ ImplementClass(Models::ChunkLoadingNode, 'CKLN', Models::ModelNode);
 
 using namespace Attr;
 using namespace Math;
+using namespace Resources;
 
 //------------------------------------------------------------------------------
 /**
@@ -78,7 +79,7 @@ ChunkLoadingNode::UnloadResources()
 //------------------------------------------------------------------------------
 /**
 */
-void
+bool
 ChunkLoadingNode::ApplySharedState()
 {
     if (this->managedMaptile->GetState() == Resource::Loaded)

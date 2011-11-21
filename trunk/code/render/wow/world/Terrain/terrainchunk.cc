@@ -79,7 +79,7 @@ TerrainChunk::UpdateChunks(const ChunkData& data)
 bool
 TerrainChunk::CreateChunkNode(const ChunkData& chunk)
 {
-	bool isCreate = !(nodes.Size() > 0);
+	bool isCreate = !(GetNodeSize() > 0);
 	String texBlend, meshName;
 
 	DebugView::Instance()->Start();
