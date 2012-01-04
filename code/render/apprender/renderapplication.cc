@@ -125,8 +125,8 @@ RenderApplication::Open()
         }
 
 #ifdef __MPQ__
-		// wow mpq assign		E:\\game\\wow\\data  D:\\game\\World of Warcraft\\Data
-		this->ioServer->SetAssign(Assign("mpq", "C:\\wow\\WOW\\Data"));
+		// wow mpq assign		E:\\game\\wow\\data  D:\\game\\World of Warcraft\\Data  C:\\wow\\WOW\\Data
+		this->ioServer->SetAssign(Assign("mpq", "E:\\game\\wow\\data"));
 		this->ioServer->SetAssign(Assign("wow", "mpqModel://"));
 		//this->ioServer->RegisterUriScheme("mpqModel", MPQFileStream::RTTI);
 		LoadMPQFile();

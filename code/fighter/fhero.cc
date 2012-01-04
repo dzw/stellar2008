@@ -49,8 +49,10 @@ void
 FHero::Init()
 {
 	const Ptr<Stage>& stage = GraphicsServer::Instance()->GetDefaultView()->GetStage();
+
 	this->model = ActorEntity::Create();//M2Entity::Create();
-	this->model->SetResourceId(ResourceId("mdl:q.n2"/*"wow:Character\\Bloodelf\\male\\bloodelfmale.m2"*/));
+	this->model->SetResourceId(ResourceId("mdl:characters/mensch_m.n2"/*"wow:Character\\Bloodelf\\male\\bloodelfmale.m2"*/));
+
 	stage->AttachEntity(this->model.upcast<GraphicsEntity>());
 
 	this->camera = FCameraManager::Instance()->GetCamera();
